@@ -1,0 +1,180 @@
+---
+linkcolor: blue
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r,include=FALSE}
+library(knitr)
+knit_hooks$set(htmlcap = function(before, options, envir) {
+  if(!before) {
+    paste('<p class="caption">',options$htmlcap,"</p>",sep="")
+    }
+    })
+```
+
+# Visualisation du parcours patient dans le PMSI
+
+La donnée de géolocalisation dans le PMSI est un code géographique pour le patient et une adresse géocodée pour l'établissement de santé. Le code géographique correspond à un regroupement de codes postaux. Pour diminuer le risque de ré-identification, la CNIL demande que les codes géographiques ne regroupent pas moins de 1 000 habitants (source ATIH).  
+
+Nous ne pourrons donc pas visualiser le parcours du patient entre son domicile et un établissement de santé mais nous pourrons visualiser son parcours entre le centroïde du code géographique de résidence et l'établissement. 
+
+Pour visualiser un parcours patient dans le PMSI, les éléments suivants sont nécessaires : 
+
+* Un objet géographique représentant les codes géographiques PMSI
+* La géolocalisation des établissements de santé
+* Des données PMSI
+* Un outil de visualisation interactif
+
+
+Chaque élément est discuté par la suite. Ces éléments ont été recherchés sur Internet : en Open Data pour les données et en Open Source pour les logiciels.   
+
+## Objet géographique des codes géographiques PMSI
+### Cartes
+
+Sur le site d'[atlasante](http://www.atlasante.fr/accueil) dont l'une des missions est de:
+
+> partager l'information géographique entre les ARS, les services de l'Etat, les collectivités locales et les établissements publics et permettre au grand public d'accéder à ce type d'information
+
+On peut télécharger le fichier "Liste_couches_prodige_synthese_20160515.xlsx" qui fournit la "Liste des données (table et couches) dans Prodige, par sous-domaine, en juin 2015". En réalisant ensuite une recherche sur leur interface, on accède au téléchargement de différents fonds de carte et fichiers CSV.
+
+Plusieurs fonds de carte intéressants à télécharger : 
+
+  + Les couches des codes géographiques 2013 et 2014 (source ATIH)
+  + La couche des codes postaux en France (source Geofla(IGN)). En combinant la couche des codes postaux avec la table de correspondance codespostaux - codesgeo de l'ATIH, il est possible de reconstituer la couche des codes géographiques. La dernière mise-à-jour de l'ATIH date du 27 août 2015. 
+
+
+```{r, include=FALSE}
+fichier <- "../../CouchesPMSI/codesgeo2014/atih_metropole_fondpmsi2014_z.shp"
+library(rgdal)
+EPSG <- make_EPSG()
+# le code de notre référentiel : RGF93
+bool <- EPSG$code == 2154 & !is.na(EPSG$code)
+RGF93 <- EPSG$prj4[bool]
+RGF93prj4 <- CRS(RGF93)
+library(maptools)
+## chargement du fichier GeoFla avec la projection RGF93
+codesgeo <- readShapePoly(fichier,proj4string = RGF93prj4)
+dep33 <- subset (codesgeo, substr(codesgeo$codgeo,1,2) == 33)
+```
+
+```{r, echo=FALSE, fig.width=6, fig.height=6,htmlcap="figure : Codes géographiques PMSI de la Gironde avec leur centroïde"}
+## calcul des centroides
+centroides <- rgeos::gCentroid(dep33,byid = T)
+plot(dep33)
+points(centroides,col="red",pch=19, cex = 0.7)
+```
+
+On peut déjà se poser la question de savoir comment on va gérer la rétrocompatibilité des anciennes versions : comment analyser plusieurs années consécutives si les codes géographiques évoluent au cours du temps ?
+
+### Métadonnées
+Les couches des codes géographiques 2013 et 2014 ne contiennent pas d'information sur la population. Ils contiennent seulement le numéro du code géographique et le libellé du code géographique. 
+Une table fournie par [atlasante](http://www.atlasante.fr/accueil) contient la population par CodegeoPMSI 2013 (source ATIH). La couche des codes postaux contient aussi des informations sur la population par code postal. 
+
+## Géolocalisation des établissements de santé
+Sur le [site data.gouv](https://www.data.gouv.fr/fr/datasets/extraction-du-fichier-national-des-etablissements-sanitaires-et-sociaux-finess-par-etablissements/), on peut télécharger la liste des établissements géolocalisés du domaine sanitaire et social.
+
+Le fichier de data.gouv contient 94093 établissements géolocalisés. Chaque établissement a une catégorie (55 au total) et sous-catégorie (155 au total). Les dix premières catégories et sous-catégories par ordre de fréquence sont présentées ci-dessous. 
+
+```{r, include=FALSE}
+load("../../FINESS/locEtab.rdata")
+library(monpaquet)
+barplotvariable <- function(df, variable){
+colonne <- which(colnames(df) %in% variable)
+tab <- sort(table(df[,colonne]),decreasing = T)
+tab2 <- tab[1:10]
+par(mar=c(4,12,4,6))
+tab_percent <- round (100*tab2/sum(tab, na.rm=T),1)
+texte <- paste (tab2, " (",tab_percent, "%)", sep="")
+bplt <- barplot(tab2, horiz = T, las = 1, xlim=c(0, max(tab) + 0.4*max(tab)), xlab="",cex.names = 0.4,cex.axis = 0.4)
+text (x= tab2 + 0.18*max(tab2) , y=bplt,labels=as.character(texte),cex = 0.5)
+}
+
+```
+```{r, echo=FALSE,htmlcap="figure : Catégories d'établissement"}
+barplotvariable(locEtab,"libcategagretab")
+```
+
+```{r, echo=FALSE,htmlcap="figure : Sous-catégories d'établissement"}
+barplotvariable(locEtab,"libcategetab")
+```
+
+Il n'existe pas de renseignements sur le type d'établissement (MCO, ...), les équipements (Scanner, IRM...), les services (UNV, urgences). [atlasante](http://www.atlasante.fr/accueil) fournit plusieurs couches géographiques sur la localisation des établissements de santé et des équipements. On a par exemple une couche pour les établissements MCO, une couche pour les scanners, une autre pour les IRM... J'ai téléchargé un fichier CSV contenant la liste des établissements avec une unité neurovasculaire (UNV) : sur 136 numéros Finess dans ce fichier, 133 sont retrouvés dans le fichier data.gouv (problème temporel ?). 
+
+## Données PMSI
+Il s'agit de données sensibles non disponibles en Open Data. Certaines données issues du PMSI sont fournies de façon agrégée : le nombre d'AVC par code géographique et par tranche d'âge par exemple. Ces données ne permettent pas de reconstituer un parcours patient. 
+
+A partir du descriptif des fichiers anonymisés envoyés aux tutelles, il est possible de créer un jeu de données simulé. 
+Les variables intéressantes à sont :
+
+* FINESS de l'établissement
+* Age
+* Sexe
+* Mode d'entrée (domicile, transfert)
+* Mode de sortie (domicile, transfert, décès)
+* Code géographique de résidence
+* Durée de séjour
+
+A partir d'un accès à une base régionale ou nationale PMSI, la première étape serait l'extraction d'une liste de patients hospitalisés pour une pathologie, par exemple AVC en diagnostic principal. La deuxième étape serait de réaliser une 2ème extraction à partir de cette liste pour obtenir l'ensemble du parcours de chaque patient. La troisième étape consisterait à reconstituer le parcours d'un patient puis à le visualiser sur une carte. 
+
+Ces premières étapes d'extraction et de pre-processing peuvent être longues. On peut aussi imaginer intégrer plus tard des données du SNIIRAM. Il faut réfléchir à une phase d'ETL et à un nouveau schéma pour stocker et interroger ces données rapidement.  
+
+Pour relier différents points sur une carte, j'ai regardé ce [tutoriel](http://flowingdata.com/2011/05/11/how-to-map-connections-with-great-circles/) sur les connections en utilisant des grands cercles (chemin le plus court entre 2 points sur une sphère). Il s'agit des méthodes utilisées pour représenter les trajets d'avion. Cette méthode n'a pas d'intérêt dans notre cas car l'échelle utilisée est trop petite : un grand cercle apparaît de la même façon qu'un simple segment entre 2 points en projection 2D. 
+
+```{r, include=FALSE}
+load("../R/parcours.rdata")
+```
+
+```{r, echo=FALSE, fig.width=6, fig.height=6,htmlcap="figure : Parcours du patient : départ de son domicile (centroïde d'ARES) vers l'UNV d'Arcachon (bleu) puis transféré en SSR (vert)"}
+library(maptools)
+plot(dep33,col="antiquewhite")
+taillepoint <- 0.5
+points(centroides,col="red",pch=19,cex=taillepoint)
+points(locEtab33SSR,col="green",pch=20,cex=taillepoint)
+points(locEtab33UNV,col="blue",pch=18,cex=taillepoint)
+arrows(x0, y0,x1,y1,length=0.05,lwd = 2,col="blue")
+arrows(x1,y1,x2,y2,length=0.05,lwd = 2,col="green")
+```
+
+Pour visualiser de multiples parcours, il sera nécessaire de faire varier l'épaisseur, la couleur et la transparence des flèches. 
+
+## Outils de visualisation
+
+Les cartes ci-dessus ont été créées avec le langage de programmation R qui possède de nombreux paquets (map, maptools, rgdal, geosphere...) pour représenter, manipuler et analyser des objets géographiques. 
+
+La principale limite de ce langage est qu'il ne fournit pas une carte interactive. On souhaiterait par exemple afficher le nom des établissements lors du passage de la souris, avoir une interface utilisateur pour filtrer par code géographique, n'afficher que certains établissements etc... 
+Une solution intéressante est Leaflet, une bibliothèque JavaScript libre de cartographie. Il existe même un paquet R qui fait le lien entre des objets R et les objets JavaScript de Leaflet. 
+
+```{r,include=F}
+EPSG <- make_EPSG()
+bool <- grepl("Lambert",EPSG$note,ignore.case = T)
+EPSG_lambert <- subset (EPSG, bool)
+RGF93 <- EPSG_lambert$prj4[EPSG_lambert$code==2154 & !is.na(EPSG_lambert$code)]
+# création d'un objet CRS 
+RGF93prj4 <- CRS(RGF93)
+library(leaflet)
+load("../../CouchesPMSI/codesgeo2014/couchegeoPMSI2014.rdata")
+load("../R/parcours.rdata")
+dep33 <- subset (couchegeoPMSI2014, substr(couchegeoPMSI2014$codgeo,1,2) == 33)
+dep33 <- spTransform(dep33, CRS("+init=epsg:4326"))
+m <- leaflet(dep33) %>%
+  addPolygons(
+    stroke = TRUE, fillOpacity = 2, smoothFactor = 2,color ="black",fillColor="white"
+  )
+df <- data.frame(X = x1, Y = y1)
+coordinates(df) <- ~ X + Y
+proj4string(df) <- RGF93prj4
+dfwgs84 <- spTransform(df, CRS("+proj=longlat +ellps=WGS84"))
+m <- addMarkers(m, lng=coordinates(dfwgs84)[1], lat=coordinates(dfwgs84)[2], popup="UNV CH d'Arcachon")
+
+```
+```{r,echo=F, htmlcap="figure : Carte interactive en JavaScript pour la visualisation des parcours"}
+m
+```
+
+En perspectives : 
+
+* Tester sur des données PMSI réelles
+* Approndir les fonctionnalités de Leaflet pour l'interactivité
+* Méthodes d'analyse des parcours : clusters ...

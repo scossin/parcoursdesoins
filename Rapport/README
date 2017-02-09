@@ -1,0 +1,3 @@
+RMD : contient le rapport au format markdown
+HTML : contient le rapport après compilation du markdown au format HTML
+R : contient des scripts utilisés pour le rapport

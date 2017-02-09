@@ -1,0 +1,5 @@
+Ici j'avais essayé de créer une couche géographique à partir de la couche GEOFLA COMMUNES : 
+- je récupère le lien entre codes postaux et codes communes
+- je récupère le lien entre codes géographiques et codes postaux
+
+Cependant, c'est plus facile de passer par la couche géographiques des codes postaux ; ou d'utiliser une couche des codes géographiques PMSI déjà faite !
