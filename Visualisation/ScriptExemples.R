@@ -40,3 +40,8 @@ plot(arrond33) ### les arrondissements
 centroides <- rgeos::gCentroid(arrond33,byid = T)
 points(centroides)
 
+### dégradé de couleurs
+colfunc <- colorRampPalette(c("yellow", "red"))
+colfunc(100)
+plot(rep(1,100),col=colfunc(100),pch=19,cex=3)
+

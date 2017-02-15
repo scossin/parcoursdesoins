@@ -1,0 +1,65 @@
+---
+linkcolor: blue
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Leaflet Shiny 
+
+Dans le rapport précédent, j'expliquais les éléments nécessaires à la réalisation d'une cartographie des parcours de soins. Une des problématiques majeure est de fournir une interface interactive à l'utilisateur. Pour visualiser les parcours de soins, il va de soi que l'utilisateur aura besoin de sélectionner une pathologie, une zone géographique (un département...), un interval temporel etc...
+
+Je n'ai pas réalisé une fouille approfondie des différentes technologies existantes. En discutant avec Francis, un autre EIG, il m'a conseillé d'utiliser Leaflet qu'il avait utilisé pour son application Ubikiwi. En regardant sur le web, j'ai tout de suite trouvé beaucoup d'avantages à utiliser cette technologie : 
+
+* C'est gratuit et OpenSource, condition sine qua non 
+* Comme c'est du web (JavaScript) l'utilisateur n'aura besoin que d'un navigateur web pour accéder à l'application (client léger)
+* Paquet R (leaflet) : R est l'un des langages que je maîtrise le mieux, il existe déjà un paquet pour faire le lien entre les objets R manipulant des couches géographiques (via les paquets maptools, map, sp, ...) et les objets géographiques manipulés par leaflet. Quand on voit les auteurs du paquet : Joe Cheng, Yihui Xie, Hadley Wickham (développeurs de Rstudio, Shiny et knitr), on peut avoir confiance sur sa stabilité et sa maintenance. 
+* Les auteurs du paquet R (leaflet) ont déjà pensé à l'incorporer dans Shiny (présentation plus bas)
+* Il existe déjà des tutoriels d'utilisation
+
+Je présente brièvement les technologies dans les sections suivantes puis je discute l'implémentation d'une visualisation des parcours de soins dans la dernière section. 
+
+## Leaflet
+Pour reprendre wikipedia : 
+
+> Leaflet est une bibliothèque JavaScript libre de cartographie en ligne développée par Vladimir Agafonkin de CloudMade et de nombreux contributeurs. Elle est notamment utilisée par le projet de cartographie libre et ouverte OpenStreetMap.
+
+En allant sur le [site officiel](http://leafletjs.com/), on voit qu'il existe des tutoriels. Intégrer une carte interactive avec leaflet dans une application web est vraiment simple. Il existe aussi de nombreux plugins. 
+
+Leaflet utilise des "tiles" (tuiles) qui sont des cartes dites glissantes (slippy map) consitutées d'un ensemble d'images 256x256 pixels (en général). Lorsqu'on se déplace sur la carte ou qu'on change le zoom, le serveur calcule les "tuiles" à remplacer. Ceci donne une impression de fluidité, l'inconvénient est qu'il faut pré-calculer toutes les tuiles pour toutes les zones géographiques et pour tous les niveaux de zoom possibles. Le premier à avoir opté pour cette solution est Google Maps. 
+Voir cet [article](http://www.neogeo-online.net/blog/archives/1727/). 
+
+
+## Shiny 
+Shiny est un paquet R permettant de développer des applications web interactives qui utilisent R. C'est une solution simple et rapide pour intégrer R à un site web. Selon moi, le principal inconvénient de Shiny est qu'il est facile de mélanger du code R avec du code Js ou html rendant la maintenabilité difficile pour de grossesses applications. Son principale avantage est la facilité du développement. 
+Un autre avantage de Shiny est qu'il est possible de dockeriser une app-Shiny : Rstudio fournit le dockerfile ! (docker est un logiciel permettant le déploiement d'applications dans des conteneurs). 
+Il existe de nombreux exemples d'app Shiny : voir [ce repo github](https://github.com/rstudio/shiny-examples).
+
+
+## Leaflet Shiny
+Il existe déjà un [exemple](https://shiny.rstudio.com/gallery/superzip-example.html) d'app Shiny avec Leaflet. Un tutoriel est aussi disponible sur ce [site](https://rstudio.github.io/leaflet/shiny.html). 
+Comme le code est disponible sur Github, j'ai regardé puis adapté à notre besoin. 
+
+## Implémentation
+Je suis reparti de l'exemple plus haut. L'application ne tourne qu'en local actuellement, j'essaierai de la déployer sur un serveur la prochaine fois pour ajouter un lien à ce rapport. 
+J'ai été agréablement surpris par la solution : tous les clics réalisés sur la carte leaflet sont transmis au serveur ce qui offre une grande souplesse. Les choix arbitraires réalisés jusqu'à présent sont les suivants : 
+
+* Le fond de carte (en dessous de la couche des zones géographiques)
+Il est possible d'en mettre aucun. Cependant, c'est agréable de voir le nom des villes, les axes routiers ... sans trop de détails non plus. J'en ai choisi un (Stamen.TonerLite) qui me semblait bien. Attention ! Afficher cette carte requière une connexion internet pour recevoir les tuiles. 
+
+* les "markers" : ils sont utilisés pour afficher les établissements. Par défaut, l'icône ressemble à celle utilisée par GoogleMap. Il est possible de modifier ces icônes de géolocalisation. J'ai créé 2 icônes pour distinguer UNV et SSR avec [https://www.canva.com/](https://www.canva.com/). Il est possible de mettre un identifiant unique à chacune de ces icônes. Quand un utilisateur clique sur l'une de ces icônes cette information (le clic) est transmise au serveur. Une pop-pup s'affiche aussi lors du clic (pour afficher le nom de l'établissement par exemple). Il est ainsi possible d'adapter la réponse : afficher des informations concernant uniquement cet établissement. 
+
+* La couche des zones géographiques. J'ai mis celle de 2014 trouvée sur le site [atlasante](http://www.atlasante.fr/accueil). Chaque zone (polygone) est cliquable, l'identifiant de chaque zone est le code géo, et comme plus haut, il est possible d'adapter la réponse du serveur. La pop-up affiche le nom de la zone géographique (issu de la table de métadonnées). La couleur du fond, l'épaisseur des contours : tout ceci est modifiable. 
+
+* J'ai simulé des parcours de soins partant du centroïde de la zone géographique à un établissement. L'épaisseur des traits correspond au nombre de patients. J'aurais pu essayer de créer autant de trait (partant d'un point quelconque au sein du polygone) que de patients pour avoir un autre effet : à tester. Il serait possible d'afficher le parcours complet du patient avec un objet "polyline" : est-ce que l'oeil humain serait capable d'identifier des patterns ou est-ce que ce serait illisible ?
+
+J'ai créé un onglet "cluster". L'exemple cité plus haut montre qu'il est possible de créer des liens avec l'onglet "map" pour permettre la visualisation de clusters identifiés par des algorithmes. 
+
+Perspectives : 
+
+* Déployer sur un serveur l'application
+* Tester sur des données réelles PMSI et adapter les paramètres pour une meilleure visualisation (épaisseur des traits, couleurs etc...)
+* Echanger avec les experts du métier sur les besoins de visualisation
+* Bibliographie des méthodes d'analyse des parcours (process mining, sequence data analysis...). Intégrer des algorithmes d'analyse à l'application. 
+* Implémentation d'algorithmes d'analyse de parcours patient. 
+

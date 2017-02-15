@@ -1,0 +1,13 @@
+.outer {
+  position: fixed; /* indispensable sinon n'affiche rien */ 
+  top: 41px; /* pour faire descendre le + du zoom */ 
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /*overflow: hidden; interet ici ? */
+  padding: 0;
+}
+
+h2{
+  text-align:center;
+}

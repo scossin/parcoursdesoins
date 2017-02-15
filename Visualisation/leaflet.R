@@ -64,6 +64,11 @@ centroides <- rgeos::gCentroid(dep33,byid = T)
 # http://nagraj.net/notes/calculating-geographic-distance-with-r/
 # ggmap package : google map for R
 
+
+codegeo_liste <- vector("list", length = nrow(dep33@data)) 
+names(codegeo_liste) <- dep33$codgeo
+
+### déterminer l'établissement le plus prêt : 
 ### déterminer l'établissement le plus prêt : 
 id_proche <- rep(0, length(centroides)) ## 0 par défaut
 min_distance <- rep(1000000, length(centroides)) ## 1 000 km
@@ -95,4 +100,54 @@ for (i in 1:nrow(table_pmsi)){
 m
 # centroides
 addCircles(m, lng = table_pmsi$codegeo.x,lat = table_pmsi$codegeo.y, radius=table_pmsi$N, color="red")
+
+table_pmsi <- data.frame(nofinesset = id_proche, codegeo = centroides, codgeo=dep33$codgeo)
+# Nb de séjours
+set.seed(67)
+table_pmsi$N <- round(runif(nrow(table_pmsi), 1,100),0)
+
+# ajout geoloc codes finess : 
+table_pmsi <- merge (table_pmsi, locEtab33UNV, by="nofinesset")
+table_pmsi$Npercent <- table_pmsi$N / sum(table_pmsi$N)
+#save(table_pmsi,file="../dev/table_pmsi.rdata")
+
+
+
+
+
+
+
+
+#### Nouvelle méthode simulation (non terminée)
+## les patients d'une zone géographique vont dans plusieurs établissements selon une probabilité
+# calculée en fonction de la distance
+i <- 1
+for (i in 1:nrow(locEtab33UNV)){
+  distance_i <-  geosphere::distCosine(centroides,locEtab33UNV[i,])
+  codegeo_liste <- mapply(c, codegeo_liste, distance_i, SIMPLIFY=FALSE)
+}
+## probabilité de chaque établissement selon la distance :
+codegeo_distance <- lapply(codegeo_liste, function(x){
+  1-round(x/sum(x),2)
+})
+## simulation parcours entre codegéo et établissemnt selon la probabilité liée à la distance : 
+codegeo_sim <- lapply(codegeo_distance, function(x){
+  ## n = nombre de parcours
+  # size = 1 seul établissement choisi
+  # prob = plus haut
+  y <- rmultinom(1000, size = 1, prob = x)
+  return(rowSums(y))
+})
+
+finess_etab <- unique(as.character(locEtab33UNV$nofinesset))
+## remplacer le nombre par le finess de l'établissement 
+codegeo_sim2 <- lapply(codegeo_sim, function(x,finess_etab){
+  data.frame(N = x, nofinesset = finess_etab)
+},finess_etab=finess_etab)
+
+## ajout codegeo: 
+codegeo_sim3 <- mapply(cbind, codegeo_sim2, "codgeo"=names(codegeo_sim), SIMPLIFY=F)
+simulation_parcours <- do.call("rbind", codegeo_sim3)
+colnames(simulation_parcours) ## pour chaque codegeo, nombre de patients (N) allant dans l'établissement nofinesset
+# finir : ajouter codesgeo, save, et import leaflet
 
