@@ -31,7 +31,7 @@ Voir cet [article](http://www.neogeo-online.net/blog/archives/1727/).
 
 
 ## Shiny 
-Shiny est un paquet R permettant de développer des applications web interactives qui utilisent R. C'est une solution simple et rapide pour intégrer R à un site web. Selon moi, le principal inconvénient de Shiny est qu'il est facile de mélanger du code R avec du code Js ou html rendant la maintenabilité difficile pour de grossesses applications. Son principale avantage est la facilité du développement. 
+Shiny est un paquet R permettant de développer des applications web interactives qui utilisent R. C'est une solution simple et rapide pour intégrer R à un site web. Selon moi, le principal inconvénient de Shiny est qu'il est facile de mélanger du code R avec du code Js ou html rendant la maintenabilité difficile pour de grosses applications. Son principale avantage est la facilité du développement. 
 Un autre avantage de Shiny est qu'il est possible de dockeriser une app-Shiny : Rstudio fournit le dockerfile ! (docker est un logiciel permettant le déploiement d'applications dans des conteneurs). 
 Il existe de nombreux exemples d'app Shiny : voir [ce repo github](https://github.com/rstudio/shiny-examples).
 

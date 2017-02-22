@@ -119,53 +119,50 @@ $(document).ready(function () {
 </div>
 
 
-<div id="leaflet-shiny" class="section level1">
-<h1>Leaflet Shiny</h1>
-<p>Dans le rapport précédent, j’expliquais les éléments nécessaires à la réalisation d’une cartographie des parcours de soins. Une des problématiques majeure est de fournir une interface interactive à l’utilisateur. Pour visualiser les parcours de soins, il va de soi que l’utilisateur aura besoin de sélectionner une pathologie, une zone géographique (un département…), un interval temporel etc…</p>
-<p>Je n’ai pas réalisé une fouille approfondie des différentes technologies existantes. En discutant avec Francis, un autre EIG, il m’a conseillé d’utiliser Leaflet qu’il avait utilisé pour son application Ubikiwi. En regardant sur le web, j’ai tout de suite trouvé beaucoup d’avantages à utiliser cette technologie :</p>
-<ul>
-<li>C’est gratuit et OpenSource, condition sine qua non</li>
-<li>Comme c’est du web (JavaScript) l’utilisateur n’aura besoin que d’un navigateur web pour accéder à l’application (client léger)</li>
-<li>Paquet R (leaflet) : R est l’un des langages que je maîtrise le mieux, il existe déjà un paquet pour faire le lien entre les objets R manipulant des couches géographiques (via les paquets maptools, map, sp, …) et les objets géographiques manipulés par leaflet. Quand on voit les auteurs du paquet : Joe Cheng, Yihui Xie, Hadley Wickham (développeurs de Rstudio, Shiny et knitr), on peut avoir confiance sur sa stabilité et sa maintenance.</li>
-<li>Les auteurs du paquet R (leaflet) ont déjà pensé à l’incorporer dans Shiny (présentation plus bas)</li>
-<li>Il existe déjà des tutoriels d’utilisation</li>
-</ul>
-<p>Je présente brièvement les technologies dans les sections suivantes puis je discute l’implémentation d’une visualisation des parcours de soins dans la dernière section.</p>
-<div id="leaflet" class="section level2">
-<h2>Leaflet</h2>
-<p>Pour reprendre wikipedia :</p>
+<div id="deploiement-et-tests" class="section level1">
+<h1>Déploiement et tests</h1>
+<p>Dans le rapport précédent, je mentionnais qu’il était nécessaire de déployer l’application sur un serveur pour qu’elle puisse être testée à distance. Ce rapport explique ce déploiement : serveur, configuration et Docker.</p>
+<div id="serveur" class="section level2">
+<h2>Serveur</h2>
+<p>J’ai choisi un serveur <a href="https://www.kimsufi.com/fr/">Kimsufi</a> KS-3B - 16G i5-750 1x2 To, localisé en France. J’ai choisi la distribution Ubuntu 16.04 LTS pour avoir la même distribution que mon ordinateur personnel.</p>
+<p>Kernel : OVH personnalise les noyaux linux des serveurs pour qu’ils soient optimisés avec leur matériel. Ils proposent plusieurs noyaux selon leur état de stabilité. A l’installation, le noyau était dans une version 3. Pour fonctionner, Docker nécessite un kernel &gt; version 4. Il existe de nombreux tutoriels sur internet pour modifier le kernel mais <a href="https://upandclear.org/2016/01/20/mettre-a-jour-un-kernel-ovh/">celui-ci</a> est très simple et reproduit après. Il faut commencer par se placer dans le dossier /boot puis on télécharge la version du noyau qui nous intéresse :</p>
+<pre class="bash"><code># remplacer 4.2.7 par la version souhaitée
+wget ftp://ftp.ovh.net/made-in-ovh/bzImage/4.2.7/System.map-4.2.7-xxxx-grs-ipv6-64
+wget ftp://ftp.ovh.net/made-in-ovh/bzImage/4.2.7/bzImage-4.2.7-xxxx-grs-ipv6-64
+update-grub
+reboot</code></pre>
+<p>Et voilà, le noyau est modifié et Docker va pouvoir fonctionner.</p>
+</div>
+<div id="docker" class="section level2">
+<h2>Docker</h2>
 <blockquote>
-<p>Leaflet est une bibliothèque JavaScript libre de cartographie en ligne développée par Vladimir Agafonkin de CloudMade et de nombreux contributeurs. Elle est notamment utilisée par le projet de cartographie libre et ouverte OpenStreetMap.</p>
+<p>Docker est une technologie qui permet d’embarquer une application et ses dépendances dans un conteneur virtuel, qui pourra être exécuté sur n’importe quel serveur Linux. Elle a pour but de faciliter les déploiements d’applications et d’étendre la flexibilité et la portabilité d’exécution que ce soit sur la machine locale, un cloud privé ou public etc…</p>
 </blockquote>
-<p>En allant sur le <a href="http://leafletjs.com/">site officiel</a>, on voit qu’il existe des tutoriels. Intégrer une carte interactive avec leaflet dans une application web est vraiment simple. Il existe aussi de nombreux plugins.</p>
-<p>Leaflet utilise des “tiles” (tuiles) qui sont des cartes dites glissantes (slippy map) consitutées d’un ensemble d’images 256x256 pixels (en général). Lorsqu’on se déplace sur la carte ou qu’on change le zoom, le serveur calcule les “tuiles” à remplacer. Ceci donne une impression de fluidité, l’inconvénient est qu’il faut pré-calculer toutes les tuiles pour toutes les zones géographiques et pour tous les niveaux de zoom possibles. Le premier à avoir opté pour cette solution est Google Maps. Voir cet <a href="http://www.neogeo-online.net/blog/archives/1727/">article</a>.</p>
+<p>Docker est vraiment facile d’utilisation. Comme je connaissais déjà cette technologie de conteneurs pour déployer une application, j’ai choisi de continuer avec Docker.</p>
+<div id="installation" class="section level3">
+<h3>Installation</h3>
+<p>J’ai suivi le tutoriel d’installation de ce <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04">site</a> pour installer Docker sur une machine Ubuntu 16.04.</p>
+<pre class="bash"><code>## récupérer Docker sur le site officiel : 
+sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
+sudo apt-get update
+apt-cache policy docker-engine ## vérification
+sudo apt-get install -y docker-engine
+sudo systemctl status docker</code></pre>
+<p>Le meilleur moyen de vérifier l’installation de Docker est de lancer le test hello-world :</p>
+<pre class="bash"><code>sudo docker run hello-world</code></pre>
+<p>Ne pas oublier d’installer un serveur Apache.</p>
+<pre class="bash"><code>sudo apt-get install apache2</code></pre>
 </div>
-<div id="shiny" class="section level2">
-<h2>Shiny</h2>
-<p>Shiny est un paquet R permettant de développer des applications web interactives qui utilisent R. C’est une solution simple et rapide pour intégrer R à un site web. Selon moi, le principal inconvénient de Shiny est qu’il est facile de mélanger du code R avec du code Js ou html rendant la maintenabilité difficile pour de grosses applications. Son principale avantage est la facilité du développement. Un autre avantage de Shiny est qu’il est possible de dockeriser une app-Shiny : Rstudio fournit le dockerfile ! (docker est un logiciel permettant le déploiement d’applications dans des conteneurs). Il existe de nombreux exemples d’app Shiny : voir <a href="https://github.com/rstudio/shiny-examples">ce repo github</a>.</p>
+<div id="dockerfile" class="section level3">
+<h3>Dockerfile</h3>
+<p>Le dockerfile est assez simple : à partir d’une distribution linux, on installe R puis les paquets nécessaires au fonctionnement de notre application Shiny. Pour faire encore plus simple, Rstudio fournit déjà un dockerfile pour déployer une application Shiny : [<a href="https://github.com/rstudio/shiny-examples/tree/master/docker" class="uri">https://github.com/rstudio/shiny-examples/tree/master/docker</a>]. Je suis donc reparti de celui-ci et j’ai ajouté le dossier de mon application Shiny.</p>
 </div>
-<div id="leaflet-shiny-1" class="section level2">
-<h2>Leaflet Shiny</h2>
-<p>Il existe déjà un <a href="https://shiny.rstudio.com/gallery/superzip-example.html">exemple</a> d’app Shiny avec Leaflet. Un tutoriel est aussi disponible sur ce <a href="https://rstudio.github.io/leaflet/shiny.html">site</a>. Comme le code est disponible sur Github, j’ai regardé puis adapté à notre besoin.</p>
 </div>
-<div id="implementation" class="section level2">
-<h2>Implémentation</h2>
-<p>Je suis reparti de l’exemple plus haut. L’application ne tourne qu’en local actuellement, j’essaierai de la déployer sur un serveur la prochaine fois pour ajouter un lien à ce rapport. J’ai été agréablement surpris par la solution : tous les clics réalisés sur la carte leaflet sont transmis au serveur ce qui offre une grande souplesse. Les choix arbitraires réalisés jusqu’à présent sont les suivants :</p>
-<ul>
-<li><p>Le fond de carte (en dessous de la couche des zones géographiques) Il est possible d’en mettre aucun. Cependant, c’est agréable de voir le nom des villes, les axes routiers … sans trop de détails non plus. J’en ai choisi un (Stamen.TonerLite) qui me semblait bien. Attention ! Afficher cette carte requière une connexion internet pour recevoir les tuiles.</p></li>
-<li><p>les “markers” : ils sont utilisés pour afficher les établissements. Par défaut, l’icône ressemble à celle utilisée par GoogleMap. Il est possible de modifier ces icônes de géolocalisation. J’ai créé 2 icônes pour distinguer UNV et SSR avec <a href="https://www.canva.com/" class="uri">https://www.canva.com/</a>. Il est possible de mettre un identifiant unique à chacune de ces icônes. Quand un utilisateur clique sur l’une de ces icônes cette information (le clic) est transmise au serveur. Une pop-pup s’affiche aussi lors du clic (pour afficher le nom de l’établissement par exemple). Il est ainsi possible d’adapter la réponse : afficher des informations concernant uniquement cet établissement.</p></li>
-<li><p>La couche des zones géographiques. J’ai mis celle de 2014 trouvée sur le site <a href="http://www.atlasante.fr/accueil">atlasante</a>. Chaque zone (polygone) est cliquable, l’identifiant de chaque zone est le code géo, et comme plus haut, il est possible d’adapter la réponse du serveur. La pop-up affiche le nom de la zone géographique (issu de la table de métadonnées). La couleur du fond, l’épaisseur des contours : tout ceci est modifiable.</p></li>
-<li><p>J’ai simulé des parcours de soins partant du centroïde de la zone géographique à un établissement. L’épaisseur des traits correspond au nombre de patients. J’aurais pu essayer de créer autant de trait (partant d’un point quelconque au sein du polygone) que de patients pour avoir un autre effet : à tester. Il serait possible d’afficher le parcours complet du patient avec un objet “polyline” : est-ce que l’oeil humain serait capable d’identifier des patterns ou est-ce que ce serait illisible ?</p></li>
-</ul>
-<p>J’ai créé un onglet “cluster”. L’exemple cité plus haut montre qu’il est possible de créer des liens avec l’onglet “map” pour permettre la visualisation de clusters identifiés par des algorithmes.</p>
-<p>Perspectives :</p>
-<ul>
-<li>Déployer sur un serveur l’application</li>
-<li>Tester sur des données réelles PMSI et adapter les paramètres pour une meilleure visualisation (épaisseur des traits, couleurs etc…)</li>
-<li>Echanger avec les experts du métier sur les besoins de visualisation</li>
-<li>Bibliographie des méthodes d’analyse des parcours (process mining, sequence data analysis…). Intégrer des algorithmes d’analyse à l’application.</li>
-<li>Implémentation d’algorithmes d’analyse de parcours patient.</li>
-</ul>
+<div id="resume" class="section level2">
+<h2>Résumé</h2>
+<p>Le premier prototype (visualisation de parcours patients entre le domicile et une UNV est disponible à cette adresse : <a href="http://91.121.106.228:3838/V1/" class="uri">http://91.121.106.228:3838/V1/</a>). Disposer d’un serveur avec Docker facilitera les mises à jour depuis ma machine et les tests utilisateurs pourront être réalisés à distance.</p>
+<p>Aucune donnée réelle ne sera mise sur ce serveur, uniquement des données fictives issues de simulation. On peut imaginer déployer ensuite, toujours au moyen de Docker, l’application sur un serveur interne pour tester sur des données réelles.</p>
 </div>
 </div>
 

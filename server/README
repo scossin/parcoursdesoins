@@ -1,0 +1,3 @@
+dockerfile pour créer une image Docker Shiny pour déployer l'application sur le serveur
+Vx : numéro de version de l'application
+V1 : visualisation des parcours patient d'une zone géographique de résidence à un établissement de santé (données fictives)

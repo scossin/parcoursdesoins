@@ -1,0 +1,66 @@
+---
+linkcolor: blue
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Déploiement et tests
+
+Dans le rapport précédent, je mentionnais qu'il était nécessaire de déployer l'application sur un serveur pour qu'elle puisse être testée à distance. 
+Ce rapport explique ce déploiement : serveur, configuration et Docker.
+
+## Serveur
+J'ai choisi un serveur [Kimsufi](https://www.kimsufi.com/fr/) KS-3B - 16G i5-750 1x2 To, localisé en France. J'ai choisi la distribution Ubuntu 16.04 LTS pour avoir la même distribution que mon ordinateur personnel. 
+
+Kernel : OVH personnalise les noyaux linux des serveurs pour qu'ils soient optimisés avec leur matériel. Ils proposent plusieurs noyaux selon leur état de stabilité. A l'installation, le noyau était dans une version 3. Pour fonctionner, Docker nécessite un kernel > version 4. Il existe de nombreux tutoriels sur internet pour modifier le kernel mais [celui-ci](https://upandclear.org/2016/01/20/mettre-a-jour-un-kernel-ovh/) est très simple et reproduit après. 
+Il faut commencer par se placer dans le dossier /boot puis on télécharge la version du noyau qui nous intéresse : 
+
+```{bash eval=FALSE}
+# remplacer 4.2.7 par la version souhaitée
+wget ftp://ftp.ovh.net/made-in-ovh/bzImage/4.2.7/System.map-4.2.7-xxxx-grs-ipv6-64
+wget ftp://ftp.ovh.net/made-in-ovh/bzImage/4.2.7/bzImage-4.2.7-xxxx-grs-ipv6-64
+update-grub
+reboot
+```
+Et voilà, le noyau est modifié et Docker va pouvoir fonctionner. 
+
+## Docker 
+
+> Docker est une technologie qui permet d'embarquer une application et ses dépendances dans un conteneur virtuel, qui pourra être exécuté sur n'importe quel serveur Linux. Elle a pour but de faciliter les déploiements d'applications et d’étendre la flexibilité et la portabilité d’exécution que ce soit sur la machine locale, un cloud privé ou public etc...
+
+Docker est vraiment facile d'utilisation. Comme je connaissais déjà cette technologie de conteneurs pour déployer une application, j'ai choisi de continuer avec Docker. 
+
+### Installation
+J'ai suivi le tutoriel d'installation de ce [site](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04) pour installer Docker sur une machine Ubuntu 16.04. 
+```{bash eval=FALSE}
+## récupérer Docker sur le site officiel : 
+sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
+sudo apt-get update
+apt-cache policy docker-engine ## vérification
+sudo apt-get install -y docker-engine
+sudo systemctl status docker
+```
+
+Le meilleur moyen de vérifier l'installation de Docker est de lancer le test hello-world :
+```{bash eval=FALSE}
+sudo docker run hello-world
+```
+
+Ne pas oublier d'installer un serveur Apache. 
+```{bash eval=FALSE}
+sudo apt-get install apache2
+```
+
+### Dockerfile
+Le dockerfile est assez simple : à partir d'une distribution linux, on installe R puis les paquets nécessaires au fonctionnement de notre application Shiny. 
+Pour faire encore plus simple, Rstudio fournit déjà un dockerfile pour déployer une application Shiny : [https://github.com/rstudio/shiny-examples/tree/master/docker]. 
+Je suis donc reparti de celui-ci et j'ai ajouté le dossier de mon application Shiny. 
+
+## Résumé
+Le premier prototype (visualisation de parcours patients entre le domicile et une UNV est disponible à cette adresse : http://91.121.106.228:3838/V1/). Disposer d'un serveur avec Docker facilitera les mises à jour depuis ma machine et les tests utilisateurs pourront être réalisés à distance. 
+
+Aucune donnée réelle ne sera mise sur ce serveur, uniquement des données fictives issues de simulation. On peut imaginer déployer ensuite, toujours au moyen de Docker, l'application sur un serveur interne pour tester sur des données réelles. 
+
+
