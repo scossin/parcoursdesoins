@@ -1,3 +1,4 @@
-dockerfile pour créer une image Docker Shiny pour déployer l'application sur le serveur
+les dockerfile pour créer une image Docker Shiny pour déployer l'application sur le serveur sont dans chacun des dossiers
 Vx : numéro de version de l'application
 V1 : visualisation des parcours patient d'une zone géographique de résidence à un établissement de santé (données fictives)
+V2 : ajouts de différentes visualisation à V1 : cartographie, Dynamic tabular, tree, timelines, network

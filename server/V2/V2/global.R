@@ -25,9 +25,9 @@ RGF93 <- EPSG_lambert$prj4[EPSG_lambert$code==2154 & !is.na(EPSG_lambert$code)]
 RGF93prj4 <- CRS(RGF93)
 
 # couches des codes géographiques PMSI 2014
-load("../../CouchesPMSI/codesgeo2014/couchegeoPMSI2014.rdata")
+load("couchegeoPMSI2014.rdata")
 # chargement des UNV et des SSR
-load("../../Rapport/R/parcours.rdata")
+load("parcours.rdata")
 dep33 <- subset (couchegeoPMSI2014, substr(couchegeoPMSI2014$codgeo,1,2) == 33)
 ### transformation nécessaire dans un autre référentiel
 dep33 <- spTransform(dep33, CRS("+init=epsg:4326"))
