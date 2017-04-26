@@ -1,0 +1,22 @@
+### Graphviz !
+
+digraph test{
+graph[fontsize=14, resolution=128, dpi=300];
+nodesep="1";
+#rankdir = LR
+node[color="#66c0cf", style=filled]
+besoins[label="Besoins d'information pour \n une problématique parcours"]
+localisation[label="Localisation/Extraction \n des données dans les SI"]
+integration[label="Intégration des données \n pour reconstituer les parcours"]
+transformation[label="Transformation des données brutes \n en concepts utilisateurs"]
+indicateurs[label="Calcul des indicateurs"]
+visualisation[label="DataVisualisation"]
+
+
+besoins -> localisation 
+localisation -> integration 
+integration -> transformation 
+transformation -> indicateurs 
+indicateurs -> visualisation 
+
+}

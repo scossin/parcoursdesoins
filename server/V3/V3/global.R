@@ -307,6 +307,11 @@ factorscolonnes <- NULL
 dfpatients$Sex <- as.factor(dfpatients$Sex)
 dfpatients$classeAge <- as.factor(dfpatients$classeAge)
 dfpatients$imagerie <- as.factor(dfpatients$imagerie)
+
+### pour un rapport : modifier imagerie et centre15 par AVCsevere et AVCthrombolyse
+# colonnes <- which(colnames(dfpatients) %in% c("imagerie","centre15"))
+# colnames(dfpatients)[colonnes] <- c("AVCsevere", "AVCthrombolyse")
+
 #################################### Indicateurs #############################################
 
 

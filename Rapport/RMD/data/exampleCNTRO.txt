@@ -1,0 +1,8 @@
+<event1> rdf:type Event;
+	rdfs:label "the second cycle of chemotherapy";
+	hasTimeStamp <tInst1>;
+	
+<tInst1> rdf:type TimeInstant;
+	hasOrigTime "June 10, 2004";
+	hasNormalizedTime 2004-06-10;
+	hasGranularity "day";

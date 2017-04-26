@@ -5,7 +5,6 @@ theme: cerulean
 linkcolor: blue
 output:
   html_document: 
-    css: "test.css"
   pdf_document: default
 
 ---
