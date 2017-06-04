@@ -1,0 +1,28 @@
+[id^=age]{
+height:300px
+}
+[id^=age] > div:first-child {
+  float:left;
+  height:300px !important;
+  
+}
+
+[id^=age] > div:last-of-type {
+  float:right;
+  height:300px !important;
+}
+
+/*
+#plots {
+  display: flex;
+}
+
+.plots > div {
+  flex: 1; /*grow*/
+}
+*/
+/* pour aligner les piecharts : 
+[id^=piechartN] {
+display: inline-block;
+}
+*/

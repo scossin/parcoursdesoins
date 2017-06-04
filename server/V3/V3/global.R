@@ -27,6 +27,7 @@ RGF93prj4 <- CRS(RGF93)
 
 # couches des codes géographiques PMSI 2014
 load("couchegeoPMSI2014.rdata")
+
 # chargement des UNV et des SSR
 load("parcours.rdata")
 dep33 <- subset (couchegeoPMSI2014, substr(couchegeoPMSI2014$codgeo,1,2) == 33)
@@ -217,20 +218,21 @@ for (i in 1:100){
   ## date transfert SSR
   finess <- sample(finessSSR,1)
   dureehospit <- abs(round(rnorm(1,20,10),0))*60*60*24
-  datehospit <-  datesortie
-  datesortie <- datehospit + dureehospit
+  dureetransfert <- abs(round(rnorm(1,0,2),0))*60*60*24
+  dateentreeSSR <- datesortie + dureetransfert ## datesortie : MCO
+  datesortieSSR <- datehospit + dureehospit
+
   unevent <- create_event(patientid = patientid,
                           finess=finess,
                           nature=finess,
-                          start=datehospit,
-                          end=datesortie,
+                          start=dateentreeSSR,
+                          end=datesortieSSR,
                           group="Hospitalisation")
   listeevents <- rbind (listeevents,unevent)
 
 }
 
 listeevents$end <- as.POSIXct(listeevents$end, origin = "1970-01-01") ## car NA présents
-
 
 ### Ajout content : contenu (image ou texte) de chaque item
 libnature <- data.frame(nature=c("hémiplégie",
@@ -308,9 +310,9 @@ dfpatients$Sex <- as.factor(dfpatients$Sex)
 dfpatients$classeAge <- as.factor(dfpatients$classeAge)
 dfpatients$imagerie <- as.factor(dfpatients$imagerie)
 
-### pour un rapport : modifier imagerie et centre15 par AVCsevere et AVCthrombolyse
-# colonnes <- which(colnames(dfpatients) %in% c("imagerie","centre15"))
-# colnames(dfpatients)[colonnes] <- c("AVCsevere", "AVCthrombolyse")
+## pour un rapport : modifier imagerie et centre15 par AVCsevere et AVCthrombolyse
+colonnes <- which(colnames(dfpatients) %in% c("imagerie","centre15"))
+colnames(dfpatients)[colonnes] <- c("AVCsevere", "AVCthrombolyse")
 
 #################################### Indicateurs #############################################
 

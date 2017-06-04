@@ -1,0 +1,31 @@
+[ {
+  "@id" : "http://www.semanticweb.org/cossin/ontologies/2017/4/untitled-ontology-18",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Ontology" ]
+}, {
+  "@id" : "http://www.semanticweb.org/cossin/ontologies/2017/4/untitled-ontology-18#MCO",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://www.semanticweb.org/cossin/ontologies/2017/4/untitled-ontology-18#SejourHospitalier"
+  } ]
+}, {
+  "@id" : "http://www.semanticweb.org/cossin/ontologies/2017/4/untitled-ontology-18#SSR",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://www.semanticweb.org/cossin/ontologies/2017/4/untitled-ontology-18#SejourHospitalier"
+  } ]
+}, {
+  "@id" : "http://www.semanticweb.org/cossin/ontologies/2017/4/untitled-ontology-18#SSRenfant",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://www.semanticweb.org/cossin/ontologies/2017/4/untitled-ontology-18#SSR"
+  } ]
+}, {
+  "@id" : "http://www.semanticweb.org/cossin/ontologies/2017/4/untitled-ontology-18#SejourHospitalier",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ]
+}, {
+  "@id" : "http://www.semanticweb.org/cossin/ontologies/2017/4/untitled-ontology-18#UNV",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://www.semanticweb.org/cossin/ontologies/2017/4/untitled-ontology-18#MCO"
+  } ]
+} ]

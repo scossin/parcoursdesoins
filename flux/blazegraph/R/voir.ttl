@@ -1,0 +1,109 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix CNTROavc: <http://www.eigsante2017.fr/CNTROavc#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix eig: <http://www.eigsante2017.fr/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+CNTROavc:AphasieIntervaltime2009-11-21T01-00-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2009-11-21T01-00-00 ;
+    a CNTROavc:Aphasie .
+
+CNTROavc:AppelCentre15Intervaltime2009-11-21T01-09-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2009-11-21T01-09-00 ;
+    a CNTROavc:AppelCentre15 .
+
+CNTROavc:Intervaltime2009-11-21T01-00-00
+    CNTROavc:hasStartTime CNTROavc:time2009-11-21T01-00-00 .
+
+CNTROavc:Intervaltime2009-11-21T01-09-00
+    CNTROavc:hasStartTime CNTROavc:time2009-11-21T01-09-00 .
+
+CNTROavc:Intervaltime2009-11-21T02-08-00
+    CNTROavc:hasEndTime CNTROavc:time2009-11-24T02-08-00 ;
+    CNTROavc:hasStartTime CNTROavc:time2009-11-21T02-08-00 .
+
+CNTROavc:Intervaltime2009-11-21T03-08-00
+    CNTROavc:hasStartTime CNTROavc:time2009-11-21T03-08-00 .
+
+CNTROavc:Intervaltime2009-11-27T02-08-00
+    CNTROavc:hasEndTime CNTROavc:time2009-12-17T02-08-00 ;
+    CNTROavc:hasStartTime CNTROavc:time2009-11-27T02-08-00 .
+
+CNTROavc:Intervaltime2010-06-09T03-08-00
+    CNTROavc:hasEndTime CNTROavc:time2010-06-12T03-08-00 ;
+    CNTROavc:hasStartTime CNTROavc:time2010-06-09T03-08-00 .
+
+CNTROavc:Intervaltime2010-06-15T03-08-00
+    CNTROavc:hasEndTime CNTROavc:time2010-07-05T03-08-00 ;
+    CNTROavc:hasStartTime CNTROavc:time2010-06-15T03-08-00 .
+
+CNTROavc:ScannerIntervaltime2009-11-21T03-08-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2009-11-21T03-08-00 ;
+    a CNTROavc:Scanner .
+
+CNTROavc:SejourMCOIntervaltime2009-11-21T02-08-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2009-11-21T02-08-00 ;
+    CNTROavc:inEtab eig:Etab330781360 ;
+    a CNTROavc:SejourMCO .
+
+CNTROavc:SejourMCOIntervaltime2010-06-09T03-08-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2010-06-09T03-08-00 ;
+    CNTROavc:inEtab eig:Etab330781360 ;
+    a CNTROavc:SejourMCO .
+
+CNTROavc:SejourSSRIntervaltime2009-11-27T02-08-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2009-11-27T02-08-00 ;
+    CNTROavc:inEtab eig:Etab330780735 ;
+    a CNTROavc:SejourSSR .
+
+CNTROavc:SejourSSRIntervaltime2010-06-15T03-08-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2010-06-15T03-08-00 ;
+    CNTROavc:inEtab eig:Etab330780735 ;
+    a CNTROavc:SejourSSR .
+
+CNTROavc:time2009-11-21T01-00-00
+    CNTROavc:hasNormalizedTime "2009-11-21T01:00:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2009-11-21T01-09-00
+    CNTROavc:hasNormalizedTime "2009-11-21T01:09:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2009-11-21T02-08-00
+    CNTROavc:hasNormalizedTime "2009-11-21T02:08:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2009-11-21T03-08-00
+    CNTROavc:hasNormalizedTime "2009-11-21T03:08:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2009-11-24T02-08-00
+    CNTROavc:hasNormalizedTime "2009-11-24T02:08:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2009-11-27T02-08-00
+    CNTROavc:hasNormalizedTime "2009-11-27T02:08:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2009-12-17T02-08-00
+    CNTROavc:hasNormalizedTime "2009-12-17T02:08:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2010-06-09T03-08-00
+    CNTROavc:hasNormalizedTime "2010-06-09T03:08:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2010-06-12T03-08-00
+    CNTROavc:hasNormalizedTime "2010-06-12T03:08:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2010-06-15T03-08-00
+    CNTROavc:hasNormalizedTime "2010-06-15T03:08:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2010-07-05T03-08-00
+    CNTROavc:hasNormalizedTime "2010-07-05T03:08:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+

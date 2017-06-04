@@ -1,0 +1,21 @@
+Event
+	Appel
+		AppelCentre15
+		AppelPompier
+	Imagerie
+		IRM
+		Scanner
+	SejourHospitalier
+		SejourAVCsevere
+		SejourAVCthrombolyse
+		SejourMCO
+		SejourSSR
+		SejourUM
+	Symptome
+		SymptomeNeuro
+			Aphasie
+			Coma
+			Hemiplegie
+	Traitement
+		TraitementMedicamenteux
+			TraitementThrombolytique

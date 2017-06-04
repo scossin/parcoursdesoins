@@ -1,0 +1,71 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix CNTROavc: <http://www.eigsante2017.fr/CNTROavc#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix eig: <http://www.eigsante2017.fr/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+CNTROavc:AppelCentre15Intervaltime2009-07-21T02-02-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2009-07-21T02-02-00 ;
+    a CNTROavc:AppelCentre15 .
+
+CNTROavc:Intervaltime2009-07-21T02-00-00
+    CNTROavc:hasStartTime CNTROavc:time2009-07-21T02-00-00 .
+
+CNTROavc:Intervaltime2009-07-21T02-02-00
+    CNTROavc:hasStartTime CNTROavc:time2009-07-21T02-02-00 .
+
+CNTROavc:Intervaltime2009-07-21T03-14-00
+    CNTROavc:hasEndTime CNTROavc:time2009-07-29T03-14-00 ;
+    CNTROavc:hasStartTime CNTROavc:time2009-07-21T03-14-00 .
+
+CNTROavc:Intervaltime2009-07-21T04-14-00
+    CNTROavc:hasStartTime CNTROavc:time2009-07-21T04-14-00 .
+
+CNTROavc:Intervaltime2009-07-29T03-14-00
+    CNTROavc:hasEndTime CNTROavc:time2009-08-13T03-14-00 ;
+    CNTROavc:hasStartTime CNTROavc:time2009-07-29T03-14-00 .
+
+CNTROavc:ScannerIntervaltime2009-07-21T04-14-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2009-07-21T04-14-00 ;
+    a CNTROavc:Scanner .
+
+CNTROavc:SejourMCOIntervaltime2009-07-21T03-14-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2009-07-21T03-14-00 ;
+    CNTROavc:inEtab eig:Etab330000555 ;
+    a CNTROavc:SejourMCO .
+
+CNTROavc:SejourSSRIntervaltime2009-07-29T03-14-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2009-07-29T03-14-00 ;
+    CNTROavc:inEtab eig:Etab330781626 ;
+    a CNTROavc:SejourSSR .
+
+CNTROavc:SymptomeNeuroIntervaltime2009-07-21T02-00-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2009-07-21T02-00-00 ;
+    a CNTROavc:SymptomeNeuro .
+
+CNTROavc:time2009-07-21T02-00-00
+    CNTROavc:hasNormalizedTime "2009-07-21T02:00:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2009-07-21T02-02-00
+    CNTROavc:hasNormalizedTime "2009-07-21T02:02:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2009-07-21T03-14-00
+    CNTROavc:hasNormalizedTime "2009-07-21T03:14:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2009-07-21T04-14-00
+    CNTROavc:hasNormalizedTime "2009-07-21T04:14:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2009-07-29T03-14-00
+    CNTROavc:hasNormalizedTime "2009-07-29T03:14:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2009-08-13T03-14-00
+    CNTROavc:hasNormalizedTime "2009-08-13T03:14:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+

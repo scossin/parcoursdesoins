@@ -77,8 +77,7 @@ colonnes <- which(colnames(finess) %in% variables)
 finessSelect <- finess[,colonnes]
 finessSelect <- unique(finessSelect)
 finessSelect <- merge (finessSelect, geoloc, by="nofinesset")
+
 ## renommage pour l'export :
 # locEtab <- finessSelect
 # save(locEtab, file="locEtab.rdata")
-
-

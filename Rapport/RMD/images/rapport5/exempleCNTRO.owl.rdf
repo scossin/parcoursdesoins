@@ -1,0 +1,897 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://informatics.mayo.edu/CNTRO#"
+     xml:base="http://informatics.mayo.edu/CNTRO"
+     xmlns:CNTRO="http://informatics.mayo.edu/CNTRO#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:rdf2="http://informatics.mayo.edu/CNTRO#rdf:"
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <owl:Ontology rdf:about="http://informatics.mayo.edu/CNTRO">
+        <owl:versionInfo>1.2</owl:versionInfo>
+        <rdfs:comment>Mayo Clinic Clinical Narrative Temporal Relation Ontology</rdfs:comment>
+        <dc:creator>Cui Tao</dc:creator>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/creator -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/creator"/>
+    
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#comment -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2000/01/rdf-schema#comment"/>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#versionInfo -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2002/07/owl#versionInfo"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#after -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#after">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#temporalRelation"/>
+        <owl:inverseOf rdf:resource="http://informatics.mayo.edu/CNTRO#before"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#Event"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#before -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#before">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#temporalRelation"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#Event"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#contain -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#contain">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#overlap"/>
+        <owl:inverseOf rdf:resource="http://informatics.mayo.edu/CNTRO#during"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#during -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#during">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#overlap"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#equal -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#equal">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#overlap"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#finish -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#finish">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#overlap"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasCode -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasCode"/>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasDP -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasDP">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#hasCode"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasDuration -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasDuration">
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#TimeInterval"/>
+        <rdfs:range rdf:resource="http://informatics.mayo.edu/CNTRO#Duration"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasDurationUnit -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasDurationUnit">
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#Duration"/>
+        <rdfs:range>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://informatics.mayo.edu/CNTRO#DurationUnit"/>
+                    <owl:Class>
+                        <owl:oneOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://informatics.mayo.edu/CNTRO#day"/>
+                            <rdf:Description rdf:about="http://informatics.mayo.edu/CNTRO#month"/>
+                            <rdf:Description rdf:about="http://informatics.mayo.edu/CNTRO#week"/>
+                            <rdf:Description rdf:about="http://informatics.mayo.edu/CNTRO#year"/>
+                        </owl:oneOf>
+                    </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:range>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasEndTime -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasEndTime">
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#TimeInterval"/>
+        <rdfs:range rdf:resource="http://informatics.mayo.edu/CNTRO#TimeInstant"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasNoteTime -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasNoteTime">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#hasValidTime"/>
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#Event"/>
+        <rdfs:range rdf:resource="http://informatics.mayo.edu/CNTRO#TimeInstant"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasOffset -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasOffset">
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#TemporalRelationStatement"/>
+        <rdfs:range rdf:resource="http://informatics.mayo.edu/CNTRO#Duration"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasPeriod -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasPeriod">
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#TimePhase"/>
+        <rdfs:range rdf:resource="http://informatics.mayo.edu/CNTRO#TimePeriod"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasStartTime -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasStartTime">
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#TimeInterval"/>
+        <rdfs:range rdf:resource="http://informatics.mayo.edu/CNTRO#TimeInstant"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasUCD -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasUCD">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#hasCode"/>
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#TraitementMedicamenteux"/>
+        <rdfs:range rdf:resource="http://informatics.mayo.edu/CNTRO#UCD"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasUM -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasUM"/>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasValidTime -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasValidTime">
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#Event"/>
+        <rdfs:range rdf:resource="http://informatics.mayo.edu/CNTRO#ValidTime"/>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Event has time</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#in -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#in"/>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#inEtab -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#inEtab">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#in"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#meet -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#meet">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#before"/>
+        <owl:propertyDisjointWith rdf:resource="http://informatics.mayo.edu/CNTRO#overlap"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#overlap -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#overlap">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#temporalRelation"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#start -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#start">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#overlap"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#temporalObject -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#temporalObject">
+        <rdfs:subPropertyOf rdf:resource="http://informatics.mayo.edu/CNTRO#rdf:object"/>
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#TemporalRelationStatement"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#temporalPredicate -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#temporalPredicate">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate"/>
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#TemporalRelationStatement"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#temporalRelation -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#temporalRelation">
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#Event"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#temporalSubject -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#temporalSubject">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#subject"/>
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#TemporalRelationStatement"/>
+        <rdfs:range rdf:resource="http://informatics.mayo.edu/CNTRO#Event"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#rdf:object -->
+
+    <owl:ObjectProperty rdf:about="http://informatics.mayo.edu/CNTRO#rdf:object"/>
+    
+
+
+    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate"/>
+    
+
+
+    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#subject -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#subject"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasDurationValue -->
+
+    <owl:DatatypeProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasDurationValue">
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#Duration"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasModality -->
+
+    <owl:DatatypeProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasModality">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#ValidTime"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasNormalizedTime -->
+
+    <owl:DatatypeProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasNormalizedTime">
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#TimeInstant"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#hasOrigTime -->
+
+    <owl:DatatypeProperty rdf:about="http://informatics.mayo.edu/CNTRO#hasOrigTime">
+        <rdfs:domain rdf:resource="http://informatics.mayo.edu/CNTRO#TimeInstant"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Aphasie -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Aphasie">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#SymptomeNeuro"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Appel -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Appel">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#AppelCentre15 -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#AppelCentre15">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Appel"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#AppelPompier -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#AppelPompier">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Appel"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#CIM10 -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#CIM10">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Codes"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Codes -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Codes"/>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Coma -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Coma">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#SymptomeNeuro"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Duration -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Duration"/>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#DurationUnit -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#DurationUnit"/>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Etablissement -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Etablissement"/>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Event -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Event"/>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Granularity -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Granularity"/>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Hemiplegie -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Hemiplegie">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#SymptomeNeuro"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#IRM -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#IRM">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Imagerie"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Imagerie -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Imagerie">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#MCO -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#MCO">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Etablissement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Reanimation -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Reanimation">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#UniteMedicale"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#SSR -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#SSR">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Etablissement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Scanner -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Scanner">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Imagerie"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#SejourAVCsevere -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#SejourAVCsevere">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://informatics.mayo.edu/CNTRO#SejourHospitalier"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://informatics.mayo.edu/CNTRO#hasDP"/>
+                        <owl:someValuesFrom rdf:resource="http://informatics.mayo.edu/CNTRO#codeCIM10AVC"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://informatics.mayo.edu/CNTRO#hasUM"/>
+                        <owl:someValuesFrom rdf:resource="http://informatics.mayo.edu/CNTRO#Reanimation"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#SejourAVCthrombolyse -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#SejourAVCthrombolyse">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://informatics.mayo.edu/CNTRO#SejourHospitalier"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://informatics.mayo.edu/CNTRO#contain"/>
+                        <owl:someValuesFrom rdf:resource="http://informatics.mayo.edu/CNTRO#TraitementThrombolytique"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://informatics.mayo.edu/CNTRO#hasDP"/>
+                        <owl:someValuesFrom rdf:resource="http://informatics.mayo.edu/CNTRO#codeCIM10AVC"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#SejourHospitalier -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#SejourHospitalier">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#SejourMCO -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#SejourMCO">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#SejourHospitalier"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#SejourSSR -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#SejourSSR">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#SejourHospitalier"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#SejourUM -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#SejourUM">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#SejourHospitalier"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Symptome -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Symptome">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#SymptomeNeuro -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#SymptomeNeuro">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Symptome"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#TemporalRelationStatement -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#TemporalRelationStatement">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement"/>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">a temporal relations statement is a subclass of rdf:statement. it is a statement to define the temporal relation between to clinical events</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#TimeInstant -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#TimeInstant">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#ValidTime"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#TimeInterval -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#TimeInterval">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#ValidTime"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#TimePeriod -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#TimePeriod">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#ValidTime"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#TimePhase -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#TimePhase">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#ValidTime"/>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Periodic Interval of Time</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Traitement -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#Traitement">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#TraitementMedicamenteux -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#TraitementMedicamenteux">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Traitement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#TraitementThrombolytique -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#TraitementThrombolytique">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://informatics.mayo.edu/CNTRO#TraitementMedicamenteux"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://informatics.mayo.edu/CNTRO#hasUCD"/>
+                        <owl:someValuesFrom rdf:resource="http://informatics.mayo.edu/CNTRO#codeUCDThrombolyse"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#TraitementMedicamenteux"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#UCD -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#UCD">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#Codes"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#UniteMedicale -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#UniteMedicale"/>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#ValidTime -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#ValidTime"/>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#codeCIM10AVC -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#codeCIM10AVC">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#CIM10"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#codeUCDThrombolyse -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#codeUCDThrombolyse">
+        <rdfs:subClassOf rdf:resource="http://informatics.mayo.edu/CNTRO#UCD"/>
+    </owl:Class>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#timeseq -->
+
+    <owl:Class rdf:about="http://informatics.mayo.edu/CNTRO#timeseq">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#seq"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement -->
+
+    <owl:Class rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement"/>
+    
+
+
+    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#seq -->
+
+    <owl:Class rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#seq"/>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+
+    <owl:Class rdf:about="http://www.w3.org/2002/07/owl#Thing"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#DureeSejour1 -->
+
+    <owl:NamedIndividual rdf:about="http://informatics.mayo.edu/CNTRO#DureeSejour1">
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#Duration"/>
+        <hasDurationValue rdf:datatype="http://www.w3.org/2001/XMLSchema#int">12</hasDurationValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#I63 -->
+
+    <owl:NamedIndividual rdf:about="http://informatics.mayo.edu/CNTRO#I63">
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#codeCIM10AVC"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#MOsejour1 -->
+
+    <owl:NamedIndividual rdf:about="http://informatics.mayo.edu/CNTRO#MOsejour1">
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#TraitementMedicamenteux"/>
+        <during rdf:resource="http://informatics.mayo.edu/CNTRO#Sejour1"/>
+        <hasUCD rdf:resource="http://informatics.mayo.edu/CNTRO#9122584"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#ReaArcachon -->
+
+    <owl:NamedIndividual rdf:about="http://informatics.mayo.edu/CNTRO#ReaArcachon">
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#Reanimation"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Sejour1 -->
+
+    <owl:NamedIndividual rdf:about="http://informatics.mayo.edu/CNTRO#Sejour1">
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#SejourUM"/>
+        <during rdf:resource="http://informatics.mayo.edu/CNTRO#SejourArcachon"/>
+        <hasDP rdf:resource="http://informatics.mayo.edu/CNTRO#I63"/>
+        <hasUM rdf:resource="http://informatics.mayo.edu/CNTRO#ReaArcachon"/>
+        <hasValidTime rdf:resource="http://informatics.mayo.edu/CNTRO#TimeSejour1"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#SejourArcachon -->
+
+    <owl:NamedIndividual rdf:about="http://informatics.mayo.edu/CNTRO#SejourArcachon">
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#SejourMCO"/>
+        <inEtab rdf:resource="http://informatics.mayo.edu/CNTRO#330000555"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#Time1 -->
+
+    <owl:NamedIndividual rdf:about="http://informatics.mayo.edu/CNTRO#Time1">
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#TimeInstant"/>
+        <hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2017-01-01T09:00:00</hasNormalizedTime>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#TimeSejour1 -->
+
+    <owl:NamedIndividual rdf:about="http://informatics.mayo.edu/CNTRO#TimeSejour1">
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#TimeInterval"/>
+        <hasDuration rdf:resource="http://informatics.mayo.edu/CNTRO#DureeSejour1"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#day -->
+
+    <owl:Thing rdf:about="http://informatics.mayo.edu/CNTRO#day">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#DurationUnit"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#month -->
+
+    <owl:Thing rdf:about="http://informatics.mayo.edu/CNTRO#month">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#DurationUnit"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#week -->
+
+    <owl:Thing rdf:about="http://informatics.mayo.edu/CNTRO#week">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#DurationUnit"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#year -->
+
+    <owl:Thing rdf:about="http://informatics.mayo.edu/CNTRO#year">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#DurationUnit"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#330000555 -->
+
+    <owl:NamedIndividual rdf:about="http://informatics.mayo.edu/CNTRO#330000555">
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#Etablissement"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://informatics.mayo.edu/CNTRO#9122584 -->
+
+    <owl:NamedIndividual rdf:about="http://informatics.mayo.edu/CNTRO#9122584">
+        <rdf:type rdf:resource="http://informatics.mayo.edu/CNTRO#codeUCDThrombolyse"/>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.2.5.20160517-0735) https://github.com/owlcs/owlapi -->
+

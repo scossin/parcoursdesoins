@@ -1,0 +1,28 @@
+
+
+Un individu peut avoir plusieurs fois le même type d'event. 
+Quand on affiche le nombre d'events => de plusieurs individus
+
+Un event peut être dans plusieurs hiérarchies (ce sera le cas pour les classes définies ; sauf si je le mets en attribut ... si c'est généralisable ;
+ex : sejourHospitalier avec un attribut : une colonne AVCsévère)
+
+A faire : 
+Click sur un évènement dans la hiérarchie, j'accède à une data.frame différente
+	Ensuite : faire plusieurs tables d'attributs 
+	Chaque table correspond à un niveau
+		Le niveau 0 - table Event  contient dates et lieu
+		Chaque niveau => des caractéristiques spécifiques
+	La table de caractéristiques d'un event correspond à la fusion (merge) de sa table spécifique et des tables haut dessus.
+
+Une sélection : une liste d'id avec le motif de cette sélection (valeur des attributs choisis)
+=> une dataframe avec l'histoire des filtres réalisés que l'utilisateur est capable de retirer
+
+
+
+/* pour retirer l onglet */
+Shiny.addCustomMessageHandler('removeTabToTabset', function(tabsetid){
+/* pour retirer l'onglet du haut (li) */ 
+$('a[href='+tabsetid+']').parent().remove();
+/* pour reitrer le contenu (le div) */
+# $('+tabsetid+').remove()
+});

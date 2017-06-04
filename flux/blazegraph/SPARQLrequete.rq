@@ -1,0 +1,42 @@
+######## Requeter dans des sous-graphes : 
+
+SELECT ?g ?s ?p ?o
+FROM NAMED <http://example/bookStore>
+FROM NAMED <http://example/bookStore2>
+WHERE {
+  GRAPH ?g{
+  ?s ?p ?o
+}
+}
+
+
+
+######## Insert dans des sous-graphes : 
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX ns: <http://example.org/ns#>
+INSERT DATA
+{ GRAPH <http://example/bookStore2> { <http://example/book2>  ns:price  42 } }
+
+######## charger un fichier dans un subgraph du triplestore : 
+LOAD <file:/tmp/data.n3> INTO GRAPH <test2>
+
+####
+LOAD <file:/tmp/test.ttl> 
+
+
+### 
+SELECT * where{?s ?p ?o}
+LIMIT 10
+
+
+### test
+prefix CNTROavc: <http://www.eigsante2017.fr/CNTROavc#>
+prefix eig: <http://www.eigsante2017.fr/>
+
+SELECT ?g ?s ?date
+WHERE {GRAPH ?g{?s CNTROavc:hasValidTime ?t1 .
+       ?s a CNTROavc:SejourMCO .
+       ?t1 CNTROavc:hasStartTime ?start . 
+      ?start CNTROavc:hasNormalizedTime ?date}}
+ORDER BY DESC(?date)
+LIMIT 10

@@ -1,0 +1,688 @@
+[ {
+  "@id" : "_:genid1",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2002/07/owl#unionOf" : [ {
+    "@list" : [ {
+      "@id" : "http://informatics.mayo.edu/CNTRO#DurationUnit"
+    }, {
+      "@id" : "_:genid3"
+    } ]
+  } ]
+}, {
+  "@id" : "_:genid11",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Restriction" ],
+  "http://www.w3.org/2002/07/owl#onProperty" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#hasUM"
+  } ],
+  "http://www.w3.org/2002/07/owl#someValuesFrom" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Reanimation"
+  } ]
+}, {
+  "@id" : "_:genid13",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Restriction" ],
+  "http://www.w3.org/2002/07/owl#onProperty" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#hasDP"
+  } ],
+  "http://www.w3.org/2002/07/owl#someValuesFrom" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#codeCIM10AVC"
+  } ]
+}, {
+  "@id" : "_:genid15",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2002/07/owl#intersectionOf" : [ {
+    "@list" : [ {
+      "@id" : "http://informatics.mayo.edu/CNTRO#SejourHospitalier"
+    }, {
+      "@id" : "_:genid19"
+    }, {
+      "@id" : "_:genid17"
+    } ]
+  } ]
+}, {
+  "@id" : "_:genid17",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Restriction" ],
+  "http://www.w3.org/2002/07/owl#onProperty" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#hasDP"
+  } ],
+  "http://www.w3.org/2002/07/owl#someValuesFrom" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#codeCIM10AVC"
+  } ]
+}, {
+  "@id" : "_:genid19",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Restriction" ],
+  "http://www.w3.org/2002/07/owl#onProperty" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#contain"
+  } ],
+  "http://www.w3.org/2002/07/owl#someValuesFrom" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TraitementThrombolytique"
+  } ]
+}, {
+  "@id" : "_:genid21",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2002/07/owl#intersectionOf" : [ {
+    "@list" : [ {
+      "@id" : "http://informatics.mayo.edu/CNTRO#TraitementMedicamenteux"
+    }, {
+      "@id" : "_:genid23"
+    } ]
+  } ]
+}, {
+  "@id" : "_:genid23",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Restriction" ],
+  "http://www.w3.org/2002/07/owl#onProperty" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#hasUCD"
+  } ],
+  "http://www.w3.org/2002/07/owl#someValuesFrom" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#codeUCDThrombolyse"
+  } ]
+}, {
+  "@id" : "_:genid3",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2002/07/owl#oneOf" : [ {
+    "@list" : [ {
+      "@id" : "http://informatics.mayo.edu/CNTRO#day"
+    }, {
+      "@id" : "http://informatics.mayo.edu/CNTRO#month"
+    }, {
+      "@id" : "http://informatics.mayo.edu/CNTRO#week"
+    }, {
+      "@id" : "http://informatics.mayo.edu/CNTRO#year"
+    } ]
+  } ]
+}, {
+  "@id" : "_:genid9",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2002/07/owl#intersectionOf" : [ {
+    "@list" : [ {
+      "@id" : "http://informatics.mayo.edu/CNTRO#SejourHospitalier"
+    }, {
+      "@id" : "_:genid13"
+    }, {
+      "@id" : "_:genid11"
+    } ]
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Ontology" ],
+  "http://purl.org/dc/elements/1.1/creator" : [ {
+    "@value" : "Cui Tao"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#comment" : [ {
+    "@value" : "Mayo Clinic Clinical Narrative Temporal Relation Ontology"
+  } ],
+  "http://www.w3.org/2002/07/owl#versionInfo" : [ {
+    "@value" : "1.2"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#330000555",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#Etablissement" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#9122584",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#codeUCDThrombolyse" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Aphasie",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#SymptomeNeuro"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Appel",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Event"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#AppelCentre15",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Appel"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#AppelPompier",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Appel"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#CIM10",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Codes"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Codes",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Coma",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#SymptomeNeuro"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Duration",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#DurationUnit",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#DureeSejour1",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#Duration" ],
+  "http://informatics.mayo.edu/CNTRO#hasDurationValue" : [ {
+    "@type" : "http://www.w3.org/2001/XMLSchema#int",
+    "@value" : "12"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Etablissement",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Event",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Granularity",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Hemiplegie",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#SymptomeNeuro"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#I63",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#codeCIM10AVC" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#IRM",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Imagerie"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Imagerie",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Event"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#MCO",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Etablissement"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#MOsejour1",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#TraitementMedicamenteux" ],
+  "http://informatics.mayo.edu/CNTRO#during" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Sejour1"
+  } ],
+  "http://informatics.mayo.edu/CNTRO#hasUCD" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#9122584"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#ReaArcachon",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#Reanimation" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Reanimation",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#UniteMedicale"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#SSR",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Etablissement"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Scanner",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Imagerie"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Sejour1",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#SejourUM" ],
+  "http://informatics.mayo.edu/CNTRO#during" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#SejourArcachon"
+  } ],
+  "http://informatics.mayo.edu/CNTRO#hasDP" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#I63"
+  } ],
+  "http://informatics.mayo.edu/CNTRO#hasUM" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#ReaArcachon"
+  } ],
+  "http://informatics.mayo.edu/CNTRO#hasValidTime" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TimeSejour1"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#SejourAVCsevere",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2002/07/owl#equivalentClass" : [ {
+    "@id" : "_:genid9"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#SejourAVCthrombolyse",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2002/07/owl#equivalentClass" : [ {
+    "@id" : "_:genid15"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#SejourArcachon",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#SejourMCO" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#SejourHospitalier",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Event"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#SejourMCO",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#SejourHospitalier"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#SejourSSR",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#SejourHospitalier"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#SejourUM",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#SejourHospitalier"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Symptome",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Event"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#SymptomeNeuro",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Symptome"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#TemporalRelationStatement",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#comment" : [ {
+    "@value" : "a temporal relations statement is a subclass of rdf:statement. it is a statement to define the temporal relation between to clinical events"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Time1",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#TimeInstant" ],
+  "http://informatics.mayo.edu/CNTRO#hasNormalizedTime" : [ {
+    "@type" : "http://www.w3.org/2001/XMLSchema#dateTime",
+    "@value" : "2017-01-01T09:00:00"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#TimeInstant",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#ValidTime"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#TimeInterval",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#ValidTime"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#TimePeriod",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#ValidTime"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#TimePhase",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#comment" : [ {
+    "@value" : "Periodic Interval of Time"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#ValidTime"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#TimeSejour1",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#TimeInterval" ],
+  "http://informatics.mayo.edu/CNTRO#hasDuration" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#DureeSejour1"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#Traitement",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Event"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#TraitementMedicamenteux",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Traitement"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#TraitementThrombolytique",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TraitementMedicamenteux"
+  } ],
+  "http://www.w3.org/2002/07/owl#equivalentClass" : [ {
+    "@id" : "_:genid21"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#UCD",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Codes"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#UniteMedicale",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#ValidTime",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#after",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty", "http://www.w3.org/2002/07/owl#TransitiveProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Event"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#temporalRelation"
+  } ],
+  "http://www.w3.org/2002/07/owl#inverseOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#before"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#before",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty", "http://www.w3.org/2002/07/owl#TransitiveProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Event"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#temporalRelation"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#codeCIM10AVC",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#CIM10"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#codeUCDThrombolyse",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#UCD"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#contain",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#overlap"
+  } ],
+  "http://www.w3.org/2002/07/owl#inverseOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#during"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#day",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#DurationUnit", "http://www.w3.org/2002/07/owl#Thing" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#during",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#overlap"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#equal",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty", "http://www.w3.org/2002/07/owl#SymmetricProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#overlap"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#finish",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty", "http://www.w3.org/2002/07/owl#SymmetricProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#overlap"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasCode",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasDP",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#hasCode"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasDuration",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TimeInterval"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Duration"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasDurationUnit",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Duration"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "_:genid1"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasDurationValue",
+  "@type" : [ "http://www.w3.org/2002/07/owl#DatatypeProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Duration"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "http://www.w3.org/2001/XMLSchema#int"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasEndTime",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TimeInterval"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TimeInstant"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasModality",
+  "@type" : [ "http://www.w3.org/2002/07/owl#DatatypeProperty", "http://www.w3.org/2002/07/owl#FunctionalProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#ValidTime"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "http://www.w3.org/2001/XMLSchema#boolean"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasNormalizedTime",
+  "@type" : [ "http://www.w3.org/2002/07/owl#DatatypeProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TimeInstant"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasNoteTime",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Event"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TimeInstant"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#hasValidTime"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasOffset",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TemporalRelationStatement"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Duration"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasOrigTime",
+  "@type" : [ "http://www.w3.org/2002/07/owl#DatatypeProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TimeInstant"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "http://www.w3.org/2001/XMLSchema#string"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasPeriod",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TimePhase"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TimePeriod"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasStartTime",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TimeInterval"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TimeInstant"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasUCD",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TraitementMedicamenteux"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#UCD"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#hasCode"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasUM",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#hasValidTime",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#comment" : [ {
+    "@value" : "Event has time"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Event"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#ValidTime"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#inEtab",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#meet",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#before"
+  } ],
+  "http://www.w3.org/2002/07/owl#propertyDisjointWith" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#overlap"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#month",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#DurationUnit", "http://www.w3.org/2002/07/owl#Thing" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#overlap",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty", "http://www.w3.org/2002/07/owl#SymmetricProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#temporalRelation"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#rdf:object",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#start",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty", "http://www.w3.org/2002/07/owl#SymmetricProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#overlap"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#temporalObject",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TemporalRelationStatement"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#rdf:object"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#temporalPredicate",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TemporalRelationStatement"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#temporalRelation",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Event"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#temporalSubject",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ],
+  "http://www.w3.org/2000/01/rdf-schema#domain" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#TemporalRelationStatement"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#range" : [ {
+    "@id" : "http://informatics.mayo.edu/CNTRO#Event"
+  } ],
+  "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" : [ {
+    "@id" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#timeseq",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ],
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf" : [ {
+    "@id" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#seq"
+  } ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#week",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#DurationUnit", "http://www.w3.org/2002/07/owl#Thing" ]
+}, {
+  "@id" : "http://informatics.mayo.edu/CNTRO#year",
+  "@type" : [ "http://www.w3.org/2002/07/owl#NamedIndividual", "http://informatics.mayo.edu/CNTRO#DurationUnit", "http://www.w3.org/2002/07/owl#Thing" ]
+}, {
+  "@id" : "http://purl.org/dc/elements/1.1/creator",
+  "@type" : [ "http://www.w3.org/2002/07/owl#AnnotationProperty" ]
+}, {
+  "@id" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ]
+}, {
+  "@id" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ]
+}, {
+  "@id" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#seq",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ]
+}, {
+  "@id" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+  "@type" : [ "http://www.w3.org/2002/07/owl#ObjectProperty" ]
+}, {
+  "@id" : "http://www.w3.org/2000/01/rdf-schema#comment",
+  "@type" : [ "http://www.w3.org/2002/07/owl#AnnotationProperty" ]
+}, {
+  "@id" : "http://www.w3.org/2002/07/owl#Thing",
+  "@type" : [ "http://www.w3.org/2002/07/owl#Class" ]
+}, {
+  "@id" : "http://www.w3.org/2002/07/owl#versionInfo",
+  "@type" : [ "http://www.w3.org/2002/07/owl#AnnotationProperty" ]
+} ]
