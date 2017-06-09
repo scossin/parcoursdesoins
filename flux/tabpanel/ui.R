@@ -16,8 +16,7 @@ ui <- shinyUI(fluidPage(
               tabPanel("InitialPanel1", "Some Text here to show this is InitialPanel1", 
                        actionButton("goCreate", "Go create a new Tab!"),
                        textOutput("creationInfo")
-              ),
-              tabPanel("InitialPanel2", "Some Text here to show this is InitialPanel2 and not some other Panel")
+              )
   ),
   
   # Important! : 'Freshly baked' tabs first enter here.

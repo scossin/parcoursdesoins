@@ -2,6 +2,22 @@ rm(list=ls())
 library(shiny)
 library(shinyTree)
 
+
+new_treeboutton <- function(event){
+  div <- div(id=event$get_treebouttonid(), value=event$get_event_number(), class="box",
+             h4(event$get_h4()),
+             shinyTree(event$get_treeid(), checkbox = TRUE),
+             #verbatimTextOutput("selTxt"),
+             div(class="bouttons",
+             actionButton(event$get_addpreviousid(), "<"),
+             actionButton(event$get_addnextid(), ">"),
+             actionButton(event$get_validateid(), "V"),
+             actionButton(event$get_removeid(), "X")
+  ))
+return(div)
+}
+
+
 ## rmatch : fonction trouvée sur stackoverflow
 # https://stackoverflow.com/questions/27890388/r-get-element-by-name-from-a-nested-list
 rmatch <- function(x, name) {
@@ -39,7 +55,7 @@ get_hierarchylistN = function(hierarchyliste, lowestlevel_vector){
   ## vérifications : 
   bool <- all(names(tab) %in% lowestlevel)
   if (!bool){
-    stop("certaines valeurs ne correspondent pas au niveau le plus de la hiérarchie")
+    stop("certaines valeurs ne correspondent pas au niveau le plus bas de la hiérarchie")
   }
   tab <- data.frame(classe=names(tab), value=as.numeric(tab))
   
@@ -83,93 +99,37 @@ get_hierarchylistN = function(hierarchyliste, lowestlevel_vector){
 ## 2) on compte le nombre d'éléments dans chaque niveau d'agrégat
 ## 3) Si un élément apparait 2 fois : on sélectionne le niveau d'agrégat le plus petit
 
-get_dfagregation <- function(hierarchyliste, choix){
-
+get_df_type_selected <- function(hierarchyliste, choix){
+  
   ## 1) 
   elementsNiveaux <- lapply(choix, function(x){
     as.character(unlist(rmatch(hierarchyliste, x)))
   })
   ## 2) 
   Nelements <- unlist(lapply(elementsNiveaux, length))
+  bool <- Nelements == 0
+  if (any(bool)){
+    cat(choix[bool], " non trouvé dans la hiérarchie \n")
+    return(NULL)
+  }
   
   dfagregation <- NULL
   i <- 1
   for (i in 1:length(elementsNiveaux)){
-    ajout <- data.frame(element = unlist(elementsNiveaux[[i]]), Ngroupe = Nelements[i], agregat = choix[i])
-    dfagregation <- rbind(dfagregation, ajout)
+    ajout <- data.frame(events = unlist(elementsNiveaux[[i]]), Ngroupe = Nelements[i], agregat = choix[i],
+                          row.names = NULL)
+    dfagregation <- rbind(dfagregation, ajout,row.names=NULL)
   }
   
   ## 3)
   ## un élément est dans plusieurs groupes pour l'agrégation : choix du groupe le plus petit
-  tab <- tapply(dfagregation$Ngroupe, dfagregation$element, min)
-  tab <- data.frame(element = names(tab), Ngroupe=as.numeric(tab))
-  dfagregation <- merge (dfagregation, tab, by=c("Ngroupe","element"))
-  bool <- length(unique(dfagregation$element)) == nrow(dfagregation)
+  tab <- tapply(dfagregation$Ngroupe, dfagregation$events, min)
+  tab <- data.frame(events = names(tab), Ngroupe=as.numeric(tab))
+  dfagregation <- merge (dfagregation, tab, by=c("Ngroupe","events"))
+  bool <- length(unique(dfagregation$events)) == nrow(dfagregation)
   if (!bool){
-    warning("Un élément est rangé dans plusieurs groupes pour l'agrégation")
+    warning("Un event est rangé dans plusieurs groupes pour l'agrégation")
   }
   
   return(dfagregation)
 }
-getwd()
-server <- shinyServer(function(input, output, session) {
-  load("hierarchy.rdata")
-  load("evenements.rdata")
-  evenements$type <- gsub("^(.*?)#","",evenements$type) ### retirer tout ce qu'il y a avant #
-  lowestlevel <- unlist(hierarchy)
-  lowestlevel_vector <- evenements$type
-  output$tree <- renderTree({ 
-    get_hierarchylistN(hierarchy, lowestlevel_vector)
-  })
-  
-  # Choix réalisées par l'utilisateur
-  dfagregation <- eventReactive(input$go, {
-    cat("bouton appuyée")
-    tree <- input$tree
-    if (is.null(tree)){
-      cat("tree is null \n")
-      return(NULL)
-    } else{
-      cat("tree is not null \n")
-      selection <- unlist(get_selected(tree))
-      selection <- sapply(selection, function(x) gsub("[(][0-9]+[)]", "",x))
-      #cat(selection)
-      #selection<-"SSR"
-      dfagregation <- get_dfagregation(hierarchy, selection)
-      return(dfagregation)
-    }
-  })
-  ##
-
-  output$selTxt <- renderText({
-    # tree <- input$tree
-    # if (is.null(tree)){
-    #   "None"
-    # } else{
-    #   selection <- unlist(get_selected(tree))
-    #   print(selection)
-    #   return(selection)
-    # }
-    return(nrow(dfagregation()))
-  })
-})
-  
-
-ui <- shinyUI(
-  shiny::fluidPage(
-    h4('Sélection et aggrégation'),
-    shinyTree("tree", checkbox = TRUE),
-    verbatimTextOutput("selTxt"),
-    actionButton("go", "go")
-  )
-)
-shinyApp(ui, server)
-
-
-
-
-
-
-
-
-

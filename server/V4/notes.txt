@@ -18,11 +18,16 @@ Une sélection : une liste d'id avec le motif de cette sélection (valeur des at
 => une dataframe avec l'histoire des filtres réalisés que l'utilisateur est capable de retirer
 
 
+L'utilisateur peut sélectionner un SEUL event en évènement principal ; il peut en sélectionner plusieurs pour les évènements suivants et précédents. 
+Il peut diviser son event en "sous-catégories" selon une colonne dans la table d'attributs. 
 
-/* pour retirer l onglet */
-Shiny.addCustomMessageHandler('removeTabToTabset', function(tabsetid){
-/* pour retirer l'onglet du haut (li) */ 
-$('a[href='+tabsetid+']').parent().remove();
-/* pour reitrer le contenu (le div) */
-# $('+tabsetid+').remove()
-});
+
+## todo : 
+le click sur un event déclenche : 
+- création d'un filtre
+- Extraction de la table spatiale des évènements en lien pour afficher sur la carte
+- création d'un arbre pour la sélection d'un prochain évènement (insertUI after)
+
+- le bouton remove déclenche tous les boutons => interet d'avoir une fonction delete pour supprimer du côté serveur
+
+- possibilité de cocher qu'une seule case => voir la config de tree.js

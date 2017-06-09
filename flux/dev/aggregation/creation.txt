@@ -1,0 +1,11 @@
+treebouttonid = id du div qui engloble le tree, h4 et les boutons : next, previous, validate et remove
+next
+previous
+validate
+remove
+tree
+h4 (titre)
+numero
+
+=> masquer le boutton previous des next
+=> et inversement

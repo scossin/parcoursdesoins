@@ -1,13 +1,13 @@
-[id^=age]{
-height:300px
+[id^=numeric]{
+height:300px!important;
 }
-[id^=age] > div:first-child {
+[id^=numeric] > div:first-child {
   float:left;
   height:300px !important;
   
 }
 
-[id^=age] > div:last-of-type {
+[id^=numeric] > div:last-of-type {
   float:right;
   height:300px !important;
 }
