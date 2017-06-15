@@ -17,13 +17,17 @@ setRefClass(
     selectionid ="vector", ## les ids selectionnes
     
     ## le filtre se place dans un tabset, celui-ci à un id :
-    tabsetid = "vector"
+    tabsetid = "numeric",
+    
+    checkbox_clics = "vector", ## eep track de l'ordre des clics dans la checkbox
+    
+    deleted_last = "logical" ## savoir si on a retiré ou enlevé un graphique
+    
   ),
   
   # Fonctions :
   methods=list(
     ### Constructeur
-    
     initialize = function(df, metadf, tabsetid){
       require(plotly)
       require(shiny)
@@ -164,18 +168,22 @@ setRefClass(
       return(selectionid)
     },
     
-    set_selectionid = function(ids){
-      selectionid <<- ids
-      bool <- df[,num_colonneid] %in% ids
-      df_selectionid <<- subset (df, bool)
+    set_lignes = function(lignes){
+      df_selectionid <<- df[lignes,]
     },
     
-    get_ids_fromrows = function(rows_selected){
-      temp_df <- subset (df, id %in% selectionid)
-      ids <- temp_df[,num_colonneid]
-      ids_rows_selected <- ids[rows_selected]
-      return(ids_rows_selected)
-    },
+    # set_selectionid = function(ids){
+    #   selectionid <<- ids
+    #   bool <- df[,num_colonneid] %in% ids
+    #   df_selectionid <<- subset (df, bool)
+    # },
+    # 
+    # get_ids_fromrows = function(rows_selected){
+    #   temp_df <- subset (df, id %in% selectionid)
+    #   ids <- temp_df[,num_colonneid]
+    #   ids_rows_selected <- ids[rows_selected]
+    #   return(ids_rows_selected)
+    # },
     
     ## l'id du tableau DT
     get_tableauid = function(){
@@ -188,6 +196,18 @@ setRefClass(
     
     get_plotsid = function(){
       return(paste0("plots",tabsetid))
+    },
+    
+    get_precedentid = function(){
+      return(paste0("precedent",tabsetid))
+    },
+    
+    set_checkbox_clics = function(checkbox_clics){
+      checkbox_clics <<- checkbox_clics
+    },
+    
+    set_deleted_last = function(bool){
+      deleted_last <<- bool
     }
   )
 )

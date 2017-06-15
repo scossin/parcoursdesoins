@@ -6,7 +6,8 @@ setRefClass(
     ## changer ensuite par table - interroger la base de données
     df_events = "data.frame", ## data.frame contenant la liste des évènements (ou connection à une DB)
     df_type_selected = "data.frame", ## data.frame contenant 2 colonnes : events et agregat
-      ## contient le choix de l'utilisateur
+    df_events_selected = "data.frame", ## après le choix de l'utilisateur, les évènements pour le sankey  
+    ## contient le choix de l'utilisateur
     #hierarchy = "list",
     df_next_events = "data.frame", ## évènements précédents en fonction de df_events et df_type_selected
     df_previous_events = "data.frame", ## évènements suivants en fonction de df_events et df_type_selected
@@ -43,10 +44,10 @@ setRefClass(
       type_selected <- paste(type_selected,collapse="','")
       ### liste des évènements à filtrer :
       #print(df_events)
-      subset_df_events_selected <- sqldf(paste0("select patient, event, num, type FROM df_events where type in ('",type_selected,"')"))
+      subset_df_events <- sqldf(paste0("select patient, event, num, type FROM df_events where type in ('",type_selected,"')"))
       
       ## cette dernière df sera vide si le type d'event sélectionné n'est pas prénset :
-      if (nrow(subset_df_events_selected) == 0){
+      if (nrow(subset_df_events) == 0){
         cat ("Aucun évènement à filtrer")
         return(NULL)
       }
@@ -55,16 +56,28 @@ setRefClass(
       ## choisis
       # pour l'instant j'utilise une table d'attribut fictive :
       
-      subset_df_events_selected$duree <- rnorm(nrow(subset_df_events_selected), 10, 2)
-      subset_df_events_selected$categorie <- "H"
-      # colnames(subset_df_events_selected)
-      colonnes <- colnames(subset_df_events_selected)
-      #str(subset_df_events_selected)
-      subset_df_events_selected$type <- as.factor(subset_df_events_selected$type)
+      subset_df_events$duree <- rnorm(nrow(subset_df_events), 10, 2)
+      subset_df_events$categorie <- "H"
+      # colnames(subset_df_events)
+      colonnes <- colnames(subset_df_events)
+      #str(subset_df_events)
+      subset_df_events$type <- as.factor(subset_df_events$type)
  
       metadf <- data.frame(colonnes = colonnes, isid=c(1,0,0,0,0,0), type=c(NA,"NA","NA","factor","integer","factor"),
                            intableau = c(0,0,0,1,1,1), ingraphique = c(0,0,0,1,1,0))
-      filtres[[paste0("filtre",event_number)]] <<- new("Filtre",df=subset_df_events_selected, metadf,event_number)
+      # tabsetid <- paste0("tabset",event_number) ## avec js ça 
+      tabsetid <- event_number
+      filtres[[paste0("filtre",event_number)]] <<- new("Filtre",df=subset_df_events, metadf,tabsetid)
+      set_df_events_selected() ## les events_selected par défaut si aucun filtre par l'utilisateur
+      
+      ## séquence spatiale : uniquement pour tabset 0
+      if (event_number == 0){
+        set_sequence_spatiale()
+      }
+    },
+    
+    set_sequence_spatiale = function(){
+      
     },
     
     get_type_selected = function(){
@@ -83,13 +96,11 @@ setRefClass(
       get_hierarchylistN(hierarchy, temp$type)
     },
     
-    ### calcule les évènements suivants en fonction des évènements sélectionnés
-    set_df_nextprevious_events = function(boolnext){
+    set_df_events_selected = function(){
       if (length(filtres) == 0){
-        cat("filtre non créé, impossible de calculer df_next_events")
-        return(NULL)
+        cat("filtre non créé, impossible de calculer df_next_events ou df_events_selected")
+        return(1)
       }
-      
       ## Avant je prenais min(num) as num mais le problème est que si lors du filtre, le premier évènement n'est pas sélectionné
       # il faut que l'évènement suivant soit sélectionné 
       # par exemple SejourMCO puis SejourSSR ; on filtre donc sur tous les évènements sélectionnés
@@ -100,24 +111,29 @@ setRefClass(
       for (i in length(filtres)){
         df_selection <- rbind (filtres[[i]]$df_selectionid)
       }
-      df_selection <- subset (df_selection, select = c("patient","num"))
+      ## vérifier qu'on ait les memes colonnes si filtres d'évènements différents
+      # avant de faire un rbind ici
+      
+      #df_selection <- subset (df_selection, select = c("patient","num"))
       
       ## on choisit l'évènement le plus récent par patient : 
       # le plus petit num 
-      if (boolnext){
-        tab <- tapply(df_selection$num, df_selection$patient, min)
-      } else {
-        tab <- tapply(df_selection$num, df_selection$patient, min) ## je laisse min ici
-        ## on sélectionne ainsi toujours le meme quelque soit boolnext ou previous
-      }
-      df_selection <- data.frame(patient=names(tab), num=as.numeric(tab))
+      tab <- tapply(df_selection$num, df_selection$patient, min)
+      tab <- data.frame(patient=names(tab), num=as.numeric(tab))
       ### les évènements sélectionnés via le filtre :
       #colnames(df_events)
       
-      ## df des evenements selectionnés
-      df_events_selected <- sqldf("Select a.patient, a.num, a.datestartevent, a.dateendevent, a.type from df_events a
-              JOIN df_selection b ON a.patient=b.patient AND a.num = b.num")
+      df_events_selected <<- merge (df_selection,tab, by=c("patient","num"))
       
+      return(0)
+    },
+    
+    ### calcule les évènements suivants en fonction des évènements sélectionnés
+    set_df_nextprevious_events = function(boolnext){
+      resultat <- set_df_events_selected() ## 
+      if (resultat){
+        return(NULL)
+      }
       # df_events_selected <- sqldf(paste0("select patient, datestartevent, dateendevent, type, min(num) as num FROM df_events where type in ('",type_selected,"')
       #                                GROUP BY patient"))
       
@@ -148,8 +164,12 @@ setRefClass(
         # il s'agit bien de min
       }
 
+      ## df des evenements selectionnés => on récupère les dates pour calculer des durées
+      df_current_event <- sqldf("Select a.patient, a.num, a.datestartevent, a.dateendevent, a.type from df_events a
+              JOIN df_events_selected b ON a.patient=b.patient AND a.num = b.num")
+      
       ### dans les étapes suivantes on crée une df allant du num_event à min ou max event
-      num_main_max <- merge (df_events_selected, num_max_event, by="patient")
+      num_main_max <- merge (df_current_event, num_max_event, by="patient")
       ## si num_main_event = num_max_event, il n'y en a pas après donc on retire :
       bool <- num_main_max$num == num_main_max$max
       num_main_max <- subset(num_main_max, !bool)
@@ -180,9 +200,9 @@ setRefClass(
       # df_next_temp : tous les events next le main_event qu'on proposera à l'utilisateur
       
       ## on calcule aussi 2 indicateurs : délai entre début main et fin mai 
-      colnames(df_events_selected) <- c("patient","mainnum","mainstart","mainend", "maintype") ## garde mainnum pour filtrer rapidement
+      colnames(df_current_event) <- c("patient","mainnum","mainstart","mainend", "maintype") ## garde mainnum pour filtrer rapidement
       ## au lieu de devoir recalculer tous les next elements
-      df_next_temp <- merge (df_events_selected,df_next_temp, by="patient")
+      df_next_temp <- merge (df_current_event,df_next_temp, by="patient")
       df_next_temp$TimeToStart <- difftime(df_next_temp$datestartevent,df_next_temp$mainstart,units="day")
       df_next_temp$TimeToEnd <- difftime(df_next_temp$datestartevent,df_next_temp$mainend,units="day")
       ## retire tout ce qui concerne le main event

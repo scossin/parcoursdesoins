@@ -5,7 +5,7 @@ library(shinyTree)
 
 new_treeboutton <- function(event){
   div <- div(id=event$get_treebouttonid(), value=event$get_event_number(), class="box",
-             h4(event$get_h4()),
+             h4(event$get_h4(), class="h4-treeboutton", value=event$get_event_number()),
              shinyTree(event$get_treeid(), checkbox = TRUE),
              #verbatimTextOutput("selTxt"),
              div(class="bouttons",

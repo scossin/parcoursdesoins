@@ -25,9 +25,6 @@ Il peut diviser son event en "sous-catégories" selon une colonne dans la table 
 ## todo : 
 le click sur un event déclenche : 
 - création d'un filtre
-- Extraction de la table spatiale des évènements en lien pour afficher sur la carte
-- création d'un arbre pour la sélection d'un prochain évènement (insertUI after)
-
+- Extraction de la table spatiale des évènements en lien pour afficher sur la carte => fichier requete.R dans le dossier blazegraph
 - le bouton remove déclenche tous les boutons => interet d'avoir une fonction delete pour supprimer du côté serveur
-
 - possibilité de cocher qu'une seule case => voir la config de tree.js

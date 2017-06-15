@@ -22,14 +22,20 @@ event <- new("Event",df_events = df_events,event_number = 1)
 hierarchy ## hiérarchy
 event$get_tree_events(hierarchy = hierarchy) ## hiérarchy avec le nombre d'évents
 event$set_df_nextprevious_events() ## pas d'events sélectionnés encore
-event$df_type_selected
+event$set_df_events_selected()
 
 ## choix dans la hiérarchie
 choix <- c("SejourMCO","SejourSSR")
 df_type_selected <- get_df_type_selected(hierarchy = hierarchy, choix = choix)
+
 event$set_df_type_selected(df_type_selected = df_type_selected)
 
+event$set_df_events_selected()
+colnames(event$df_events_selected)
+
+undebug(event$set_df_nextprevious_events)
 event$set_df_nextprevious_events(boolnext = T)
+event$df_next_events
 event$set_df_nextprevious_events(boolnext = F)
 
 

@@ -87,7 +87,17 @@ OPTIONAL{?event CNTROavc:inEtab ?lieu.
         ?tevent CNTROavc:hasEndTime ?endevent . # avec un date de fin 1
 		?endevent CNTROavc:hasNormalizedTime ?dateendevent .} # dont la forme normalisée est} # Un Sejour dans un etab
 }}
-ORDER by ?patient ?datestartevent")
+ORDER by ?patient ?datestartevent",
+
+
+coordonnesGeo = "
+prefix wgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+prefix eig: <http://www.eigsante2017.fr/>
+SELECT ?code ?lat ?long where {
+  ?s eig:hasCode ?code ;
+     wgs84:lat ?lat ;
+	 wgs84:long ?long}
+")
 
 ### refaire la requete pour récupérer tous les évènements: 
 # rdf:type event
