@@ -39,6 +39,12 @@ navbarPage("Parcours de soins", id="CartoParcours",
              )
            ),
            fluidRow(sankeyD3::sankeyNetworkOutput("sankey"))),
+  
+  
+  
+  
+  
+  ### leaflet
   tabPanel("Carte",
            div(class="outer",
                
@@ -60,7 +66,12 @@ navbarPage("Parcours de soins", id="CartoParcours",
                          checkboxInput("SSR",label = "SSR",value = T)
                          
            ) # fermeture absolute panel
-  )), # fermeture div,
+  )
+  ) # fermeture tabpanel leaflet,
+  
+  ,    ### timelines
+  
+  
   tabPanel("Timelines")
 )
 

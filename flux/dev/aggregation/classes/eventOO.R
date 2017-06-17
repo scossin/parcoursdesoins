@@ -12,6 +12,7 @@ setRefClass(
     df_next_events = "data.frame", ## évènements précédents en fonction de df_events et df_type_selected
     df_previous_events = "data.frame", ## évènements suivants en fonction de df_events et df_type_selected
     filtres = "list",
+    spatial="ANY",
     event_number = "numeric" ## numéro d'event permettant d'ordonner les events
   ),
   
@@ -69,15 +70,6 @@ setRefClass(
       tabsetid <- event_number
       filtres[[paste0("filtre",event_number)]] <<- new("Filtre",df=subset_df_events, metadf,tabsetid)
       set_df_events_selected() ## les events_selected par défaut si aucun filtre par l'utilisateur
-      
-      ## séquence spatiale : uniquement pour tabset 0
-      if (event_number == 0){
-        set_sequence_spatiale()
-      }
-    },
-    
-    set_sequence_spatiale = function(){
-      
     },
     
     get_type_selected = function(){
@@ -124,8 +116,18 @@ setRefClass(
       #colnames(df_events)
       
       df_events_selected <<- merge (df_selection,tab, by=c("patient","num"))
-      
       return(0)
+    },
+    
+    set_spatial = function(){
+      ### mise à jour de l'objet spatial : 
+      ## séquence spatiale : uniquement pour tabset 0
+      if (event_number == 0){
+        if (!set_df_events_selected()) {## mise à jour de la sélection
+          spatial <<- new("spatial",tab_spatial = tab_spatial, df_selection =  df_events_selected)
+        } 
+      }
+      return(NULL)
     },
     
     ### calcule les évènements suivants en fonction des évènements sélectionnés

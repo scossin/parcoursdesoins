@@ -1,21 +1,26 @@
-library(sqldf)
-library(dplyr)
-library(shiny)
-library(shinyTree)
-library(stringr)
-library(leaflet)
+
 
 ## ordonner les évènements par patient : 
 #rm(list=ls())
-source("eventOO.R")
+source("classes/eventOO.R")
+source("classes/spatialOO.R")
 #source("sankey.R")
-source("../../tabpanel/filtreOO.r")
-#source("global.R")
-source("leaflet.R")
+source("classes/filtreOO.r")
+
+
+### leaflet : 
+source("output/leaflet/fonctions_leaflet.R")
+source("output/leaflet/global_leaflet.R")
+
 load("hierarchy.rdata")
 
 ### faire la dataframe sequence spatiale : 
 
+degrade_couleurs <- function(n){
+  colfunc <- colorRampPalette(c("black", "white"))
+  couleurs <- colfunc(n)
+  return(couleurs)
+}
 
 server <- shinyServer(function(input, output, session) {
 
@@ -355,61 +360,8 @@ server <- shinyServer(function(input, output, session) {
   })
 
   
- 
-  ### leaflet: 
-  output$map <- renderLeaflet({
-    m <- leaflet(dep33)  %>%
-      addPolygons(popup=as.character(dep33$libgeo), stroke=T,opacity=0.5,weight=1,color="grey",
-                   layerId=dep33$codgeo) %>%
-      addProviderTiles("Stamen.TonerLite")   %>%
-      # markers UNV
-      addMarkers(lng=coordinates(locEtab33UNV)[,1],
-                 lat=coordinates(locEtab33UNV)[,2],
-                 popup=as.character(locEtab33UNV$rs),
-                 group = "UNV",layerId=locEtab33UNV$nofinesset,icon=UNVicon) %>%
-      # markers SSR
-      addMarkers(lng=coordinates(locEtab33SSR)[,1],
-                 lat=coordinates(locEtab33SSR)[,2],
-                 popup=as.character(locEtab33SSR$rs),icon=SSRicon,
-                 group = "SSR",layerId=locEtab33SSR$nofinesset)
-    ### passer une matrice au lieu de faire une boucle
-    i <- 1
-    #afficher_parcours(m,trajectoires)
-    # for (i in 1:nrow(trajectoires)){
-    #   poids <- trajectoires$poids[i] ## entre 1 et 10
-    #   longitudes <- c(trajectoires$fromlong, trajectoires$tolong)
-    #   latitudes <- c(trajectoires$fromlat, trajectoires$tolat)
-    # 
-    #   m <- addPolylines(m,lng=longitudes, lat=latitudes,color = "green",
-    #                     weight = trajectoires,opacity = 1,
-    #                     label=paste(trajectoires$N[i]))
-    # 
-    #   #layerId=trajectoires$id[i])
-    # }
-    m
-  })
-  
-  observeEvent(input$button,{
-    afficher_parcours("map",trajectoires)
-  })
-
-  
-    }) ## fin server
-
-
-afficher_parcours <- function(map, trajectoires){
-  ### ajout des nouvelles trajectoires
-  for (i in 1:50){
-    poids <- trajectoires$poids[i] ## entre 1 et 10
-    longitudes <- c(trajectoires$fromlong[i], trajectoires$tolong[i])
-    latitudes <- c(trajectoires$fromlat[i], trajectoires$tolat[i])
-    
-    leafletProxy(map) %>% addPolylines(lng=longitudes, lat=latitudes,color = trajectoires$couleur[i],
-                                       weight = poids,opacity = 1, 
-                                       label=paste(trajectoires$N[i]),
-                                       layerId=trajectoires$id[i])
-  }
-}
+  source("output/leaflet/output_leaflet.R",local = T)
+})
 
 
 ### non utilisé : à supprimer 
