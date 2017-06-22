@@ -67,7 +67,7 @@ setRefClass(
   # les transferts de provenance et de destination
   
   ## fonction indépendante de cette classe
-  get_zone_chalandise = function(df_patient, df_events_selected){
+  get_zone_chalandise = function(df_patient, df_selection){
     
     ### 1) Nombre de patients par domicile : 
     
@@ -82,13 +82,15 @@ setRefClass(
     df_patient_count <- count_dom(df_patient)
     colnames(df_patient_count) <- c("domicile","denom")
     
-    ## de meme pour df_events_selected
-    df_trajectoires <- df_events_selected
-    df_trajectoires_count <- subset (df_trajectoires, select= colonnes)
-    df_trajectoires_count  <- unique(df_trajectoires_count)
-    df_trajectoires_count <- count_dom(df_trajectoires_count)
+    ## de meme pour df_selection
+    patients1 <- as.character(df_patient$patient)
+    patients2 <- unique(df_selection$patient)
+    bool <- patients1 %in% patients2
+    df_patient_selected <- subset (df_patient, bool)
+    df_patient_selected  <- unique(df_patient_selected)
+    df_patient_selected_count <- count_dom(df_patient_selected)
     
-    rapport_domicile <- merge (df_patient_count, df_trajectoires_count, by="domicile", all.x=T)
+    rapport_domicile <- merge (df_patient_count, df_patient_selected_count, by="domicile", all.x=T)
     bool <- is.na(rapport_domicile$frequence) ## all.x = T donc si aucun sélectionné on met 0
     rapport_domicile$frequence[bool] <- 0
     rapport_domicile$pourcentage <- rapport_domicile$frequence / rapport_domicile$denom

@@ -1,13 +1,6 @@
 ### fonction pour créer l'ui
 new_tabpanel <- function(filtre){
   tab <- tabPanel(filtre$tabsetid, class="tabset",
-                  div(class="outer",
-                      shiny::actionButton(filtre$get_precedentid(),label = "précédent", class="boutton_precedent",
-                                          onclick = "precedent()"),
-                      tags$head(
-                        # Include our custom CSS
-                        includeCSS("styleTabpanel.css")
-                      ),
                       fluidRow(
                         column(6,
                                h2("Tableau"),
@@ -17,12 +10,11 @@ new_tabpanel <- function(filtre){
                         column(10,
                                h2("Graphiques"),
                                filtre$getCheckBox())
-                        #(filtre$get_checkboxid()))
                       ),
                       fluidRow(
                         column(12,
                                uiOutput(filtre$get_plotsid()))
-                      ))
+                      )
                   
   )
   return(tab)
@@ -32,11 +24,19 @@ new_tabpanel <- function(filtre){
 
 # Important! : This is the make-easy wrapper for adding new tabPanels.
 addTabToTabset <- function(Panels, tabsetName){
+  event_number <- lapply(Panels, function(Panel){return(Panel$attribs$title)})
+  Panels <- lapply(Panels, function(Panel){Panel$attribs$title <- NULL; return(Panel)})
+  output$creationPool <- renderUI({Panels})
+  session$sendCustomMessage(type = "addTabToTabset", message = list(event_number = event_number, 
+                                                                    tabsetName = tabsetName))
+}
+
+
+
+addPatientsToTabset <- function(Panels){
   titles <- lapply(Panels, function(Panel){return(Panel$attribs$title)})
   Panels <- lapply(Panels, function(Panel){Panel$attribs$title <- NULL; return(Panel)})
   output$creationPool <- renderUI({Panels})
-  session$sendCustomMessage(type = "addTabToTabset", message = list(titles = titles, 
-                                                                    tabsetName = tabsetName))
 }
 
 make_tableau <- function(filtre){
@@ -45,12 +45,13 @@ make_tableau <- function(filtre){
     filtre$getDT()
   })
 }
+
 # 
 addplots_tabpanel <- function(filtre){
   output[[filtre$get_plotsid()]] <- renderUI({
     ## si un element est cliqué dans la checkbox, les graphiques à afficher sont calculés :
-    plot_list <- filtre$get_plot_output_list(colonnes_cocher = filtre$checkbox_clics)
-
+    plot_list <- filtre$get_plot_output_list()
+    
     ## si ce n'est pas une suppression alors on calcule les graphiques
     if (length(filtre$deleted_last) == 1 && !filtre$deleted_last){ 
       cat ("graphique refait ! \n")
@@ -66,13 +67,7 @@ make_plots_in_tabpanel <- function(filtre){
   cat("make_plots_in_tabpanel() - idHTML des plots à réaliser : ", idplots, "\n")
   # i <- c("ageplotly")
   for (idHTML in idplots) {
-    # Need local so that each item gets its own number. Without it, the value
-    # of i in the renderPlot() will be the same across all instances, because
-    # of when the expression is evaluated.
-    local({
-      #idHTML <- i
       output[[idHTML]] <- filtre$getRightPlot(idHTML = idHTML)
-    })
   }
 }
 
@@ -81,8 +76,8 @@ add_observers_tabpanel <- function(filtre){
   ### lorsque le tableau est modifié : 
   observeEvent(input[[paste0(filtre$get_tableauid(), "_rows_all")]],{
     lignes <- input[[paste0(filtre$get_tableauid(), "_rows_all")]]
-    filtre$set_lignes(lignes)
-    cat (nrow(filtre$df_selectionid)," lignes sélectionnées dans le tableau ",filtre$tabsetid, "\n")
+    filtre$set_lignes_selection(lignes)
+    cat (length(filtre$lignes_selection)," lignes sélectionnées dans le tableau ",filtre$tabsetid, "\n")
     make_plots_in_tabpanel(filtre)  
   })
   

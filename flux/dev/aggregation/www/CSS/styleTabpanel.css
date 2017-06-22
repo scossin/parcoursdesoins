@@ -1,3 +1,4 @@
+/*
 [id^=numeric]{
 height:300px!important;
 }
@@ -12,17 +13,34 @@ height:300px!important;
   height:300px !important;
 }
 
+*/
+
+
 /*
 #plots {
   display: flex;
 }
 
 .plots > div {
-  flex: 1; /*grow*/
+  flex: 1;
 }
-*/
+
 /* pour aligner les piecharts : 
 [id^=piechartN] {
 display: inline-block;
 }
 */
+
+
+
+/* nom de la variable de chaque plot affichée dans un h4 */
+[id^=plots] div > h4 {
+  background-color: #f0f0f0;
+  font-size: 200%;
+  text-align: center;
+}
+
+/* centrer les plots */
+[id^=plots] div {
+  margin:auto;
+}

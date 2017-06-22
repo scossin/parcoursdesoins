@@ -6,7 +6,7 @@ setRefClass(
     ## changer ensuite par table - interroger la base de données
     df_events = "data.frame", ## data.frame contenant la liste des évènements (ou connection à une DB)
     df_type_selected = "data.frame", ## data.frame contenant 2 colonnes : events et agregat
-    df_events_selected = "data.frame", ## après le choix de l'utilisateur, les évènements pour le sankey  
+    df_events_selected = "data.frame", ## après le choix de l'utilisateur, les évènements pour la sélection
     ## contient le choix de l'utilisateur
     #hierarchy = "list",
     df_next_events = "data.frame", ## évènements précédents en fonction de df_events et df_type_selected
@@ -43,32 +43,28 @@ setRefClass(
       ## type_selected <- c("SejourUM","SejourUM")
       type_selected <- df_type_selected$events
       type_selected <- paste(type_selected,collapse="','")
-      ### liste des évènements à filtrer :
-      #print(df_events)
-      subset_df_events <- sqldf(paste0("select patient, event, num, type FROM df_events where type in ('",type_selected,"')"))
       
+      ### liste des évènements à filtrer :
+      subset_df_events <- sqldf(paste0("select patient, event, num, type FROM df_events where type in ('",type_selected,"')"))
+
       ## cette dernière df sera vide si le type d'event sélectionné n'est pas prénset :
       if (nrow(subset_df_events) == 0){
         cat ("Aucun évènement à filtrer")
         return(NULL)
       }
       
-      ### ici j'ai une connexion à une base de données pour récupérer les attributs des évènements
-      ## choisis
-      # pour l'instant j'utilise une table d'attribut fictive :
-      
-      subset_df_events$duree <- rnorm(nrow(subset_df_events), 10, 2)
-      subset_df_events$categorie <- "H"
-      # colnames(subset_df_events)
-      colonnes <- colnames(subset_df_events)
-      #str(subset_df_events)
       subset_df_events$type <- as.factor(subset_df_events$type)
- 
-      metadf <- data.frame(colonnes = colonnes, isid=c(1,0,0,0,0,0), type=c(NA,"NA","NA","factor","integer","factor"),
-                           intableau = c(0,0,0,1,1,1), ingraphique = c(0,0,0,1,1,0))
+      subset_df_events$duree <- rnorm(nrow(subset_df_events),mean=100,sd = 20)
+      
+      ### meta données (à récupérer via une base de données) :
+      colonne_id <- "patient"
+      colonnes_tableau <- c("type","duree")
+      type_colonnes_tableau <- c("factor","numeric")
+      ## devrait etre une fonction statique de eventOO.R mais pas de fonction statique en R5
+      metadf <- create_metadf(colonne_id, colonnes_tableau, type_colonnes_tableau)
+      
       # tabsetid <- paste0("tabset",event_number) ## avec js ça 
-      tabsetid <- event_number
-      filtres[[paste0("filtre",event_number)]] <<- new("Filtre",df=subset_df_events, metadf,tabsetid)
+      filtres[[paste0("filtre",event_number)]] <<- new("Filtre",df=subset_df_events, metadf,tabsetid = event_number)
       set_df_events_selected() ## les events_selected par défaut si aucun filtre par l'utilisateur
     },
     
@@ -101,7 +97,7 @@ setRefClass(
       ### récupérer la sélection des events actuels
       df_selection <- NULL
       for (i in length(filtres)){
-        df_selection <- rbind (filtres[[i]]$df_selectionid)
+        df_selection <- rbind (filtres[[i]]$get_df_selection())
       }
       ## vérifier qu'on ait les memes colonnes si filtres d'évènements différents
       # avant de faire un rbind ici

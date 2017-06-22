@@ -4,18 +4,14 @@ setRefClass(
   # Attributs
   fields =  c(
     df = "data.frame", ## la dataframe
-    metadf = "data.frame", ## metadonnees sur df
-    df_selectionid = "data.frame", ## current selection
+    metadf = "list", ## metadonnees sur df
+    
+    lignes_selection = "vector",
     
     graphiques = "data.frame", ### liste des graphiques disponibles
     
-    colonnes_tableau = "vector", ## colonnes à afficher dans le tableau
-    colonnes_graphiques = "vector", ## colonnes pouvant etre selectionner pour afficher un graphique
-    
     num_colonneid = "numeric",  # numéro de la colonne contenant l'identifiant unique
 
-    selectionid ="vector", ## les ids selectionnes
-    
     ## le filtre se place dans un tabset, celui-ci à un id :
     tabsetid = "numeric",
     
@@ -26,26 +22,59 @@ setRefClass(
   ),
   
   # Fonctions :
+  
   methods=list(
+    
+    set_lignes_selection = function(lignes){
+      lignes_selection <<- lignes
+    },
+    
+    get_df_selection = function(){
+      return(df[lignes_selection,])
+    },
+    
+    check_colnames = function(df, colonnes){
+      bool <- colonnes %in% colnames(df)
+      if (all(bool)){
+        return(T)
+      } else {
+        stop(colonnes[!bool], " non trouvées dans df")
+      }
+    },
+    
     ### Constructeur
     initialize = function(df, metadf, tabsetid){
-      require(plotly)
       require(shiny)
       
+      cat ("Création d'un nouveau filtre")
+      ### vérification metadf et df
+      bool <- is.list(metadf)
+      if (!bool){
+        stop("metadf n'est pas de type liste \n")
+      }
+    
+      
+      check_colnames(df, metadf$colonne_id)
+      check_colnames(df, metadf$colonnes_tableau)
+      
+      bool <- length(metadf$type_colonnes_tableau) == length(metadf$colonnes_tableau)
+      if (!bool){
+        stop("metadf : type colonnes_tableau longueur différente de colonnes_tableau")
+      }
+      
+      bool <- metadf$type_colonnes_tableau %in% c("numeric",NA,"factor","date") ## tout ce que je prend en charge pour l'instant
+      if (!all(bool)){
+        stop("type", metadf$type_colonnes_tableau[!bool], "non pris en charge")
+      }
+      
+      ## fin verif
       df <<- df
       metadf <<- metadf
       tabsetid <<- tabsetid
       
-      ## colonnes pour le tableau
-      colonnes_tableau <<- as.vector(metadf$colonnes[as.logical(metadf$intableau)])
+      num_colonneid <<- which(colnames(df) == metadf$colonne_id)
       
-      ## colonnes pour la checkbox (graphique)
-      colonnes_graphiques <<- as.vector(metadf$colonnes[as.logical(metadf$ingraphique)])
-      
-      num_colonneid <<- which(colnames(df) == as.vector(metadf$colonnes[as.logical(metadf$isid)]))
-      
-      selectionid <<- df[,num_colonneid] ## tous les ids sont selectionnes par defaut
-      df_selectionid <<- df ## data.frame contenant la selection
+      lignes_selection <<- 1:nrow(df) ## toutes les lignes sélectionnées à l'initialisation
       
       graphiques <<- data.frame(idHTML=factor(), colonne = character(), commande=character())
       ## idHTML : id du div HTML du graphique
@@ -58,12 +87,12 @@ setRefClass(
       # checkboxes pour selectionner les variables
       inputId <- get_checkboxid()
       shiny::checkboxGroupInput(inputId, "Cocher pour afficher les graphiques:", 
-                         choices  = colonnes_graphiques,
+                         choices  = metadf$colonnes_tableau,
                          selected = NULL,inline=T)
     },
     
     getDT = function(){
-      num_colonnes_tableau <- colnames(df) %in% colonnes_tableau
+      num_colonnes_tableau <- colnames(df) %in% metadf$colonnes_tableau
       ncolonnes <- sum(num_colonnes_tableau) - 1
       DT::datatable(df[,num_colonnes_tableau], width="auto",
                     rownames = F, caption="", filter="top", ## pas de rownames, ni de catpion, filter en haut
@@ -73,11 +102,11 @@ setRefClass(
     },
     
     ## renvoie la liste (balises html) des plots à afficher
-    get_plot_output_list = function(colonnes_cocher){
+    get_plot_output_list = function(){
       plot_output_list <- vector(mode = "list")
-      for (i in colonnes_cocher){
+      for (i in checkbox_clics){
         num <- which(colnames(df) == i) ## numéro de la colonne
-        classe <- metadf$type[metadf$colonnes == i] ## la classe de la colonne donne le type de plot à afficher
+        classe <- metadf$type_colonnes_tableau[metadf$colonnes_tableau == i] ## la classe de la colonne donne le type de plot à afficher
         plot_output_list[[i]] <- getRightUi(colonne_cocher = i, classe)
       }
       do.call(tagList, plot_output_list) ## nécessaire pour l'affichage HTML
@@ -87,103 +116,113 @@ setRefClass(
     getRightUi = function(colonne_cocher, classe){
       if (classe == "factor") {
         ## 
-        idplotly <- paste0(tabsetid, colonne_cocher,"plotlypie")
-        bool <- idplotly %in% graphiques$id ## vérifie si le plot est connu ou pas
+        idbarplot <- paste0("barplot",colonne_cocher,"event",tabsetid)
+        bool <- idbarplot %in% graphiques$id ## vérifie si le plot est connu ou pas
         if (!bool){
-          ajout <- data.frame(idHTML = c(idplotly), colonne = colonne_cocher, commande=c("plotly_pie"))
+          ajout <- data.frame(idHTML = c(idbarplot), colonne = colonne_cocher, commande=c("factor_graphique"))
           graphiques <<- rbind(graphiques, ajout)
         }
         
         ## encapsuler pour permettre au CSS de mettre cote à cote les graphiques d'une meme variable
         ajoutdiv <- paste0("<div id=factor_graphics_", tabsetid, colonne_cocher,">")
-        liste <- list(HTML(ajoutdiv),plotlyOutput(idplotly,width = '22%'))
+        liste <- list(HTML(ajoutdiv),HTML("<h4>",colonne_cocher,"</h4>"),shiny::plotOutput(idbarplot,width = "50%"))
         return (do.call(tagList, liste))
         }
       # else if (classe == "integer") return (shiny::plotOutput(id))
-      else if (classe == "integer") {
+      else if (classe == "numeric") {
         ## plusieurs graphiques pour la classe integer
         # l identifiant correspond à la colonne + le nom de la fonction
-        idplotly <- paste0(tabsetid,colonne_cocher,"plotly") ## id du div HTML
-        idhisto <- paste0(tabsetid, colonne_cocher,"hist") ## id du div HTML
+        idboxplot <- paste0("boxplot",colonne_cocher, "event",tabsetid) ## id du div HTML
+        #idhisto <- paste0("histo",colonne_cocher, "event",tabsetid) ## id du div HTML
         #output <- list(plotlyOutput(idplotly), plotOutput(idhisto))
         
         ## ajout dans la data.frame graphique pour savoir ce qu'il faut plotter
-        bool <- idplotly %in% graphiques$id ## vérifie si le plot est connu ou pas
+        bool <- idboxplot %in% graphiques$id ## vérifie si le plot est connu ou pas
         if (!bool){
-          ajout <- data.frame(idHTML = c(idplotly, idhisto), colonne = colonne_cocher, commande=c("plotly_scatter","hist"))
+          #ajout <- data.frame(idHTML = c(idplotly, idhisto), colonne = colonne_cocher, commande=c("plotly_scatter","hist"))
+          ajout <- data.frame(idHTML = c(idboxplot), colonne = colonne_cocher, commande=c("numerique_graphique"))
           graphiques <<- rbind(graphiques, ajout)
         }
         
         ## encapsuler pour permettre au CSS de mettre cote à cote les graphiques d'une meme variable
         ajoutdiv <- paste0("<div id=numeric_graphics_", tabsetid, colonne_cocher,">")
-        liste <- list(HTML(ajoutdiv),plotlyOutput(idplotly,width = '50%'),
-                      plotOutput(idhisto,width = '50%'), HTML("</div>"))
+        # liste <- list(HTML(ajoutdiv),shiny::plotOutput(idplotly,width = '50%'),
+        #               plotOutput(idhisto,width = '50%'), HTML("</div>"))
+        liste <- list(HTML(ajoutdiv),HTML("<h4>",colonne_cocher,"</h4>"),shiny::plotOutput(idboxplot,width = "50%"),HTML("</div>"))
         return (do.call(tagList, liste))
+      } else if (classe == "date") {
+        iddates <- paste0("dates",colonne_cocher, "event",tabsetid) ## id du div HTML
+        #idhisto <- paste0("histo",colonne_cocher, "event",tabsetid) ## id du div HTML
+        #output <- list(plotlyOutput(idplotly), plotOutput(idhisto))
+        
+        ## ajout dans la data.frame graphique pour savoir ce qu'il faut plotter
+        bool <- iddates %in% graphiques$id ## vérifie si le plot est connu ou pas
+        if (!bool){
+          #ajout <- data.frame(idHTML = c(idplotly, idhisto), colonne = colonne_cocher, commande=c("plotly_scatter","hist"))
+          ajout <- data.frame(idHTML = c(iddates), colonne = colonne_cocher, commande=c("dates_graphique"))
+          graphiques <<- rbind(graphiques, ajout)
+        }
+        
+        ## encapsuler pour permettre au CSS de mettre cote à cote les graphiques d'une meme variable
+        ajoutdiv <- paste0("<div id=numeric_graphics_", tabsetid, colonne_cocher,">")
+        # liste <- list(HTML(ajoutdiv),shiny::plotOutput(idplotly,width = '50%'),
+        #               plotOutput(idhisto,width = '50%'), HTML("</div>"))
+        liste <- list(HTML(ajoutdiv),HTML("<h4>",colonne_cocher,"</h4>"),shiny::plotOutput(iddates,width = "50%"),HTML("</div>"))
+        return (do.call(tagList, liste))
+      } else {
+        stop("classe : ", classe , "non trouvée \n")
       }
     },
     
     getRightPlot = function(idHTML){
-      # num <- which(colnames(df) == id) ### numero de la colonne
-      # classe <- class(df[,num])
-      # #if (classe=="integer") return (renderPlot(boxplot(df_selectionid[,num])))
-      # if (classe=="integer") return (renderPlotly(
-      #   plot_ly(x = 1:nrow(df_selectionid), y = ~df_selectionid[,num],
-      #       type="scatter",mode="markers",source="delai")))
-      # if (classe=="factor") return (renderPlotly(create_pie(id,df_selectionid[,num])))
-      
       bool <- graphiques$idHTML == idHTML
+      if (!any(bool)){
+        stop(idHTML, "non trouvée dans les graphiques à réaliser \n")
+      }
       temp <- subset (graphiques, bool)
       num <- which(colnames(df) == temp$colonne) ## quel est la variable concernée pour ce graphique ?
-      x <- df_selectionid[,num] # c'est x
+      initial_x <- df[,num]
+      index_selection <- lignes_selection
+      nom_variable <- colnames(df)[num]
+      
+      if (temp$commande == "numerique_graphique"){
+        return(renderPlot(numerique_box_comparaison(initial_x, index_selection)))
+      }
+      if (temp$commande == "factor_graphique"){
+        return(renderPlot(barplot_graphique_comparaison(initial_x, index_selection, nom_variable)))
+      }
+      
+      if (temp$commande=="dates_graphique"){
+        return(renderPlot(dates_graphique_comparaison(initial_x, index_selection, nom_variable)))
+      }
       
       ## quel graphique réalisé ?
-      if (temp$commande == "plotly_scatter"){
-        return(renderPlotly(plot_ly(x = 1:nrow(df_selectionid), y = ~x,
-                type="scatter",mode="markers",source="delai")))
-      }
-      if (temp$commande == "hist"){
-        return(renderPlot(hist(x)))
-      }
-      
-      if (temp$commande=="plotly_pie"){
-        return (renderPlotly(create_pie(x)))
-      }
+      # if (temp$commande == "plotly_scatter"){
+      #   return(renderPlotly(plot_ly(x = 1:nrow(df_selectionid), y = ~x,
+      #           type="scatter",mode="markers",source="delai")))
+      # }
+      # if (temp$commande == "hist"){
+      #   return(renderPlot(hist(x)))
+      # }
+      # 
+      # if (temp$commande=="plotly_pie"){
+      #   return (renderPlotly(create_pie(x)))
+      # }
     },
     
     
-    create_pie = function(x){
-      valeurs <- table(x)
-      plot_ly(labels = names(valeurs), values = valeurs, type = 'pie',source="test") %>%
-        layout(title = "nomvariable",
-               xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-    },
+    # create_pie = function(x){
+    #   valeurs <- table(x)
+    #   plot_ly(labels = names(valeurs), values = valeurs, type = 'pie',source="test") %>%
+    #     layout(title = "nomvariable",
+    #            xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+    #            yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+    # },
     
     remove_graphiques = function(colonne){
       bool <- colonne %in% graphiques$colonne
       graphiques <<- subset (graphiques, !bool)
     },
-    
-    get_selectionid = function(){
-      return(selectionid)
-    },
-    
-    set_lignes = function(lignes){
-      df_selectionid <<- df[lignes,]
-    },
-    
-    # set_selectionid = function(ids){
-    #   selectionid <<- ids
-    #   bool <- df[,num_colonneid] %in% ids
-    #   df_selectionid <<- subset (df, bool)
-    # },
-    # 
-    # get_ids_fromrows = function(rows_selected){
-    #   temp_df <- subset (df, id %in% selectionid)
-    #   ids <- temp_df[,num_colonneid]
-    #   ids_rows_selected <- ids[rows_selected]
-    #   return(ids_rows_selected)
-    # },
     
     ## l'id du tableau DT
     get_tableauid = function(){
@@ -198,10 +237,6 @@ setRefClass(
       return(paste0("plots",tabsetid))
     },
     
-    get_precedentid = function(){
-      return(paste0("precedent",tabsetid))
-    },
-    
     set_checkbox_clics = function(checkbox_clics){
       checkbox_clics <<- checkbox_clics
     },
@@ -212,3 +247,60 @@ setRefClass(
   )
 )
 
+
+
+
+
+
+###### Ancienne version de cette fonction : utilsiation de plotly
+## mais problème lorsqu'il y a trop de points à afficher en Javascript
+## plante vite avec un piechart
+# getRightUi = function(colonne_cocher, classe){
+#   if (classe == "factor") {
+#     ## 
+#     idplotly <- paste0(tabsetid, colonne_cocher,"plotlypie")
+#     bool <- idplotly %in% graphiques$id ## vérifie si le plot est connu ou pas
+#     if (!bool){
+#       ajout <- data.frame(idHTML = c(idplotly), colonne = colonne_cocher, commande=c("plotly_pie"))
+#       graphiques <<- rbind(graphiques, ajout)
+#     }
+#     
+#     ## encapsuler pour permettre au CSS de mettre cote à cote les graphiques d'une meme variable
+#     ajoutdiv <- paste0("<div id=factor_graphics_", tabsetid, colonne_cocher,">")
+#     liste <- list(HTML(ajoutdiv),plotlyOutput(idplotly,width = '22%'))
+#     return (do.call(tagList, liste))
+#   }
+#   # else if (classe == "integer") return (shiny::plotOutput(id))
+#   else if (classe == "numeric") {
+#     ## plusieurs graphiques pour la classe integer
+#     # l identifiant correspond à la colonne + le nom de la fonction
+#     idplotly <- paste0(tabsetid,colonne_cocher,"plotly") ## id du div HTML
+#     idhisto <- paste0(tabsetid, colonne_cocher,"hist") ## id du div HTML
+#     #output <- list(plotlyOutput(idplotly), plotOutput(idhisto))
+#     
+#     ## ajout dans la data.frame graphique pour savoir ce qu'il faut plotter
+#     bool <- idplotly %in% graphiques$id ## vérifie si le plot est connu ou pas
+#     if (!bool){
+#       ajout <- data.frame(idHTML = c(idplotly, idhisto), colonne = colonne_cocher, commande=c("plotly_scatter","hist"))
+#       graphiques <<- rbind(graphiques, ajout)
+#     }
+#     
+#     ## encapsuler pour permettre au CSS de mettre cote à cote les graphiques d'une meme variable
+#     ajoutdiv <- paste0("<div id=numeric_graphics_", tabsetid, colonne_cocher,">")
+#     liste <- list(HTML(ajoutdiv),plotlyOutput(idplotly,width = '50%'),
+#                   plotOutput(idhisto,width = '50%'), HTML("</div>"))
+#     return (do.call(tagList, liste))
+#   }
+# },
+
+
+
+
+### fonction permettant la création d'une table de méta données ; utiliser par le filtre
+create_metadf <- function(colonne_id, colonnes_tableau,type_colonnes_tableau){
+  metadf <- list()
+  metadf[["colonne_id"]] <- colonne_id
+  metadf[["colonnes_tableau"]] <- colonnes_tableau
+  metadf[["type_colonnes_tableau"]] <- type_colonnes_tableau
+  return(metadf)
+}

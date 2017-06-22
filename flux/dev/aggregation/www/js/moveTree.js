@@ -16,7 +16,7 @@ if (message.boolprevious == null){
 }
 //
 
-}, 100);
+}, 200);
 
 // Afficher le tree
 //var bouttonafficher = document.getElementById(message.bouttonafficher);

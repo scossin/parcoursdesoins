@@ -28,7 +28,6 @@ function(input, output, session){
   choix <- c("SejourMCO","SejourSSR")
   df_type_selected <- get_df_type_selected(hierarchy = hierarchy, choix = choix)
   values[["selection0"]]$event$set_df_type_selected(df_type_selected = df_type_selected)
-  values[["selection0"]]$event$set_df_events_selected() ## cette fonction crée 
-  
+    
   source("output_leaflet.R",local = T)
 }

@@ -3,83 +3,98 @@
  * fichier source : 
  * https://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/
  * 
+ * */                       
+                             
+
+/* Cette fonction permet de : 
+ * 1) Ajouter un "li" dans la barre de tabset pour sélectionner un évènement. Chaque li contient un href contenant l'id du contenu
+ * 2) Déplacer le contenu (tous les éléments sont créés dynamiquement et placés dans l'id "creationPool") pour le mettre au bon endroit
+ * 
  * */
+Shiny.addCustomMessageHandler('addTabToTabset', function(message){
+ 
+ /* 1) Création du li dans le tabset */ 
+ var tabsetTarget = document.getElementById(message.tabsetName);
+ var event_number = parseInt(message.event_number);
+ /* Creating node in the navigation bar */
+ var navNode = document.createElement('li');
+ var linkNode = document.createElement('a');
+ 
+ linkNode.appendChild(document.createTextNode(event_number)); // le texte : on met le numéro de l'évènement, ce sera renuméroté par une fonction ensuite
+ linkNode.setAttribute('data-toggle', 'tab'); // important ! permet de charger le contenu quand on clic sur le "li" 
+ linkNode.setAttribute('data-value', 'tabset'+event_number); // utilisé par la fonction de renumérotation des events pour la sélection de chaque tabset 
+ linkNode.setAttribute('number', event_number); /* number est utilisé par la fonction de renumérotation des events */
+ linkNode.setAttribute('href', '#tab-' + event_number); /* Le lien vers le contenu ; #patients fait référence à tabContent.setAttribute('id', 'patients'); plus bas */
+ navNode.appendChild(linkNode);
+
+ /* POSITIONNEMENT DU LI
+  *  pour appender le "li" (navNode) : 
+  * 	soit le numéro est le plus élevé, on l'append
+  * 	soit aucun tabset n'existe encore, l'append 
+  * 	soit le numéro n'est pas le plus élevé, on l'insertBefore le plus petit numéro 
+  * */
+
+ var tabsets = $("a[data-value^='tabset']") ;
+ 
+ if (tabsets.length==0 || ishighest_number(tabsets, event_number)){
+	 tabsetTarget.appendChild(navNode);
+ } 
+ else {
+	 tabsetTarget.insertBefore(navNode, tabsets[0].parentNode);
+ }
+
+ 
+  /* 2) Déplacement du contenu */ 
+ /* Move the tabs content to where they are normally stored. Using timeout, because
+ it can take some 20-50 millis until the elements are created. */ 
+ setTimeout(function(){
+	 var tabContent = document.getElementById('creationPool').childNodes[0]; // Notre contenu à déplacer
+	 tabContent.setAttribute('id', 'tab-' + event_number); // ! important ; permet de faire le lien entre le li (via href) et ce contenu
+	 
+	 /* tabContent doit etre déplacé et mis dans un div "tab-content" ; mais attention il y a plusieurs div "tab-content" si plusieurs tabset panel !! */ 
+	 /* on sélectoinne le div de classe "tab-content" qui se situe à coté (sibling) de tabsetTarget qui correspond au tabset panel sélectionné par id plus haut */ 
+	 var tabContainerTarget = $(tabsetTarget).siblings(".tab-content")[0];
+	 tabContainerTarget.appendChild(tabContent); // contenu appendé !
+ }, 200);
+ renumeroter_tabsets(); // renumérotation des tabsets (texte) 
+});
 
 
-/* In coherence with the original Shiny way, tab names are created with random numbers. 
-                             To avoid duplicate IDs, we collect all generated IDs.  */
-                             // var hrefCollection = []; pas besoin !
-                             
-                             Shiny.addCustomMessageHandler('addTabToTabset', function(message){
-                             
-                             tabsetName = parseInt(message.tabsetNumber)
-                             
-                             var hrefCodes = [];
-                             /* Getting the right tabsetPanel */
-                             var tabsetTarget = document.getElementById(message.tabsetName);
-                             
-                             /* Iterating through all Panel elements */
-                             for(var i = 0; i < message.titles.length; i++){
-                             
-                             /* Creating 6-digit tab ID and check, whether it was already assigned. */
 
-/* je ne comprends pas sa boucle do while inside for loop : je retire */ 
-/* do {
-hrefCodes[i] = Math.floor(Math.random()*100000);
-} 
-while(hrefCollection.indexOf(hrefCodes[i]) != -1); */
 
- /* je remplace l id par le titre au lieu d un nombre aleatoire (voir plus haut) */
-                             hrefCodes[i] = message.titles[i];
-                             
-                             //hrefCollection = hrefCollection.concat(hrefCodes[i]);
-                             
-                             /* Creating node in the navigation bar */
-                             var navNode = document.createElement('li');
-                             var linkNode = document.createElement('a');
-                             
-                             linkNode.appendChild(document.createTextNode(message.titles[i]));
-                             linkNode.setAttribute('data-toggle', 'tab');
-                             linkNode.setAttribute('data-value', 'tabset'+message.titles[i]);
-                             linkNode.setAttribute('number', message.titles[i]);
-                             linkNode.setAttribute('href', '#tab-' + hrefCodes[i]);
-                             
-                             navNode.appendChild(linkNode);
-                             
-                             
-                             /*
-                              *  pour appender navNode : 
-                              * 	soit le numéro est le plus élevé, on l'append
-                              * 	soit aucun tabset n'existe encore, l'append 
-                              * 	soit le numéro n'est pas le plus élevé, on l'insertBefore le plus petit numéro */
+// Cette fonction est la même que addTabToTabset mais customiser pour un tabpanel particulier : Patients                 
+ Shiny.addCustomMessageHandler('addPatientsToTabset', function(message){
+		/* tabsetpanel où on met va le mettre : */
+ var tabsetTarget = document.getElementById(message.tabsetName);
 
-                             number = parseInt(message.titles[i]);
-                             var tabsets = $("a[data-value^='tabset']") ;
-                             if (tabsets.length==0 || ishighest_number(tabsets, number)){
-								 tabsetTarget.appendChild(navNode);
-							 } 
-							 else {
-								 tabsetTarget.insertBefore(navNode, tabsets[0].parentNode);
-							 }
+ /* Iterating through all Panel elements : il n'y en a qu'un dans notre cas d'usage*/
+ /* Création du 'li' de sélection (node in the navigation bar) */ 
+ var navNode = document.createElement('li');
+ var linkNode = document.createElement('a');
+ 
+ linkNode.appendChild(document.createTextNode('Patients'));
+ linkNode.setAttribute('data-toggle', 'tab');
+ linkNode.setAttribute('href', '#patients'); /* Le lien vers le contenu ; #patients fait référence à tabContent.setAttribute('id', 'patients'); plus bas */
+ 
+ navNode.appendChild(linkNode);
+ 
+ tabsetTarget.appendChild(navNode); // ajout du li au tabsetpanel
+ 
+ /* Move the tabs content to where they are normally stored. Using timeout, because
+ it can take some 20-50 millis until the elements are created. */ 
+ setTimeout(function(){
+	 var tabContent = document.getElementById('creationPool').childNodes[0];
+	 tabContent.setAttribute('id', 'patients');
+	 
+	 /* tabContent est déplacé et mis dans un div "tab-content" ; mais attention il y a plusieurs div "tab-content" si plusieurs tabset panel !! */ 
+	 /* on sélectoinne le div de classe "tab-content" qui se situe après (sibling) tabsetTarget qu'on sélectionne avec son id */ 
+	 var tabContainerTarget = $(tabsetTarget).siblings(".tab-content")[0]
+	 tabContainerTarget.appendChild(tabContent);
+ }, 100);
+ });
 
-                             };
-                             
-                             /* Move the tabs content to where they are normally stored. Using timeout, because
-                             it can take some 20-50 millis until the elements are created. */ 
-                             setTimeout(function(){
-                             var creationPool = document.getElementById('creationPool').childNodes;
-                             var tabContainerTarget = document.getElementsByClassName('tab-content')[0];
-                             
-                             /* Again iterate through all Panels. */
-                             for(var i = 0; i < creationPool.length; i++){
-                             var tabContent = creationPool[i];
-                             tabContent.setAttribute('id', 'tab-' + hrefCodes[i]);
-                             tabContainerTarget.appendChild(tabContent);
-                             };
-                             }, 100);
-                             renumeroter_tabsets();
-                             });
 
+// fonction pour positionner le "li" pour la fonction addTabToTabset
 ishighest_number = function(tabsets, number){
 	var valeurs = [];
 	
@@ -94,11 +109,13 @@ ishighest_number = function(tabsets, number){
 		}
 	}
 	
-	return(true); // si aucun "number" de tabset à une valeur a celui qu'on ajoute
+	return(true); // si aucun "number" de tabsets a une valeur supérieur à celui-ci, on renvoie false
 }
 
 /*
- * Pourquoi faut-il renuméroter les tabsets ? Même pb que pour la renumérotation des events. Voir moveTree.js - renumeroter_h4_treeboutton() pour les explications"
+ * Pourquoi faut-il renuméroter les tabsets ? Même pb que pour la renumérotation des events pour les tree. Voir moveTree.js - renumeroter_h4_treeboutton() pour les explications"
+ *
+ * La fonction est appelée lorsqu'on ajoute un "li" au tabset panel
  * */
 renumeroter_tabsets = function(){
 	 // Identifier les tabsets dans le dom
@@ -118,14 +135,5 @@ for(var i = 0; i < tabsets.length; i++){
 	tabsets[i].textContent = "event" + n ;
 }
 }
-
-
-// onclick précédent
-precedent = function(){
-	var timelines = $("[data-value=Timelines]");
-	timelines[0].click();
-	var events = $("[data-value=Events]");
-	events[0].click();
-};
 
 

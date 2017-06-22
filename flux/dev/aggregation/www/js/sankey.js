@@ -14,6 +14,6 @@ $('document').ready(function(){
 remove_radiobuttons = function(){
 	var radiobuttons = $('*[id^="sankey_radio"]');
 	for (var i = 0 ; i< radiobuttons.length ; i++){ 
-		radiobuttons[i].remove()
+		radiobuttons[i].parentNode.remove()
 	}
 };
