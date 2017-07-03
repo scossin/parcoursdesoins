@@ -8,13 +8,21 @@
 
 /* Cette fonction permet de : 
  * 1) Ajouter un "li" dans la barre de tabset pour sélectionner un évènement. Chaque li contient un href contenant l'id du contenu
- * 2) Déplacer le contenu (tous les éléments sont créés dynamiquement et placés dans l'id "creationPool") pour le mettre au bon endroit
+ * 2) Déplacer le contenu (tous les éléments sont créés dynamiquement et placés dans l'id "creationPool_tabpanel") pour le mettre au bon endroit
  * 
  * */
 Shiny.addCustomMessageHandler('addTabToTabset', function(message){
+	
+	console.log("addTabToTabset called");
  
  /* 1) Création du li dans le tabset */ 
+ 
+ console.log("\t création d'un li dans tabsetTarget : " + message.tabsetName);
  var tabsetTarget = document.getElementById(message.tabsetName);
+ 
+
+ 
+ 
  var event_number = parseInt(message.event_number);
  /* Creating node in the navigation bar */
  var navNode = document.createElement('li');
@@ -43,20 +51,30 @@ Shiny.addCustomMessageHandler('addTabToTabset', function(message){
 	 tabsetTarget.insertBefore(navNode, tabsets[0].parentNode);
  }
 
+console.log("\t Renumérotation des tabsets");
+renumeroter_tabsets(); // renumérotation des tabsets (texte) 
+
  
   /* 2) Déplacement du contenu */ 
  /* Move the tabs content to where they are normally stored. Using timeout, because
  it can take some 20-50 millis until the elements are created. */ 
  setTimeout(function(){
-	 var tabContent = document.getElementById('creationPool').childNodes[0]; // Notre contenu à déplacer
+	 
+	 console.log("\t contenu dans creationPool_tabpanel");
+	 var tabContent = document.getElementById('creationPool_tabpanel').childNodes[0]; // Notre contenu à déplacer
+	 
+	 
 	 tabContent.setAttribute('id', 'tab-' + event_number); // ! important ; permet de faire le lien entre le li (via href) et ce contenu
 	 
 	 /* tabContent doit etre déplacé et mis dans un div "tab-content" ; mais attention il y a plusieurs div "tab-content" si plusieurs tabset panel !! */ 
 	 /* on sélectoinne le div de classe "tab-content" qui se situe à coté (sibling) de tabsetTarget qui correspond au tabset panel sélectionné par id plus haut */ 
+	 
+	 console.log("\t déplacer vers tabContainerTarget");
 	 var tabContainerTarget = $(tabsetTarget).siblings(".tab-content")[0];
+	 
 	 tabContainerTarget.appendChild(tabContent); // contenu appendé !
  }, 200);
- renumeroter_tabsets(); // renumérotation des tabsets (texte) 
+ 
 });
 
 
@@ -83,14 +101,14 @@ Shiny.addCustomMessageHandler('addTabToTabset', function(message){
  /* Move the tabs content to where they are normally stored. Using timeout, because
  it can take some 20-50 millis until the elements are created. */ 
  setTimeout(function(){
-	 var tabContent = document.getElementById('creationPool').childNodes[0];
+	 var tabContent = document.getElementById('creationPool_tabpanel').childNodes[0];
 	 tabContent.setAttribute('id', 'patients');
 	 
 	 /* tabContent est déplacé et mis dans un div "tab-content" ; mais attention il y a plusieurs div "tab-content" si plusieurs tabset panel !! */ 
 	 /* on sélectoinne le div de classe "tab-content" qui se situe après (sibling) tabsetTarget qu'on sélectionne avec son id */ 
 	 var tabContainerTarget = $(tabsetTarget).siblings(".tab-content")[0]
 	 tabContainerTarget.appendChild(tabContent);
- }, 100);
+ }, 200);
  });
 
 

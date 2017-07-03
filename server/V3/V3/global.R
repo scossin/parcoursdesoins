@@ -131,7 +131,8 @@ create_event <- function(patientid, finess, nature, start, end, group){
 library(lubridate) ## pour additionner des durées à une date
 jour2009 <- seq(as.Date("1/1/2009 00:00", format="%d/%m/%Y %M:%S"),as.Date("31/12/2009 00:00", format="%d/%m/%Y %M:%S"),
                 by="day")
-
+jour2010 <- seq(as.Date("1/1/2010 00:00", format="%d/%m/%Y %M:%S"),as.Date("31/12/2010 00:00", format="%d/%m/%Y %M:%S"),
+                by="day")
 ### Création de timelines fake
 ## Etablissements de Gironde : UNV et SSR
 #load("/home/cossin/Documents/EIG/parcoursdesoins/Rapport/R/parcours.rdata")
@@ -229,10 +230,23 @@ for (i in 1:100){
                           end=datesortieSSR,
                           group="Hospitalisation")
   listeevents <- rbind (listeevents,unevent)
-
+  
+  ## deces
+  datedeces <- sample(jour2010,1)
+  datedeces<- as.POSIXct(datedeces)
+  unevent <- create_event(patientid = patientid,
+                          finess=999,
+                          nature="Deces",
+                          start=datedeces,
+                          end=NA,
+                          group="Deces")
+  listeevents <- rbind (listeevents,unevent)
 }
 
 listeevents$end <- as.POSIXct(listeevents$end, origin = "1970-01-01") ## car NA présents
+
+# save(listeevents,file="../../../flux/blazegraph/R/listeevents.rdata")
+
 
 ### Ajout content : contenu (image ou texte) de chaque item
 libnature <- data.frame(nature=c("hémiplégie",

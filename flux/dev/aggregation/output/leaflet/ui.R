@@ -6,7 +6,7 @@ tabPanel("Carte",
              
              tags$head(
                # Include our custom CSS
-               includeCSS("style_leaflet.css")
+               includeCSS("../../www/CSS/styleLeaflet.css")
              ),
              leaflet::leafletOutput("map", width="100%", height="100%"),
              
@@ -16,13 +16,16 @@ tabPanel("Carte",
                            draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
                            width = 330, height = "auto",
                            
-                           h2("Sélection"),
-                           actionButton("button", "Reset"),
+                           div(id="affichermapdiv",
+                           actionButton("affichermap", "Recalculer")),
+                           h4("Icônes"),
+                           div(id="UNVSSRcheckbox",
                            checkboxInput("UNV",label = "UNV",value = T),
-                           checkboxInput("SSR",label = "SSR",value = T),
-                           h4("Provenance et destination"),
-                           checkboxGroupInput("checkbox_transfert",label="Transfert", 
-                                              choices=c("entree","sortie"), selected=c("entree","sortie"))
+                           checkboxInput("SSR",label = "SSR",value = T)),
+
+                           checkboxGroupInput("checkbox_transfert",label="Provenance et destination", 
+                                              choices=c("entree","sortie"), selected=c("entree","sortie"),
+                                              inline = T)
                            
              ) # fermeture absolute panel
          )

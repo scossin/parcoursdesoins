@@ -102,10 +102,15 @@ for (i in patients){ ### les évènements de chaque patient sont traités sépar
                         prefixe_objet = "eig",objet = events$etab)
   
   
+
   fichier <- paste0("../triplets/timelines/",i,".xml")
   rdf$serializeandwrite(fichier)
   rdf$resetMemory()
 }
+
+
+### Ces "timelines" au format RDF sont ensuite chargés dans un triplestore
+# voir : chargement.R
 
 ########## partie ci-dessous est temporaire : supprimer si je n'y reviens pas
 # ### je n'arrive pas à faire des constructs
@@ -134,7 +139,7 @@ for (i in patients){ ### les évènements de chaque patient sont traités sépar
 # redland::freeQueryResults(queryResult)
 # 
 # redland::executeQuery("SELECT * WHERE {?p ?s ?o}",rdf$model)
-### Ces "timelines" au format RDF sont ensuite chargés dans un triplestore
+
 
 
 XMLtoTurtleCmmande <- "rapper -i rdfxml ../triplets/timelines/patient1.xml -o turtle > voir.ttl"

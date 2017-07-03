@@ -8,9 +8,14 @@ library(leaflet)
 
 # Important! : creationPool should be hidden to avoid elements flashing before they are moved.
 #              But hidden elements are ignored by shiny, unless this option below is set.
-output$creationPool <- renderUI({})
-outputOptions(output, "creationPool", suspendWhenHidden = FALSE)
-# End Important
+output$creationPool_tree <- renderUI({})
+outputOptions(output, "creationPool_tree", suspendWhenHidden = FALSE)
+
+# Important! : creationPool should be hidden to avoid elements flashing before they are moved.
+#              But hidden elements are ignored by shiny, unless this option below is set.
+output$creationPool_tabpanel <- renderUI({})
+outputOptions(output, "creationPool_tabpanel", suspendWhenHidden = FALSE)
+
 
 ## values contient la liste des objets events créés (treeboutton + filtre)
 values = list()
@@ -19,6 +24,7 @@ id_treebutton <- 0   # numérotation des events : ne jamais répéter un même i
 ## même si l'id disparait
 id_tabset0 <- 0 ## numérotation du tabset 0 ! doit etre réalisé séparément car contrairement
 ## aux autres, la hiérarchie ne disparait jamais ; il faut changer l'id du tabset 
+
 
 ### chaque element de values contient des events
 # permet de récupérer l'id/numéro de chaque event
@@ -37,7 +43,7 @@ removeEvents <- function(values, event_number, boolitself=NULL){
     ## retirer les tabset si créés : 
     if (length(filtres) != 0){
       for (i in 1:length(filtres)){
-        remove_tabset(filtres[[i]]$tabsetid) ### fonction JS
+        jslink$remove_tabset(filtres[[i]]$tabsetid) ### fonction JS
       }
     }
     return(NULL)
@@ -52,9 +58,9 @@ removeEvents <- function(values, event_number, boolitself=NULL){
       }
       cat("\t suppression de ", i, "via le boutton 0 \n")
       selection <- paste0("selection",i)
-      remove_tabpanel(values[[selection]]$event$filtres)
+      remove_tabpanel(values[[selection]]$event$filtres) ## private fonction def au dessus
       values[[selection]] <<- NULL ## retire de values
-      remove_treebutton(treebouttonvalue = i) ## retire le treeboutton
+      jslink$remove_treebutton(treebouttonvalue = i) ## retire le treeboutton
     }
     return(NULL)
   }
@@ -64,7 +70,7 @@ removeEvents <- function(values, event_number, boolitself=NULL){
     selection <- paste0("selection",event_number)
     remove_tabpanel(values[[selection]]$event$filtres)
     values[[selection]] <<- NULL
-    remove_treebutton(treebouttonvalue = event_number)
+    jslink$remove_treebutton(treebouttonvalue = event_number)
   }
   
   bool <- event_number < 0    ### cas ou event_number est négatif (all previous)
@@ -75,7 +81,7 @@ removeEvents <- function(values, event_number, boolitself=NULL){
       selection <- paste0("selection",i)
       remove_tabpanel(values[[selection]]$event$filtres)
       values[[selection]] <<- NULL
-      remove_treebutton(treebouttonvalue = i)
+      jslink$remove_treebutton(treebouttonvalue = i)
     }
     return(NULL)
   }
@@ -87,7 +93,7 @@ removeEvents <- function(values, event_number, boolitself=NULL){
       cat("suppression de ", i, "via > du boutton", event_number, "\n")
       selection <- paste0("selection",i)
       values[[selection]] <<- NULL
-      remove_treebutton(treebouttonvalue = i)
+      jslink$remove_treebutton(treebouttonvalue = i)
     }
     return(NULL)
   }

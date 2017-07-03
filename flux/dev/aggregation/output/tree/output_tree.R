@@ -1,25 +1,27 @@
+output_tree <- new.env()
+
 ### addTree : ajouter l'ui (tree) à l'interface
 ## boolprevious : si NULL l'element est placé en tout dernier (append)
 # si pas null (n'importe quoi, meme False attention !) alors l'element est placé en tout premier (prepend)
 # div : le div 
-addTree <- function(event,boolprevious=NULL){
-  div_treeboutton <- new_treeboutton(event) ## création de l'UI
-  output$creationPool2 <- renderUI({div_treeboutton})
-  ## pas de display pour les bouttons suivants : 
+output_tree$addTree <- function(event){
+  div_treeboutton <- fonctions_tree$new_treeboutton(event) ## création de l'UI
+  output$creationPool_tree <- renderUI({div_treeboutton})
+  ## création de l'UI mais pas de bouton display pour les bouttons suivants : 
   # boutton remove de l'event 0
   # bouttons previous ou bouttons next pour les events suivants et précédents respectivement :
   # ce display est retiré par une fonction JS appelé avec moveTree
 }
 
 ## ploter le tree dans un treeboutton : ajout du contenu du tree
-make_tree_in_treeboutton <- function(event,hierarchy){
-  output[[event$get_treeid()]] <- renderTree({ 
-    event$get_tree_events(hierarchy)
+output_tree$make_tree_in_treeboutton <- function(event,hierarchy){
+  output[[event$get_treeid()]] <- renderTree({
+    fonctions_tree$get_hierarchylistN(hierarchyliste = hierarchy, lowestlevel_vector =  event$get_type())
   })
 }
 
 #### tous les évènements possibles avec treeboutton
-add_observers_treeboutton <- function(event){
+output_tree$add_observers_treeboutton <- function(event, jslink){
   
   ### lorsque l'utilisateur clique sur validate
   observeEvent(input[[event$get_validateid()]],{
@@ -52,7 +54,7 @@ add_observers_treeboutton <- function(event){
     choix <- sapply(selection, function(x) gsub("[(][0-9]+[)]", "",x)) ### retirer les nombres entre parenthèses
     
     
-    df_type_selected <- get_df_type_selected(hierarchy, choix)
+    df_type_selected <- fonctions_tree$get_df_type_selected(hierarchy, choix)
     
     ## séparément le cas où un filtre (et donc un tabset) existe déjà : il faut updater
     # ou le cas où le filtre n'existe pas encore : il faut créer (tabset ...)
@@ -65,22 +67,23 @@ add_observers_treeboutton <- function(event){
     if (!bool){
       for (i in 1:length(event$filtres)){
         # cat(length(event$filtres))
-        tabpanel <- list(new_tabpanel(event$filtres[[i]]))
-        addTabToTabset(tabpanel, "mainTabset")
-        make_tableau(event$filtres[[i]])
-        addplots_tabpanel(event$filtres[[i]])
-        make_plots_in_tabpanel(event$filtres[[i]])
-        add_observers_tabpanel(event$filtres[[i]])
+        tabpanel <- list(fonctions_tabpanel$new_tabpanel(event$filtres[[i]]))
+        fonctions_tabpanel$addTabToTabset(tabpanel)
+        jslink$moveTabpanel(event_number = event$filtres[[i]]$tabsetid, tabsetName = "mainTabset") ## modif de place
+        fonctions_tabpanel$make_tableau(event$filtres[[i]])
+        fonctions_tabpanel$addplots_tabpanel(event$filtres[[i]])
+        fonctions_tabpanel$make_plots_in_tabpanel(event$filtres[[i]])
+        fonctions_tabpanel$add_observers_tabpanel(event$filtres[[i]])
       }
     } else {
       for (i in 1:length(event$filtres)){
         updateCheckboxGroupInput(session, event$filtres[[i]]$get_checkboxid(), 
                                  choices = event$filtres[[i]]$metadf$colonnes_tableau,
                                  selected = NULL, inline=T)
-        make_tableau(event$filtres[[i]])
-        addplots_tabpanel(event$filtres[[i]])
-        make_plots_in_tabpanel(event$filtres[[i]])
-        add_observers_tabpanel(event$filtres[[i]])
+        fonctions_tabpanel$make_tableau(event$filtres[[i]])
+        fonctions_tabpanel$addplots_tabpanel(event$filtres[[i]])
+        fonctions_tabpanel$make_plots_in_tabpanel(event$filtres[[i]])
+        fonctions_tabpanel$add_observers_tabpanel(event$filtres[[i]])
       }
     }
     
@@ -118,19 +121,20 @@ add_observers_treeboutton <- function(event){
     ## 3) 
     id_treebutton <<- id_treebutton + 1 ## on incrémente
     n <- - id_treebutton ## signe négatif car previous
-    boolprevious <- T
+
     ## calculer le previous : 
-    event$set_df_nextprevious_events(!boolprevious) ## calcule les events précédents
+    event$set_df_nextprevious_events(boolnext=F) ## calcule les events précédents
     
     previousevent <- new("Event",df_events = event$df_previous_events,event_number=n)
     
     values[[paste0("selection",n)]]$event <<- previousevent
     cat("\t values : ", get_event_numbers(values),"\n")
     
-    addTree(previousevent,boolprevious)
-    make_tree_in_treeboutton(previousevent, hierarchy)
-    add_observers_treeboutton(previousevent)
-    hide_boutton(previousevent)
+    output_tree$addTree(previousevent)
+    jslink$moveTree (previousevent$get_treebouttonid(), boolprevious=T)
+    output_tree$make_tree_in_treeboutton(previousevent, hierarchy)
+    output_tree$add_observers_treeboutton(previousevent,jslink)
+    jslink$hide_boutton(previousevent)
     cat ("\t event",previousevent$get_event_number(), " créé ! \n ")
   }) ### fin ObserveEvent addprevious
   
@@ -164,11 +168,12 @@ add_observers_treeboutton <- function(event){
     values[[paste0("selection",n)]]$event <<- nextevent
     cat("\t values : ", get_event_numbers(values),"\n")
     
-    addTree(nextevent,boolprevious=NULL)
-    make_tree_in_treeboutton(nextevent, hierarchy)
-    add_observers_treeboutton(nextevent)
-    hide_boutton(nextevent)
+    output_tree$addTree(nextevent)
+    jslink$moveTree (nextevent$get_treebouttonid(), boolprevious=NULL)
+    output_tree$make_tree_in_treeboutton(nextevent, hierarchy)
+    output_tree$add_observers_treeboutton(nextevent,jslink)
+    jslink$hide_boutton(nextevent)
     cat ("\t event",nextevent$get_event_number(), " créé ! \n ")
-  }) ### fin ObserveEvent addprevious
+  }) ### fin ObserveEvent next
   
 } # fin add_observers_treeboutton

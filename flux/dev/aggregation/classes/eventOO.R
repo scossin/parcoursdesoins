@@ -30,7 +30,6 @@ setRefClass(
         stop ("df_type_selected ne contient pas toutes les colonnes : events et agregat")
       }
       
-      
       df_type_selected <<- df_type_selected
       
       df_next_events <<- data.frame(patient=character(), type=factor(),
@@ -42,11 +41,13 @@ setRefClass(
       #### création d'un objet filtre pour filtrer les évènements :
       ## type_selected <- c("SejourUM","SejourUM")
       type_selected <- df_type_selected$events
-      type_selected <- paste(type_selected,collapse="','")
+      type_selected <- paste(type_selected,collapse="','") ## pour la requete SQL suivante
       
       ### liste des évènements à filtrer :
-      subset_df_events <- sqldf(paste0("select patient, event, num, type FROM df_events where type in ('",type_selected,"')"))
+      # subset_df_events <- sqldf(paste0("select patient, event, num, type FROM df_events where type in ('",type_selected,"')"))
 
+      subset_df_events <- sqldf(paste0("select * FROM df_events where type in ('",type_selected,"')"))
+      
       ## cette dernière df sera vide si le type d'event sélectionné n'est pas prénset :
       if (nrow(subset_df_events) == 0){
         cat ("Aucun évènement à filtrer")
@@ -54,12 +55,40 @@ setRefClass(
       }
       
       subset_df_events$type <- as.factor(subset_df_events$type)
-      subset_df_events$duree <- rnorm(nrow(subset_df_events),mean=100,sd = 20)
+      subset_df_events$agregat <- as.factor(unique(df_type_selected$agregat))
+      
+      ### jointure à faire sur table de métadonnées :
+      
+      # fake colonne duree :
+      
+      subset_df_events$duree <- round(rnorm(nrow(subset_df_events),mean=100,sd = 20),0)
+      
       
       ### meta données (à récupérer via une base de données) :
       colonne_id <- "patient"
-      colonnes_tableau <- c("type","duree")
-      type_colonnes_tableau <- c("factor","numeric")
+      colonnes_tableau <- c("type","duree","TimeToStart","TimeToEnd","agregat")
+      type_colonnes_tableau <- c("factor","numeric","numeric","numeric","factor")
+      
+     
+      ### Pour un démo : ajouter des attributs à SejourMCO et SejourSSR : 
+      # A retirer apres la démo : récupérer les attributs et leur type en base de données
+      agregat <- unique(df_type_selected$agregat)
+      if (agregat %in% c("SejourHospitalier","SejourMCO","SejourSSR")){
+        load("rdata/ATTR_SejourHospitalier.rdata")
+        subset_df_events <- merge (subset_df_events, ATTR_SejourHospitalier, by=c("patient","num"), all.x=T)
+        colonnes_SejourHospitalier <- c("nofinesset","RaisonSociale","libcategetab","dep","INSEE_COM")
+        colonnes_tableau <- c(colonnes_tableau, colonnes_SejourHospitalier)
+        if (agregat == "SejourMCO"){
+          colonnes_tableau <- c(colonnes_tableau, "UNV")
+        }
+        if (agregat == "SejourSSR"){
+          colonnes_tableau <- c(colonnes_tableau, c("SSRadulte","SSRenfant"))
+        }
+        add_factors <- rep("factor",length(colonnes_tableau) - length(type_colonnes_tableau))
+        type_colonnes_tableau <- c(type_colonnes_tableau, add_factors)
+      } ## fin ajout attributs pour démo
+
+      
       ## devrait etre une fonction statique de eventOO.R mais pas de fonction statique en R5
       metadf <- create_metadf(colonne_id, colonnes_tableau, type_colonnes_tableau)
       
@@ -79,9 +108,9 @@ setRefClass(
     
     ### prend la hiérarchie en entrée et met le nombre de valeurs entre parenthèse
     ## renvoie une liste ; est utilisée par shinyTree
-    get_tree_events = function(hierarchy){
+    get_type = function(hierarchy,get_hierarchylistN){
       temp <- sqldf("select distinct patient, type from df_events") ## selectionne les différents types d'évènements
-      get_hierarchylistN(hierarchy, temp$type)
+      return(temp$type)
     },
     
     set_df_events_selected = function(){
@@ -197,12 +226,22 @@ setRefClass(
               JOIN df_event_next b ON a.patient=b.patient AND a.num = b.num")
       # df_next_temp : tous les events next le main_event qu'on proposera à l'utilisateur
       
-      ## on calcule aussi 2 indicateurs : délai entre début main et fin mai 
+      ## on calcule aussi 2 indicateurs : délai entre début main et fin main 
       colnames(df_current_event) <- c("patient","mainnum","mainstart","mainend", "maintype") ## garde mainnum pour filtrer rapidement
       ## au lieu de devoir recalculer tous les next elements
       df_next_temp <- merge (df_current_event,df_next_temp, by="patient")
-      df_next_temp$TimeToStart <- difftime(df_next_temp$datestartevent,df_next_temp$mainstart,units="day")
-      df_next_temp$TimeToEnd <- difftime(df_next_temp$datestartevent,df_next_temp$mainend,units="day")
+      
+      ## calcul du temps : début - début et fin - début
+      if (boolnext){
+        df_next_temp$TimeToStart <- difftime(df_next_temp$datestartevent,df_next_temp$mainstart,units="day")
+        df_next_temp$TimeToEnd <- difftime(df_next_temp$datestartevent,df_next_temp$mainend,units="day")
+      } else {
+        df_next_temp$TimeToStart <- difftime(df_next_temp$mainstart,df_next_temp$datestartevent,units="day")
+        df_next_temp$TimeToEnd <- difftime(df_next_temp$mainend,df_next_temp$datestartevent,units="day")
+      }
+      df_next_temp$TimeToStart <- as.numeric(df_next_temp$TimeToStart)
+      df_next_temp$TimeToEnd <- as.numeric(df_next_temp$TimeToEnd)
+      
       ## retire tout ce qui concerne le main event
       df_next_temp$mainend <- NULL
       df_next_temp$mainstart <- NULL
@@ -213,9 +252,6 @@ setRefClass(
       } else {
         df_previous_events <<- df_next_temp
       }
-
-      #colnames(df_next_temp)
-      #colnames()
     },
     
     

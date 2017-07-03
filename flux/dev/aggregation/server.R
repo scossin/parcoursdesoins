@@ -31,29 +31,38 @@ server <- shinyServer(function(input, output, session) {
   source("output/sankey/output_sankey.R",local=T)
   source("output/sankey/fonctions_sankey.R")
   
-  ##### Création de l'event 0 !
-  values[["selection0"]]$event <- new("Event",df_events = evenements,event_number=0) ## création de l'objet sur le serveur
-  addTree(values[["selection0"]]$event) ## crétaion de l'ui
-  treebouttonid <- values[["selection0"]]$event$get_treebouttonid()
-  moveTree (treebouttonid, boolprevious=NULL)
-  make_tree_in_treeboutton(values[["selection0"]]$event, hierarchy) ## plot : création du contenu de l'ui
-  hide_boutton(values[["selection0"]]$event) ## retirer certains bouttons (event 0 : boutton supprimer)
-  add_observers_treeboutton(values[["selection0"]]$event)
+  ## Survie : 
+  source("output/survie/output_survie.R",local=T)
+
   
-  
-  
-  # Création de tab dess patients :
+  # Création de tab patients :
   load("output/tabpanel/df_patient.rdata")
   colonne_id <- "patient"
   colonnes_tableau <- c("age","sexe","categorieAge","domicile","depdomicile")
   type_colonnes_tableau <- c("numeric","factor","factor","factor","factor")
   metadf <- create_metadf(colonne_id, colonnes_tableau,type_colonnes_tableau)
-  filtre <- new("Filtre", df = df_patient, metadf = metadf, tabsetid=999)
-  tabpanel <- list(new_tabpanel(filtre))
-  addPatientsToTabset(tabpanel)
-  session$sendCustomMessage(type = "addPatientsToTabset", message = list(tabsetName = "mainTabset"))
-  make_tableau(filtre)
-  addplots_tabpanel(filtre)
-  make_plots_in_tabpanel(filtre)
-  add_observers_tabpanel(filtre)
+  filtre_patient <- new("Filtre", df = df_patient, metadf = metadf, tabsetid=999)
+  
+  tabpanel <- list(fonctions_tabpanel$new_tabpanel(filtre_patient))
+  fonctions_tabpanel$addPatientsToTabset(tabpanel)
+  jslink$moveTabpatient(tabsetName="mainTabset")
+  fonctions_tabpanel$make_tableau(filtre_patient)
+  fonctions_tabpanel$addplots_tabpanel(filtre_patient)
+  fonctions_tabpanel$make_plots_in_tabpanel(filtre_patient)
+  fonctions_tabpanel$add_observers_tabpanel(filtre_patient)
+  
+  ##### Création de l'event 0 !
+  observeEvent(input$firstevent,{
+    ## selon la sélection des patients : 
+    patients_selection <- unique(filtre_patient$get_df_selection()$patient)
+    firstevent <- subset (evenements, patient %in% patients_selection)
+    values[["selection0"]]$event <<- new("Event",df_events = firstevent,event_number=0) ## création de l'objet sur le serveur
+    output_tree$addTree(values[["selection0"]]$event) ## crétaion de l'ui
+    treebouttonid <- values[["selection0"]]$event$get_treebouttonid()
+    jslink$moveTree (treebouttonid, boolprevious=NULL)
+    output_tree$make_tree_in_treeboutton(values[["selection0"]]$event, hierarchy) ## plot : création du contenu de l'ui
+    jslink$hide_boutton(values[["selection0"]]$event) ## retirer certains bouttons (event 0 : boutton supprimer)
+    output_tree$add_observers_treeboutton(values[["selection0"]]$event, jslink=jslink)
+  })
+  
 })

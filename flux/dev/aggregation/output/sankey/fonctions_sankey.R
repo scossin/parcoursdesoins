@@ -4,6 +4,7 @@ library(stringr)
 ### SankeyD3
 library(sankeyD3)
 
+# load("df_sankey2.rdata")
 
 ## fonction pour réaliser le sankey
 make_sankey = function(df_sankey, V1 = F, V2 = T){
@@ -19,7 +20,7 @@ make_sankey = function(df_sankey, V1 = F, V2 = T){
   ## on ajoute le numéro de l'event :
   for (i in 1:length(df_sankey)){
     df_sankey[,i] <- as.factor( df_sankey[,i])
-    levels(df_sankey[,i]) <- paste0(levels(df_sankey[,i]), numeros[i])
+    levels(df_sankey[,i]) <- paste0(levels(df_sankey[,i]), "NUM",numeros[i])
     # df_sankey[,i] <- paste0(df_sankey[,i], numeros[i])
   }
   
@@ -79,7 +80,7 @@ make_sankey = function(df_sankey, V1 = F, V2 = T){
     links$source <- NULL
     colnames(links) <- c("N","source","target")
     
-    nodes$name <- gsub("[-]?[0-9]+$","",nodes$name) ## suprprimer le numéro de l'event et du cluster
+    nodes$name <- gsub("NUM[-]?[0-9]+$","",nodes$name) ## suprprimer le numéro de l'event et du cluster
     nodes$groupe <- gsub("^[(0-9)]+","",nodes$name) ## pour avoir le groupe : chaque groupe a une couleur différente
     nodes$name <- gsub("NA$","",nodes$name) ## remplacer les NA par ""
     
@@ -161,8 +162,9 @@ make_sankey = function(df_sankey, V1 = F, V2 = T){
     links$source <- NULL
     colnames(links) <- c("N","source","target")
     
-    nodes$groupe <- gsub("[-]?[0-9]+$","",nodes$name) ## suprprimer le numéro de l'event et du cluster
-    
+    # nodes$groupe <- gsub("[-]?[0-9]+$","",nodes$name) ## suprprimer le numéro de l'event et du cluster
+    nodes$name <- gsub("NUM[-]?[0-9]+$","",nodes$name)
+    nodes$groupe <- nodes$name
     ## retirer 
     
     sankey <- sankeyNetwork(Links = links, Nodes = nodes, Source = "source",

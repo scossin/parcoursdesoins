@@ -46,21 +46,31 @@ setRefClass(
     initialize = function(df, metadf, tabsetid){
       require(shiny)
       
-      cat ("Création d'un nouveau filtre")
+      cat ("Création d'un nouveau filtre \n")
       ### vérification metadf et df
       bool <- is.list(metadf)
       if (!bool){
         stop("metadf n'est pas de type liste \n")
       }
     
-      
       check_colnames(df, metadf$colonne_id)
-      check_colnames(df, metadf$colonnes_tableau)
+      
+      #### Avant je vérifias que toutes les colonnes de metadf étaient présentes dans df
+      ## j'assouplis : je mets tout ce que je veux dans metadf et je retire les colonnes non présentes
+      ## 
+      ## check_colnames(df, metadf$colonnes_tableau)
+      
       
       bool <- length(metadf$type_colonnes_tableau) == length(metadf$colonnes_tableau)
       if (!bool){
         stop("metadf : type colonnes_tableau longueur différente de colonnes_tableau")
       }
+      
+      bool <- metadf$colonnes_tableau %in% colnames(df)
+      
+      metadf <<- metadf ## initialise ici car sinon les lignes ci-dessous non pris en compte si mis en dessous
+      metadf$colonnes_tableau <<- metadf$colonnes_tableau[bool]
+      metadf$type_colonnes_tableau <<- metadf$type_colonnes_tableau[bool]
       
       bool <- metadf$type_colonnes_tableau %in% c("numeric",NA,"factor","date") ## tout ce que je prend en charge pour l'instant
       if (!all(bool)){
@@ -69,7 +79,7 @@ setRefClass(
       
       ## fin verif
       df <<- df
-      metadf <<- metadf
+      #metadf <<- metadf
       tabsetid <<- tabsetid
       
       num_colonneid <<- which(colnames(df) == metadf$colonne_id)

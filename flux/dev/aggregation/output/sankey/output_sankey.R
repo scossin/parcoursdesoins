@@ -16,7 +16,14 @@ observeEvent(input$go,{
       event <- values[[paste0("selection",num_event)]]$event
       event$set_df_events_selected() ## mise à jour si filtre modifié
       
-      df_events_selected <- subset (event$df_events_selected, select=c("patient",choix_colonne))
+      ## colonne du filtre ou colonne patient ? 
+      bool <- choix_colonne %in% colnames(filtre_patient$df)
+      if (bool){
+        df_events_selected <- subset (filtre_patient$df, select=c("patient",choix_colonne))
+      } else {
+        df_events_selected <- subset (event$df_events_selected, select=c("patient",choix_colonne))
+      }
+      
       colnames(df_events_selected) <- c("patient",paste0("event",num_event))
       if (is.null(df_sankey)){ ## si c'est la première itération
         df_sankey <- df_events_selected
@@ -61,10 +68,18 @@ observeEvent(input$update,{
   cat("Bouton update de Sankey cliqué \n")
   liste <- NULL
   
-  ## values ne devrait pas etre null car il est initialisé 
-  # if (length(values) == 0){
-  #   return(NULL)
-  # }
+  # values ne devrait pas etre null car il est initialisé
+  if (length(values) == 0){
+    cat("\n Values de longueur NULL \n")
+    return(NULL)
+  }
+  
+  ## colonnes de la tab_patient
+  colonnes_patient <- filtre_patient$metadf$colonnes_tableau
+  bool <- filtre_patient$metadf$type_colonnes_tableau == "factor"
+  colonnes_patient <- colonnes_patient[bool]
+  
+  ## récupère les colonnes de chaque filtre :
   for (i in 1:length(values)){
     filtres <- values[[i]]$event$filtres
     if (length(filtres) == 0){
@@ -77,6 +92,7 @@ observeEvent(input$update,{
       type_colonnes_tableau <- filtres[[y]]$metadf$type_colonnes_tableau
       bool <- type_colonnes_tableau == "factor"
       colonnes_tableau <- colonnes_tableau[bool]
+      colonnes_tableau <- c(colonnes_tableau, colonnes_patient)
       if (length(colonnes_tableau) != 0){
         liste <- c(liste, create_sankey_radiobutton(colonnes_tableau,event_number)) 
       }

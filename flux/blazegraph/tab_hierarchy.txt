@@ -19,3 +19,4 @@ Event
 	Traitement
 		TraitementMedicamenteux
 			TraitementThrombolytique
+	Deces

@@ -1,5 +1,3 @@
-source("fonctions_sankey.R")
-
 library(dplyr)
 library(sqldf)
 source("../../classes/eventOO.R")
@@ -17,7 +15,7 @@ evenements <- as.data.frame(evenements) ## sinon erreur bizarre
 
 server <- shinyServer(function(input, output, session) {
   source("../../global_server.R", local=T)
-  source("output_sankey.R",local=T)
+  source("output_survie.R",local=T)
   
   ## création de l'event 0
   values[["selection0"]]$event <- new("Event",df_events = evenements,event_number=0)
@@ -28,7 +26,7 @@ server <- shinyServer(function(input, output, session) {
   ## création de l'event 1 
   df_next <- values[["selection0"]]$event$set_df_nextprevious_events(boolnext=T)
   values[["selection1"]]$event <- new("Event",df_events = df_next,event_number=1)
-  choix <- c("SejourMCO")
+  choix <- c("Traitement")
   df_type_selected <- fonctions_tree$get_df_type_selected(hierarchy = hierarchy, choix = choix)
   values[["selection1"]]$event$set_df_type_selected(df_type_selected = df_type_selected)
   

@@ -20,7 +20,7 @@ navbarPage("Parcours de soins", id="CartoParcours",
                       )),
                     # Important! : 'Freshly baked' tabs first enter here.
                     #uiOutput("creationPool", style = "display: none;")
-                    uiOutput("creationPool")
+                    uiOutput("creationPool_tabpanel")
                     # End Important
            ),
            tabPanel("Carte"))

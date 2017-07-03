@@ -1,4 +1,6 @@
-new_treeboutton <- function(event){
+fonctions_tree <- new.env()
+
+fonctions_tree$new_treeboutton <- function(event){
   div <- div(id=event$get_treebouttonid(), value=event$get_event_number(), class="box",
              h4(event$get_h4(), class="h4-treeboutton", value=event$get_event_number()),
              shinyTree(event$get_treeid(), checkbox = TRUE),
@@ -15,7 +17,7 @@ return(div)
 
 ## rmatch : fonction trouvée sur stackoverflow
 # https://stackoverflow.com/questions/27890388/r-get-element-by-name-from-a-nested-list
-rmatch <- function(x, name) {
+fonctions_tree$rmatch <- function(x, name) {
   pos <- match(name, names(x))
   if (!is.na(pos)) return(x[[pos]])
   for (el in x) {
@@ -26,7 +28,7 @@ rmatch <- function(x, name) {
   }
 }
 
-get_hierarchylistN = function(hierarchyliste, lowestlevel_vector){
+fonctions_tree$get_hierarchylistN = function(hierarchyliste, lowestlevel_vector){
   require(jsonlite)
   ## fonction récursive pour récupérer tous les noms de la liste :  
   getnames_of_liste <- function(liste){
@@ -65,7 +67,7 @@ get_hierarchylistN = function(hierarchyliste, lowestlevel_vector){
   tab <- rbind(tab, superclasse) ## on a les valeurs pour le lowest level, on détermine pour les niveaux au-dessus
   
   for (i in noms){
-    fils <- names(rmatch(hierarchyliste, i))
+    fils <- names(fonctions_tree$rmatch(hierarchyliste, i))
     tab$value[tab$classe == i] <- sum(tab$value[tab$classe %in% fils])
   }
   tab$newname <- paste0(tab$classe,"(",tab$value,")")
@@ -94,11 +96,11 @@ get_hierarchylistN = function(hierarchyliste, lowestlevel_vector){
 ## 2) on compte le nombre d'éléments dans chaque niveau d'agrégat
 ## 3) Si un élément apparait 2 fois : on sélectionne le niveau d'agrégat le plus petit
 
-get_df_type_selected <- function(hierarchyliste, choix){
+fonctions_tree$get_df_type_selected <- function(hierarchyliste, choix){
   
   ## 1) 
   elementsNiveaux <- lapply(choix, function(x){
-    as.character(unlist(rmatch(hierarchyliste, x)))
+    as.character(unlist(fonctions_tree$rmatch(hierarchyliste, x)))
   })
   ## 2) 
   Nelements <- unlist(lapply(elementsNiveaux, length))

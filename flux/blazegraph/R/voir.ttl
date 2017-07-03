@@ -14,6 +14,10 @@ CNTROavc:AppelCentre15Intervaltime2009-11-21T01-09-00
     CNTROavc:hasValidTime CNTROavc:Intervaltime2009-11-21T01-09-00 ;
     a CNTROavc:AppelCentre15 .
 
+CNTROavc:DecesIntervaltime2010-01-23T01-00-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2010-01-23T01-00-00 ;
+    a CNTROavc:Deces .
+
 CNTROavc:Intervaltime2009-11-21T01-00-00
     CNTROavc:hasStartTime CNTROavc:time2009-11-21T01-00-00 .
 
@@ -30,6 +34,9 @@ CNTROavc:Intervaltime2009-11-21T03-08-00
 CNTROavc:Intervaltime2009-11-27T02-08-00
     CNTROavc:hasEndTime CNTROavc:time2009-12-17T02-08-00 ;
     CNTROavc:hasStartTime CNTROavc:time2009-11-27T02-08-00 .
+
+CNTROavc:Intervaltime2010-01-23T01-00-00
+    CNTROavc:hasStartTime CNTROavc:time2010-01-23T01-00-00 .
 
 CNTROavc:Intervaltime2010-06-09T03-08-00
     CNTROavc:hasEndTime CNTROavc:time2010-06-12T03-08-00 ;
@@ -89,6 +96,10 @@ CNTROavc:time2009-11-27T02-08-00
 
 CNTROavc:time2009-12-17T02-08-00
     CNTROavc:hasNormalizedTime "2009-12-17T02:08:00"^^xsd:dateTime ;
+    a CNTROavc:TimeInstant .
+
+CNTROavc:time2010-01-23T01-00-00
+    CNTROavc:hasNormalizedTime "2010-01-23T01:00:00"^^xsd:dateTime ;
     a CNTROavc:TimeInstant .
 
 CNTROavc:time2010-06-09T03-08-00

@@ -16,3 +16,12 @@ h2{
 [id^=piechartN] {
 display: inline-block;
 }
+
+/* Aligner les checkbox UNV et SSR */
+#UNVSSRcheckbox > div{
+	display: ruby;
+}
+
+#affichermapdiv {
+text-align:center;
+}

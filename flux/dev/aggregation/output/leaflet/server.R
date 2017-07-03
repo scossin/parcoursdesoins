@@ -26,7 +26,7 @@ function(input, output, session){
   values[["selection0"]]$event <- new("Event",df_events = evenements,event_number=0)
   ### L'utilisateur choisit les events à 0
   choix <- c("SejourMCO","SejourSSR")
-  df_type_selected <- get_df_type_selected(hierarchy = hierarchy, choix = choix)
+  df_type_selected <- fonctions_tree$get_df_type_selected(hierarchy = hierarchy, choix = choix)
   values[["selection0"]]$event$set_df_type_selected(df_type_selected = df_type_selected)
     
   source("output_leaflet.R",local = T)
