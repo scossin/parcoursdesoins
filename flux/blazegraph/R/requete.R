@@ -32,36 +32,7 @@ evenements <- merge (evenements, domiciles, by="patient")
 
 save(evenements, file="../../aggregation/evenements.rdata")
 
-## fonction qui détermine la séquence spatiale à partir d'une liste d'events : 
-# à réfléchir ce qu'on veut afficher spatialement
-# choix arbitaire : algo : si plus de 2 jours entre 2 évènements alors le patient est rentré à domicile
-i <- evenements$patient[100]
-patients <- unique(evenements$patient)
-sequencespatial <- NULL
-bool <- is.na(evenements$dateendevent)
-evenementsfinis <- subset (evenements, !bool)
-for (i in patients){
-  temp <- subset (evenementsfinis, patient == i)
-  temp <- temp[order(temp$datestartevent),]
-  dom <- unique(as.character(temp$domicile))
-  diff <- as.numeric(temp$datestartevent[2:(nrow(temp))] - temp$dateendevent[1:(nrow(temp)-1)])
-  bool <- diff < 3
-  fromlieu <- ifelse (bool, temp$lieu[-nrow(temp)], dom)
-  fromlieu <- append(dom, fromlieu)
-  tolieu <- ifelse (bool, temp$lieu[-1],dom)
-  tolieu <- append(tolieu, dom)
-  ajout <- data.frame(fromlieu = fromlieu, tolieu = tolieu)
-  sequencespatial <- rbind(sequencespatial, ajout)
-}
 
-sequencespatial2 <- cbind(evenementsfinis, sequencespatial) ## dataframe qui sera utilisé pour afficher sur une carte
-
-# colnames(transfertMCOSSR)[c(2:3)] <- c("FROM","TO")
-# ## retirer les préfixes
-# transfertMCOSSR[] <- apply(transfertMCOSSR, 2, function(x){
-#   x <- gsub("^[A-Za-z]+:","",x)
-# })
-# save(file="transfertMCOSSR.rdata",transfertMCOSSR)
 
 ######### hiérarchie ancienne méthode : récupérer via une requête SPARQL
 #### 2 colonnes : s = fils ; o = pere (?s rdf:type ?o) 

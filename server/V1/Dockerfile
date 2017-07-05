@@ -116,3 +116,6 @@ RUN R -e "install.packages(packrat:::dirDependencies('/srv/shiny-server'))"
 
 # il ne détecte pas le paquet rgeos ?! : installation manuelle
 RUN R -e "install.packages('rgeos')"
+
+
+

@@ -1,0 +1,22 @@
+/* Espace en dessous le petit texte d'explicatoin */
+#survie_explication{
+margin-bottom:50px;
+}
+
+/* titre : Diagramme de Sankey */
+#survie_titre{
+text-align:center; 
+background-color:#F0F0F0; 
+font-size:200%;
+}
+
+#prediction_explication{
+margin-bottom:50px;
+}
+
+/* titre : Diagramme de Sankey */
+#prediction_titre{
+text-align:center; 
+background-color:#F0F0F0; 
+font-size:200%;
+}

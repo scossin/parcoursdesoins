@@ -1,1 +1,0 @@
-#### vide car généré dynamiquement
