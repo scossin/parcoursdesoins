@@ -5,7 +5,12 @@ fonctions_tabpanel$new_tabpanel <- function(filtre){
   tab <- shiny::tabPanel(filtre$tabsetid, class="tabset",
                       fluidRow(
                         column(6,
-                               h2("Tableau"),
+                        HTML("<span class='Npatients' >Nombre de patients : <span>"),
+                        shiny::textOutput(outputId = filtre$get_Npatientsid(),inline = T))
+                      ),
+                      fluidRow(
+                        column(6,
+                               h2("Filtre"),
                                DT::dataTableOutput(filtre$get_tableauid())
                         )),
                       fluidRow(
@@ -47,6 +52,14 @@ fonctions_tabpanel$make_tableau <- function(filtre){
   })
 }
 
+fonctions_tabpanel$make_Npatients <- function(filtre){
+  output[[filtre$get_Npatientsid()]] <-  shiny::renderText({
+    cat("make_Npatients called \n")
+    return(length(unique(filtre$get_df_selection()$patient)))
+  })
+}
+
+
 # 
 fonctions_tabpanel$addplots_tabpanel <- function(filtre){
   output[[filtre$get_plotsid()]] <- renderUI({
@@ -66,6 +79,11 @@ fonctions_tabpanel$addplots_tabpanel <- function(filtre){
 fonctions_tabpanel$make_plots_in_tabpanel <- function(filtre){
   idplots <- as.character(filtre$graphiques$idHTML)
   cat("make_plots_in_tabpanel() - idHTML des plots à réaliser : ", idplots, "\n")
+  bool <- is.na(idplots)
+  idplots <- idplots[!bool]
+  if (length(idplots) == 0){
+    return(NULL)
+  }
   # i <- c("ageplotly")
   for (idHTML in idplots) {
       output[[idHTML]] <- filtre$getRightPlot(idHTML = idHTML)
@@ -79,7 +97,8 @@ fonctions_tabpanel$add_observers_tabpanel <- function(filtre){
     lignes <- input[[paste0(filtre$get_tableauid(), "_rows_all")]]
     filtre$set_lignes_selection(lignes)
     cat (length(filtre$lignes_selection)," lignes sélectionnées dans le tableau ",filtre$tabsetid, "\n")
-    fonctions_tabpanel$make_plots_in_tabpanel(filtre)  
+    fonctions_tabpanel$make_plots_in_tabpanel(filtre) 
+    fonctions_tabpanel$make_Npatients(filtre)
   })
   
   ### lorsqu'une checkbox est cliqué : 

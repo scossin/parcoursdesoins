@@ -31,10 +31,14 @@ ATTR_SejourHospitalier$SSRadulte <- sample(c("oui","non"), nrow(ATTR_SejourHospi
 ATTR_SejourHospitalier$SSRenfant <- sample(c("oui","non"), nrow(ATTR_SejourHospitalier),replace = T)
 ATTR_SejourHospitalier$UNV <- "oui"
 
+ATTR_SejourHospitalier$DP <- sample(c("AVC","ACFA","Diabète","EP"),nrow(ATTR_SejourHospitalier),
+                                    prob = c(.5,.2,.2,.1),replace = T)
+
 ATTR_SejourHospitalier$SSRadulte <- as.factor(ATTR_SejourHospitalier$SSRadulte)
 ATTR_SejourHospitalier$SSRenfant <- as.factor(ATTR_SejourHospitalier$SSRenfant)
 ATTR_SejourHospitalier$UNV <- as.factor(ATTR_SejourHospitalier$UNV)
 ATTR_SejourHospitalier$INSEE_COM <- as.factor(ATTR_SejourHospitalier$INSEE_COM)
+ATTR_SejourHospitalier$DP <- as.factor(ATTR_SejourHospitalier$DP)
 
 save(ATTR_SejourHospitalier,file="ATTR_SejourHospitalier.rdata")
 

@@ -1,126 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rdf:RDF xmlns:CNTROavc="http://www.eigsante2017.fr/CNTROavc#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:eig="http://www.eigsante2017.fr/" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-08T02-06-00">
-    <CNTROavc:hasEndTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-01-06T02-06-00"/>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#SejourMCOIntervaltime2009-06-02T02-59-00">
+    <CNTROavc:in rdf:resource="http://www.eigsante2017.fr/Etab330000555"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#TraitementThrombolytiqueIntervaltime2009-01-02T03-36-00">
-    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-02T03-36-00"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T01-00-00">
-    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-01-02T01:00:00</CNTROavc:hasNormalizedTime>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T01-00-00">
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-02T02-59-00">
     <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#TimeInstant"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#IRMIntervaltime2009-01-02T03-06-00">
-    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#IRM"/>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-06-02T02-59-00">
+    <CNTROavc:hasEndTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-06-06T02-59-00"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T03-06-00">
-    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-01-02T03:06:00</CNTROavc:hasNormalizedTime>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-06T02-06-00">
-    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-01-06T02:06:00</CNTROavc:hasNormalizedTime>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#SejourMCOIntervaltime2009-01-02T02-06-00">
-    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-02T02-06-00"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#ComaIntervaltime2009-01-02T01-00-00">
-    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#Coma"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#AppelPompierIntervaltime2009-01-02T01-13-00">
-    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-02T01-13-00"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T03-36-00">
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-25T03-07-00">
     <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#TimeInstant"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T01-13-00">
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-25T03-07-00">
+    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-06-25T03:07:00</CNTROavc:hasNormalizedTime>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-02T02-00-00">
+    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-06-02T02:00:00</CNTROavc:hasNormalizedTime>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#SejourSSRIntervaltime2009-06-07T02-59-00">
+    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-06-07T02-59-00"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#AppelPompierIntervaltime2009-06-02T02-04-00">
+    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-06-02T02-04-00"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-07T02-59-00">
     <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#TimeInstant"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#TraitementThrombolytiqueIntervaltime2009-01-02T03-36-00">
-    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#TraitementThrombolytique"/>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-06-02T02-04-00">
+    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-06-02T02-04-00"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#ComaIntervaltime2009-01-02T01-00-00">
-    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-02T01-00-00"/>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-06-02T02-00-00">
+    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-06-02T02-00-00"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T01-13-00">
-    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-01-02T01:13:00</CNTROavc:hasNormalizedTime>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#ConsultationIntervaltime2009-06-25T03-07-00">
+    <CNTROavc:in rdf:resource="http://www.eigsante2017.fr/Medecin810100896983"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#SejourSSRIntervaltime2009-01-08T02-06-00">
-    <CNTROavc:inEtab rdf:resource="http://www.eigsante2017.fr/Etab330781121"/>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-06-07T02-59-00">
+    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-06-07T02-59-00"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T02-06-00">
-    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#TimeInstant"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-08T02-06-00">
-    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-01-08T02:06:00</CNTROavc:hasNormalizedTime>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#IRMIntervaltime2009-01-02T03-06-00">
-    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-02T03-06-00"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2010-08-17T02-00-00">
-    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#TimeInstant"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2010-08-17T02-00-00">
-    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2010-08-17T02:00:00</CNTROavc:hasNormalizedTime>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-02T01-13-00">
-    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T01-13-00"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#SejourMCOIntervaltime2009-01-02T02-06-00">
-    <CNTROavc:inEtab rdf:resource="http://www.eigsante2017.fr/Etab330781360"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#SejourSSRIntervaltime2009-01-08T02-06-00">
-    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#SejourSSR"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-08T02-06-00">
-    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-01-08T02-06-00"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#SejourMCOIntervaltime2009-01-02T02-06-00">
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#SejourMCOIntervaltime2009-06-02T02-59-00">
     <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#SejourMCO"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-02T03-06-00">
-    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T03-06-00"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#DecesIntervaltime2010-08-17T02-00-00">
-    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2010-08-17T02-00-00"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#SejourSSRIntervaltime2009-01-08T02-06-00">
-    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-08T02-06-00"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-02T01-00-00">
-    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T01-00-00"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2010-08-17T02-00-00">
-    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2010-08-17T02-00-00"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-06T02-06-00">
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-06T02-59-00">
     <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#TimeInstant"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-02T02-06-00">
-    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T02-06-00"/>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#SejourSSRIntervaltime2009-06-07T02-59-00">
+    <CNTROavc:in rdf:resource="http://www.eigsante2017.fr/Etab330780370"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-02T02-06-00">
-    <CNTROavc:hasEndTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-01-08T02-06-00"/>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#ConsultationIntervaltime2009-06-25T03-07-00">
+    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-06-25T03-07-00"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#DecesIntervaltime2010-08-17T02-00-00">
-    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#Deces"/>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-02T02-04-00">
+    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-06-02T02:04:00</CNTROavc:hasNormalizedTime>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#AppelPompierIntervaltime2009-01-02T01-13-00">
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-06-25T03-07-00">
+    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-06-25T03-07-00"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#AphasieIntervaltime2009-06-02T02-00-00">
+    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#Aphasie"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#DecesIntervaltime2010-06-21T02-00-00">
+    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2010-06-21T02-00-00"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#AphasieIntervaltime2009-06-02T02-00-00">
+    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-06-02T02-00-00"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-06T02-59-00">
+    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-06-06T02:59:00</CNTROavc:hasNormalizedTime>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-11T02-59-00">
+    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-06-11T02:59:00</CNTROavc:hasNormalizedTime>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2010-06-21T02-00-00">
+    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2010-06-21T02:00:00</CNTROavc:hasNormalizedTime>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#SejourSSRIntervaltime2009-06-07T02-59-00">
+    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#SejourSSR"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-11T02-59-00">
+    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#TimeInstant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#ConsultationIntervaltime2009-06-25T03-07-00">
+    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#Consultation"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#AppelPompierIntervaltime2009-06-02T02-04-00">
     <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#AppelPompier"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T02-06-00">
-    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-01-02T02:06:00</CNTROavc:hasNormalizedTime>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2010-06-21T02-00-00">
+    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2010-06-21T02-00-00"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T03-06-00">
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-02T02-00-00">
     <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#TimeInstant"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T03-36-00">
-    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-01-02T03:36:00</CNTROavc:hasNormalizedTime>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-07T02-59-00">
+    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-06-07T02:59:00</CNTROavc:hasNormalizedTime>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-01-08T02-06-00">
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#DecesIntervaltime2010-06-21T02-00-00">
+    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#Deces"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-02T02-59-00">
+    <CNTROavc:hasNormalizedTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2009-06-02T02:59:00</CNTROavc:hasNormalizedTime>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2009-06-02T02-04-00">
     <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#TimeInstant"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-01-02T03-36-00">
-    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-01-02T03-36-00"/>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-06-02T02-59-00">
+    <CNTROavc:hasStartTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-06-02T02-59-00"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#SejourMCOIntervaltime2009-06-02T02-59-00">
+    <CNTROavc:hasValidTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-06-02T02-59-00"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#Intervaltime2009-06-07T02-59-00">
+    <CNTROavc:hasEndTime rdf:resource="http://www.eigsante2017.fr/CNTROavc#time2009-06-11T02-59-00"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.eigsante2017.fr/CNTROavc#time2010-06-21T02-00-00">
+    <rdf:type rdf:resource="http://www.eigsante2017.fr/CNTROavc#TimeInstant"/>
   </rdf:Description>
 </rdf:RDF>

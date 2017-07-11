@@ -14,8 +14,13 @@ CNTROavc:AppelCentre15Intervaltime2009-11-21T01-09-00
     CNTROavc:hasValidTime CNTROavc:Intervaltime2009-11-21T01-09-00 ;
     a CNTROavc:AppelCentre15 .
 
-CNTROavc:DecesIntervaltime2010-01-23T01-00-00
-    CNTROavc:hasValidTime CNTROavc:Intervaltime2010-01-23T01-00-00 ;
+CNTROavc:ConsultationIntervaltime2010-01-07T02-24-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2010-01-07T02-24-00 ;
+    CNTROavc:in eig:Medecin810003841565 ;
+    a CNTROavc:Consultation .
+
+CNTROavc:DecesIntervaltime2010-07-18T02-00-00
+    CNTROavc:hasValidTime CNTROavc:Intervaltime2010-07-18T02-00-00 ;
     a CNTROavc:Deces .
 
 CNTROavc:Intervaltime2009-11-21T01-00-00
@@ -35,16 +40,11 @@ CNTROavc:Intervaltime2009-11-27T02-08-00
     CNTROavc:hasEndTime CNTROavc:time2009-12-17T02-08-00 ;
     CNTROavc:hasStartTime CNTROavc:time2009-11-27T02-08-00 .
 
-CNTROavc:Intervaltime2010-01-23T01-00-00
-    CNTROavc:hasStartTime CNTROavc:time2010-01-23T01-00-00 .
+CNTROavc:Intervaltime2010-01-07T02-24-00
+    CNTROavc:hasStartTime CNTROavc:time2010-01-07T02-24-00 .
 
-CNTROavc:Intervaltime2010-06-09T03-08-00
-    CNTROavc:hasEndTime CNTROavc:time2010-06-12T03-08-00 ;
-    CNTROavc:hasStartTime CNTROavc:time2010-06-09T03-08-00 .
-
-CNTROavc:Intervaltime2010-06-15T03-08-00
-    CNTROavc:hasEndTime CNTROavc:time2010-07-05T03-08-00 ;
-    CNTROavc:hasStartTime CNTROavc:time2010-06-15T03-08-00 .
+CNTROavc:Intervaltime2010-07-18T02-00-00
+    CNTROavc:hasStartTime CNTROavc:time2010-07-18T02-00-00 .
 
 CNTROavc:ScannerIntervaltime2009-11-21T03-08-00
     CNTROavc:hasValidTime CNTROavc:Intervaltime2009-11-21T03-08-00 ;
@@ -52,22 +52,12 @@ CNTROavc:ScannerIntervaltime2009-11-21T03-08-00
 
 CNTROavc:SejourMCOIntervaltime2009-11-21T02-08-00
     CNTROavc:hasValidTime CNTROavc:Intervaltime2009-11-21T02-08-00 ;
-    CNTROavc:inEtab eig:Etab330781360 ;
-    a CNTROavc:SejourMCO .
-
-CNTROavc:SejourMCOIntervaltime2010-06-09T03-08-00
-    CNTROavc:hasValidTime CNTROavc:Intervaltime2010-06-09T03-08-00 ;
-    CNTROavc:inEtab eig:Etab330781360 ;
+    CNTROavc:in eig:Etab330781360 ;
     a CNTROavc:SejourMCO .
 
 CNTROavc:SejourSSRIntervaltime2009-11-27T02-08-00
     CNTROavc:hasValidTime CNTROavc:Intervaltime2009-11-27T02-08-00 ;
-    CNTROavc:inEtab eig:Etab330780735 ;
-    a CNTROavc:SejourSSR .
-
-CNTROavc:SejourSSRIntervaltime2010-06-15T03-08-00
-    CNTROavc:hasValidTime CNTROavc:Intervaltime2010-06-15T03-08-00 ;
-    CNTROavc:inEtab eig:Etab330780735 ;
+    CNTROavc:in eig:Etab330780735 ;
     a CNTROavc:SejourSSR .
 
 CNTROavc:time2009-11-21T01-00-00
@@ -98,23 +88,11 @@ CNTROavc:time2009-12-17T02-08-00
     CNTROavc:hasNormalizedTime "2009-12-17T02:08:00"^^xsd:dateTime ;
     a CNTROavc:TimeInstant .
 
-CNTROavc:time2010-01-23T01-00-00
-    CNTROavc:hasNormalizedTime "2010-01-23T01:00:00"^^xsd:dateTime ;
+CNTROavc:time2010-01-07T02-24-00
+    CNTROavc:hasNormalizedTime "2010-01-07T02:24:00"^^xsd:dateTime ;
     a CNTROavc:TimeInstant .
 
-CNTROavc:time2010-06-09T03-08-00
-    CNTROavc:hasNormalizedTime "2010-06-09T03:08:00"^^xsd:dateTime ;
-    a CNTROavc:TimeInstant .
-
-CNTROavc:time2010-06-12T03-08-00
-    CNTROavc:hasNormalizedTime "2010-06-12T03:08:00"^^xsd:dateTime ;
-    a CNTROavc:TimeInstant .
-
-CNTROavc:time2010-06-15T03-08-00
-    CNTROavc:hasNormalizedTime "2010-06-15T03:08:00"^^xsd:dateTime ;
-    a CNTROavc:TimeInstant .
-
-CNTROavc:time2010-07-05T03-08-00
-    CNTROavc:hasNormalizedTime "2010-07-05T03:08:00"^^xsd:dateTime ;
+CNTROavc:time2010-07-18T02-00-00
+    CNTROavc:hasNormalizedTime "2010-07-18T02:00:00"^^xsd:dateTime ;
     a CNTROavc:TimeInstant .
 

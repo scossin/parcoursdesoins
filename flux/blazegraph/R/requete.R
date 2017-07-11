@@ -17,7 +17,6 @@ evenements  <- SPARQL(url = endpoint_timelines,query = SPARQLqueries$evenements2
                            ns=ns)$results
 
 
-
 ## les dates sont en secondes puis le 1970-1-1
 evenements$datestartevent <- as.POSIXct(evenements$datestartevent, origin = "1970-01-01")
 evenements$dateendevent <- as.POSIXct(evenements$dateendevent, origin = "1970-01-01")
@@ -30,7 +29,7 @@ evenements$patient <- gsub(">$","",evenements$patient)
 load("domiciles.rdata")
 evenements <- merge (evenements, domiciles, by="patient")
 
-save(evenements, file="../../aggregation/evenements.rdata")
+save(evenements, file="../../evenements_consultation.rdata")
 
 
 
@@ -111,7 +110,7 @@ for (i in 1:length(top)){
   listes[[i]] <- recursive (top[i], df_hierarchy)
 }
 hierarchy <- listes
-save(file="../../aggregation/hierarchy.rdata",hierarchy)
+save(file="../../hierarchy.rdata",hierarchy)
 
 
 ## commande CURL : 

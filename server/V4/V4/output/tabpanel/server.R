@@ -20,6 +20,7 @@ function(input, output, session){
   fonctions_tabpanel$addPatientsToTabset(tabpanel) ## envoie le tabpanel sur l'ui 
   jslink$moveTabpanel(event_number = filtre$tabsetid, tabsetName = "mainTabset") ## modif de place
   fonctions_tabpanel$make_tableau(filtre) ## fait le tableau
+  fonctions_tabpanel$make_Npatients(filtre)
   fonctions_tabpanel$addplots_tabpanel(filtre) ## ajout les plots (ui) selon les sélections
   fonctions_tabpanel$make_plots_in_tabpanel(filtre) ## fait les plots
   fonctions_tabpanel$add_observers_tabpanel(filtre) ## observers sur tableau et checkbox

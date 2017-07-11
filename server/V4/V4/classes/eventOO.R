@@ -79,7 +79,7 @@ setRefClass(
         colonnes_SejourHospitalier <- c("nofinesset","RaisonSociale","libcategetab","dep","INSEE_COM")
         colonnes_tableau <- c(colonnes_tableau, colonnes_SejourHospitalier)
         if (agregat == "SejourMCO"){
-          colonnes_tableau <- c(colonnes_tableau, "UNV")
+          colonnes_tableau <- c(colonnes_tableau, "UNV","DP")
         }
         if (agregat == "SejourSSR"){
           colonnes_tableau <- c(colonnes_tableau, c("SSRadulte","SSRenfant"))
@@ -87,12 +87,24 @@ setRefClass(
         add_factors <- rep("factor",length(colonnes_tableau) - length(type_colonnes_tableau))
         type_colonnes_tableau <- c(type_colonnes_tableau, add_factors)
       } ## fin ajout attributs pour démo
+      
+      ## consultation : 
+      if (agregat == "Consultation"){
+        load("rdata/ATTR_Consultation.rdata")
+        subset_df_events <- merge (subset_df_events, ATTR_Consultation, by=c("patient","num"), all.x=T)
+        colonnes_Consultation <- c("RPPS","Nom","Prenom","FINESS","RaisonSociale","Commune","LibCommune",
+                                        "CodePostal","Spécialité","Etablissement")
+        colonnes_tableau <- c(colonnes_tableau, colonnes_Consultation)
+        add_factors <- rep("factor",length(colonnes_tableau) - length(type_colonnes_tableau))
+        type_colonnes_tableau <- c(type_colonnes_tableau, add_factors)
+      }
 
       
       ## devrait etre une fonction statique de eventOO.R mais pas de fonction statique en R5
       metadf <- create_metadf(colonne_id, colonnes_tableau, type_colonnes_tableau)
       
       # tabsetid <- paste0("tabset",event_number) ## avec js ça 
+      #filtres <<- list()
       filtres[[paste0("filtre",event_number)]] <<- new("Filtre",df=subset_df_events, metadf,tabsetid = event_number)
       set_df_events_selected() ## les events_selected par défaut si aucun filtre par l'utilisateur
     },
@@ -109,7 +121,7 @@ setRefClass(
     ### prend la hiérarchie en entrée et met le nombre de valeurs entre parenthèse
     ## renvoie une liste ; est utilisée par shinyTree
     get_type = function(hierarchy,get_hierarchylistN){
-      temp <- sqldf("select distinct patient, type from df_events") ## selectionne les différents types d'évènements
+      temp <- sqldf("select patient, type from df_events") ## selectionne les différents types d'évènements
       return(temp$type)
     },
     

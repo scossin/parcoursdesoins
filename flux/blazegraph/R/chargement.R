@@ -14,7 +14,7 @@ endpoint_timelines <- "http://127.0.0.1:8889/bigdata/namespace/timelines/sparql"
 
 #### Chargement des timelines :
 i <- "patient1"
-load("listeevents.rdata")
+load("listeevents_consultation.rdata")
 patients <- unique(listeevents$patientid)
 for (i in patients){
   print (i)

@@ -32,6 +32,11 @@ output_tree$add_observers_treeboutton <- function(event, jslink){
       cat("\t",treenumber , " : aucun élément sélectionné pour valider.")
       return(NULL)
     }
+
+    if (length(selection) > 1){
+      cat("\t",treenumber , " : plus de 2 éléments sélectionnés")
+      return(NULL)
+    }
     
     #### On n'a pas le droit de sélectionner s'il y a aucun event : 0 ou pas de parenthèse()
     Nselection <- sapply(selection, function(x) str_extract(x, pattern="[(][0-9]+[)]"))
@@ -61,6 +66,7 @@ output_tree$add_observers_treeboutton <- function(event, jslink){
     bool <- length(event$filtres) > 0
     
     #print (df_type_selected)
+    event$filtres <- list()
     event$set_df_type_selected(df_type_selected) ## création du filtre à cette étape
     cat ("\t création d'un filtre pour l'event ", event$get_event_number(), "\n")
     

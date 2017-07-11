@@ -3,3 +3,5 @@ shiny-examples/
 PlanAction.rmd
 .*
 !/.gitignore
+ExtractionMonoTable_CAT18_ToutePopulation_201707090738.csv
+flux/blazegraph/triplets/timelines/*

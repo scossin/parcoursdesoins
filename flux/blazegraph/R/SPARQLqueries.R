@@ -83,8 +83,10 @@ WHERE {GRAPH ?patient{
        a ?type .
 ?tevent CNTROavc:hasStartTime ?startevent . # avec un date de fin 1
 ?startevent CNTROavc:hasNormalizedTime ?datestartevent . # dont la forme normalisée est
-OPTIONAL{?event CNTROavc:inEtab ?lieu.
-        ?tevent CNTROavc:hasEndTime ?endevent . # avec un date de fin 1
+OPTIONAL{?event CNTROavc:in ?lieu.
+         }
+OPTIONAL{
+    ?tevent CNTROavc:hasEndTime ?endevent . # avec un date de fin 1
 		?endevent CNTROavc:hasNormalizedTime ?dateendevent .} # dont la forme normalisée est} # Un Sejour dans un etab
 }}
 ORDER by ?patient ?datestartevent",

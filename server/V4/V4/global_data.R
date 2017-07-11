@@ -5,3 +5,4 @@ evenements <- evenements %>% group_by(patient) %>% mutate(num = row_number()) ##
 evenements <- as.data.frame(evenements) ## sinon erreur bizarre
 load("output/leaflet/tab_spatial.rdata")
 
+load("rdata/consultation33selection.rdata")

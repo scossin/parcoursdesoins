@@ -135,7 +135,7 @@ setRefClass(
         
         ## encapsuler pour permettre au CSS de mettre cote à cote les graphiques d'une meme variable
         ajoutdiv <- paste0("<div id=factor_graphics_", tabsetid, colonne_cocher,">")
-        liste <- list(HTML(ajoutdiv),HTML("<h4>",colonne_cocher,"</h4>"),shiny::plotOutput(idbarplot,width = "50%"))
+        liste <- list(HTML(ajoutdiv),HTML("<h4>",colonne_cocher,"</h4>"),shiny::plotOutput(idbarplot,width = "100%"))
         return (do.call(tagList, liste))
         }
       # else if (classe == "integer") return (shiny::plotOutput(id))
@@ -158,7 +158,7 @@ setRefClass(
         ajoutdiv <- paste0("<div id=numeric_graphics_", tabsetid, colonne_cocher,">")
         # liste <- list(HTML(ajoutdiv),shiny::plotOutput(idplotly,width = '50%'),
         #               plotOutput(idhisto,width = '50%'), HTML("</div>"))
-        liste <- list(HTML(ajoutdiv),HTML("<h4>",colonne_cocher,"</h4>"),shiny::plotOutput(idboxplot,width = "50%"),HTML("</div>"))
+        liste <- list(HTML(ajoutdiv),HTML("<h4>",colonne_cocher,"</h4>"),shiny::plotOutput(idboxplot,width = "100%"),HTML("</div>"))
         return (do.call(tagList, liste))
       } else if (classe == "date") {
         iddates <- paste0("dates",colonne_cocher, "event",tabsetid) ## id du div HTML
@@ -245,6 +245,10 @@ setRefClass(
     
     get_plotsid = function(){
       return(paste0("plots",tabsetid))
+    },
+    
+    get_Npatientsid = function(){
+      return(paste0("Npatients",tabsetid))
     },
     
     set_checkbox_clics = function(checkbox_clics){

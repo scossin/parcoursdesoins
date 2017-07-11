@@ -75,9 +75,11 @@ numerique_hist_comparaison <- function(initial_x, index_selection, nom_variable)
 
 barplot_graphique <- function(x, nom_variable){
   #### pour ne pas modifier l'ordre des facteurs si on veut en mettre un
-  if (!is.factor(x)){
-    x <- as.factor(as.character(x))
-  }
+  # if (!is.factor(x)){
+  #   x <- as.factor(as.character(x))
+  # }
+  
+  x <- as.factor(as.character(x)) ## pour retirer toutes les valeurs à 0
   missing <- sum(is.na(x))
   tab <- table(x)
   nombres_titre <- paste ("N=",sum(tab), " (inconnu=",missing,")",sep="")
@@ -202,9 +204,12 @@ dates_graphique_comparaison <- function(initial_x, index_selection, nom_variable
 
 barplot_graphique_comparaison <- function(initial_x, index_selection, nom_variable){
   #### pour ne pas modifier l'ordre des facteurs si on veut en mettre un
-  if (!is.factor(initial_x)){
-    initial_x <- as.factor(as.character(initial_x))
-  }
+  # if (!is.factor(initial_x)){
+  #   initial_x <- as.factor(as.character(initial_x))
+  # }
+  
+  initial_x <- as.factor(as.character(initial_x)) ## pour retirer toutes les valeurs à 0
+  
   selection_x <- initial_x[index_selection]
   
   nf <- layout(matrix(c(1,2), ncol=2, byrow=T)) ### 2 graphes cote à cote

@@ -80,6 +80,7 @@ server <- shinyServer(function(input, output, session) {
     for (i in 1:length(values)){
       values[[i]]$event$set_df_events_selected()
       df_events_selected <- values[[i]]$event$df_events_selected
+      #str(df_events_selected)
       if (!is.null(df_events_selected)){
         id_parcours <- append(id_parcours,as.character(df_events_selected$patient))
       }

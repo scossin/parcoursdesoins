@@ -44,3 +44,11 @@ display: inline-block;
 [id^=plots] div {
   margin:auto;
 }
+
+
+
+.Npatients{
+font-size: 200%;
+text-align: center;
+margin-left: 40px;
+}

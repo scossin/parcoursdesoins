@@ -6,7 +6,7 @@ bool <- age < 18
 bool2 <- age > 75
 categorieAge <- ifelse (bool, "<18",ifelse(bool2,
                               ">75",">18 et <75"))
-df <- data.frame(patient = paste0("patient",1:100), age = age, sexe=c("H","F"),
+df <- data.frame(patient = paste0("patient",1:nrow(domiciles)), age = age, sexe=c("H","F"),
                  categorieAge=categorieAge)
 df <- merge (df, domiciles, by="patient")
 df$depdomicile <- 33

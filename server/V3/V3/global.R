@@ -145,6 +145,7 @@ finessSSR <- locEtab33SSR@data$nofinesset
 listeevents <- NULL
 set.seed(67)
 ### création des évènements :
+load("../../../RPPS/consultation33selection.rdata")
 i <- 2
 for (i in 1:100){
   patientid <- paste("patient",i,sep="")
@@ -231,6 +232,38 @@ for (i in 1:100){
                           group="Hospitalisation")
   listeevents <- rbind (listeevents,unevent)
   
+  
+  ## hospit
+  finess <- sample(finessUNV,1)
+  tempsinter <- abs(round(rnorm(1,10,10),0))*60*60*24
+  datehospit <-  datesortieSSR + tempsinter
+  dureehospit <-  abs(round(rnorm(1,4,2),0)+1)*60*60*24
+  datesortie <- datehospit + dureehospit
+  
+  bool <- rbinom(1,1,0.25) == 1
+  if (bool){
+
+    unevent <- create_event(patientid = patientid,
+                            finess=finess,
+                            nature=finess,
+                            start=datehospit,
+                            end=datesortie,
+                            group="Hospitalisation")
+    listeevents <- rbind (listeevents,unevent)
+  }
+  
+  ## consultation
+  rpps <- sample(as.character(consultation33selection$RPPS), 1)
+  tempsinter <- abs(round(rnorm(1,10,10),0))*60
+  dateconsultation <- datesortie + tempsinter
+  unevent <- create_event(patientid = patientid,
+                          finess=999,
+                          nature=rpps,
+                          start=dateconsultation,
+                          end=NA,
+                          group="Consultation")
+  listeevents <- rbind (listeevents,unevent)
+  
   ## deces
   datedeces <- sample(jour2010,1)
   datedeces<- as.POSIXct(datedeces)
@@ -245,7 +278,7 @@ for (i in 1:100){
 
 listeevents$end <- as.POSIXct(listeevents$end, origin = "1970-01-01") ## car NA présents
 
-# save(listeevents,file="../../../flux/blazegraph/R/listeevents.rdata")
+# save(listeevents,file="../../../flux/blazegraph/R/listeevents_consultation.rdata")
 
 
 ### Ajout content : contenu (image ou texte) de chaque item
