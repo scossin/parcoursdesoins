@@ -35,29 +35,32 @@ colnames(meta) <- c("code","label")
 ## rempalce les coordonnées par le référentiel WGS84
 meta$long <- coordonnees$X
 meta$lat <- coordonnees$Y
-meta$idEtab <- paste0("Etab",meta$code)
+meta$idEtab <- meta$code
 
 ### Création de triplets : 
 namespaces <- read.table("namespaces.csv",sep="\t", header=T, comment.char = "",
                          stringsAsFactors = F)
 source("RDF.R")
 rdf <- new("RDF",namespaces=namespaces)
-rdf$create_tripletspl(prefixe_sujet = "eig", sujet = meta$idEtab,
+rdf$create_tripletspl(prefixe_sujet = "datagouv", sujet = meta$idEtab,
                       prefixe_predicat = "geo", predicat = "long",
                       literal = meta$long, typeliteral = "float")
 
-rdf$create_tripletspl(prefixe_sujet = "eig", sujet = meta$idEtab,
+rdf$create_tripletspl(prefixe_sujet = "datagouv", sujet = meta$idEtab,
                       prefixe_predicat = "geo", predicat = "lat",
                       literal = meta$lat, typeliteral = "float")
 
-rdf$create_tripletspl(sujet = meta$idEtab, prefixe_sujet = "eig",
+rdf$create_tripletspl(sujet = meta$idEtab, prefixe_sujet = "datagouv",
                       prefixe_predicat = "rdfs", predicat = "label",
                       literal = meta$label, typeliteral = "string")
 
-rdf$create_tripletspl(prefixe_sujet = "eig", sujet = meta$idEtab,
-                      prefixe_predicat = "eig", predicat = "hasCode",
+rdf$create_tripletspl(prefixe_sujet = "datagouv", sujet = meta$idEtab,
+                      prefixe_predicat = "datagouv", predicat = "hasCode",
                       literal = meta$code, typeliteral = "string")
 
+rdf$create_tripletspo(prefixe_sujet = "datagouv", sujet = meta$idEtab,
+                      prefixe_predicat = "rdf", predicat = "type",
+                      prefixe_objet = "datagouv", objet = "Etablissement")
 rdf$serializeandwrite("codesFINESS.rdf")
 ## passage au format turtle car plus lisibles : 
 XMLtoTurtleCmmande <- "rapper -i rdfxml codesFINESS.rdf -o turtle > codesFINESS.ttl"

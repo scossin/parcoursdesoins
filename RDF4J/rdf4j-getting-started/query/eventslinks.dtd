@@ -1,0 +1,22 @@
+<!ELEMENT eventslinks (event+, link*)>
+<!ELEMENT event (eventType,predicate*)>
+<!ATTLIST event number CDATA #REQUIRED>
+<!ELEMENT eventType (#PCDATA)>
+<!ELEMENT predicate (numeric|factor|date)>
+
+<!ELEMENT numeric (predicateType, minValue, maxValue)>
+<!ELEMENT date (predicateType, minValue, maxValue)>
+<!ELEMENT predicateType (#PCDATA)>
+<!ELEMENT minValue (#PCDATA)>
+<!ELEMENT maxValue (#PCDATA)>
+
+<!ELEMENT factor (predicateType, value+)>
+<!ELEMENT value (#PCDATA)>
+
+<!ELEMENT link (event1,event2,predicate1,predicate2,operator,minValue,maxValue)>
+<!ELEMENT event1 (#PCDATA)>
+<!ELEMENT event2 (#PCDATA)>
+<!ELEMENT predicate1 (#PCDATA)>
+<!ELEMENT predicate2 (#PCDATA)>
+<!ELEMENT operator (#PCDATA)>
+

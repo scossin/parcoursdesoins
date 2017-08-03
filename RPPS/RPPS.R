@@ -2,6 +2,11 @@
 RPPS <- read.table("ExtractionMonoTable_CAT18_ToutePopulation_201707090738.csv",sep=";",header = T,quote="",
                    comment.char = "")
 
+bool <- grepl("nicolas",RPPS$X.Nom.d.exercice.,ignore.case = T)
+bool2 <- grepl("elise",RPPS$X.Prénom.d.exercice.,ignore.case = T)
+bool3 <- bool & bool2
+any(bool)
+voir <- subset (RPPS, bool3)
 str(RPPS)
 
 ## je veux la neurologie et la médecine générale : 

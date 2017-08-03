@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE events SYSTEM "events.dtd">
+<events>
+	<event number="0">
+		<eventType>SejourMCO</eventType>
+		<predicate>
+			<numeric>
+				<predicateType>hasMedecin</predicateType>
+				<minValue>10</minValue>
+				<maxValue>20</maxValue>
+			</numeric>
+		</predicate>
+		<predicate>
+			<factor>
+				<predicateType>hasDP</predicateType>
+				<value>15115457</value>
+				<value>45656244</value>
+				<value>1</value>
+				<value>2</value>
+				<value>pellegrin</value>
+			</factor>
+		</predicate>	
+	</event>
+		<event number="1">
+		<eventType>SejourMCO</eventType>
+		<predicate>
+			<numeric>
+				<predicateType>hasMedecin</predicateType>
+				<minValue>10</minValue>
+				<maxValue>20</maxValue>
+			</numeric>
+		</predicate>	
+	</event>
+	<event number="1">
+		<eventType>SejourMCO</eventType>
+		<predicate>
+			<date>
+				<predicateType>hasBeginning</predicateType>
+				<minValue>1970_10_10</minValue>
+				<maxValue>2016_10_10</maxValue>
+			</date>
+		</predicate>	
+	</event>
+</events>

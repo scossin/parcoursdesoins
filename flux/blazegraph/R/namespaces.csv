@@ -1,8 +1,9 @@
 namespace	prefixe
 http://www.w3.org/2003/01/geo/wgs84_pos#	geo
-http://www.eigsante2017.fr/	eig
+http://www.eigsante2017.fr#	eig
 http://purl.org/dc/elements/1.1/	dc
 http://www.w3.org/2001/XMLSchema#	xsd
 http://www.w3.org/2000/01/rdf-schema#	rdfs
 http://www.eigsante2017.fr/CNTROavc#	CNTROavc
 http://www.w3.org/1999/02/22-rdf-syntax-ns#	rdf
+https://www.data.gouv.fr/FINESS#	datagouv
