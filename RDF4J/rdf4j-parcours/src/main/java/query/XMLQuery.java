@@ -2,6 +2,7 @@ package query;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ import exceptions.UnfoundTerminologyException;
 import ontologie.EIG;
 import ontologie.EventOntology;
 import parameters.MainResources;
+import parameters.Util;
 import query.XMLFile.XMLelement;
 
 
@@ -100,8 +102,8 @@ public class XMLQuery implements Query {
 	 * @throws UnfoundTerminologyException
 	 * @throws OperatorException 
 	 */
-	public XMLQuery(File xmlFile) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException{
-		xml = new XMLFile(xmlFile);
+	public XMLQuery(XMLFile xmlFile) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException{
+		this.xml = xmlFile;
 		// events element description in the XML :
 		NodeList eventNodes = xml.getEventNodes();
 		for (int i = 0 ; i<eventNodes.getLength() ; i++){
@@ -276,13 +278,21 @@ public class XMLQuery implements Query {
 		
 		
 		// Order by : 
-		queryString += "ORDER BY ?context";
+		queryString += "ORDER BY ?context ";
+		
+		// and numEvent : 
+		for (int numberEvent : eventQuery.keySet()){
+			queryString += "?event" + numberEvent + EIG.hasNum + " "; // ?event0hasNum : the event number in the timeline
+		}
+		
 		return(queryString);
 	}
 	
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException {
 		//QueryClass queryClass = new QueryClass(new File(Util.queryFolder+"queryMCOSSR3day.xml"));
-		XMLQuery queryClass = new XMLQuery(new File(MainResources.queryFolder+"queryMCOSSR3day.xml"));
+		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "queryMCOSSR3day.xml" );
+		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdFile);
+		XMLQuery queryClass = new XMLQuery(new XMLFile(xmlFile, dtdFile));
 		System.out.println(queryClass.getSPARQLQueryString());
 	}
 

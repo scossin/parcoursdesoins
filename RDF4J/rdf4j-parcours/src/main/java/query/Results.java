@@ -1,7 +1,7 @@
 package query;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,21 +31,23 @@ public class Results {
 		return(con);
 	}
 	
-	private XMLQuery queryClass ;
+	private Query query ;
 	
 	private SimpleDataset dataSet;
 	
-	public Results (String sparqlEndpoint, XMLQuery queryClass){
+	public Results (String sparqlEndpoint, Query query){
 		this.con = new DBconnection(sparqlEndpoint);
-		this.queryClass = queryClass;
+		this.query = query;
 	}
-	public Results (String sparqlEndpoint, XMLQuery queryClass, SimpleDataset dataSet){
-		this(sparqlEndpoint,queryClass);
+	
+	public Results (String sparqlEndpoint, Query query, SimpleDataset dataSet){
+		this(sparqlEndpoint,query);
 		this.dataSet = dataSet;
 	}
 	
+	
 	public TupleQueryResult sendQuery(){
-		TupleQuery keywordQuery = con.getDBcon().prepareTupleQuery(queryClass.getSPARQLQueryString());
+		TupleQuery keywordQuery = con.getDBcon().prepareTupleQuery(query.getSPARQLQueryString());
 		keywordQuery.setDataset(dataSet);
 		TupleQueryResult keywordQueryResult = keywordQuery.evaluate();
 		return(keywordQueryResult);
@@ -53,7 +55,7 @@ public class Results {
 	
 	public static void main(String[] args) throws NumberFormatException, ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, IncomparableValueException, UnfoundTerminologyException, OperatorException {
 		SimpleDataset dataset = new SimpleDataset();
-		int n = 1;
+		int n = 10;
 		IRI patients[] = new IRI[n];
 		for (int i = 0; i<n ; i++){
 			String patient_n = "p" + (i+1);
@@ -64,14 +66,20 @@ public class Results {
 		}
 		
 		
-		XMLQuery queryClass = new XMLQuery(new File(MainResources.queryFolder+"queryMCOSSRafter.xml"));
-		Results results = new Results(Util.sparqlEndpoint,queryClass,dataset);
+		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "queryMCOSSR3day.xml" );
+		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdFile);
+		Query query = new XMLQuery(new XMLFile(xmlFile, dtdFile));
+		
+		Results results = new Results(Util.sparqlEndpoint,query,dataset);
 		TupleQueryResult keywordQueryResult = results.sendQuery();
 		while(keywordQueryResult.hasNext()){
 			BindingSet set = keywordQueryResult.next();
-			System.out.println("resultat : " + set.getValue("context"));
+			IRI context = (IRI) set.getValue("context");
+			System.out.println(context.getLocalName());
 			break;
 		}
+		
+		keywordQueryResult.close();
+		results.getCon().close();
 	}
-
 }

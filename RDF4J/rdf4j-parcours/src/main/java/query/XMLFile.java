@@ -222,7 +222,6 @@ public class XMLFile {
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "test.xml" );
 		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdFile);
 		
-		
 		XMLFile xml = new XMLFile(xmlFile, dtdFile);
 		
 		NodeList nList = xml.getEventNodes();

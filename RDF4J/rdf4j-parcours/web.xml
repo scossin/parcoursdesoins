@@ -46,4 +46,14 @@
   </servlet-mapping>
   
   
+   <servlet>
+    <servlet-name>CheckConnection</servlet-name>
+    <servlet-class>servlet.CheckConnection</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>CheckConnection</servlet-name>
+    <url-pattern>/connection</url-pattern>
+  </servlet-mapping>
+  
 </web-app>

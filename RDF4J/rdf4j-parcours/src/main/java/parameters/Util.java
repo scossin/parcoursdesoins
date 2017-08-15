@@ -88,7 +88,7 @@ public class Util {
 	/**
 	 * An immutable URL to the sparqlEndpoint used by {@link DBconnection}
 	 */
-	public final static String sparqlEndpoint = "http://127.0.0.1:8889/bigdata/namespace/timelines/sparql";
+	public final static String sparqlEndpoint = "http://172.17.0.2:8080/bigdata/namespace/timelines/sparql";
 
 
 	/** [.]ttl$ */ 

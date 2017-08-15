@@ -1,0 +1,10 @@
+14:50:57.555 [main] ERROR servlet.DockerDB - Environnement variable + BlazegraphDB_PORT not found
+14:52:59.280 [main] ERROR servlet.DockerDB - Environnement variable + "BlazegraphDB_PORT" not found
+14:54:12.766 [main] ERROR servlet.DockerDB - Environnement variable "BlazegraphDB_PORT" not found
+15:14:07.624 [main] ERROR servlet.DockerDB - Environnement variable "BLAZEGRAPHDB_PORT" not found
+18:18:17.496 [main] INFO  ontologie.EventOntology - loading ontology/time.ttl
+18:22:29.812 [main] INFO  ontologie.EventOntology - loading ontology/time.ttl
+18:22:39.745 [main] INFO  ontologie.EventOntology - loading ontology/time.ttl
+18:25:58.427 [main] INFO  ontologie.EventOntology - loading ontology/time.ttl
+18:30:02.553 [main] INFO  ontologie.EventOntology - loading ontology/time.ttl
+18:33:15.024 [main] INFO  ontologie.EventOntology - loading ontology/time.ttl
