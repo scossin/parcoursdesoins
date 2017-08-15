@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE eventslinks SYSTEM "eventslinks.dtd">
+<eventslinks>
+	<event number="0">
+		<eventType>SejourMCO</eventType>	
+	</event>
+		<event number="1">
+		<eventType>SejourMCO</eventType>	
+	</event>
+		<link>
+		<event1>0</event1>
+		<event2>1</event2>
+		<predicate1>hasEnd</predicate1>
+		<predicate2>hasBeginning</predicate2>
+		<operator>diff</operator>
+		<minValue>0</minValue>
+		<maxValue></maxValue>
+	</link>
+</eventslinks>

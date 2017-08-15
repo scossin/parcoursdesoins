@@ -1,0 +1,10 @@
+18:27:28.450 [main] INFO  ontologie.EventOntology - loading ontology/time.ttl
+18:27:29.192 [main] INFO  parameters.TestSet - test...
+18:27:29.193 [main] ERROR parameters.TestSet - exceptions.UnfoundEventException
+	at parameters.TestSet.main(TestSet.java:22)
+
+19:12:26.176 [main] INFO  ontologie.EventOntology - loading ontology/time.ttl
+19:12:26.823 [main] INFO  parameters.TestSet - test...
+19:12:26.825 [main] ERROR parameters.TestSet - exceptions.UnfoundEventException
+	at parameters.TestSet.main(TestSet.java:25)
+
