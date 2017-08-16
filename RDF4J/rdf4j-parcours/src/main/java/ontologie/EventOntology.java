@@ -50,9 +50,6 @@ public class EventOntology {
 	 */
 	private static HashSet<Event> events ;
 	
-	private static HashMap<IRI, Terminology> resourcesTerminology ; 
-	
-	
 	public static boolean isEvent(String eventName){
 		IRI eventIRI = Util.vf.createIRI(EIG.NAMESPACE, eventName);
 		Iterator<Event> iter = events.iterator();
@@ -99,18 +96,15 @@ public class EventOntology {
 	 * Get all predicates of an event : look for this event predicates and its parent predicates
 	 * @param event An instance of class {@link Event}
 	 * @return A set of predicates IRI
+	 * @throws UnfoundEventException 
 	 */
-	public static Set<IRI> getPredicatesOfEvent(Event event){
+	public static Set<IRI> getPredicatesOfEvent(Event event) throws UnfoundEventException{
 		Set<IRI> predicates = new HashSet<IRI>();
 		predicates.addAll(event.getPredicates());
 		for (IRI parent : event.getParents()){ // get all parent predicates recursively
-			try {
 				Event parentEvent = getEvent(parent);
 				Set<IRI> predicatessparents = getPredicatesOfEvent(parentEvent);
 				predicates.addAll(predicatessparents);
-			} catch (UnfoundEventException e) {
-				System.out.println("Unfound parent event : " + e.getMessage());
-			}	
 		}
 		return(predicates);
 	}
@@ -271,19 +265,7 @@ public class EventOntology {
 			e.printStackTrace();
 		}
 		
-		// Step 1 : load terminologies :  
-		resourcesTerminology = new HashMap<IRI, Terminology>();
 		   
-		      // FINESS code is a french terminology for healthcare institution
-		InputStream finessInput = Util.classLoader.getResourceAsStream(MainResources.finessTerminology);
-		resourcesTerminology.put(FINESS.getClassNameIRI(), new TerminologyInstance(finessInput, 
-				Util.DefaultRDFformat, FINESS.getClassNameIRI()));
-		try {
-			finessInput.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		// Step 2 : list all classes rdf:SubClassOf eig:Event 
 		Set<IRI> eventsIRI = new HashSet<IRI>();
@@ -340,18 +322,9 @@ public class EventOntology {
 		events=tempEvents; 
 }
 
-	public static boolean isRecognizedTerminology(IRI valueIRI) {
-		return(resourcesTerminology.containsKey(valueIRI));
-	}
 	
 	public static boolean isRecognizedDatatype(IRI datatypeIRI){ 
-		return(isRecognizedTerminology(datatypeIRI) || new XMLSchemaDatatypeHandler().isRecognizedDatatype(datatypeIRI));
+		return(Terminology.isRecognizedClassName(datatypeIRI) || new XMLSchemaDatatypeHandler().isRecognizedDatatype(datatypeIRI));
 	}
 	
-	public static boolean isInstanceOfTerminology(IRI terminologyIRI, String instanceName) throws UnfoundTerminologyException {
-		if (!resourcesTerminology.containsKey(terminologyIRI)){
-			throw new UnfoundTerminologyException (terminologyIRI.stringValue());
-		}
-		return(resourcesTerminology.get(terminologyIRI).isInstance(instanceName));
-	}
 }

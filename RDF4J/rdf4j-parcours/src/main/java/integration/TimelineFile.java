@@ -20,9 +20,10 @@ import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
 import ontologie.EIG;
-import ontologie.FINESS;
 import ontologie.TIME;
+import ontologie.Terminology.TerminoEnum;
 import parameters.MainResources;
+import parameters.Util;
 
 public class TimelineFile {
 	
@@ -35,7 +36,11 @@ public class TimelineFile {
 		model.setNamespace(TIME.PREFIX, TIME.NAMESPACE);
 		model.setNamespace(EIG.PREFIX, EIG.NAMESPACE);
 		model.setNamespace(XMLSchema.PREFIX, XMLSchema.NAMESPACE);
-		model.setNamespace(FINESS.PREFIX, FINESS.NAMESPACE);
+		
+		// loop over terminologies
+		for (TerminoEnum termino : TerminoEnum.values()){
+			model.setNamespace(termino.getTermino().getPrefix(), termino.getTermino().getNAMESPACE());
+		}
 		return(model);
 	}
 	
@@ -60,7 +65,7 @@ public class TimelineFile {
 		}
 		try{
 			FileOutputStream out = new FileOutputStream(file);
-			Rio.write(model, out, RDFFormat.TURTLE);
+			Rio.write(model, out, Util.DefaultRDFformat);
 			System.out.println(file.getName() + " successfully created/updated");
 		} finally{
 			model.clear(); // clear the model for the next call

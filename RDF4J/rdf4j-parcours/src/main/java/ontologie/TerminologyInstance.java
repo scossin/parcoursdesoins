@@ -19,10 +19,12 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
+import ontologie.Terminology.TerminoEnum;
 import parameters.MainResources;
 import parameters.Util;
 
-public class TerminologyInstance implements Terminology {
+@Deprecated
+public class TerminologyInstance {
 
 	private IRI terminologyIRI;
 	private String instanceNamespace;
@@ -71,7 +73,7 @@ public class TerminologyInstance implements Terminology {
 		InputStream in = Util.classLoader.getResourceAsStream(MainResources.finessTerminology);
 		//String baseURI = EIG.NAMESPACE;
 
-		IRI classOfInstance = FINESS.getClassNameIRI();
+		IRI classOfInstance = TerminoEnum.FINESS.getTermino().getClassNameIRI();
 		System.out.println(classOfInstance.stringValue());
 		TerminologyInstance terminologyInstance = new TerminologyInstance(in, 
 				RDFFormat.TURTLE, classOfInstance);

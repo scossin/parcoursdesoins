@@ -2,13 +2,6 @@
 RPPS <- read.table("ExtractionMonoTable_CAT18_ToutePopulation_201707090738.csv",sep=";",header = T,quote="",
                    comment.char = "")
 
-bool <- grepl("nicolas",RPPS$X.Nom.d.exercice.,ignore.case = T)
-bool2 <- grepl("elise",RPPS$X.Prénom.d.exercice.,ignore.case = T)
-bool3 <- bool & bool2
-any(bool)
-voir <- subset (RPPS, bool3)
-str(RPPS)
-
 ## je veux la neurologie et la médecine générale : 
 RPPS$X.Libellé.savoir.faire. <- gsub("^\"|\"$","",RPPS$X.Libellé.savoir.faire.)
 sort(table(RPPS$X.Libellé.savoir.faire.))
@@ -34,3 +27,5 @@ consultation33selection$Etablissement <- ifelse (bool, "non","oui")
 colnames(consultation33selection) <- c("RPPS","Nom","Prenom","FINESS","RaisonSociale","Commune","LibCommune",
                                        "CodePostal","Spécialité","Etablissement")
 save(consultation33selection, file="consultation33selection.rdata")
+
+write.table(consultation33selection, "RPPS.csv",sep=",",col.names =T, row.names=F, quote=F)

@@ -23,7 +23,8 @@ public class DockerDB {
 	public static final String dbAlias = "BlazegraphDB" ;
 	
 	public enum Endpoints {
-		TIMELINES("/bigdata/namespace/timelines/sparql");
+		TIMELINES("/bigdata/namespace/timelines/sparql"),
+		TERMINOLOGIES("/bigdata/namespace/terminologies/sparql");
 		
 		private final String url;
 		
@@ -36,7 +37,6 @@ public class DockerDB {
 		}
 		
 	}
-	public static final String Endpoint = "/bigdata/namespace/timelines/sparql";
 	
 	
 	private static String getEnvValue() throws NullPointerException{
@@ -53,6 +53,12 @@ public class DockerDB {
 	}
 	
 	public static String getEndpointIPadress(Endpoints endpoint) throws NullPointerException{
+		String envValue = getEnvValue().replaceAll("^tcp", "http");
+		envValue += endpoint.getURL();
+		return(envValue);
+	}
+	
+	public static String getEndpointIPadress(String IPadress, String port, Endpoints endpoint) throws NullPointerException{
 		String envValue = getEnvValue().replaceAll("^tcp", "http");
 		envValue += endpoint.getURL();
 		return(envValue);

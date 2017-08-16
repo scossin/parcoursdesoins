@@ -22,7 +22,7 @@ public class Hello extends HttpServlet {
 	public void init() throws ServletException {
 		logger.info("loading ...");
 		try {
-			EventOntology.isInstanceOfTerminology(FINESS.getClassNameIRI(), "3300002172");
+			EventOntology.isEvent("SejourMCO");
 		} catch (UnfoundTerminologyException e) {
 			// TODO Auto-generated catch block
 			logger.info("an error occured");

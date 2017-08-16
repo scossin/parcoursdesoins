@@ -149,20 +149,13 @@ public class EventInXMLfile {
 		filterStatements.add(statement);
 	}
 
-	/**
-	 * Return the good format of a IRI for a SPARQL query
-	 * @param oneIRI a IRI (subject, predicate or object)
-	 * @return String for a SPARQL query
-	 */
-	private String formatIRI4query (IRI oneIRI){
-		return("<" + oneIRI.stringValue()+">");
-	}
+
 	
 	/**
 	 * Add the type of this event in the SPARQL statement where (ex : ?event0 a SejourHospitalier)
 	 */
 	private void setRDFtypeStatement (){
-		addWhereStatement(eventVariable, formatIRI4query(RDF.TYPE), formatIRI4query(this.event.getEventIRI()));
+		addWhereStatement(eventVariable, Query.formatIRI4query(RDF.TYPE), Query.formatIRI4query(this.event.getEventIRI()));
 	}
 	
 	/**
@@ -172,7 +165,7 @@ public class EventInXMLfile {
 	private void setHasNumStatement (){
 		IRI hasNum = Util.vf.createIRI(EIG.NAMESPACE, EIG.hasNum);
 		String numVariable = getVariableName(EIG.hasNum) ; 
-		addWhereStatement(eventVariable, formatIRI4query(hasNum), numVariable);
+		addWhereStatement(eventVariable, Query.formatIRI4query(hasNum), numVariable);
 	}
 	
 	/**
@@ -196,7 +189,7 @@ public class EventInXMLfile {
 			
 		} else {
 			String variableName = getVariableName(predicate.getLocalName());
-			addWhereStatement(eventVariable, formatIRI4query(predicate), variableName);	
+			addWhereStatement(eventVariable, Query.formatIRI4query(predicate), variableName);	
 		}
 	}
 	
@@ -217,11 +210,11 @@ public class EventInXMLfile {
 		String variableInstantStart = eventVariable + "Start";
 		String variableInstantStartValue = getVariableName(TIME.HASBEGINNING.getLocalName());
 		// this event hasBeginning this node 
-		addWhereStatement(eventVariable, formatIRI4query(TIME.HASBEGINNING), variableInstantStart);
+		addWhereStatement(eventVariable, Query.formatIRI4query(TIME.HASBEGINNING), variableInstantStart);
 		// the start of the event is a timeInstant
-		addWhereStatement(variableInstantStart, formatIRI4query(RDF.TYPE), formatIRI4query(TIME.INSTANT));
+		addWhereStatement(variableInstantStart, Query.formatIRI4query(RDF.TYPE), Query.formatIRI4query(TIME.INSTANT));
 		// the date value is
-		addWhereStatement(variableInstantStart, formatIRI4query(TIME.INXSDDATETIME), 
+		addWhereStatement(variableInstantStart, Query.formatIRI4query(TIME.INXSDDATETIME), 
 				variableInstantStartValue);
 	}
 	
@@ -232,11 +225,11 @@ public class EventInXMLfile {
 		String variableInstantEnd = eventVariable + "End";
 		String variableInstantEndValue = getVariableName(TIME.HASEND.getLocalName());
 		// this event hasBeginning this node 
-		addWhereStatement(eventVariable, formatIRI4query(TIME.HASEND), variableInstantEnd);
+		addWhereStatement(eventVariable, Query.formatIRI4query(TIME.HASEND), variableInstantEnd);
 		// the start of the event is a timeInstant
-		addWhereStatement(variableInstantEnd, formatIRI4query(RDF.TYPE), formatIRI4query(TIME.INSTANT));
+		addWhereStatement(variableInstantEnd, Query.formatIRI4query(RDF.TYPE), Query.formatIRI4query(TIME.INSTANT));
 		// the date value is
-		addWhereStatement(variableInstantEnd, formatIRI4query(TIME.INXSDDATETIME), 
+		addWhereStatement(variableInstantEnd, Query.formatIRI4query(TIME.INXSDDATETIME), 
 				variableInstantEndValue);
 	}
 	
@@ -285,7 +278,7 @@ public class EventInXMLfile {
 		}
 		
 		// finally add the where statement :
-		addWhereStatement(eventVariable, formatIRI4query(predicateIRI), numericVariable);
+		addWhereStatement(eventVariable, Query.formatIRI4query(predicateIRI), numericVariable);
 	}
 	
 	/**
@@ -366,7 +359,7 @@ public class EventInXMLfile {
 				throw new LiteralUtilException(predicateType + " doesn't expect a date value" +
 						" but a " + valueIRI.stringValue() + "datatype");
 			}
-			addWhereStatement(eventVariable, formatIRI4query(predicateIRI), dateVariable);	
+			addWhereStatement(eventVariable, Query.formatIRI4query(predicateIRI), dateVariable);	
 		}
 			
 		
@@ -434,18 +427,14 @@ public class EventInXMLfile {
 		for (int i = 0; i<factorValuesNodes.getLength() ; i++){
 			String instanceName = factorValuesNodes.item(i).getTextContent();
 			// check if instance belongs to the terminology
-			if (!EventOntology.isInstanceOfTerminology(terminologyIRI, instanceName)){
-				throw new UnfoundInstanceOfTerminologyException(instanceName,terminologyIRI.stringValue());
-			} else {
-				IRI instanceIRI = Util.vf.createIRI(terminologyIRI.stringValue(), instanceName);
-				filter += "("+formatIRI4query(instanceIRI) + ") ";	
-			}
+			IRI instanceIRI = Util.vf.createIRI(terminologyIRI.stringValue(), instanceName);
+			filter += "("+Query.formatIRI4query(instanceIRI) + ") ";	
 		}
 		filter = filter + "}";
 		addFilterStatement(filter);
 		
 		// finally, add the whereStatement :
-		addWhereStatement(eventVariable, formatIRI4query(predicateIRI), factorVariable);
+		addWhereStatement(eventVariable, Query.formatIRI4query(predicateIRI), factorVariable);
 	}
 	
 	/**
@@ -473,20 +462,16 @@ public class EventInXMLfile {
 		String filter = "FILTER ("+ factorVariable + " IN ( " + "";
 		for (int i = 0; i<factorValuesNodes.getLength() ; i++){
 			String instanceName = factorValuesNodes.item(i).getTextContent();
-			// check if instance belongs to the terminology
-			if (!EventOntology.isInstanceOfTerminology(terminologyIRI, instanceName)){
-				throw new UnfoundInstanceOfTerminologyException(instanceName,terminologyIRI.getLocalName());
-			} else {
-				IRI instanceIRI = Util.vf.createIRI(terminologyIRI.stringValue(), instanceName);
-				filter += formatIRI4query(instanceIRI) + ",";
-			}
+			// doesn'check if instance belongs to the terminology
+			IRI instanceIRI = Util.vf.createIRI(terminologyIRI.stringValue(), instanceName);
+			filter += Query.formatIRI4query(instanceIRI) + ",";
 		}
 		filter = filter.replaceAll("[,]$", ""); // remove last ,
 		filter += "))"; // clause filter statement
 		addFilterStatement(filter);
 		
 		// finally, add the whereStatement :
-		addWhereStatement(eventVariable, formatIRI4query(predicateIRI), factorVariable);
+		addWhereStatement(eventVariable, Query.formatIRI4query(predicateIRI), factorVariable);
 	}
 	
 	

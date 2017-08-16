@@ -1,0 +1,13 @@
+@prefix asip:    <http://esante.gouv.fr#> .
+@prefix eig:     <http://www.eigsante2017.fr#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+asip:RPPS${RPPS} a asip:RPPS ;
+	rdfs:label "${RPPS}" ;
+	asip:Nom "${Nom}"	;
+	asip:Prenom "${Prenom}"	;
+	asip:Commune "${Commune}"	;
+	asip:LibCommune "${LibCommune}"	;
+	asip:CodePostal "${CodePostal}"	;
+	asip:Specialite "${Specialite}"	;
+	asip:Etablissement "${Etablissement}"	.

@@ -1,8 +1,10 @@
 package query;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -66,19 +68,29 @@ public class Results {
 		}
 		
 		
-		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "queryMCOSSR3day.xml" );
+		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "queryMCO.xml" );
 		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdFile);
 		Query query = new XMLQuery(new XMLFile(xmlFile, dtdFile));
 		
-		Results results = new Results(Util.sparqlEndpoint,query,dataset);
+		Results results = new Results(Util.sparqlEndpoint,query);
 		TupleQueryResult keywordQueryResult = results.sendQuery();
+		
+		ArrayList<IRI> eventLists = new ArrayList<IRI>();
+		
 		while(keywordQueryResult.hasNext()){
 			BindingSet set = keywordQueryResult.next();
-			IRI context = (IRI) set.getValue("context");
-			System.out.println(context.getLocalName());
-			break;
+			IRI event0 = (IRI) set.getValue("event0");
+			eventLists.add(event0);
 		}
 		
+		FileWriter writer = new FileWriter("eventLists.txt"); 
+		for (IRI event : eventLists){
+			String str = event.stringValue() + "\n";
+			writer.write(str);
+		}
+		writer.close();
+		
+		System.out.println(eventLists.size());
 		keywordQueryResult.close();
 		results.getCon().close();
 	}
