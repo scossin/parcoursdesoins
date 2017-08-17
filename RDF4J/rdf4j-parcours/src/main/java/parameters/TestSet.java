@@ -12,5 +12,11 @@ public class TestSet {
 	
 	public static void main(String[] args) throws UnfoundTerminologyException, UnfoundEventException, InterruptedException {
 		// TODO Auto-generated method stub
+		String fileName = MainResources.timelinesFolder;
+		System.out.println(fileName);
+		//Util.classLoader.getResourceAsStream(fileName);
+		System.out.println(Util.classLoader.getResource(fileName).getPath());
+		
+		
 
 }}

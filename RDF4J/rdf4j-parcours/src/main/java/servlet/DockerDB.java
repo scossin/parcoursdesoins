@@ -59,7 +59,7 @@ public class DockerDB {
 	}
 	
 	public static String getEndpointIPadress(String IPadress, String port, Endpoints endpoint) throws NullPointerException{
-		String envValue = getEnvValue().replaceAll("^tcp", "http");
+		String envValue = IPadress + ":" + port;
 		envValue += endpoint.getURL();
 		return(envValue);
 	}

@@ -32,6 +32,7 @@ import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
 import parameters.Util;
+import terminology.Terminology;
 
 /**
  * This class represents an ontology of events. 
@@ -78,7 +79,7 @@ public class EventOntology {
 				return(unEvent);
 			}
 		}
-		throw new UnfoundEventException (eventIRI.getLocalName()) ;
+		throw new UnfoundEventException (logger, eventIRI.getLocalName()) ;
 	}
 	
 	/**

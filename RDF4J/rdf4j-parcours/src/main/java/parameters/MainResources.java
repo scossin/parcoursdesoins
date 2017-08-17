@@ -6,6 +6,9 @@ package parameters;
  * @author cossin
  */
 public class MainResources {
+	
+	public final static String directoryMainResources = "src/main/resources/";
+	
 	/**
 	 * The path to the ontologie folder (relative to this project folder)
 	 */

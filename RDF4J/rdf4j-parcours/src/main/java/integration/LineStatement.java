@@ -1,6 +1,7 @@
 package integration;
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -11,6 +12,8 @@ import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import exceptions.InvalidContextException;
 import exceptions.UnfoundEventException;
@@ -22,6 +25,11 @@ import ontologie.Event;
 import ontologie.EventOntology;
 import ontologie.TIME;
 import parameters.Util;
+import servlet.DockerDB;
+import servlet.DockerDB.Endpoints;
+import terminology.Terminology;
+import terminology.TerminologyServer;
+import terminology.Terminology.TerminoEnum;
 
 /**
  * A class to transform statements in a CSV file to statements in RDF. <br>
@@ -42,6 +50,8 @@ import parameters.Util;
 
 public class LineStatement {
 	
+	final static Logger logger = LoggerFactory.getLogger(LineStatement.class);
+	
 	/**
 	 * First thing checked : number of expected columns in the CSV file
 	 */
@@ -51,6 +61,8 @@ public class LineStatement {
 	 * IRI of the contextName
 	 */
 	private IRI contextIRI;
+	
+	private String columnSeparator;
 	
 	/**
 	 * Object of class Event retrieved with the eventName(eventType)
@@ -73,6 +85,9 @@ public class LineStatement {
 	private IRI idEventIRI;
 	
 
+	
+	private HashMap<IRI, Set<IRI>> instancesOfTerminology ;
+	
 	/**
 	 * 
 	 * @param line A line of a CSV file for example
@@ -83,7 +98,14 @@ public class LineStatement {
 	 * @throws InvalidContextException if contextName format is incorrect
 	 * @throws UnfoundTerminologyException if predicate is an objectProperty and instance is not found in terminology
 	 */
-	public LineStatement (String line, String columnSeparator) throws UnfoundEventException, UnfoundPredicatException, InvalidContextException, ParseException, UnfoundTerminologyException{
+	
+	public LineStatement (String columnSeparator, HashMap<IRI, Set<IRI>> instancesOfTerminology) {
+		this.instancesOfTerminology = instancesOfTerminology;
+		this.columnSeparator = columnSeparator;
+	}
+	
+	public void addLineStatement (String line) throws UnfoundEventException, UnfoundPredicatException, InvalidContextException, ParseException, UnfoundTerminologyException, UnfoundInstanceOfTerminologyException{
+		
 		String[] columns = line.split(columnSeparator);
 		checknColumns(columns.length);
 		
@@ -187,9 +209,10 @@ public class LineStatement {
 	 * @throws ParseException If the literal can't be made
 	 * @throws UnfoundPredicatException If the predicate is not found
 	 * @throws UnfoundTerminologyException If the instance is not described in the terminology
+	 * @throws UnfoundInstanceOfTerminologyException 
 	 */
 
-	private void setPredicateValue(String predicate, String objValue) throws UnfoundPredicatException, ParseException, UnfoundTerminologyException {	
+	private void setPredicateValue(String predicate, String objValue) throws UnfoundPredicatException, ParseException, UnfoundTerminologyException, UnfoundInstanceOfTerminologyException {	
 		
 		// check if it's a timePredicate
 		if (TIME.isRecognizedTimePredicate(predicate)){
@@ -208,18 +231,28 @@ public class LineStatement {
 			if (isDataType){
 				
 				this.value = Util.makeLiteral(objIRI, objValue);
+				
 			} else {
 				// check is value is known
-				if (EventOntology.isInstanceOfTerminology(objIRI, objValue)){
+				IRI classNameIRI = objIRI;
+				String instanceName = objValue;
+				IRI instanceIRI = Terminology.getTerminology(classNameIRI).makeInstanceIRI(instanceName);
+				if (isInstanceOfTerminology(objIRI, instanceIRI)){
 					this.value = Util.vf.createIRI(objIRI.stringValue(), objValue) ;
 				} else {
-					throw new UnfoundInstanceOfTerminologyException(objIRI.getLocalName(), objValue);
+					throw new UnfoundInstanceOfTerminologyException(logger,instanceIRI.stringValue(), 
+							objIRI.stringValue());
 				}
 			}
 		}
 	}
 
 	
+	private boolean isInstanceOfTerminology(IRI classNameIRI, IRI instanceIRI) throws UnfoundTerminologyException {
+		boolean search = instancesOfTerminology.get(classNameIRI).contains(instanceIRI);
+		return search;
+	}
+
 	/* Getters ....................................*/
 	public IRI getIdEventIRI() {
 		return idEventIRI;
@@ -242,13 +275,25 @@ public class LineStatement {
 	}
 	
 	
-	public static void main(String[] args)  {
+	public static void main(String[] args) throws Exception  {
+		String sparqlEndpoint = DockerDB.getEndpointIPadress(Endpoints.TERMINOLOGIES);
+		TerminologyServer terminoServer = new TerminologyServer(sparqlEndpoint);
+		HashMap<IRI, Set<IRI>> instancesOfTerminology = new HashMap<IRI, Set<IRI>>();
+		for (TerminoEnum termino : TerminoEnum.values()){
+			IRI className = termino.getTermino().getClassNameIRI();
+			Set<IRI> instancesIRI = terminoServer.getInstancesOfTerminology(termino);
+			instancesOfTerminology.put(className, instancesIRI);
+		}
+		terminoServer.getCon().close();
+		
 		// TODO Auto-generated method stub
-		String line = "p1\tSejourMCO\t2017_02_28_23_59_59\thasEnd\t2017_02_28_23_59_59";
+		//String line = "p1\tSejourMCO\t2017_02_28_23_59_59\thasEnd\t2017_02_28_23_59_59";
+		String line = "p1\tSejourMCO\t2017_02_28_23_59_59\tinEtab\t330781360";
 		String separator = "\t";
-			LineStatement newStatement = null;
+			LineStatement newStatement = new LineStatement(separator,instancesOfTerminology);
+			
 			try {
-				newStatement = new LineStatement(line, separator);
+				newStatement.addLineStatement(line);
 			} catch (InvalidContextException | UnfoundEventException | UnfoundPredicatException | ParseException
 					| UnfoundTerminologyException e) {
 				// TODO Auto-generated catch block

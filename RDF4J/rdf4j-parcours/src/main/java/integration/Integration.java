@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
 import parameters.Util;
+import terminology.TerminologyServer;
 
 /**
  * This class transforms a CSV file containing statements in RDF with {@link LineStatement}
@@ -93,21 +95,25 @@ public class Integration {
 	}
 	
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
+		
+		
+		HashMap<IRI, Set<IRI>> instancesOfTerminology = TerminologyServer.getInstancesOfTerminology();
+		
 		// TODO Auto-generated method stub
 		Integration integration = new Integration();
 		
-		Path filePath = Paths.get(MainResources.chargementFolder + "hospitToCSV.csv");
+		Path filePath = Paths.get(MainResources.chargementFolder + "allRelations.csv");
 		BufferedReader br = Files.newBufferedReader(filePath,Util.charset);
 
         // first line from the text file
 		String line = br.readLine();
 		// loop until all lines are read
 		int numLine = 1 ; 
+		LineStatement lineStatement = new LineStatement("\t",instancesOfTerminology);
 		while (line != null) {
-			LineStatement lineStatement;
 			try {
-				lineStatement = new LineStatement(line, "\t");
+				lineStatement.addLineStatement(line);
 				integration.getCon().add(lineStatement.getStatements());
 				integration.addContext(lineStatement.getContexte());
 			} catch (ParseException | UnfoundEventException | UnfoundTerminologyException 
@@ -119,17 +125,17 @@ public class Integration {
 			}
 			
 			line = br.readLine(); // next line
-			numLine++;
-			//break;
-			
+			numLine++;			
 		}
+		
 		
 		for (IRI contextIRI : integration.getContexts()){
 			RepositoryResult<Statement> statementsContext = integration.getCon().getStatements(null, null, null,contextIRI);
-			Model oneContext = QueryResults.asModel(statementsContext);
-			TimelineFile.addTriplesInFile(contextIRI, oneContext);
+			Model model = QueryResults.asModel(statementsContext);
+			TimelineFile.addTriplesInFile(contextIRI, model);
 			integration.getCon().remove(statementsContext,contextIRI);
 		}
+		
 
 }
 }

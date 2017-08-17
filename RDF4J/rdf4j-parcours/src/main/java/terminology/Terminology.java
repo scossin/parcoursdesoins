@@ -1,8 +1,12 @@
-package ontologie;
+package terminology;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.rdf4j.model.IRI;
 
 import exceptions.UnfoundTerminologyException;
+import parameters.MainResources;
 import parameters.Util;
 
 
@@ -10,10 +14,10 @@ public class Terminology {
 	
 	public enum TerminoEnum {
 
-		RPPS(new Terminology("http://esante.gouv.fr#","asip","RPPS")),
+		RPPS(new Terminology("http://esante.gouv.fr#","asip","RPPS","RPPS.ttl")),
 		
 		// FINESS code is a french terminology for healthcare institution
-		FINESS(new Terminology("https://www.data.gouv.fr/FINESS#","datagouv","Etablissement"));
+		FINESS(new Terminology("https://www.data.gouv.fr/FINESS#","datagouv","Etablissement","FINESS.ttl"));
 		
 		private Terminology terminology;
 		
@@ -42,11 +46,14 @@ public class Terminology {
 	 * Every instance of the terminology is rdf:type <https://www.data.gouv.fr/FINESS#Etablissement>
 	 */
 	 private String className ;
+	 
+	 private String fileName ;
 	
-	 public Terminology(String NAMESPACE, String PREFIX, String className){
+	 public Terminology(String NAMESPACE, String PREFIX, String className, String fileName){
 		 this.NAMESPACE = NAMESPACE;
 		 this.PREFIX = PREFIX;
 		 this.className = className;
+		 this.fileName = fileName;
 		 //this.NS = new SimpleNamespace(PREFIX, NAMESPACE);
 	 }
 	
@@ -56,6 +63,10 @@ public class Terminology {
 	 
 	 public String getNAMESPACE(){
 		 return(this.NAMESPACE);
+	 }
+	 
+	 public String getFileName(){
+		 return(fileName);
 	 }
 	 
 	/**
@@ -84,7 +95,17 @@ public class Terminology {
 		throw new UnfoundTerminologyException(className.stringValue() + "does not belong to a terminology");
 	}
 	
+	public static Set<IRI> getClassNames(){
+		Set<IRI> classNamesIRI = new HashSet<IRI>();
+		for (TerminoEnum terminology : TerminoEnum.values()){
+			classNamesIRI.add(terminology.getTermino().getClassNameIRI());
+		}
+		return(classNamesIRI);
+	}
+	
 	public IRI makeInstanceIRI (String instanceName){
 		return(Util.vf.createIRI(NAMESPACE,className + instanceName));
 	}
+	
+	public static final String terminologiesFolder = MainResources.terminologiesFolder;
 }

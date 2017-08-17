@@ -1,0 +1,13 @@
+The Blazegraph docker is a jetty server with a bigdata.war file launching Blazegraph.
+jetty server max size of POST is 200ko
+Replace jetty.xml in the container by this file using (new dockerfile will be made)
+
+docker cp jetty.xml blazegraph:/usr/local/jetty/etc/jetty.xml
+
+this new jetty.xml file adds : 
+
+	  <Call name="setAttribute">
+	    <Arg>org.eclipse.jetty.server.Request.maxFormContentSize</Arg>
+	    <Arg>-1</Arg>
+	  </Call>
+

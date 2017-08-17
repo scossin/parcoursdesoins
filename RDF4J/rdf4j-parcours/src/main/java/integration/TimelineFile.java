@@ -21,9 +21,9 @@ import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
 import ontologie.EIG;
 import ontologie.TIME;
-import ontologie.Terminology.TerminoEnum;
 import parameters.MainResources;
 import parameters.Util;
+import terminology.Terminology.TerminoEnum;
 
 public class TimelineFile {
 	
@@ -54,7 +54,10 @@ public class TimelineFile {
 	// add RDF triples from disk file if file already exists
 	public static void addTriplesInFile(IRI contextIRI, Model newModel) throws RDFParseException, RepositoryException, IOException{
 		model.addAll(newModel);
-		File file = new File(MainResources.timelinesFolder + contextIRI.getLocalName() + ".ttl");
+		String timelinesFolder = MainResources.timelinesFolder ;
+		String timelinesFolderPath = Util.classLoader.getResource(timelinesFolder).getPath();
+		String fileName = timelinesFolderPath + contextIRI.getLocalName() + ".ttl";
+		File file = new File(fileName);
 		if (file.exists()){
 			con.add(file, EIG.NAMESPACE, RDFFormat.TURTLE,contextIRI);
 			RepositoryResult<Statement> statementsContext = con.getStatements(null, null, null);
@@ -66,7 +69,7 @@ public class TimelineFile {
 		try{
 			FileOutputStream out = new FileOutputStream(file);
 			Rio.write(model, out, Util.DefaultRDFformat);
-			System.out.println(file.getName() + " successfully created/updated");
+			//System.out.println(file.getName() + " successfully created/updated");
 		} finally{
 			model.clear(); // clear the model for the next call
 			con.clear(); // clear the Repository Connection for the next call

@@ -43,11 +43,16 @@ hasBeginning <- addPredicateValue(listeevents, contexte,"start","hasBeginning")
 hospit <- subset(listeevents, group=="Hospitalisation")
 inEtab <- addPredicateValue(hospit, contexte,"finess","inEtab")
 
+## description consultation : 
+consultation <- subset(listeevents, group=="Consultation")
+inDoctor <- addPredicateValue(consultation, contexte,"nature","inDoctor")
+write.table(inDoctor,"inDoctor.csv",sep="\t",col.names = F, row.names = F,quote=F)
+
+
+allRelations <- rbind (hasEnd, hasBeginning, inEtab,inDoctor)
+write.table(allRelations,"allRelations.csv",sep="\t",col.names = F, row.names = F,quote=F)
+
 ####
-load("../../../server/V4/V4/rdata/consultation33selection.rdata")
-bool <- colnames(consultation33selection) == "Spécialité"
-colnames(consultation33selection)[bool] <- "Specialite"
-write.table(consultation33selection, "RPPS.csv",sep=",",col.names =T, row.names=F, quote=F)
 
 ## description 
 table(listeevents$group)

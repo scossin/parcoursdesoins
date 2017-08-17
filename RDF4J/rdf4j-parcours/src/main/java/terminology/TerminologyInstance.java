@@ -1,4 +1,4 @@
-package ontologie;
+package terminology;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,9 +19,9 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
-import ontologie.Terminology.TerminoEnum;
 import parameters.MainResources;
 import parameters.Util;
+import terminology.Terminology.TerminoEnum;
 
 @Deprecated
 public class TerminologyInstance {
