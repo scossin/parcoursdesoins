@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE eventslinks SYSTEM "eventslinks.dtd" > 
+<eventslinks>
+ <event number="0">
+  
+  <eventType>SejourMCO</eventType>
+  <predicate>
+   <factor>
+    <predicateType>inEtab</predicateType>
+    <value>1</value>
+    <value>2</value>
+    <value>3</value>
+    <value>4</value>
+    <value>5</value>
+    <value>6</value>
+    <value>7</value>
+    <value>8</value>
+    <value>9</value>
+    <value>10</value>
+   </factor>
+  </predicate>
+  <predicate>
+   <Date>
+    <predicateType>hasEnd</predicateType>
+    <minValue>10</minValue>
+    <maxValue>20</maxValue>
+   </Date>
+  </predicate>
+ </event>
+ <event number="1">
+  
+  <eventType>SejourSSR</eventType>
+  <predicate>
+   <numeric>
+    <predicateType>hasMedecin</predicateType>
+    <minValue>10</minValue>
+    <maxValue>20</maxValue>
+   </numeric>
+  </predicate>
+ </event>
+</eventslinks>

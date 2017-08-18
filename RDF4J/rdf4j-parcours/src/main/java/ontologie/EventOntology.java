@@ -51,6 +51,7 @@ public class EventOntology {
 	 */
 	private static HashSet<Event> events ;
 	
+	
 	public static boolean isEvent(String eventName){
 		IRI eventIRI = Util.vf.createIRI(EIG.NAMESPACE, eventName);
 		Iterator<Event> iter = events.iterator();

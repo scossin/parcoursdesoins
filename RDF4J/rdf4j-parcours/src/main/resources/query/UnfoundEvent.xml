@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE eventslinks SYSTEM "eventslinks.dtd">
+<eventslinks>
+	<event number="0">
+		<eventType>SejourMCO2</eventType>
+	</event>
+</eventslinks>

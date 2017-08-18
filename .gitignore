@@ -7,5 +7,5 @@ ExtractionMonoTable_CAT18_ToutePopulation_201707090738.csv
 flux/blazegraph/triplets/timelines/*
 RDF4J/rdf4j-parcours/src/main/resources/timelines/*
 .Rproj.user
-server/V5/*
+server/V5/dev/*
 RDF4J/rdf4j-parcours/logs/*

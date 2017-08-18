@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import exceptions.UnfoundTerminologyException;
 import ontologie.EventOntology;
-import ontologie.FINESS;
 
 public class Hello extends HttpServlet {
 	final static Logger logger = LoggerFactory.getLogger(Hello.class);
@@ -21,13 +20,7 @@ public class Hello extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		logger.info("loading ...");
-		try {
-			EventOntology.isEvent("SejourMCO");
-		} catch (UnfoundTerminologyException e) {
-			// TODO Auto-generated catch block
-			logger.info("an error occured");
-			e.printStackTrace();
-		}
+		EventOntology.isEvent("SejourMCO");
 	}
 	
 	@Override
@@ -36,12 +29,6 @@ public class Hello extends HttpServlet {
 	    response.setContentType("text/html");
 
 	   boolean trouve = false;
-	try {
-		trouve = EventOntology.isInstanceOfTerminology(FINESS.getClassNameIRI(), "330000217");
-	} catch (UnfoundTerminologyException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
 	    
 	    PrintWriter out = response.getWriter();
 	    String docType =
