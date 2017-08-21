@@ -1,4 +1,4 @@
-<!ELEMENT eventslinks (event+, link*)>
+<!ELEMENT eventslinks (event+, link*, context?)>
 <!ELEMENT event (eventType,predicate*)>
 <!ATTLIST event number CDATA #REQUIRED>
 <!ELEMENT eventType (#PCDATA)>
@@ -20,3 +20,4 @@
 <!ELEMENT predicate2 (#PCDATA)>
 <!ELEMENT operator (#PCDATA)>
 
+<!ELEMENT context (value)>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE eventslinks SYSTEM "describe.dtd">
+<eventslinks>
+	<event number="0">
+		<eventType>SejourMCO</eventType>
+		<predicate>
+		<predicateType>inEtab</predicateType>
+		</predicate>
+		<value>p1_SejourMCO_2009_11_21T02_08_00_000_01_00\tp10_SejourMCO_2009_10_06T04_32_00_000_02_00</value>
+	</event>
+	
+	<context>
+	<value>p1	p10</value>
+	</context>
+</eventslinks>

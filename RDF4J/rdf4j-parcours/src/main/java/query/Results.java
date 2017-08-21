@@ -1,11 +1,13 @@
 package query;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.ArrayList;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.rdf4j.model.IRI;
@@ -13,6 +15,8 @@ import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import exceptions.IncomparableValueException;
@@ -27,6 +31,8 @@ import parameters.Util;
 
 public class Results {
 
+	final static Logger logger = LoggerFactory.getLogger(Results.class);
+	
 	private DBconnection con;
 	
 	public DBconnection getCon(){
@@ -35,24 +41,93 @@ public class Results {
 	
 	private Query query ;
 	
-	private SimpleDataset dataSet;
+	private BufferedWriter bufferWriter;
 	
-	public Results (String sparqlEndpoint, Query query){
+	private String[] eventNames;
+	
+	public BufferedWriter getBufferedWriter(){
+		return(bufferWriter);
+	}
+	
+	private File file;
+	
+	public File getFile(){
+		return(file);
+	}
+	
+	public boolean isFileAlreadyExists(){
+		return(file.exists());
+	}
+	
+	private void writeResults(TupleQueryResult tupleResult) throws IOException{
+		logger.info("Writing results to file : "+ file.getAbsolutePath());
+		
+		setUpBufferWriter();
+		
+		// Headers : 
+		StringBuilder sb = new StringBuilder();
+		for (String eventName : eventNames){
+			sb.append(eventName);
+			sb.append("\t");
+		}
+		sb.setLength(sb.length()-1); // remove last \t
+		sb.append("\n"); 
+		bufferWriter.write(sb.toString());
+		// lines : 
+		while(tupleResult.hasNext()){
+			sb.setLength(0);
+			BindingSet set = tupleResult.next();
+			for (String variable : eventNames){
+				IRI variableIRI = (IRI) set.getValue(variable);
+				sb.append(variableIRI.getLocalName());
+				sb.append("\t");
+			}
+			sb.setLength(sb.length()-1); // remove last \t
+			sb.append("\n"); 
+			bufferWriter.write(sb.toString());
+		}
+		
+		tupleResult.close();
+		bufferWriter.close();
+	}
+
+	private void setUpBufferWriter() throws IOException{
+    	FileWriter fw = new FileWriter(file,true);
+    	this.bufferWriter = new BufferedWriter(fw);
+	}
+	
+	private void setFile(Query query){
+		String cacheFolder = MainResources.cacheFolder ;
+		String timelinesFolderPath = Util.classLoader.getResource(cacheFolder).getPath();
+		int queryHashCode = query.getSPARQLQueryString().hashCode();
+		int contextHashCode = query.getContextDataset().getNamedGraphs().hashCode(); // same query in a different context is possible
+		String fileName = timelinesFolderPath + queryHashCode + "_" + contextHashCode  + ".csv";
+		file = new File(fileName);
+	}
+	
+	public Results (String sparqlEndpoint, Query query) throws IOException{
 		this.con = new DBconnection(sparqlEndpoint);
 		this.query = query;
+		this.eventNames = query.getVariableNames();
+		setFile(query);
 	}
-	
-	public Results (String sparqlEndpoint, Query query, SimpleDataset dataSet){
-		this(sparqlEndpoint,query);
-		this.dataSet = dataSet;
-	}
-	
-	
+		
 	public TupleQueryResult sendQuery(){
+		logger.info("Sending request : \t" + query.getSPARQLQueryString() + "with " 
+				+ query.getContextDataset().getNamedGraphs().size() + " contexts");
 		TupleQuery keywordQuery = con.getDBcon().prepareTupleQuery(query.getSPARQLQueryString());
-		keywordQuery.setDataset(dataSet);
+		keywordQuery.setDataset(query.getContextDataset());
 		TupleQueryResult keywordQueryResult = keywordQuery.evaluate();
 		return(keywordQueryResult);
+	}
+	
+	public void setUpFile() throws IOException{
+		if (isFileAlreadyExists()){
+			logger.info("Query not sent : file already exists");
+		} else {
+			TupleQueryResult tupleResult = sendQuery();
+			writeResults(tupleResult);
+		}
 	}
 	
 	public static void main(String[] args) throws NumberFormatException, ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, IncomparableValueException, UnfoundTerminologyException, OperatorException {
@@ -65,33 +140,15 @@ public class Results {
 			System.out.println(patient1);
 			patients[i] = patient1;
 			dataset.addNamedGraph(patients[i]);
-		}
+		} 
 		
-		
-		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "queryMCO.xml" );
-		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdFile);
-		Query query = new XMLQuery(new XMLFile(xmlFile, dtdFile));
+		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "queryMCOContext.xml" );
+		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdSearchFile);
+		Query query = new XMLSearchQuery(new XMLFile(xmlFile, dtdFile));
 		
 		Results results = new Results(Util.sparqlEndpoint,query);
-		TupleQueryResult keywordQueryResult = results.sendQuery();
-		
-		ArrayList<IRI> eventLists = new ArrayList<IRI>();
-		
-		while(keywordQueryResult.hasNext()){
-			BindingSet set = keywordQueryResult.next();
-			IRI event0 = (IRI) set.getValue("event0");
-			eventLists.add(event0);
-		}
-		
-		FileWriter writer = new FileWriter("eventLists.txt"); 
-		for (IRI event : eventLists){
-			String str = event.stringValue() + "\n";
-			writer.write(str);
-		}
-		writer.close();
-		
-		System.out.println(eventLists.size());
-		keywordQueryResult.close();
+		results.setUpFile();
+
 		results.getCon().close();
 	}
 }

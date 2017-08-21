@@ -71,6 +71,8 @@ public class AddInferenceToFiles {
 	
 	public static void main(String args[]) throws IOException{
 		AddInferenceToFiles inferences = new AddInferenceToFiles();
-		inferences.addInferenceToTimelines(new File(MainResources.timelinesFolder));
+		String timelinesFolderPath = Util.classLoader.getResource(MainResources.timelinesFolder).getPath();
+		File timelinesFolder = new File(timelinesFolderPath);
+		inferences.addInferenceToTimelines(timelinesFolder);
 	}
 }

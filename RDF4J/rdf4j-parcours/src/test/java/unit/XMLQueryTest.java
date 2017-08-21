@@ -19,7 +19,7 @@ import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
 import parameters.Util;
 import query.XMLFile;
-import query.XMLQuery;
+import query.XMLSearchQuery;
 
 public class XMLQueryTest {
 
@@ -31,8 +31,8 @@ public class XMLQueryTest {
 		thrown.expect(UnfoundEventException.class);
 		
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "UnfoundEvent.xml" );
-		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdFile);
+		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdSearchFile);
 		XMLFile file = new XMLFile(xmlFile, dtdFile);
-		new XMLQuery(file);
+		new XMLSearchQuery(file);
 	}
 }

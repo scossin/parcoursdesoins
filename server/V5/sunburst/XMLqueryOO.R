@@ -4,6 +4,7 @@ XMLquery <- R6Class(
     docType = XML::Doctype(),
     listEventNodes = list(),
     listLinkNodes = list(),
+    listContextNode = list(),
     fileName = "character",
     
     initialize = function(){
@@ -49,12 +50,18 @@ XMLquery <- R6Class(
       }
     },
     
+    addContextNode = function(contextVector){
+      contextNode <- xmlNode("context")
+      self$listContextNode <- list(private$makeContextNode(contextNode, contextVector))
+    },
+      
     saveQuery = function(){
       ## add predicates to each eventNode
-      eventLinksNode <- makeEventsLinksNode(self$listEventNodes, self$listLinkNodes)
+      eventLinksNode <- private$makeEventsLinksNode(self$listEventNodes, self$listLinkNodes,
+                                                    self$listContextNode)
       randomNumber <- round(runif(1, 0, 10^12),0)
       self$fileName <- paste0("/tmp/XMLquery",randomNumber, ".xml")
-      saveXML(eventLinks, file=self$fileName,doctype = self$docType)
+      saveXML(eventLinksNode, file=self$fileName,doctype = self$docType)
     },
     
     sendQuery=function(url){
@@ -66,16 +73,31 @@ XMLquery <- R6Class(
   ),
   
   private=list(
+    makeContextNode = function(contextNode,values){
+      ## private functions
+      getValuesNodes_ <- function(contextNode, values){
+        if (is.null(values) || length(values) == 0){
+          stop("values must be have length > 0")
+        }
+        values <- paste(values, collapse="\t")
+        valueNode <- xmlNode("value",text=values)
+        contextNode <- addChildren(contextNode,valueNode)
+        return(contextNode)
+      }
+      contextNode <- getValuesNodes_(contextNode,values)
+      class(contextNode) <- c(class(contextNode),"contextNode")
+      return(contextNode)
+    },
+    
     makePredicateNode = function(predicateClass, predicateType, values, minValue, maxValue){
       ## private functions
       getFactorNodes_ <- function(predicateClassNode, values){
         if (is.null(values) || length(values) == 0){
           stop("values must be have length > 0")
         }
-        for (value in values){
-          valueNode <- xmlNode("value",text=value)
-          predicateClassNode <- addChildren(predicateClassNode,valueNode)
-        }
+        values <- paste(values, collapse="\t")
+        valueNode <- xmlNode("value",text=values)
+        predicateClassNode <- addChildren(predicateClassNode,valueNode)
         return(predicateClassNode)
       }
       
@@ -134,7 +156,7 @@ XMLquery <- R6Class(
       eventNode <- xmlNode("event",attrs=eventNumber, text="")
       eventNode <- addChildren(eventNode, eventTypeNode)
       
-      class(eventNode) <- c(class(predicateNode),"eventNode")
+      class(eventNode) <- c(class(eventNode),"eventNode")
       
       eventNode <- private$makeEventNode2(eventNode, predicatesNodes)
       return(eventNode)
@@ -181,7 +203,7 @@ XMLquery <- R6Class(
       return(linkNode)
     },
     
-    makeEventsLinksNode = function(eventNodes, linkNodes = NULL){
+    makeEventsLinksNode = function(eventNodes, linkNodes = NULL, contextNodes = NULL){
       eventslinks <- xmlNode("eventslinks")
       for (eventNode in eventNodes){
         if (!inherits(eventNode,"eventNode")){
@@ -191,12 +213,20 @@ XMLquery <- R6Class(
       }
       
       if (!is.null(linkNodes)){
-        
         for (linkNode in linkNodes){
           if (!inherits(linkNode,"linkNode")){
             stop("linkNodes must be instances of linkNode classes")
           }
           eventslinks <- addChildren(eventslinks, linkNode)
+        }
+      }
+      
+      if (!is.null(contextNodes)){
+        for (contextNode in contextNodes){
+          if (!inherits(contextNode,"contextNode")){
+            stop("linkNodes must be instances of contextNode classes")
+          }
+          eventslinks <- addChildren(eventslinks, contextNode)
         }
       }
       return(eventslinks)

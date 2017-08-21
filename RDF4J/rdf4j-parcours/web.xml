@@ -7,32 +7,32 @@
    <!-- To save as "hello\WEB-INF\web.xml" -->
  
    <servlet>
-      <servlet-name>Hello</servlet-name>
-      <servlet-class>servlet.Hello</servlet-class>
+      <servlet-name>Initialize</servlet-name>
+      <servlet-class>servlet.Initialize</servlet-class>
        <load-on-startup>1</load-on-startup>
    </servlet>
  
    <!-- Note: All <servlet> elements MUST be grouped together and
          placed IN FRONT of the <servlet-mapping> elements -->
  
+ <!--
    <servlet-mapping>
-      <servlet-name>Hello</servlet-name>
-      <url-pattern>/sayhello</url-pattern>
+      <servlet-name>Initialize</servlet-name>
+      <url-pattern>/Initialize</url-pattern>
    </servlet-mapping>
-   
+ -->   
    
     <servlet>
-      <servlet-name>HelloServlet</servlet-name>
-      <servlet-class>servlet.HelloServlet</servlet-class>
-       <load-on-startup>1</load-on-startup>
+      <servlet-name>HandleXMLQuery</servlet-name>
+      <servlet-class>servlet.HandleXMLQuery</servlet-class>
    </servlet>
  
    <!-- Note: All <servlet> elements MUST be grouped together and
          placed IN FRONT of the <servlet-mapping> elements -->
  
    <servlet-mapping>
-      <servlet-name>HelloServlet</servlet-name>
-      <url-pattern>/HelloServlet</url-pattern>
+      <servlet-name>HandleXMLQuery</servlet-name>
+      <url-pattern>/XMLQuery</url-pattern>
    </servlet-mapping>
    
    <servlet>

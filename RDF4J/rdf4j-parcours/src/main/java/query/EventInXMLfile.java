@@ -421,12 +421,10 @@ public class EventInXMLfile {
 		if (factorValuesNodes.getLength() == 0){ // no element value
 			return;
 		}
-		
 		// ex : VALUES (?event0inEtab) { ( <https://www.data.gouv.fr/FINESS#Etablissement330000555> ) }
+		String instanceNames[] = factorValuesNodes.item(0).getTextContent().split("\t"); // only one item
 		String filter = "VALUES ("+ factorVariable + ") {";
-		for (int i = 0; i<factorValuesNodes.getLength() ; i++){
-			String instanceName = factorValuesNodes.item(i).getTextContent();
-			// check if instance belongs to the terminology
+		for (String instanceName : instanceNames){
 			IRI instanceIRI = Util.vf.createIRI(terminologyIRI.stringValue(), instanceName);
 			filter += "("+Query.formatIRI4query(instanceIRI) + ") ";	
 		}

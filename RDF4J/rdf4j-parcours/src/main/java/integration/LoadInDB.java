@@ -58,12 +58,13 @@ public class LoadInDB {
 	
 	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException {
 		// TODO Auto-generated method stub
-		//File timelinesFolder = new File(MainResources.timelinesFolder);
+		String timelinesFolderPath = Util.classLoader.getResource(MainResources.timelinesFolder).getPath();
+		File timelinesFolder = new File(timelinesFolderPath);
 		LoadInDB load = new LoadInDB(Util.sparqlEndpoint);
 		
-		String fichier = MainResources.directoryMainResources + MainResources.terminologiesFolder + "p9999.ttl";
-		load.loadTimelineFile(new File(fichier));
-		//load.loadAllTimelineFiles(timelinesFolder);
-		//load.getCon().close();
+		//String fichier = MainResources.directoryMainResources + MainResources.terminologiesFolder + "p9999.ttl";
+		//load.loadTimelineFile(new File(fichier));
+		load.loadAllTimelineFiles(timelinesFolder);
+		load.getCon().close();
 	}
 }

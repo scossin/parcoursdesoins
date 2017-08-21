@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,12 +14,14 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.query.impl.SimpleDataset;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import exceptions.IncomparableValueException;
+import exceptions.InvalidContextException;
 import exceptions.OperatorException;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
@@ -37,12 +40,21 @@ import query.XMLFile.XMLelement;
  * @author cossin
  *
  */
-public class XMLQuery implements Query {
+public class XMLSearchQuery implements Query {
 
 	/**
 	 * Instance of XMLFile representing a user query in a XML file
 	 */
 	private XMLFile xml ;
+	
+	
+	private SimpleDataset contextDataset ;
+	
+
+	public SimpleDataset getContextDataset() {
+		// TODO Auto-generated method stub
+		return contextDataset;
+	}
 	
 	/**
 	 * a list of binding statement. A bind statement create a new variable to compare 2 values
@@ -102,7 +114,7 @@ public class XMLQuery implements Query {
 	 * @throws UnfoundTerminologyException
 	 * @throws OperatorException 
 	 */
-	public XMLQuery(XMLFile xmlFile) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException{
+	public XMLSearchQuery(XMLFile xmlFile) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException{
 		this.xml = xmlFile;
 		// events element description in the XML :
 		NodeList eventNodes = xml.getEventNodes();
@@ -122,6 +134,9 @@ public class XMLQuery implements Query {
 			Node linkNode = linkNodes.item(i);
 			addLinkStatements(linkNode);
 		}
+		
+		// context
+		this.contextDataset = xml.getContextDataSet();
 	}
 	
 	/**
@@ -247,11 +262,13 @@ public class XMLQuery implements Query {
 	public String getSPARQLQueryString(){
 		String queryString = "";
 		
-		// Select Statements
+		   // Select Statements
 		String part1 = "SELECT ?context ";
+		
+  	      // ?event0hasNum : the event number in the timeline
 		for (int numberEvent : eventQuery.keySet()){
-			part1 += "?event" + numberEvent + " ";
-			part1 += "?event" + numberEvent + EIG.hasNum + " "; // ?event0hasNum : the event number in the timeline
+			part1 += "?event" + numberEvent + " "; // ?event0
+			part1 += "?event" + numberEvent + EIG.hasNum + " "; 
 		}
 		queryString += part1 ; 
 		
@@ -291,9 +308,20 @@ public class XMLQuery implements Query {
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException {
 		//QueryClass queryClass = new QueryClass(new File(Util.queryFolder+"queryMCOSSR3day.xml"));
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "queryMCOSSR3day.xml" );
-		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdFile);
-		XMLQuery queryClass = new XMLQuery(new XMLFile(xmlFile, dtdFile));
+		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdSearchFile);
+		XMLSearchQuery queryClass = new XMLSearchQuery(new XMLFile(xmlFile, dtdFile));
 		System.out.println(queryClass.getSPARQLQueryString());
 	}
+
+	@Override
+	public String[] getVariableNames() {
+		ArrayList<String> eventNumber = new ArrayList<String>();
+		eventNumber.add("context");
+		for (int numberEvent : eventQuery.keySet()){
+			eventNumber.add("event" + numberEvent);
+		}
+		return(eventNumber.toArray(new String[eventNumber.size()]));
+	}
+
 
 }

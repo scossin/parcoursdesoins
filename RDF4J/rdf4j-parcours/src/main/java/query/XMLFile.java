@@ -8,6 +8,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.query.impl.SimpleDataset;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -16,8 +18,10 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import exceptions.InvalidContextException;
 import parameters.MainResources;
 import parameters.Util;
+import query.XMLFile.XMLelement;
 
 /**
  * This class handles a XML file containing the query. <br>
@@ -57,12 +61,14 @@ public class XMLFile {
 	 * <li> predicate1 : for link only, the predicate name of the first event
 	 * <li> predicate1 : for link only, the predicate name of the second event
 	 * <li> operator : for link only, the name of the operator to compare values
+	 * <li> context : in which contexts to search
 	 * </ul> 
 	 * @author cossin
 	 *
 	 */
 	public static enum XMLelement {
-		event, link, minValue, maxValue, value, predicateType, eventType, event1, event2, predicate1, predicate2, operator;
+		event, link, minValue, maxValue, value, predicateType, eventType, event1, event2, predicate1, predicate2, operator,
+		context;
 	}
 	
 	/**
@@ -115,6 +121,8 @@ public class XMLFile {
 	private NodeList linkNodes ;
 	
 	
+	private NodeList contextNodes;
+	
 	/************************************************ Getter *************/
 	
 	public NodeList getEventNodes(){
@@ -123,6 +131,10 @@ public class XMLFile {
 	
 	public NodeList getLinkNodes(){
 		return(linkNodes);
+	}
+	
+	public NodeList getContextNodes(){
+		return(contextNodes);
 	}
 	
 	
@@ -142,6 +154,7 @@ public class XMLFile {
 	    Document doc = builder.parse(xmlFile);
 	    this.eventNodes = doc.getElementsByTagName(XMLelement.event.toString());
 	    this.linkNodes = doc.getElementsByTagName(XMLelement.link.toString());
+	    this.contextNodes = doc.getElementsByTagName(XMLelement.context.toString());
 	}
 	
 	public XMLFile (InputStream xmlFile, InputStream dtdFile) throws ParserConfigurationException, SAXException, IOException {
@@ -156,6 +169,7 @@ public class XMLFile {
 	    Document doc = builder.parse(xmlFile);
 	    this.eventNodes = doc.getElementsByTagName(XMLelement.event.toString());
 	    this.linkNodes = doc.getElementsByTagName(XMLelement.link.toString());
+	    this.contextNodes = doc.getElementsByTagName(XMLelement.context.toString());
 	}
 	
 	
@@ -217,10 +231,8 @@ public class XMLFile {
 	
 	public static void main(String[] args) throws SAXException, IOException, ParserConfigurationException {
 
-		
-		
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "test.xml" );
-		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdFile);
+		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdSearchFile);
 		
 		XMLFile xml = new XMLFile(xmlFile, dtdFile);
 		
@@ -236,6 +248,23 @@ public class XMLFile {
 		
 		xmlFile.close();
 		dtdFile.close();
+	}
+	
+	public SimpleDataset getContextDataSet() throws InvalidContextException{
+		SimpleDataset dataset = new SimpleDataset();
+		NodeList contextNodes = getContextNodes();		
+		if (contextNodes.getLength() == 0){
+			return(new SimpleDataset());
+		} else {
+		Node contextNode = contextNodes.item(0); // only 0-1 element (context?)
+		NodeList contextValuesNode = ((Element) contextNode).getElementsByTagName(XMLelement.value.toString());
+		String contextValues[] = contextValuesNode.item(0).getTextContent().split("\t");
+		for (String contextName : contextValues){
+			IRI contextIRI = Util.getContextIRI(contextName);
+			dataset.addNamedGraph(contextIRI);
+		}
+		}
+		return(dataset);
 	}
 	
 }

@@ -24,24 +24,16 @@ public class CheckConnection extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-
 		String resultat="";
 		DBconnection con = null;
 		try {
 			con = new DBconnection(DockerDB.getEndpointIPadress(Endpoints.TIMELINES));
 			TupleQuery keywordQuery = con.getDBcon().prepareTupleQuery("SELECT * WHERE {?s ?p ?o} LIMIT 1");
-			TupleQueryResult keywordQueryResult = keywordQuery.evaluate();
-			if (!keywordQueryResult.hasNext()){
-				logger.info("Repository is empty");
-			}
-			while(keywordQueryResult.hasNext()){
-				logger.info("Printing only one statement...");
-				BindingSet set = keywordQueryResult.next();
-				resultat += set.toString();
-				break;
-			}
+			keywordQuery.evaluate();
+			resultat = "Connection test successful";
+			logger.info(resultat);
 		} catch (Exception e){
-			logger.error("impossible to connect to DB");
+			logger.error("Impossible to connect to DB");
 			throw e;
 		}  finally{
 			con.close();

@@ -20,6 +20,7 @@ public class MainResources {
 	 */
 	public final static String terminologiesFolder = "terminologies/";
 	
+	public final static String cacheFolder="cache/";
 
 	/**
 	 * The path to the timelines folder containing the events of each patient in a file
@@ -52,5 +53,7 @@ public class MainResources {
 	/**
 	 * The name of the DTD file of a user XML query
 	 */
-	public final static String dtdFile = queryFolder + "eventslinks.dtd";
+	public final static String dtdSearchFile = queryFolder + "eventslinks.dtd";
+	
+	public final static String dtdDescribeFile = queryFolder + "describe.dtd";
 }

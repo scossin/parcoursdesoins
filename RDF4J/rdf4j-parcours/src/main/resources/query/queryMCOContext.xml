@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE eventslinks SYSTEM "eventslinks.dtd">
+<eventslinks>
+	<event number="0">
+		<eventType>SejourMCO</eventType>	
+	</event>
+	
+	<context>
+	<value>p100	p198</value>
+	</context>
+</eventslinks>
