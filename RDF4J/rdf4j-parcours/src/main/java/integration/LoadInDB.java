@@ -6,9 +6,12 @@ import java.io.IOException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.rio.RDFParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import exceptions.InvalidContextFormatException;
 import ontologie.EIG;
+import ontologie.EventOntology;
 import parameters.MainResources;
 import parameters.Util;
 
@@ -20,6 +23,7 @@ import parameters.Util;
  */
 public class LoadInDB {
 
+	final static Logger logger = LoggerFactory.getLogger(LoadInDB.class);
 	
 	
 	private DBconnection con;
@@ -32,16 +36,16 @@ public class LoadInDB {
 		con = new DBconnection(sparqlEndpoint);
 	}
 	
-	public void loadTimelineFile(File file) throws RDFParseException, RepositoryException, IOException{
+	public void loadTimelineFile(File file) throws RDFParseException, RepositoryException, IOException, InvalidContextFormatException{
 		if (!Util.isValidContextFileFormat(file)){
-			throw new InvalidContextFormatException(file.getName());
+			throw new InvalidContextFormatException(logger,file.getName());
 		}
-		IRI contextIRI = Util.getContextIRI(file);
+		IRI contextIRI = EventOntology.getContextIRI(file);
 		con.getDBcon().clear(contextIRI); // remove previous statements
 		con.getDBcon().add(file, EIG.NAMESPACE, Util.DefaultRDFformat,contextIRI);
 	}
 	
-	public void loadAllTimelineFiles(File folder) throws IOException{
+	public void loadAllTimelineFiles(File folder) throws IOException, InvalidContextFormatException{
 		if (!folder.isDirectory()){
 			throw new IOException(folder.getAbsolutePath() + " is not a directory");
 		}
@@ -56,7 +60,7 @@ public class LoadInDB {
 		}
 	}
 	
-	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException {
+	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException, InvalidContextFormatException {
 		// TODO Auto-generated method stub
 		String timelinesFolderPath = Util.classLoader.getResource(MainResources.timelinesFolder).getPath();
 		File timelinesFolder = new File(timelinesFolderPath);

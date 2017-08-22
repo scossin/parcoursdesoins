@@ -10,6 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import exceptions.InvalidContextException;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
 import parameters.MainResources;
@@ -20,7 +21,7 @@ import query.XMLFile;
 public class XMLDescribeQueryTest {
 	
 	@Test
-	public void testQueryString() throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException{
+	public void testQueryString() throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException{
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
 		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdDescribeFile);
 		XMLFile file = new XMLFile(xmlFile, dtdFile);

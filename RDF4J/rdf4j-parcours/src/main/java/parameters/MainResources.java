@@ -56,4 +56,6 @@ public class MainResources {
 	public final static String dtdSearchFile = queryFolder + "eventslinks.dtd";
 	
 	public final static String dtdDescribeFile = queryFolder + "describe.dtd";
+	
+	public final static String dtdCountFile = queryFolder + "count.dtd";
 }

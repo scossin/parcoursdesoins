@@ -23,16 +23,22 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import exceptions.IncomparableValueException;
+import exceptions.InvalidContextException;
+import exceptions.InvalidXMLFormat;
 import exceptions.MyExceptions;
 import exceptions.OperatorException;
+import exceptions.UnfoundDTDFile;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
 import parameters.Util;
+import query.InitialQuery;
 import query.Query;
 import query.Results;
+import query.XMLDescribeQuery;
 import query.XMLFile;
+import query.XMLFile.DTDFiles;
 import query.XMLSearchQuery;
 import servlet.DockerDB.Endpoints;
 
@@ -41,17 +47,14 @@ public class HandleXMLQuery extends HttpServlet {
  
 	final static Logger logger = LoggerFactory.getLogger(HandleXMLQuery.class);
 	
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException ,IOException {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException ,IOException {
 
 
 		resp.setContentType("text/csv");
 		resp.setHeader("Content-Disposition","attachment;filename="+"results.csv");
 
-
-
 		logger.info("New XMLquery received !");
-		InputStream xmlFileIn = null ;
-
+		InputStream xmlFileIn = null ; // get InputStream of XMLFile
 		try{
 			List<FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(req);
 			for (FileItem item : items) {
@@ -63,24 +66,40 @@ public class HandleXMLQuery extends HttpServlet {
 			throw new ServletException("Cannot parse multipart request.", e);
 		}
 
-		InputStream dtdFileIn = Util.classLoader.getResourceAsStream(MainResources.dtdSearchFile);
-
 		Query query = null;
+		XMLFile xml = null;
 		try {
-			query = new XMLSearchQuery(new XMLFile(xmlFileIn, dtdFileIn));
-		} catch (NumberFormatException | UnfoundEventException | ParserConfigurationException | SAXException
-				| UnfoundPredicatException | ParseException | IncomparableValueException | UnfoundTerminologyException
-				| OperatorException e) {
-			MyExceptions.logException(logger, e);
-			e.printStackTrace();
+			xml = new XMLFile(xmlFileIn);
+		} catch (InvalidContextException | ParserConfigurationException | SAXException e1) {
+			MyExceptions.logException(logger, e1);
+			e1.printStackTrace();
+		}
+		
+		try {
+			if (xml.getDTDFile() == DTDFiles.SearchQuery){
+				query = new XMLSearchQuery(xml);
+			} else if (xml.getDTDFile() == DTDFiles.DescribeQuery) {
+				query = new XMLDescribeQuery(xml);
+			} else if (xml.getDTDFile() == DTDFiles.CountQuery){
+				query = new InitialQuery(xml);
+			} else {
+				throw new UnfoundDTDFile(logger, xml.getDTDFile().getFilePath());
+			}
+			
+		} catch (NumberFormatException | UnfoundEventException | UnfoundPredicatException
+				| IncomparableValueException | UnfoundTerminologyException | OperatorException
+				| InvalidContextException | InvalidXMLFormat | ParserConfigurationException | SAXException
+				| ParseException | UnfoundDTDFile e1) {
+			// TODO Auto-generated catch block
+			MyExceptions.logException(logger, e1);
+			e1.printStackTrace();
 		} finally{
 			xmlFileIn.close();
-			dtdFileIn.close();
 		}
 
 		String sparqlEndpoint = DockerDB.getEndpointIPadress(Endpoints.TIMELINES);
 		Results results = new Results(sparqlEndpoint,query);
-		results.setUpFile();
+		results.serializeResult();
 		File file = results.getFile();
 		FileInputStream fis = null;
 

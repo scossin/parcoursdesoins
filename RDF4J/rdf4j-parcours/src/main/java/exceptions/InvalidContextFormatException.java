@@ -1,9 +1,10 @@
 package exceptions;
 
+import org.slf4j.Logger;
+
 public class InvalidContextFormatException extends InvalidContextException{
 
-	public InvalidContextFormatException(String fileName){
-		super(fileName);
-		System.out.println("\"" + fileName + "\""+ " incorrect context file format");
+	public InvalidContextFormatException(Logger logger, String fileName){
+		super(logger,fileName);
 	}
 }

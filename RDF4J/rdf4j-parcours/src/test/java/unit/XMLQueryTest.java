@@ -12,6 +12,8 @@ import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
 
 import exceptions.IncomparableValueException;
+import exceptions.InvalidContextException;
+import exceptions.InvalidXMLFormat;
 import exceptions.OperatorException;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
@@ -27,7 +29,7 @@ public class XMLQueryTest {
 	public ExpectedException thrown = ExpectedException.none();
 	
 	@Test
-	public void testDTD() throws ParserConfigurationException, SAXException, IOException, NumberFormatException, UnfoundEventException, UnfoundPredicatException, ParseException, IncomparableValueException, UnfoundTerminologyException, OperatorException{
+	public void testDTD() throws ParserConfigurationException, SAXException, IOException, NumberFormatException, UnfoundEventException, UnfoundPredicatException, ParseException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat{
 		thrown.expect(UnfoundEventException.class);
 		
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "UnfoundEvent.xml" );

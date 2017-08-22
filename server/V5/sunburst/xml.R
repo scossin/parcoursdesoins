@@ -22,12 +22,40 @@ rm(list=ls())
 require(R6)
 require(httr)
 require(XML)
+source("XMLDescribeQueryOO.R")
 source("XMLqueryOO.R")
 source("ConnectionOO.R")
-query <- XMLquery$new()
-query$addEventNode(0, "SejourMCO")
+source("XMLDescribeQueryOO.R")
+
+query <- XMLDescribeQuery$new()
+query$docType
+query$addEventTypeNode("SejourMCO")
+query$listEventNodes
+query$addPredicateTypeNode(c("inEtab"))
+contexts <- paste0("p",c(1,10))
+query$addContextNode(contexts)
+eventInstances <- c("p1_SejourMCO_2009_11_21T02_08_00_000_01_00",
+                    "p10_SejourMCO_2009_10_06T04_32_00_000_02_00")
+query$addEventInstances(eventInstances)
+
 con <- Connection$new()
-con$getQueryURL()
+query$saveQuery()
+
+results <- query$sendQuery(con$getQueryURL())
+results$status_code
+voir <- read.table(file=textConnection(rawToChar(results$content)), sep="\t",header = T)
+
+
+write()
+
+query$addEventNode(0, "SejourMCO")
+
+
+
+
+query$listContextNode
+
+
 
 
 contexts <- paste0("p",1:100000)
@@ -51,13 +79,20 @@ results$status_code
 
 contexts <- paste0("p",1:10)
 query$addContextNode(contextVector = contexts)
+
 query$saveQuery()
 
 system.time(
   results <- query$sendQuery(con$getQueryURL())
 )
 
+query$fileName
+
 results$status_code
+
+
+
+
 
 voir <- read.table(file=textConnection(rawToChar(results$content)), sep="\t",header = T)
 

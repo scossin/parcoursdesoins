@@ -2,10 +2,12 @@ package exceptions;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-public class InvalidXMLFormat extends ParserConfigurationException {
+import org.slf4j.Logger;
+
+public class InvalidXMLFormat extends MyExceptions {
     
-	public InvalidXMLFormat(String msg) {
-		super(msg);
+	public InvalidXMLFormat(Logger logger, String msg) {
+		super(logger, msg);
     } 
 
 }

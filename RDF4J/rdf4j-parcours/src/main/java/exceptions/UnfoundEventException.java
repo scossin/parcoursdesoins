@@ -8,7 +8,6 @@ public class UnfoundEventException extends MyExceptions {
 		super(logger);
 	}
 
-
 	public UnfoundEventException(Logger logger, String event){
 		super(logger, "\"" + event + "\""+ " unfound event");
 	}

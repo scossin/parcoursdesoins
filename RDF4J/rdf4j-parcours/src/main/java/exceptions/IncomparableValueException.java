@@ -1,7 +1,9 @@
 package exceptions;
 
-public class IncomparableValueException extends Exception {
-	public IncomparableValueException(String msg){
-		super(msg);
+import org.slf4j.Logger;
+
+public class IncomparableValueException extends MyExceptions {
+	public IncomparableValueException(Logger logger, String msg){
+		super(logger, msg);
 	}
 }

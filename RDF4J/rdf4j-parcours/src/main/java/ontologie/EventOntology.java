@@ -1,5 +1,6 @@
 package ontologie;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -27,9 +28,10 @@ import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import exceptions.InvalidContextException;
+import exceptions.InvalidContextFormatException;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
-import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
 import parameters.Util;
 import terminology.Terminology;
@@ -164,7 +166,7 @@ public class EventOntology {
 				return(unIRI);
 			}
 		}
-		throw new UnfoundPredicatException(predicateName);
+		throw new UnfoundPredicatException(logger, predicateName);
 	}
 	
 	public static boolean isPredicateOfEvent (String predicateName, Event event){
@@ -206,6 +208,37 @@ public class EventOntology {
 		}
 	}
 	
+	
+	/**
+	 * 
+	 * @param file A timeline file
+	 * @return the contextIRI (named graph IRI)
+	 * @throws InvalidContextFormatException If the filename is incorrect according to {@link isValidContextFileFormat}}
+	 */
+	public static IRI getContextIRI (File file) throws InvalidContextFormatException{
+		if (Util.isValidContextFileFormat(file)){
+			String context = file.getName().replaceAll(Util.fileExtensionRegex, "");
+			IRI contextIRI = Util.vf.createIRI(EIG.NAMESPACE, context);
+			return contextIRI;
+		} else {
+			throw new InvalidContextFormatException(logger, file.getName());
+		}
+	}
+	
+	/**
+	 * Check if the context String is correct and return the IRI of the context (named graph)
+	 * @param contextName A string of the context localName (ex : p20)
+	 * @return an IRI of the contextName in the namespace of my ontology
+	 * @throws InvalidContextException if contextName is not valid
+	 */
+	public static IRI getContextIRI(String contextName) throws InvalidContextException{
+		if (Util.isValidContextName(contextName)){
+			IRI contextIRI = Util.vf.createIRI(EIG.NAMESPACE, contextName);
+			return contextIRI;
+		} else {
+			throw new InvalidContextException(logger, contextName);
+		}
+	}
 	
 	/**
 	 * Get all the subClassOf of an event IRI in the ontology

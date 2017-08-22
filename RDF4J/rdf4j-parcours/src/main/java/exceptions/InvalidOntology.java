@@ -1,7 +1,9 @@
 package exceptions;
 
-public class InvalidOntology extends Exception {
-	public InvalidOntology(String msg){
-		super(msg);
+import org.slf4j.Logger;
+
+public class InvalidOntology extends MyExceptions {
+	public InvalidOntology(Logger logger, String msg){
+		super(logger, msg);
 	}
 }

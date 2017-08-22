@@ -96,22 +96,6 @@ public class Util {
 	
 
 	/**
-	 * 
-	 * @param file A timeline file
-	 * @return the contextIRI (named graph IRI)
-	 * @throws InvalidContextFormatException If the filename is incorrect according to {@link isValidContextFileFormat}}
-	 */
-	public static IRI getContextIRI (File file) throws InvalidContextFormatException{
-		if (isValidContextFileFormat(file)){
-			String context = file.getName().replaceAll(fileExtensionRegex, "");
-			IRI contextIRI = Util.vf.createIRI(EIG.NAMESPACE, context);
-			return contextIRI;
-		} else {
-			throw new InvalidContextFormatException(file.getName());
-		}
-	}
-	
-	/**
 	 * Add the namespace of the ontology used {@link EIG} to a String
 	 * @param localName The name of a resource (event, predicate, values) in my ontology
 	 * @return an IRI in the namespace of my ontology
@@ -120,22 +104,7 @@ public class Util {
 		IRI myIRI = Util.vf.createIRI(EIG.NAMESPACE, localName);
 		return myIRI;
 	}
-	
-	/**
-	 * Check if the context String is correct and return the IRI of the context (named graph)
-	 * @param contextName A string of the context localName (ex : p20)
-	 * @return an IRI of the contextName in the namespace of my ontology
-	 * @throws InvalidContextException if contextName is not valid
-	 */
-	public static IRI getContextIRI(String contextName) throws InvalidContextException{
-		if (isValidContextName(contextName)){
-			IRI contextIRI = Util.vf.createIRI(EIG.NAMESPACE, contextName);
-			return contextIRI;
-		} else {
-			throw new InvalidContextException(contextName);
-		}
-	}
-	
+		
 	/**
 	 * Given the datatypeUri and a literal string (numeric, date...) return a well formatted Literal for RDF statement
 	 * @param datatypeUri Must be a primitive or derived datatype. See {@link org.eclipse.rdf4j.model.datatypes.XMLDatatypeUtil#isBuiltInDatatype}}

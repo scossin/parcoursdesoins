@@ -1,7 +1,9 @@
 package exceptions;
 
-public class OperatorException extends Exception {
-	public OperatorException(String msg){
-		super(msg);
+import org.slf4j.Logger;
+
+public class OperatorException extends MyExceptions {
+	public OperatorException(Logger logger, String msg){
+		super(logger, msg);
 	}
 }

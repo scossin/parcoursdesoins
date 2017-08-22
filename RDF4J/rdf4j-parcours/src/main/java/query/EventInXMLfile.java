@@ -11,13 +11,14 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.datatypes.XMLDatatypeUtil;
 import org.eclipse.rdf4j.model.util.LiteralUtilException;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import exceptions.InvalidXMLFormat;
 import exceptions.UnfoundEventException;
-import exceptions.UnfoundInstanceOfTerminologyException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import ontologie.EIG;
@@ -34,7 +35,8 @@ import query.XMLFile.XMLelement;
  *
  */
 public class EventInXMLfile {
-
+	final static Logger logger = LoggerFactory.getLogger(EventInXMLfile.class);
+	
 	/**
 	 * The variable that will be used to describe the event in the SPARQL query
 	 * Concatenation of "?event" and event number (ex : ?event0)
@@ -177,7 +179,7 @@ public class EventInXMLfile {
 	 */
 	public void addLinkStatement (IRI predicate) throws UnfoundPredicatException{
 		if (!EventOntology.isPredicateOfEvent(predicate.getLocalName(), event)){
-			throw new UnfoundPredicatException(predicate.getLocalName());
+			throw new UnfoundPredicatException(logger, predicate.getLocalName());
 		}
 		
 		if (TIME.isRecognizedTimePredicate(predicate.getLocalName())){
@@ -274,7 +276,8 @@ public class EventInXMLfile {
 		try{
 			addFilterStatement(getNumericFilter(numericVariable,minValue,maxValue));
 		} catch (IllegalArgumentException e){
-			throw new InvalidXMLFormat(eventVariable + predicateType + " min and maxValue : at least one of them must be set");
+			String msg = eventVariable + predicateType + " min and maxValue : at least one of them must be set";
+			throw new InvalidXMLFormat(logger, msg);
 		}
 		
 		// finally add the where statement :
@@ -370,7 +373,7 @@ public class EventInXMLfile {
 		boolean isSetMax = !maxValue.equals("");
 
 		if (!isSetMin && !isSetMax){
-			throw new InvalidXMLFormat(eventVariable + predicateType + " min and maxValue not set");
+			throw new InvalidXMLFormat(logger, eventVariable + predicateType + " min and maxValue not set");
 		}
 
 		String minStat = "";

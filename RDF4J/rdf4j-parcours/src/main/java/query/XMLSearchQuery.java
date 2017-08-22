@@ -1,6 +1,5 @@
 package query;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -15,6 +14,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -22,6 +23,7 @@ import org.xml.sax.SAXException;
 
 import exceptions.IncomparableValueException;
 import exceptions.InvalidContextException;
+import exceptions.InvalidXMLFormat;
 import exceptions.OperatorException;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
@@ -30,31 +32,25 @@ import ontologie.EIG;
 import ontologie.EventOntology;
 import parameters.MainResources;
 import parameters.Util;
+import query.XMLFile.DTDFiles;
 import query.XMLFile.XMLelement;
 
 
 /**
- * A class returning a query string for a SPARQL query
- * The initial query is a XML file handled by {@link XMLFile}. 
- * It contains a description list of events handled by {@link EventInXMLfile}
+ * A class to produce SPARQL query to search events and links between events. <br>
+ * The XML file is handled by {@link XMLFile}. <br>
+ * The events elements of the XML query are handled by {@link EventInXMLfile}
  * @author cossin
  *
  */
 public class XMLSearchQuery implements Query {
 
+	final static Logger logger = LoggerFactory.getLogger(XMLSearchQuery.class);
+	
 	/**
 	 * Instance of XMLFile representing a user query in a XML file
 	 */
 	private XMLFile xml ;
-	
-	
-	private SimpleDataset contextDataset ;
-	
-
-	public SimpleDataset getContextDataset() {
-		// TODO Auto-generated method stub
-		return contextDataset;
-	}
 	
 	/**
 	 * a list of binding statement. A bind statement create a new variable to compare 2 values
@@ -82,6 +78,14 @@ public class XMLSearchQuery implements Query {
 		filterStatements.add(filterStatement);
 	}
 	
+	/**
+	 * Integer : the event number
+	 * EventInXMLfile : a description of an Event (type, predicates ...), each one contains SPARQL statements for
+	 * description and filtering
+	 */
+	private Map<Integer, EventInXMLfile> eventQuery = new HashMap<Integer, EventInXMLfile>();
+	
+	
 	/******************************* getter **********************/
 	public HashSet<String> getFilterStatements(){
 		return(filterStatements);
@@ -90,14 +94,6 @@ public class XMLSearchQuery implements Query {
 	public HashSet<String> getBindStatements(){
 		return(bindStatements);
 	}
-	
-	
-	/**
-	 * Integer : the event number
-	 * EventInXMLfile : a description of an Event (type, predicates ...), each one contains SPARQL statements for
-	 * description and filtering
-	 */
-	private Map<Integer, EventInXMLfile> eventQuery = new HashMap<Integer, EventInXMLfile>();
 	
 
 	/**
@@ -113,8 +109,10 @@ public class XMLSearchQuery implements Query {
 	 * @throws IncomparableValueException
 	 * @throws UnfoundTerminologyException
 	 * @throws OperatorException 
+	 * @throws InvalidContextException 
+	 * @throws InvalidXMLFormat 
 	 */
-	public XMLSearchQuery(XMLFile xmlFile) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException{
+	public XMLSearchQuery(XMLFile xmlFile) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat{
 		this.xml = xmlFile;
 		// events element description in the XML :
 		NodeList eventNodes = xml.getEventNodes();
@@ -134,9 +132,6 @@ public class XMLSearchQuery implements Query {
 			Node linkNode = linkNodes.item(i);
 			addLinkStatements(linkNode);
 		}
-		
-		// context
-		this.contextDataset = xml.getContextDataSet();
 	}
 	
 	/**
@@ -173,7 +168,7 @@ public class XMLSearchQuery implements Query {
 	
 	
 	/**
-	 * Add contraints SPARQL statements between events
+	 * Add contraints/links between events
 	 * @param linkNode A XML element describing links between events
 	 * @throws NumberFormatException Wrong event numbers
 	 * @throws UnfoundPredicatException If the predicate can't be found in the EventOntology
@@ -212,9 +207,10 @@ public class XMLSearchQuery implements Query {
 		
 		// check the comparison is possible between values
 		if (!value1IRI.equals(value2IRI)){
-			throw new IncomparableValueException("can't compare " + value1IRI.stringValue() + 
+			String msg = "can't compare " + value1IRI.stringValue() + 
 					" and " + value2IRI.stringValue() + " values of " + predicate1 + " and " + 
-					predicate2);
+					predicate2;
+			throw new IncomparableValueException(logger, msg);
 		}
 		
 		// For each event, declare the variable that will be compared in a filter statement 
@@ -225,7 +221,7 @@ public class XMLSearchQuery implements Query {
 		String operatorName = element.getElementsByTagName(XMLelement.operator.toString())
 				.item(0).getTextContent();
 		if (!XMLFile.isRecognizedOperator(operatorName)){
-			throw new OperatorException("Unknown operator \"" + operatorName + "\"");
+			throw new OperatorException(logger, "Unknown operator \"" + operatorName + "\"");
 		}
 		
 		// only difference of values is implemented now (date difference, numerical differences...)
@@ -257,6 +253,25 @@ public class XMLSearchQuery implements Query {
 	}
 	
 	/**
+	 * Variables of a search query are : 
+	 * <ul>
+	 * <li> ?context : the namedGraph specific to a patient
+	 * <li> ?event0 : first event
+	 * <li> ...
+	 * <li> ?eventn : nth event
+	 * </ul>
+	 */
+	public String[] getVariableNames() {
+		ArrayList<String> eventNumber = new ArrayList<String>();
+		eventNumber.add("context");
+		for (int numberEvent : eventQuery.keySet()){
+			eventNumber.add("event" + numberEvent);
+		}
+		return(eventNumber.toArray(new String[eventNumber.size()]));
+	}
+	
+	/**
+	 * main function of this class : return a SPARQL query String
 	 * @return a SPARQL query string
 	 */
 	public String getSPARQLQueryString(){
@@ -305,7 +320,7 @@ public class XMLSearchQuery implements Query {
 		return(queryString);
 	}
 	
-	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException {
+	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat {
 		//QueryClass queryClass = new QueryClass(new File(Util.queryFolder+"queryMCOSSR3day.xml"));
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "queryMCOSSR3day.xml" );
 		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdSearchFile);
@@ -314,14 +329,7 @@ public class XMLSearchQuery implements Query {
 	}
 
 	@Override
-	public String[] getVariableNames() {
-		ArrayList<String> eventNumber = new ArrayList<String>();
-		eventNumber.add("context");
-		for (int numberEvent : eventQuery.keySet()){
-			eventNumber.add("event" + numberEvent);
-		}
-		return(eventNumber.toArray(new String[eventNumber.size()]));
+	public SimpleDataset getContextDataset() {
+		return(xml.getContextDataSet());
 	}
-
-
 }

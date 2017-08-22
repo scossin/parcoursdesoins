@@ -1,10 +1,15 @@
 package exceptions;
 
-import org.eclipse.rdf4j.model.IRI;
+import org.slf4j.Logger;
 
-public class UnfoundTerminologyException extends Exception {
+public class UnfoundTerminologyException extends MyExceptions {
 	
-	public UnfoundTerminologyException(String terminologyName){
-		super("\"" + terminologyName + "\"" + " non trouvé dans la liste des terminologies");
+	public UnfoundTerminologyException(Logger logger, String terminologyName){
+		super(logger, getMessage(terminologyName));
 }
+	
+	private static String getMessage (String terminologyName){
+		String message = "\"" + terminologyName + "\"" + " non trouvé dans la liste des terminologies" ;
+		return(message);
+	}
 }

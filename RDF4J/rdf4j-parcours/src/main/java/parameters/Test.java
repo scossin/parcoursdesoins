@@ -1,13 +1,20 @@
 package parameters;
 
-import javax.swing.plaf.synth.SynthSeparatorUI;
-
-import ch.qos.logback.core.net.SyslogOutputStream;
-import ontologie.EIG;
+import org.eclipse.rdf4j.query.impl.SimpleDataset;
 
 public class Test {
 	
+	private SimpleDataset dataset = new SimpleDataset();
+	
+	public SimpleDataset getDataSet(){
+		return(dataset);
+	}
 	public static void main (String[] args){
-		System.out.println(Util.vf.createIRI(EIG.NAMESPACE,"p2").hashCode());
+		Test test = new Test();
+		
+		if (test.getDataSet() == null){
+			System.out.println("c'est nulle");
+		}
+		System.out.println(test.getDataSet().getNamedGraphs().hashCode());
 	}
 }

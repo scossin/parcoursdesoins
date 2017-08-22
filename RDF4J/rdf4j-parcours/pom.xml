@@ -36,12 +36,12 @@
 			<scope>test</scope>
 		</dependency>
 
-	<dependency>
-		<groupId>org.junit.platform</groupId>
-		<artifactId>junit-platform-runner</artifactId>
-		<version>1.0.0-RC2</version>
-		<scope>test</scope>
-	</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-runner</artifactId>
+			<version>1.0.0-RC2</version>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
 		<dependency>
@@ -73,7 +73,6 @@
 			<artifactId>logback-classic</artifactId>
 			<version>1.1.2</version>
 		</dependency>
-
 	</dependencies>
 
 

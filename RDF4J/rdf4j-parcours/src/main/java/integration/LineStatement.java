@@ -111,7 +111,7 @@ public class LineStatement {
 		
 		// first column
 		String contextName = columns[0];
-		this.contextIRI = Util.getContextIRI(contextName);
+		this.contextIRI = EventOntology.getContextIRI(contextName);
 		
 		// Column 2 : type of Event
 		String eventName = columns[1];

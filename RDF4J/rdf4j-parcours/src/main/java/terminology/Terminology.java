@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.rdf4j.model.IRI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
@@ -11,6 +13,7 @@ import parameters.Util;
 
 
 public class Terminology {
+	final static Logger logger = LoggerFactory.getLogger(Terminology.class);
 	
 	public enum TerminoEnum {
 
@@ -92,7 +95,7 @@ public class Terminology {
 				return(enumTermino.getTermino());
 			}
 		}
-		throw new UnfoundTerminologyException(className.stringValue() + "does not belong to a terminology");
+		throw new UnfoundTerminologyException(logger, className.stringValue() + "does not belong to a terminology");
 	}
 	
 	public static Set<IRI> getClassNames(){

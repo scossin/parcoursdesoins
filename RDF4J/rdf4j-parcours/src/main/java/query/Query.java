@@ -3,6 +3,8 @@ package query;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
 
+import query.XMLFile.DTDFiles;
+
 /**
  * The goal is to transform a user query (XML, JSON...) into a valid SPARQL QueryString
  * @author cossin

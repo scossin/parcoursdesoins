@@ -15,14 +15,19 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import exceptions.InvalidContextFormatException;
 import integration.TimelineFile;
 import ontologie.EIG;
+import ontologie.EventOntology;
 import parameters.MainResources;
 import parameters.Util;
 
 public class AddInferenceToFiles {
+	
+	final static Logger logger = LoggerFactory.getLogger(AddInferenceToFiles.class);
 	
 	private Repository rep ; 
 	private RepositoryConnection con;
@@ -36,11 +41,11 @@ public class AddInferenceToFiles {
 	}
 
 	
-	public void addInference(File file) throws RDFParseException, RepositoryException, IOException{
+	public void addInference(File file) throws RDFParseException, RepositoryException, IOException, InvalidContextFormatException{
 		if (!Util.isValidContextFileFormat(file)){
-			throw new InvalidContextFormatException(file.getName());
+			throw new InvalidContextFormatException(logger, file.getName());
 		}
-		IRI contextIRI = Util.getContextIRI(file);
+		IRI contextIRI = EventOntology.getContextIRI(file);
 		con.add(file, EIG.NAMESPACE, Util.DefaultRDFformat,contextIRI);
 		con.add(Inference.getSubClassOf(con));
 		con.add(Inference.getNumbering(con));
@@ -54,7 +59,7 @@ public class AddInferenceToFiles {
 		}
 	}
 	
-	public void addInferenceToTimelines(File folder) throws IOException{
+	public void addInferenceToTimelines(File folder) throws IOException, InvalidContextFormatException{
 		if (!folder.isDirectory()){
 			throw new IOException(folder.getAbsolutePath() + " is not a directory");
 		}
@@ -69,7 +74,7 @@ public class AddInferenceToFiles {
 		}
 	}
 	
-	public static void main(String args[]) throws IOException{
+	public static void main(String args[]) throws IOException, InvalidContextFormatException{
 		AddInferenceToFiles inferences = new AddInferenceToFiles();
 		String timelinesFolderPath = Util.classLoader.getResource(MainResources.timelinesFolder).getPath();
 		File timelinesFolder = new File(timelinesFolderPath);
