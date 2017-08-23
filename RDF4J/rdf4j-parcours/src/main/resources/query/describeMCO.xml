@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE eventslinks SYSTEM "describe.dtd">
 <eventslinks>
-	<event number="0">
+	<event>
 		<eventType>SejourMCO</eventType>
 		<predicate>
 		<predicateType>inEtab</predicateType>

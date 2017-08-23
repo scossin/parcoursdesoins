@@ -40,6 +40,7 @@ public class Event {
 	
 	private HashMap<IRI, Boolean> predicateIsDataType = new HashMap<IRI,Boolean>() ;
 	
+	
 	/**
 	 * List of parents in the ontology hierarchy
 	 */

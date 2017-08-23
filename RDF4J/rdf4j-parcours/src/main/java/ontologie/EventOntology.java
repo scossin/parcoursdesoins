@@ -34,6 +34,7 @@ import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
 import parameters.MainResources;
 import parameters.Util;
+import query.Query;
 import terminology.Terminology;
 
 /**
@@ -52,7 +53,6 @@ public class EventOntology {
 	 * A list of {@link Event} describing each class of type Event in the Ontology
 	 */
 	private static HashSet<Event> events ;
-	
 	
 	public static boolean isEvent(String eventName){
 		IRI eventIRI = Util.vf.createIRI(EIG.NAMESPACE, eventName);
@@ -322,11 +322,13 @@ public class EventOntology {
 				
 				IRI predicateIRI = (IRI)stat.getSubject();
 				// Ask if predicate is a DataTypeProperty
-				String queryString = "ASK { " + "<" + predicateIRI.toString() + "> a <" + OWL.DATATYPEPROPERTY.toString() + ">}";
+				String queryString = "ASK { " + Query.formatIRI4query(predicateIRI) + "a" +
+						Query.formatIRI4query(OWL.DATATYPEPROPERTY) + "}";
 				BooleanQuery isDataTypeQuery = con.prepareBooleanQuery(queryString);
 				boolean isDataType = isDataTypeQuery.evaluate();
 				event.addPredicateIsDataType(predicateIRI, isDataType);
 				
+				// range
 				values = con.getStatements(predicateIRI, RDFS.RANGE, null);
 				if (!values.hasNext()){
 					System.out.println("Range not set for " + predicateIRI.stringValue());

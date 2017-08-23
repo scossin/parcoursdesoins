@@ -1,9 +1,8 @@
-package servlet;
+package queryFiles;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.OutputStream;
 import java.util.HashMap;
 
 import org.eclipse.rdf4j.model.IRI;
@@ -21,22 +20,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ontologie.EIG;
-import parameters.MainResources;
 import parameters.Util;
 
-public class SunburstHierarchy {
+public class GetSunburstHierarchy implements FileQuery{
 
-	final static Logger logger = LoggerFactory.getLogger(SunburstHierarchy.class);
+	final static Logger logger = LoggerFactory.getLogger(GetSunburstHierarchy.class);
+	
+	public static final String fileName = "EventHierarchy4Sunburst.csv";
+	private final String MIMEtype = "text/csv";
 	
 	private HashMap<IRI,IRI> childParent= new HashMap<IRI,IRI>();
+
+
+	private HashMap<String, String> hierarchy;
 	
-	public void setChildParent(RepositoryConnection con, IRI eventIRI) throws Exception{
+	private void setChildParent(RepositoryConnection con, IRI eventIRI){
 		RepositoryResult<Statement> statements = con.getStatements(null, RDFS.SUBCLASSOF, eventIRI);
 		while(statements.hasNext()){
 			Statement stat = statements.next();
 			IRI subIRI = (IRI)stat.getSubject();
 			if (childParent.containsKey(subIRI)){
-				throw new Exception ("This class does not handle multiaxial terminology");
+				logger.error("This class does not handle multiaxial terminology");
 			}
 			childParent.put(subIRI, eventIRI);
 			setChildParent(con, subIRI); // get children recursively
@@ -61,54 +65,53 @@ public class SunburstHierarchy {
 			}
 			sb.deleteCharAt(0); // remove first -
 			classLocation.put(childName, sb.toString());
-			System.out.println(sb.toString());
 		}
 		return(classLocation);
 	}
 	
-	public IRI test (){
-		return(null);
-	}
-	
-	public static void main(String[] args) throws Exception {
+	public GetSunburstHierarchy(String HierarchyFileName, IRI classeNameIRI) throws RDFParseException, RepositoryException, IOException{
 		// TODO Auto-generated method stub
-		
-		InputStream ontologyInput = Util.classLoader.getResourceAsStream(MainResources.ontologyFileName);
-		
+		InputStream ontologyInput = Util.classLoader.getResourceAsStream(HierarchyFileName);
 		// p RDF triple in memory : 
 		Repository rep = new SailRepository(new MemoryStore());
 		rep.initialize();
 		RepositoryConnection con = rep.getConnection();
-		try {
-			con.add(ontologyInput, EIG.NAMESPACE, RDFFormat.TURTLE);
-			ontologyInput.close();
-		} catch (RDFParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		IRI eventIRI = Util.vf.createIRI(EIG.NAMESPACE,EIG.eventClassName);
-		
-		SunburstHierarchy test = new SunburstHierarchy();
-		test.setChildParent(con, eventIRI);
-		HashMap<String,String> hierarchy = test.getHierarchy();
-		
-		FileWriter fw = new FileWriter("hierarchy4sunburst.txt");
-		StringWriter writer = new StringWriter();
-		for (String className : hierarchy.keySet()){
-			writer.write(className + "\t" + hierarchy.get(className) + "\n");
-		}
-		fw.write(writer.toString());
-		writer.close();
-		fw.close();
+		con.add(ontologyInput, EIG.NAMESPACE, RDFFormat.TURTLE);
+		ontologyInput.close();
+		setChildParent(con, classeNameIRI);
+		this.hierarchy = getHierarchy();
 		con.close();
 		rep.shutDown();
+	}
+
+	@Override
+	public void sendBytes(OutputStream os) throws IOException {
+		StringBuilder line = new StringBuilder();
+		//header
+		line.append("event");
+		line.append("\t");
+		line.append("tree");
+		line.append("\n");
+		os.write(line.toString().getBytes());
+		line.setLength(0);
 		
-}
+		for (String className : hierarchy.keySet()){
+			line.append(className);
+			line.append("\t");
+			line.append(hierarchy.get(className));
+			line.append("\n");
+			os.write(line.toString().getBytes());
+			line.setLength(0);
+		}
+	}
+
+	@Override
+	public String getFileName() {
+		return fileName;
+	}
+
+	@Override
+	public String getMIMEtype() {
+		return MIMEtype;
+	}
 }

@@ -22,11 +22,11 @@ import parameters.Util;
 import servlet.DockerDB;
 import servlet.DockerDB.Endpoints;
 
-public class InitialQuery implements Query {
+public class XMLCountQuery implements Query {
 
 	private XMLFile xml;
 	private String sparqlQuery;
-	public InitialQuery(XMLFile xml){
+	public XMLCountQuery(XMLFile xml){
 		this.xml = xml;
 		setSparqlQuery();
 	}
@@ -64,10 +64,22 @@ public class InitialQuery implements Query {
 		//QueryClass queryClass = new QueryClass(new File(Util.queryFolder+"queryMCOSSR3day.xml"));
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
 		XMLFile xml = new XMLFile(xmlFile);
-		Query query = new InitialQuery(xml);
+		Query query = new XMLCountQuery(xml);
 		System.out.println(query.getSPARQLQueryString());
 		System.out.println(xml.getContextDataSet().hashCode());
 		Results result = new Results(DockerDB.getEndpointIPadress(Endpoints.TIMELINES),query);
 		result.serializeResult();
 	}
 }
+
+/**
+// * SELECT ?eventType ?p (count(?p) as ?count) ?comment WHERE { 
+//  ?s a ?eventType .
+//  ?s ?p ?o .
+//SERVICE <http://127.0.0.1:8080/bigdata/namespace/ontology/sparql> { 
+//?p rdfs:comment ?comment .
+//FILTER(regex(str(?p), "http://www.eigsante2017.fr#"))
+//}}
+//GROUP BY ?eventType ?p ?comment
+ */
+ 

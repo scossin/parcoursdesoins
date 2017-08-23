@@ -46,6 +46,18 @@
   </servlet-mapping>
   
   
+  <servlet>
+    <servlet-name>GetFile</servlet-name>
+    <servlet-class>servlet.GetFile</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>GetFile</servlet-name>
+    <url-pattern>/GetFile</url-pattern>
+  </servlet-mapping>
+  
+  
+  
    <servlet>
     <servlet-name>CheckConnection</servlet-name>
     <servlet-class>servlet.CheckConnection</servlet-class>

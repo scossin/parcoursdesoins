@@ -12,31 +12,31 @@
 <http://www.w3.org/2006/time> a owl:Ontology ;
 	owl:versionIRI :2016 ;
 	rdfs:seeAlso <http://www.w3.org/TR/owl-time> , <http://www.isi.edu/~pan/OWL-Time.html> ;
-	dct:contributor _:genid1920165041 .
+	owl:priorVersion :2006 ;
+	dct:contributor _:genid160553716 .
 
-_:genid1920165041 foaf:name "Simon J D Cox" ;
+_:genid160553716 foaf:name "Simon J D Cox" ;
 	foaf:mbox <mailto:simon.cox@csiro.au> ;
 	dct:identifier <http://orcid.org/0000-0002-3884-3420> .
 
-<http://www.w3.org/2006/time> owl:priorVersion :2006 ;
-	dct:isVersionOf <http://www.w3.org/TR/owl-time> ;
+<http://www.w3.org/2006/time> dct:isVersionOf <http://www.w3.org/TR/owl-time> ;
 	dct:rights "Copyright © 2006-2016 W3C All Rights Reserved. W3C liability, trademark and document use rules apply."@en ;
 	rdfs:comment "Update of OWL-Time ontology, extended to support general temporal reference systems"@en ;
 	rdfs:seeAlso <http://dx.doi.org/10.3233/SW-150187> ;
 	dct:license <https://creativecommons.org/licenses/by/4.0/> ;
-	dct:creator _:genid2057911476 .
+	rdfs:comment "An OWL Ontology of Time (OWL-Time)."@en ;
+	dct:creator _:genid1271285245 .
 
-_:genid2057911476 foaf:name "Jerry Hobbs" ;
-	foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> .
-
-<http://www.w3.org/2006/time> rdfs:comment "An OWL Ontology of Time (OWL-Time)."@en ;
-	dct:creator _:genid1074404286 .
-
-_:genid1074404286 foaf:name "Pan Feng" ;
+_:genid1271285245 foaf:name "Pan Feng" ;
 	foaf:mbox <mailto:panfeng66@gmail.com> .
 
 <http://www.w3.org/2006/time> rdfs:seeAlso <http://www.isi.edu/~pan/time/pub/hobbs-pan-TALIP04.pdf> ;
-	dct:created "2006-09-27"^^xsd:date ;
+	dct:creator _:genid1867894009 .
+
+_:genid1867894009 foaf:name "Jerry Hobbs" ;
+	foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> .
+
+<http://www.w3.org/2006/time> dct:created "2006-09-27"^^xsd:date ;
 	dct:modified "2016-07-12"^^xsd:date ;
 	rdfs:label "OWL-Time"@en ;
 	rdfs:seeAlso <http://www.semantic-web-journal.net/content/time-ontology-extended-non-gregorian-calendar-applications> .
@@ -177,19 +177,22 @@ _:genid5 a rdf:List ;
 
 <http://www.eigsante2017.fr#hasDP> a owl:ObjectProperty ;
 	rdfs:domain <http://www.eigsante2017.fr#SejourMCO> ;
-	rdfs:range <http://www.eigsante2017.fr#Code> .
+	rdfs:range <http://www.eigsante2017.fr#Code> ;
+	rdfs:comment "a pour diagnostic principal PMSI un code CIM10" .
 # 
 # http://www.eigsante2017.fr#inDoctor
 
 <http://www.eigsante2017.fr#inDoctor> a owl:ObjectProperty ;
 	rdfs:domain <http://www.eigsante2017.fr#Event> ;
-	rdfs:range <http://esante.gouv.fr#RPPS> .
+	rdfs:range <http://esante.gouv.fr#RPPS> ;
+	rdfs:comment "Identité du médecin" .
 # 
 # http://www.eigsante2017.fr#inEtab
 
 <http://www.eigsante2017.fr#inEtab> a owl:ObjectProperty ;
 	rdfs:domain <http://www.eigsante2017.fr#SejourHospitalier> ;
-	rdfs:range <https://www.data.gouv.fr/FINESS#Etablissement> .
+	rdfs:range <https://www.data.gouv.fr/FINESS#Etablissement> ;
+	rdfs:comment "Identité de l'établissement" .
 # 
 # http://www.w3.org/2006/time#after
 
@@ -427,12 +430,6 @@ _:genid9 a rdf:List ;
 # #
 # #################################################################
 # 
-# 
-# http://www.eigsante2017.fr#hasMedecin
-
-<http://www.eigsante2017.fr#hasMedecin> a owl:DatatypeProperty ;
-	rdfs:domain <http://www.eigsante2017.fr#SejourMCO> ;
-	rdfs:range xsd:integer .
 # 
 # http://www.w3.org/2006/time#day
 
@@ -1244,51 +1241,61 @@ _:genid62 foaf:mbox <mailto:panfeng66@gmail.com> ;
 _:genid63 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
 	foaf:name "Jerry Hobbs" .
 
-_:genid64 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
+_:genid64 foaf:mbox <mailto:panfeng66@gmail.com> ;
+	foaf:name "Pan Feng" .
+
+_:genid65 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 	foaf:mbox <mailto:simon.cox@csiro.au> ;
 	foaf:name "Simon J D Cox" .
-
-_:genid65 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
-	foaf:name "Jerry Hobbs" .
 
 _:genid66 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 	foaf:mbox <mailto:simon.cox@csiro.au> ;
 	foaf:name "Simon J D Cox" .
 
-_:genid67 foaf:mbox <mailto:panfeng66@gmail.com> ;
-	foaf:name "Pan Feng" .
-
-_:genid68 xsd:pattern "---(0[1-9]|[1-9][0-9])(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?"^^xsd:string .
-
-_:genid69 xsd:pattern "-?([1-9][0-9]{3,}|0[0-9]{3})(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?"^^xsd:string .
-
-_:genid70 xsd:pattern "--(0[1-9]|1[0-9]|20)(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?"^^xsd:string .
-
-_:genid71 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
-	foaf:mbox <mailto:simon.cox@csiro.au> ;
-	foaf:name "Simon J D Cox" .
-
-_:genid72 foaf:mbox <mailto:panfeng66@gmail.com> ;
-	foaf:name "Pan Feng" .
-
-_:genid73 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
+_:genid67 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
 	foaf:name "Jerry Hobbs" .
 
-_:genid74 foaf:mbox <mailto:panfeng66@gmail.com> ;
-	foaf:name "Pan Feng" .
-
-_:genid75 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
+_:genid68 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 	foaf:mbox <mailto:simon.cox@csiro.au> ;
 	foaf:name "Simon J D Cox" .
 
-_:genid76 foaf:mbox <mailto:panfeng66@gmail.com> ;
+_:genid69 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
+	foaf:name "Jerry Hobbs" .
+
+_:genid70 foaf:mbox <mailto:panfeng66@gmail.com> ;
 	foaf:name "Pan Feng" .
+
+_:genid71 xsd:pattern "--(0[1-9]|1[0-9]|20)(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?"^^xsd:string .
+
+_:genid72 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
+	foaf:name "Jerry Hobbs" .
+
+_:genid73 xsd:pattern "-?([1-9][0-9]{3,}|0[0-9]{3})(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?"^^xsd:string .
+
+_:genid74 xsd:pattern "---(0[1-9]|[1-9][0-9])(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?"^^xsd:string .
+
+_:genid75 foaf:mbox <mailto:panfeng66@gmail.com> ;
+	foaf:name "Pan Feng" .
+
+_:genid76 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
+	foaf:name "Jerry Hobbs" .
 
 _:genid77 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
 	foaf:name "Jerry Hobbs" .
 
-_:genid78 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
-	foaf:name "Jerry Hobbs" .
+_:genid78 foaf:mbox <mailto:panfeng66@gmail.com> ;
+	foaf:name "Pan Feng" .
+
+_:genid79 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
+	foaf:mbox <mailto:simon.cox@csiro.au> ;
+	foaf:name "Simon J D Cox" .
+
+_:genid80 foaf:mbox <mailto:panfeng66@gmail.com> ;
+	foaf:name "Pan Feng" .
+
+_:genid81 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
+	foaf:mbox <mailto:simon.cox@csiro.au> ;
+	foaf:name "Simon J D Cox" .
 # 
 # 
 # #################################################################
@@ -1334,8 +1341,8 @@ _:genid78 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
 	dct:issued "1999-07-02"^^xsd:date .
 # 
 
-<http://purl.org/dc/elements/1.1/date> dct:issued "1999-07-02"^^xsd:date ;
-	skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
+<http://purl.org/dc/elements/1.1/date> skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
+	dct:issued "1999-07-02"^^xsd:date ;
 	dct:modified "2008-01-14"^^xsd:date ;
 	rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/> ;
 	dct:hasVersion <http://dublincore.org/usage/terms/history/#date-006> ;

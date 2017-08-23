@@ -8,20 +8,10 @@ hierarchy$size <- 0
 hierarchy$size[1] <- 1
 hierarchy$event<-NULL
 hierarchy$color <- sapply(rainbow(20), function(x) substr(x,1,7))
-sunburst(hierarchy,colors = hierarchy$color, count=T,legend = list(w=200))
 
-library(treemap)
-treemap(hierarchy)
 
 
 #  read the csv data downloaded from the Google Fusion Table linked in the article
-ngrams2 <- read.csv(
-  system.file(
-    "examples/ngrams2.csv"
-    ,package="sunburstR"
-  )
-  , stringsAsFactors = FALSE
-)
 
 
 server <- function(input,output,session){
@@ -33,24 +23,17 @@ server <- function(input,output,session){
     add_shiny(sunburst(hierarchy,colors = hierarchy$color, count=T,legend = list(w=200)))
   })
   
-  
-  selection <- reactive({
-    #print(input$sunburst_onclick)
-    #print (str(input$sunburst))
-    input$sunburst_click
-  })
-  
   output$selection <- renderText(input$sunburst_click)
 }
 
 
 ui<-fluidPage(
-    
-    # plot sunburst
-    mainPanel(
-      sunburstOutput("sunburst"),
-      textOutput("selection")
-    )
+  
+  # plot sunburst
+  mainPanel(
+    sunburstOutput("sunburst"),
+    textOutput("selection")
+  )
 )
 
 shinyApp(ui = ui, server = server)

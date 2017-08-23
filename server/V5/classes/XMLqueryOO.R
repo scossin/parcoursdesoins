@@ -26,12 +26,6 @@ XMLquery <- R6Class(
       stop("saveQuery not implemented")
     },
     
-    sendQuery=function(url){
-      query$saveQuery()
-      results <- httr::POST(url, body=list(filedata=upload_file(self$fileName)))
-      return(results)
-    },
-    
     setFileName = function(){
       randomNumber <- round(runif(1, 0, 10^12),0)
       self$fileName <- paste0("/tmp/XMLquery",private$system, randomNumber, ".xml")

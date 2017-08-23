@@ -33,7 +33,7 @@ import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
 import parameters.Util;
-import query.InitialQuery;
+import query.XMLCountQuery;
 import query.Query;
 import query.Results;
 import query.XMLDescribeQuery;
@@ -81,7 +81,7 @@ public class HandleXMLQuery extends HttpServlet {
 			} else if (xml.getDTDFile() == DTDFiles.DescribeQuery) {
 				query = new XMLDescribeQuery(xml);
 			} else if (xml.getDTDFile() == DTDFiles.CountQuery){
-				query = new InitialQuery(xml);
+				query = new XMLCountQuery(xml);
 			} else {
 				throw new UnfoundDTDFile(logger, xml.getDTDFile().getFilePath());
 			}

@@ -349,6 +349,10 @@ public class XMLFile {
 			return;
 		}
 		String contextValues[] = contextValuesNode.item(0).getTextContent().split("\t");
+		if (contextValues.length == 1 || contextValues.equals("")){
+			logger.info("\t value node of context node is empty"); // <value></value>
+			return;
+		}
 		for (String contextName : contextValues){
 			IRI contextIRI = EventOntology.getContextIRI(contextName);
 			dataset.addNamedGraph(contextIRI);

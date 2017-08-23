@@ -16,7 +16,6 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
       self$listEventNodes[[eventName]] <- eventNode
     },
     
-    
     addPredicateNode = function(eventNumber,predicateClass, predicateType, values, minValue, maxValue){
       predicateNode <- private$makePredicateNode(predicateClass, predicateType, values, minValue, maxValue)
       eventName <- paste0("event",eventNumber)
@@ -30,11 +29,13 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
     
     addLinkNode = function(eventNumber1, eventNumber2, 
                            predicate1, predicate2, operator, minValue, maxValue){
+      linkNode <- private$makeLinkNode(eventNumber1, eventNumber2,
+                                       predicate1, predicate2, operator, minValue, maxValue)
       oldList <- self$listLinkNodes
-      if (is.null(oldList)){
-        self$listLinkNodes <- list(predicateNode)
+      if (length(oldList) == 0){
+        self$listLinkNodes <- list(linkNode)
       } else {
-        self$listLinkNodes <- list(oldList, predicateNode)
+        self$listLinkNodes <- list(oldList, linkNode)
       }
     },
     
@@ -52,6 +53,10 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
   private=list(
     name = "eventslinks",
     system = "eventslinks.dtd",
+    
+    makeContextNode = function(contextNode,values){
+      super$makeContextNode(contextNode,values)
+    },
     
     makePredicateNode = function(predicateClass, predicateType, values, minValue, maxValue){
       ## private functions
