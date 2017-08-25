@@ -4,9 +4,9 @@
  <event>
   <eventType>SejourMCO</eventType>
   <predicate>
-   <predicateType>inEtab</predicateType>
+   <predicateType>inEtab	hasBeginning	hasEnd</predicateType>
   </predicate>
-  <context>p1_SejourMCO_2009_11_21T02_08_00_000_01_00	p10_SejourMCO_2009_10_06T04_32_00_000_02_00</context>
+  <value>p1_SejourMCO_2009_11_21T02_08_00_000_01_00	p10_SejourMCO_2009_10_06T04_32_00_000_02_00</value>
  </event>
  <context>
   <value>p1	p10</value>

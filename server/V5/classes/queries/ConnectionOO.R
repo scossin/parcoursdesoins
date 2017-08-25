@@ -1,12 +1,12 @@
 Connection <- R6Class(
   "Connection",
   public = list(
-    fileComments = "comments.csv",
+    filePredicatesDescription = "predicatesDescription.csv",
     filePredicateFrequency = "predicateFrequency.csv",
     fileEventHierarchy4Sunburst = "EventHierarchy4Sunburst.csv",
     
     getFile = function(fileName){
-      fileNames=c(self$fileComments,self$filePredicateFrequency,self$fileEventHierarchy4Sunburst)
+      fileNames=c(self$filePredicatesDescription,self$filePredicateFrequency,self$fileEventHierarchy4Sunburst)
       bool <- fileName %in% fileNames
       if (!any(bool)){
         stop("choose fileName among ",fileNames)
@@ -36,7 +36,8 @@ Connection <- R6Class(
       if (response$status_code!=200){
         stop("Request failed", rawToChar(response$content))
       } else {
-        results <- read.table(file=textConnection(rawToChar(response$content)), sep="\t",header = T)
+        results <- read.table(file=textConnection(rawToChar(response$content)), sep="\t",header = T,
+                              comment.char ="",quote="")
       }
       return(results)
     }

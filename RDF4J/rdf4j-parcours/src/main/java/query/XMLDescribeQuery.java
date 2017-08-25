@@ -2,14 +2,15 @@ package query;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -19,11 +20,9 @@ import exceptions.InvalidContextException;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
 import ontologie.EIG;
-import ontologie.Event;
-import ontologie.EventOntology;
+import ontologie.TIME;
 import parameters.MainResources;
 import parameters.Util;
-import query.XMLFile.DTDFiles;
 import query.XMLFile.XMLelement;
 
 /**
@@ -32,30 +31,52 @@ import query.XMLFile.XMLelement;
  *
  */
 public class XMLDescribeQuery implements Query {
-
-	/**
-	 * EventType
-	 */
-	private Event event ;
+	final static Logger logger = LoggerFactory.getLogger(XMLDescribeQuery.class);
 	/**
 	 * The initial query is a XML file
 	 */
 	private XMLFile xml ;
 	
 	/**
-	 * A list of predicate / value
-	 */
-	private HashMap<IRI,Value> predicatesValue = new HashMap<IRI,Value>();
-		
-	/**
 	 * A string containing VALUES { value1 value2 ... valueN} where value1 ... valueN are eventInstances
 	 */
-	String eventValuesSPARQL;
+	private Set<IRI> eventValuesSPARQL = new HashSet<IRI>();
 	
 	/**
-	 * A string containing VALUES { value1 value2 ... valueN} where value1 ... valueN are predicatesInstances
+	 * A a set of IRI containing VALUES { value1 value2 ... valueN} where value1 ... valueN are predicatesInstances
 	 */
-	String predicatesValuesSPARQL;
+	private Set<IRI> predicateValuesBasic = new HashSet<IRI>();
+	
+	/**
+	 * A string containing VALUES { value1 value2 ... valueN} where value1 ... valueN are predicatesInstances of Time Ontology
+	 */
+	private Set<IRI> predicateValuesTime = new HashSet<IRI>();
+	
+	
+	
+	
+	private final String eventReplacementString = "EVENTSINSTANCESgoHERE";
+	private final String basicReplacementString = "PREDICATESgoHERE";
+	private final String timeReplacementString = "PREDICATESTIMEvaluesGOhere";
+	
+	String startOfQuery = "SELECT * WHERE { \n " +
+			"VALUES ?event {" +             eventReplacementString                           + "} \n"+
+			"{";
+	
+	String basicQuery = "SELECT ?context ?event ?predicate ?value WHERE {graph ?context { \n"+
+			"VALUES ?predicate {" +             basicReplacementString            +"} . \n" + 
+			"?event ?predicate ?value . \n" + 
+			"}}"
+	;
+	
+	String timeOntologyQuery = "SELECT ?context ?event ?predicate ?value WHERE {graph ?context { \n" + 
+			"VALUES ?predicate {"+            timeReplacementString            + "} . \n" + 
+			"?event ?predicate ?startORend . \n"+
+			"?startORend a "+ Query.formatIRI4query(TIME.INSTANT) + " . \n" + 
+			"?startORend "+ Query.formatIRI4query(TIME.INXSDDATETIME) + " ?value . \n"+
+			"}}";
+	;
+	
 	
 	/**
 	 * 
@@ -67,13 +88,12 @@ public class XMLDescribeQuery implements Query {
 	 * @throws UnfoundPredicatException
 	 * @throws InvalidContextException
 	 */
-	public XMLDescribeQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException{
+	public XMLDescribeQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException{
 		this.xml = xml;
 		Node eventNode = xml.getEventNodes().item(0);
-		this.event = EventOntology.getEvent(XMLFile.getEventType(eventNode));
 		setEventValuesSPARQL(eventNode);
-		setPredicatesValues(eventNode); 
-		setpredicatesValuesSPARQL();
+		setPredicatesValues(eventNode);
+		replacePredicatesValues();
 	}
 	
 	/**
@@ -81,10 +101,10 @@ public class XMLDescribeQuery implements Query {
 	 */
 	public String getSPARQLQueryString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT ?context ?event ?predicate ?value WHERE {graph ?context { \n ");
-		sb.append(eventValuesSPARQL);
-		sb.append(predicatesValuesSPARQL);
-		sb.append("?event ?predicate ?value . \n");
+		sb.append(startOfQuery);
+		sb.append(basicQuery);
+		sb.append("} UNION { \n");
+		sb.append(timeOntologyQuery);
 		sb.append("}} \n");
 		return(sb.toString());
 	}
@@ -100,14 +120,47 @@ public class XMLDescribeQuery implements Query {
 		Node predicate = predicates.item(0);
 		String predicateNames[] = predicate.getTextContent().split("\t");
 		for (String predicateName : predicateNames){
-			predicatesValue.putAll(EventOntology.getOnePredicateValuePair(predicateName, event));
+			if (TIME.isRecognizedTimePredicate(predicateName)){
+				predicateValuesTime.add(Util.vf.createIRI(TIME.NAMESPACE, predicateName));
+			} else {
+				predicateValuesBasic.add(Util.vf.createIRI(EIG.NAMESPACE, predicateName));
+			}
 		}
 	}
 	
-	/**
+	private void replacePredicatesValues(){
+		// basic : 
+		StringBuilder sb = new StringBuilder();
+		sb.append(" ");
+		for (IRI predicateIRI : predicateValuesBasic){
+			sb.append(Query.formatIRI4query(predicateIRI));
+			sb.append(" ");
+		}
+		this.basicQuery = basicQuery.replace(basicReplacementString, sb.toString());
+		
+		// time : 
+		sb.setLength(0);
+		sb.append(" ");
+		for (IRI predicateIRI : predicateValuesTime){
+			sb.append(Query.formatIRI4query(predicateIRI));
+			sb.append(" ");
+		}
+		this.timeOntologyQuery = timeOntologyQuery.replace(timeReplacementString, sb.toString());
+		
+		// events : 
+		sb.setLength(0);
+		sb.append(" ");
+		for (IRI predicateIRI : eventValuesSPARQL){
+			sb.append(Query.formatIRI4query(predicateIRI));
+			sb.append(" ");
+		}
+		this.startOfQuery = startOfQuery.replace(eventReplacementString, sb.toString());
+	}
+	
+	/*
 	 * Create a "VALUES" condition of predicates for the SPARQL query
 	 * @throws UnfoundEventException
-	 */
+	
 	
 	private void setpredicatesValuesSPARQL() throws UnfoundEventException{
 		Set<IRI> predicatesIRI = predicatesValue.keySet();
@@ -119,6 +172,7 @@ public class XMLDescribeQuery implements Query {
 		sb.append("} .\n");
 		this.predicatesValuesSPARQL = sb.toString();
 	}
+	 */
 	
 	/**
 	 * Create a "VALUES" condition of events instances for the SPARQL query
@@ -127,22 +181,12 @@ public class XMLDescribeQuery implements Query {
 	 */
 	private void setEventValuesSPARQL (Node eventNode) throws UnfoundPredicatException{
 		Element element = (Element) eventNode;
-		NodeList predicates = element.getElementsByTagName(XMLelement.value.toString());
-		Node predicate = predicates.item(0);
-		String predicateNames[] = predicate.getTextContent().split("\t");
-		IRI[] eventsIRI = new IRI[predicateNames.length];
-		for (int i = 0; i<predicateNames.length; i++){
-			eventsIRI[i] = Util.vf.createIRI(EIG.NAMESPACE, predicateNames[i]);
+		NodeList eventInstance = element.getElementsByTagName(XMLelement.value.toString());
+		Node eventInstances = eventInstance.item(0);
+		String eventInstancesNames[] = eventInstances.getTextContent().split("\t");
+		for (String eventInstanceName : eventInstancesNames){
+			eventValuesSPARQL.add(Util.vf.createIRI(EIG.NAMESPACE, eventInstanceName));
 		}
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append("VALUES ?event { ");
-		for (IRI eventIRI : eventsIRI){
-			sb.append(Query.formatIRI4query(eventIRI));
-			sb.append(" ");
-		}
-		sb.append("} . \n");
-		this.eventValuesSPARQL = sb.toString();
 	}
 
 

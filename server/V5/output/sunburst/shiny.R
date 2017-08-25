@@ -14,25 +14,35 @@ hierarchy$color <- sapply(rainbow(20), function(x) substr(x,1,7))
 #  read the csv data downloaded from the Google Fusion Table linked in the article
 
 
+
 server <- function(input,output,session){
+  addObserver <- function(){
+    observeEvent(input[["hierarchical1_click"]],{
+      print("cliqué !")
+    })
+  }
   
-  output$sunburst <- renderSunburst({
+  output$hierarchical1 <- renderSunburst({
     #invalidateLater(1000, session)
-    
-    
     add_shiny(sunburst(hierarchy,colors = hierarchy$color, count=T,legend = list(w=200)))
   })
   
-  output$selection <- renderText(input$sunburst_click)
+  output$selection <- renderText(input$hierarchical1_click)
+  
+  addObserver()
+  
+  isolate(
+    print (reactiveValuesToList(input)))
 }
 
 
 ui<-fluidPage(
   
   # plot sunburst
-  mainPanel(
-    sunburstOutput("sunburst"),
-    textOutput("selection")
+  fluidRow(
+    column(12,
+           sunburstOutput("hierarchical1")
+    )
   )
 )
 
