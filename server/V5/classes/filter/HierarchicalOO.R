@@ -1,4 +1,5 @@
 Hierarchical <- R6::R6Class(
+  inherit=uiObject,
   "Hierarchical",
   
   public=list(

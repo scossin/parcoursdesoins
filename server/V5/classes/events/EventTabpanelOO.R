@@ -3,34 +3,33 @@ EventTabpanel <- R6::R6Class(
   
   public=list(
     eventNumber = numeric(),
+    context = character(),
     hierarchicalObject = NULL,
     listButtonFilterObject = list(),
     listButtonFilterObserver = list(),
     eventType = NULL,
     
-    initialize = function(eventNumber,hierarchicalObject){
+    initialize = function(eventNumber, context){
       self$eventNumber <- eventNumber
-      bool <- inherits(hierarchicalObject, "Hierarchical")
-      if (!bool){
-        stop("hierarchicalObject must be a Hierarchical instance")
-      }
+      self$context <- context
+      
+      jslink$newTabpanel(tabsetPanel = GLOBALeventTabSetPanel, 
+                         liText = self$getLiText(),
+                         firstDivId = private$getFirstDivOfEventId())
+    },
+    
+    setHierarchicalObject = function(){
+      hierarchicalObject <- HierarchicalSunburst$new(eventNumber = self$eventNumber, 
+                                                     context = self$context,
+                                                     parentId = private$getFirstDivOfEventId(),
+                                                     where = "afterEnd")
+      hierarchicalObject$getHierarchicalDataFromServer()
+      hierarchicalObject$insertUIandMakePlot()
       self$hierarchicalObject <- hierarchicalObject
     },
     
     getObjectId = function(){
       paste0("eventTabpanel",self$eventNumber)
-    },
-    
-    getTabpanel = function(){
-      tab <- shiny::tabPanel(
-        self$getObjectId(), class="tabset",
-        fluidRow(
-          column(12,
-            self$hierarchicalObject$getUI()
-        )
-      )
-      )
-      return(tab)
     },
     
     addHierarchicalObserver = function(){
@@ -70,6 +69,9 @@ EventTabpanel <- R6::R6Class(
         names(self$listButtonFilterObject) <- namesList
         names(self$listButtonFilterObserver) <- namesList
         # names(self$listButtonFilterObserver[[nObject+1]]) <- buttonFilter$getButtonId()
+        cat("Removing ...", 2)
+        self$hierarchicalObject$finalize()
+        self$hierarchicalObject <- NULL
       },once = T)
     },
     
@@ -105,10 +107,27 @@ EventTabpanel <- R6::R6Class(
         buttonFilter$setFilterObject(filterObject)
         
       }))
+    },
+    
+    getLiText = function(){
+      return(paste0("event",self$eventNumber))
+    },
+    
+    finalize = function(){
+      if (!is.null(self$hierarchicalObject)){
+        self$hierarchicalObject$finalize()
+      }
+      
     }
     
   ),
+      
   private = list(
+    getFirstDivOfEventId = function(){
+      return(paste0("firstDivOfEvent",self$getObjectId()))
+    },
+    
+    
     availableFilters = c("NUMERIC","DATE","HIERARCHICAL","FACTOR"),
     createFilterObject = function(filterType,
                                   eventNumber, predicateName, dataFrame){

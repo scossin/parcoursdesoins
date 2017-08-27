@@ -1,5 +1,7 @@
 Filter <- R6::R6Class(
+  inherit=uiObject,
   "Filter",
+  
   public=list(
     eventNumber = numeric(),
     predicateName = character(),
@@ -14,11 +16,7 @@ Filter <- R6::R6Class(
       # self$domParentId <- domParentId
     },
     
-    getUI = function(){
-      stop("getUI not implemented !")
-    },
-    
-    getChoosenEvents = function(){
+    getChosenEvents = function(){
       stop("getChoosenEvents not implemented !")
     },
     

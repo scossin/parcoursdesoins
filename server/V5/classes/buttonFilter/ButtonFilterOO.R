@@ -33,10 +33,10 @@ ButtonFilter <- R6::R6Class(
       htmlText <- paste0("<b>", self$predicateName, "</b> (", self$predicateComment, ")")
       # all in div to append filterObject inside
       div(id = self$getDivId(),
-      materialSwitch(inputId = self$getButtonId(), 
-                     label = HTML(htmlText), 
-                     value = FALSE, ### not checked by default
-                     status = "primary", right = T)) ### label to the right to align
+      shinyWidgets::materialSwitch(inputId = self$getButtonId(), 
+                                      label = HTML(htmlText), 
+                                      value = FALSE, ### not checked by default
+                                      status = "primary", right = T)) ### label to the right to align
     }
   ),
   
