@@ -1,6 +1,18 @@
 ### télécharger le fichier sur le site de l'ASIP
-RPPS <- read.table("ExtractionMonoTable_CAT18_ToutePopulation_201707090738.csv",sep=";",header = T,quote="",
+RPPS <- read.table("ExtractionMonoTable_CAT18_ToutePopulation_201708270748.csv",sep=";",header = T,quote="",
                    comment.char = "")
+# colnames(RPPS)
+# bool <- grepl("SALLES",RPPS$X.Nom.d.exercice.)
+# bool2 <- grepl("NATHALIE",RPPS$X.Prénom.d.exercice.)
+# voir <- subset (RPPS, bool & bool2)
+# t(voir)
+# voir2 <- apply(voir, MARGIN = 2, function(x){
+#   as.character(gsub("^\"|\"$","",x))
+# })
+# 
+# voir2 <- as.data.frame(voir2)
+# library(xtable)
+# print.xtable(voir2, type="latex")
 
 ## je veux la neurologie et la médecine générale : 
 RPPS$X.Libellé.savoir.faire. <- gsub("^\"|\"$","",RPPS$X.Libellé.savoir.faire.)

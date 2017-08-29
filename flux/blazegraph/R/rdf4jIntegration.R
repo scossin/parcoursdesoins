@@ -32,6 +32,12 @@ addPredicateValue <- function(df, contexte, variable, relation){
 
 contexte <- paste0("p",1:1000)
 
+## has price
+listeevents$price <- NA
+bool <- listeevents$group == "Hospitalisation"
+listeevents$price[bool] <- sample(rnorm(100,2500,500),size=sum(bool),replace = T)
+listeevents$price <- round(listeevents$price, 1)
+
 bool <- is.na(listeevents$end)
 listeevents$end <- ifelse(bool, listeevents$start, listeevents$end)
 
@@ -43,13 +49,15 @@ hasBeginning <- addPredicateValue(listeevents, contexte,"start","hasBeginning")
 hospit <- subset(listeevents, group=="Hospitalisation")
 inEtab <- addPredicateValue(hospit, contexte,"finess","inEtab")
 
+## prix des events : 
+hasPrice <- addPredicateValue(hospit, contexte,"price","hasPrice")
+
 ## description consultation : 
 consultation <- subset(listeevents, group=="Consultation")
 inDoctor <- addPredicateValue(consultation, contexte,"nature","inDoctor")
-write.table(inDoctor,"inDoctor.csv",sep="\t",col.names = F, row.names = F,quote=F)
+#write.table(inDoctor,"inDoctor.csv",sep="\t",col.names = F, row.names = F,quote=F)
 
-
-allRelations <- rbind (hasEnd, hasBeginning, inEtab,inDoctor)
+allRelations <- rbind (hasEnd, hasBeginning, inEtab,inDoctor,hasPrice)
 write.table(allRelations,"allRelations.csv",sep="\t",col.names = F, row.names = F,quote=F)
 
 ####

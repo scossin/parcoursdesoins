@@ -1,12 +1,9 @@
-
-
-predicatesDescription <- GLOBALcon$getFile(fileName = GLOBALcon$filePredicatesDescription)
 # eventPredicates <- con$getFile(fileName = con$filePredicateFrequency)
 # 
 # predicatesDescription <- merge(predicatesDescription, eventPredicates, by="predicate")
-predicatesDescription$eventType <- "SejourMCO"
+# predicatesDescription$eventType <- "SejourMCO"
 # predicatesDescription <- unique(predicatesDescription)
-GLOBALpredicatesDescription <- predicatesDescription
+# GLOBALpredicatesDescription <- predicatesDescription
 
 # logFile <- "logFile.txt"
 # if (!file.exists(logFile)){
@@ -15,7 +12,6 @@ GLOBALpredicatesDescription <- predicatesDescription
 # con <- file(logFile)
 # sink(con, append=TRUE)
 # sink(con, append=TRUE, type="message")
-
 
 server <- function(input,output,session){
   source("../../classes/superClasses/uiObject.R",local=T)
@@ -26,7 +22,6 @@ server <- function(input,output,session){
   source("../../classes/buttonFilter/ButtonFilterOO.R",local=T)
   source("../../classes/filter/FilterOO.R",local=T) ## order matters ! 
   source("../../classes/filter/FilterNumericOO.R",local=T)
-  
   source("globalFunctions.R", local = T)
   
   listEventTabpanel <- ListEventsTabpanel$new()

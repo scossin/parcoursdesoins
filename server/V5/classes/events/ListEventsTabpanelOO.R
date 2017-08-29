@@ -11,7 +11,7 @@ ListEventsTabpanel <- R6::R6Class(
       }
       listLength <- length(self$listEventTabpanel)
       self$listEventTabpanel[[listLength+1]] <- eventTabpanel
-      names(self$listEventTabpanel)[listLength+1] <<- eventTabpanel$getLiText()
+      names(self$listEventTabpanel)[listLength+1] <- eventTabpanel$getLiText()
     },
     
     removeEventTabpanel = function(liText){

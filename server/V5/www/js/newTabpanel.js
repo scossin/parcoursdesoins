@@ -23,7 +23,7 @@ checkNotNull = function(variable, variableName){
 	 
 	 var tabsetPanel = message.tabsetPanel;
 	 var liText = message.liText; // the text to display in the li element
-	 var firstDivId = message.firstDivId;
+	 var contentId = message.contentId;
 	 
 	 if (tabsetPanel == null){
 		 console.error("\t empty argument tabsetPanel");
@@ -35,7 +35,7 @@ checkNotNull = function(variable, variableName){
 		 return;
 	 }
 	 
-	 if (firstDivId == null){
+	 if (contentId == null){
 		 console.error("\t empty argument liText");
 		 return;
 	 }
@@ -55,9 +55,9 @@ checkNotNull = function(variable, variableName){
 	 linkNode.appendChild(document.createTextNode(liText)); // text of the tabPanel
 	 linkNode.setAttribute('data-toggle', 'tab'); // important ! shiny will display the content when we click on the li node 
 	 
-	 // I don't check conflict of id ; just generate a very high randomNumber ; collision can happen but probability is very low
-	 var randomNumber = Math.floor(Math.random() * 20)
-	 var newDivContentId = 'tab-' + randomNumber;
+	 // caution ! no check contentId already exists are not
+	 // var newDivContentId = 'tab-' + contentId;
+	 var newDivContentId = contentId;
 	 
 	 linkNode.setAttribute('href', "#"+newDivContentId); /* Link between this li node dans the content see below */
 	 //linkNode.setAttribute('data-value', liText);
@@ -77,7 +77,7 @@ checkNotNull = function(variable, variableName){
 		 
 		 // add basic content now : an empty div with an id where UI will be appended by the application
 		 var newContent = document.createElement('div');
-		 newContent.setAttribute('id', firstDivId);
+		 newContent.setAttribute('id', 'firstDivOf' + contentId);
 		 newDivContent.appendChild(newContent);
 		 console.log("\t newTabpanel finished !");
 	});

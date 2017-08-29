@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+
 import org.eclipse.rdf4j.common.iteration.Iterations;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exceptions.InvalidContextFormatException;
+import exceptions.InvalidOntology;
 import integration.TimelineFile;
 import ontologie.EIG;
 import ontologie.EventOntology;
@@ -41,12 +44,14 @@ public class AddInferenceToFiles {
 	}
 
 	
-	public void addInference(File file) throws RDFParseException, RepositoryException, IOException, InvalidContextFormatException{
+	public void addInference(File file) throws RDFParseException, RepositoryException, IOException, InvalidContextFormatException, DatatypeConfigurationException, InvalidOntology{
 		if (!Util.isValidContextFileFormat(file)){
 			throw new InvalidContextFormatException(logger, file.getName());
 		}
 		IRI contextIRI = EventOntology.getContextIRI(file);
 		con.add(file, EIG.NAMESPACE, Util.DefaultRDFformat,contextIRI);
+		con.add(Inference.hasDuration(con));
+		con.add(Inference.setEIGtype(con));
 		con.add(Inference.getSubClassOf(con));
 		con.add(Inference.getNumbering(con));
 		model.addAll(Iterations.asList(con.getStatements(null, null, null)));
@@ -59,13 +64,14 @@ public class AddInferenceToFiles {
 		}
 	}
 	
-	public void addInferenceToTimelines(File folder) throws IOException, InvalidContextFormatException{
+	public void addInferenceToTimelines(File folder) throws IOException, InvalidContextFormatException, InvalidOntology, DatatypeConfigurationException{
 		if (!folder.isDirectory()){
 			throw new IOException(folder.getAbsolutePath() + " is not a directory");
 		}
 		File files[] = folder.listFiles();
 		for (File file : files){
 			try {
+				logger.info("trying to add inference to ..." + file.getPath());
 				addInference(file);
 				System.out.println(file.getPath() + " inferences added");
 			} catch (RDFParseException | RepositoryException | IOException e) {
@@ -74,7 +80,7 @@ public class AddInferenceToFiles {
 		}
 	}
 	
-	public static void main(String args[]) throws IOException, InvalidContextFormatException{
+	public static void main(String args[]) throws IOException, InvalidContextFormatException, InvalidOntology, DatatypeConfigurationException{
 		AddInferenceToFiles inferences = new AddInferenceToFiles();
 		String timelinesFolderPath = Util.classLoader.getResource(MainResources.timelinesFolder).getPath();
 		File timelinesFolder = new File(timelinesFolderPath);

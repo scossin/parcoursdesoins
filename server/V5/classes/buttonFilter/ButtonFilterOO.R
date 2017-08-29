@@ -1,17 +1,21 @@
 ButtonFilter <- R6::R6Class(
+   inherit = uiObject,
   "ButtonFilter",
   
   public = list(
     eventNumber = numeric(),
     predicateName = character(),
     predicateComment = character(),
+    predicateLabel = character(),
     filterObject = NULL,
     isChecked = logical(),
     
-    initialize = function(eventNumber, predicateName, predicateComment){
+    initialize = function(eventNumber, predicateName, predicateLabel, predicateComment, parentId, where){
+      super$initialize(parentId = parentId, where = where)
       self$eventNumber <- eventNumber
       self$predicateName <- predicateName
       self$predicateComment <- predicateComment
+      self$predicateLabel <- predicateLabel
     },
     
     setFilterObject = function(filterObject){
@@ -19,24 +23,27 @@ ButtonFilter <- R6::R6Class(
     },
     
     
-    getButtonId = function(){
+    getObjectId = function(){
       return(paste0("Button",self$eventNumber, self$predicateName))
     },
     
     getDivId = function(){
-      buttonId <- self$getButtonId()
+      buttonId <- self$getObjectId()
       return(paste0("div",buttonId))
     },
     
-    getUI = function(){
+    makeUI = function(){
       ## bold predicate
-      htmlText <- paste0("<b>", self$predicateName, "</b> (", self$predicateComment, ")")
+      htmlText <- paste0("<b>", self$predicateLabel, "</b> (", self$predicateComment, ")")
       # all in div to append filterObject inside
-      div(id = self$getDivId(),
-      shinyWidgets::materialSwitch(inputId = self$getButtonId(), 
+      ui <- div(id = self$getDivId(),
+                    shinyWidgets::materialSwitch(inputId = self$getObjectId(), 
                                       label = HTML(htmlText), 
                                       value = FALSE, ### not checked by default
                                       status = "primary", right = T)) ### label to the right to align
+      insertUI(selector = private$getJquerySelector(self$parentId),
+               where = self$where,
+               ui = ui)
     }
   ),
   
@@ -44,4 +51,4 @@ ButtonFilter <- R6::R6Class(
   )
 )
 
-
+# buttonFilter <- ButtonFilter$new(1, "predicateName","comment", "parentId","afterEnd")

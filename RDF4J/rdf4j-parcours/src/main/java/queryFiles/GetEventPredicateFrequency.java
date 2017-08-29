@@ -2,8 +2,12 @@ package queryFiles;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import query.PreparedQuery;
 import query.Query;
@@ -12,16 +16,17 @@ import servlet.DockerDB;
 import servlet.DockerDB.Endpoints;
 
 public class GetEventPredicateFrequency implements FileQuery{
-
+	final static Logger logger = LoggerFactory.getLogger(GetEventPredicateFrequency.class);
+	
 	public static final String fileName = "predicateFrequency.csv";
 	private final String MIMEType = "text/csv";
 	
-	private final String sparqlQueryString  = "SELECT ?eventType ?predicate (count(?predicate) as ?freq) WHERE { \n" +
+	private final String sparqlQueryString  = "SELECT ?eventType ?predicate (count(?predicate) as ?frequency) WHERE { \n" +
 		  "?s a ?eventType . \n" + 
-				  "?s ?predicate ?o . } \n"+
+				  "?s ?predicate ?o . } \n" + 
 				"GROUP BY ?predicate ?eventType";
 	
-	private final String[] variableNames = {"eventType","predicate","freq"};
+	private final String[] variableNames = {"predicate","eventType","frequency"};
 	
 	public File fileToSend ;
 	
@@ -56,8 +61,11 @@ public class GetEventPredicateFrequency implements FileQuery{
 	}
 	
 	public static void main(String[] args) throws IOException{
-		GetEventPredicateFrequency predicateFrequency = new GetEventPredicateFrequency();
-		System.out.println(predicateFrequency.fileToSend.getAbsolutePath());
+		GetEventPredicateFrequency eventPredicateFrequency = new GetEventPredicateFrequency();
+		File file = new File("commentaires.csv");
+		OutputStream os = new FileOutputStream(file);
+		eventPredicateFrequency.sendBytes(os);
+		os.close();
 	}
 
 }

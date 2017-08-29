@@ -13,30 +13,30 @@
 	owl:versionIRI :2016 ;
 	rdfs:seeAlso <http://www.w3.org/TR/owl-time> , <http://www.isi.edu/~pan/OWL-Time.html> ;
 	owl:priorVersion :2006 ;
-	dct:contributor _:genid160553716 .
+	dct:isVersionOf <http://www.w3.org/TR/owl-time> ;
+	dct:contributor _:genid285224746 .
 
-_:genid160553716 foaf:name "Simon J D Cox" ;
-	foaf:mbox <mailto:simon.cox@csiro.au> ;
+_:genid285224746 foaf:mbox <mailto:simon.cox@csiro.au> ;
+	foaf:name "Simon J D Cox" ;
 	dct:identifier <http://orcid.org/0000-0002-3884-3420> .
 
-<http://www.w3.org/2006/time> dct:isVersionOf <http://www.w3.org/TR/owl-time> ;
-	dct:rights "Copyright © 2006-2016 W3C All Rights Reserved. W3C liability, trademark and document use rules apply."@en ;
+<http://www.w3.org/2006/time> dct:rights "Copyright © 2006-2016 W3C All Rights Reserved. W3C liability, trademark and document use rules apply."@en ;
 	rdfs:comment "Update of OWL-Time ontology, extended to support general temporal reference systems"@en ;
 	rdfs:seeAlso <http://dx.doi.org/10.3233/SW-150187> ;
 	dct:license <https://creativecommons.org/licenses/by/4.0/> ;
-	rdfs:comment "An OWL Ontology of Time (OWL-Time)."@en ;
-	dct:creator _:genid1271285245 .
+	dct:creator _:genid1527447201 .
 
-_:genid1271285245 foaf:name "Pan Feng" ;
+_:genid1527447201 foaf:name "Pan Feng" ;
 	foaf:mbox <mailto:panfeng66@gmail.com> .
 
-<http://www.w3.org/2006/time> rdfs:seeAlso <http://www.isi.edu/~pan/time/pub/hobbs-pan-TALIP04.pdf> ;
-	dct:creator _:genid1867894009 .
+<http://www.w3.org/2006/time> dct:creator _:genid1798704562 .
 
-_:genid1867894009 foaf:name "Jerry Hobbs" ;
+_:genid1798704562 foaf:name "Jerry Hobbs" ;
 	foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> .
 
-<http://www.w3.org/2006/time> dct:created "2006-09-27"^^xsd:date ;
+<http://www.w3.org/2006/time> rdfs:comment "An OWL Ontology of Time (OWL-Time)."@en ;
+	rdfs:seeAlso <http://www.isi.edu/~pan/time/pub/hobbs-pan-TALIP04.pdf> ;
+	dct:created "2006-09-27"^^xsd:date ;
 	dct:modified "2016-07-12"^^xsd:date ;
 	rdfs:label "OWL-Time"@en ;
 	rdfs:seeAlso <http://www.semantic-web-journal.net/content/time-ontology-extended-non-gregorian-calendar-applications> .
@@ -178,21 +178,32 @@ _:genid5 a rdf:List ;
 <http://www.eigsante2017.fr#hasDP> a owl:ObjectProperty ;
 	rdfs:domain <http://www.eigsante2017.fr#SejourMCO> ;
 	rdfs:range <http://www.eigsante2017.fr#Code> ;
-	rdfs:comment "a pour diagnostic principal PMSI un code CIM10" .
+	rdfs:comment "problème de santé qui a motivé l'admission du patient"@fr , "the condition, after study, which occasioned the admission to the hospital"@en ;
+	rdfs:label "diagnostic principal"@fr , "principal diagnosis"@en .
 # 
 # http://www.eigsante2017.fr#inDoctor
 
 <http://www.eigsante2017.fr#inDoctor> a owl:ObjectProperty ;
 	rdfs:domain <http://www.eigsante2017.fr#Event> ;
 	rdfs:range <http://esante.gouv.fr#RPPS> ;
-	rdfs:comment "Identité du médecin" .
+	rdfs:comment "variables concernant le médecin"@fr , "variables describing the physician"@en ;
+	rdfs:label "description du médecin"@fr , "physician characteristics"@en .
 # 
 # http://www.eigsante2017.fr#inEtab
 
 <http://www.eigsante2017.fr#inEtab> a owl:ObjectProperty ;
 	rdfs:domain <http://www.eigsante2017.fr#SejourHospitalier> ;
 	rdfs:range <https://www.data.gouv.fr/FINESS#Etablissement> ;
-	rdfs:comment "Identité de l'établissement" .
+	rdfs:comment "characteristics of the institutions"@en , "variables décrivant l'établissement"@fr ;
+	rdfs:label "healthcare institutions"@en , "établissement de santé"@fr .
+# 
+# http://www.eigsante2017.fr#hasType
+
+<http://www.eigsante2017.fr#hasType> a owl:ObjectProperty ;
+	rdfs:domain <http://www.eigsante2017.fr#Event> ;
+	rdfs:range <http://www.eigsante2017.fr#Event> ;
+	rdfs:comment "catégorie la plus basse"@fr , "original type of event"@en ;
+	rdfs:label "event type"@en , "type d'évènement"@fr .
 # 
 # http://www.w3.org/2006/time#after
 
@@ -430,6 +441,22 @@ _:genid9 a rdf:List ;
 # #
 # #################################################################
 # 
+# 
+# http://www.eigsante2017.fr#hasDuration
+
+<http://www.eigsante2017.fr#hasDuration> a owl:DatatypeProperty ;
+	rdfs:domain <http://www.eigsante2017.fr#Event> ;
+	rdfs:range xsd:integer ;
+	rdfs:comment "durée de l'évènement"@fr , "event duration"@en ;
+	rdfs:label "duration"@en , "durée"@fr .
+# 
+# http://www.eigsante2017.fr#hasPrice
+
+<http://www.eigsante2017.fr#hasPrice> a owl:DatatypeProperty ;
+	rdfs:domain <http://www.eigsante2017.fr#Event> ;
+	rdfs:range xsd:double ;
+	rdfs:comment "price in euros of the event"@en , "prix en euros de l'évènement"@fr ;
+	rdfs:label "price"@en , "prix"@fr .
 # 
 # http://www.w3.org/2006/time#day
 
@@ -1231,22 +1258,20 @@ tzont:TimeZone a owl:Class .
 	rdfs:label "Year (unit of temporal duration)"@en .
 # 
 
-_:genid61 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
-	foaf:mbox <mailto:simon.cox@csiro.au> ;
-	foaf:name "Simon J D Cox" .
+_:genid61 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
+	foaf:name "Jerry Hobbs" .
 
-_:genid62 foaf:mbox <mailto:panfeng66@gmail.com> ;
-	foaf:name "Pan Feng" .
+_:genid62 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
+	foaf:name "Jerry Hobbs" .
 
 _:genid63 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
 	foaf:name "Jerry Hobbs" .
 
-_:genid64 foaf:mbox <mailto:panfeng66@gmail.com> ;
-	foaf:name "Pan Feng" .
+_:genid64 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
+	foaf:name "Jerry Hobbs" .
 
-_:genid65 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
-	foaf:mbox <mailto:simon.cox@csiro.au> ;
-	foaf:name "Simon J D Cox" .
+_:genid65 foaf:mbox <mailto:panfeng66@gmail.com> ;
+	foaf:name "Pan Feng" .
 
 _:genid66 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 	foaf:mbox <mailto:simon.cox@csiro.au> ;
@@ -1259,20 +1284,26 @@ _:genid68 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 	foaf:mbox <mailto:simon.cox@csiro.au> ;
 	foaf:name "Simon J D Cox" .
 
-_:genid69 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
-	foaf:name "Jerry Hobbs" .
+_:genid69 foaf:mbox <mailto:panfeng66@gmail.com> ;
+	foaf:name "Pan Feng" .
 
 _:genid70 foaf:mbox <mailto:panfeng66@gmail.com> ;
 	foaf:name "Pan Feng" .
 
-_:genid71 xsd:pattern "--(0[1-9]|1[0-9]|20)(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?"^^xsd:string .
+_:genid71 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
+	foaf:mbox <mailto:simon.cox@csiro.au> ;
+	foaf:name "Simon J D Cox" .
 
-_:genid72 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
-	foaf:name "Jerry Hobbs" .
+_:genid72 foaf:mbox <mailto:panfeng66@gmail.com> ;
+	foaf:name "Pan Feng" .
 
-_:genid73 xsd:pattern "-?([1-9][0-9]{3,}|0[0-9]{3})(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?"^^xsd:string .
+_:genid73 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
+	foaf:mbox <mailto:simon.cox@csiro.au> ;
+	foaf:name "Simon J D Cox" .
 
-_:genid74 xsd:pattern "---(0[1-9]|[1-9][0-9])(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?"^^xsd:string .
+_:genid74 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
+	foaf:mbox <mailto:simon.cox@csiro.au> ;
+	foaf:name "Simon J D Cox" .
 
 _:genid75 foaf:mbox <mailto:panfeng66@gmail.com> ;
 	foaf:name "Pan Feng" .
@@ -1280,22 +1311,38 @@ _:genid75 foaf:mbox <mailto:panfeng66@gmail.com> ;
 _:genid76 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
 	foaf:name "Jerry Hobbs" .
 
-_:genid77 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
-	foaf:name "Jerry Hobbs" .
-
-_:genid78 foaf:mbox <mailto:panfeng66@gmail.com> ;
-	foaf:name "Pan Feng" .
-
-_:genid79 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
+_:genid77 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 	foaf:mbox <mailto:simon.cox@csiro.au> ;
 	foaf:name "Simon J D Cox" .
 
-_:genid80 foaf:mbox <mailto:panfeng66@gmail.com> ;
-	foaf:name "Pan Feng" .
+_:genid78 xsd:pattern "-?([1-9][0-9]{3,}|0[0-9]{3})(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?"^^xsd:string .
+
+_:genid79 xsd:pattern "---(0[1-9]|[1-9][0-9])(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?"^^xsd:string .
+
+_:genid80 xsd:pattern "--(0[1-9]|1[0-9]|20)(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?"^^xsd:string .
 
 _:genid81 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 	foaf:mbox <mailto:simon.cox@csiro.au> ;
 	foaf:name "Simon J D Cox" .
+
+_:genid82 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
+	foaf:name "Jerry Hobbs" .
+
+_:genid83 foaf:mbox <mailto:panfeng66@gmail.com> ;
+	foaf:name "Pan Feng" .
+
+_:genid84 foaf:mbox <mailto:panfeng66@gmail.com> ;
+	foaf:name "Pan Feng" .
+
+_:genid85 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
+	foaf:mbox <mailto:simon.cox@csiro.au> ;
+	foaf:name "Simon J D Cox" .
+
+_:genid86 foaf:isPrimaryTopicOf <https://en.wikipedia.org/wiki/Jerry_Hobbs> ;
+	foaf:name "Jerry Hobbs" .
+
+_:genid87 foaf:mbox <mailto:panfeng66@gmail.com> ;
+	foaf:name "Pan Feng" .
 # 
 # 
 # #################################################################
@@ -1312,8 +1359,8 @@ _:genid81 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 # 
 
 <http://purl.org/dc/elements/1.1/contributor> rdfs:label "Contributor"@en ;
-	dct:hasVersion <http://dublincore.org/usage/terms/history/#contributor-006> ;
 	skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
+	dct:hasVersion <http://dublincore.org/usage/terms/history/#contributor-006> ;
 	rdfs:comment "An entity responsible for making contributions to the resource."@en ;
 	dct:description "Examples of a Contributor include a person, an organization, or a service. Typically, the name of a Contributor should be used to indicate the entity."@en ;
 	dct:modified "2008-01-14"^^xsd:date ;
@@ -1327,34 +1374,34 @@ _:genid81 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 	skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
 	rdfs:comment "The spatial or temporal topic of the resource, the spatial applicability of the resource, or the jurisdiction under which the resource is relevant."@en ;
 	dct:description "Spatial topic and spatial applicability may be a named place or a location specified by its geographic coordinates. Temporal topic may be a named period, date, or date range. A jurisdiction may be a named administrative entity or a geographic place to which the resource applies. Recommended best practice is to use a controlled vocabulary such as the Thesaurus of Geographic Names [TGN]. Where appropriate, named places or time periods can be used in preference to numeric identifiers such as sets of coordinates or date ranges."@en ;
-	rdfs:label "Coverage"@en ;
-	dct:issued "1999-07-02"^^xsd:date .
+	dct:issued "1999-07-02"^^xsd:date ;
+	rdfs:label "Coverage"@en .
 # 
 
 <http://purl.org/dc/elements/1.1/creator> dct:modified "2008-01-14"^^xsd:date ;
 	rdfs:label "Creator"@en ;
 	rdfs:comment "An entity primarily responsible for making the resource."@en ;
-	dct:description "Examples of a Creator include a person, an organization, or a service. Typically, the name of a Creator should be used to indicate the entity."@en ;
 	rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/> ;
+	dct:description "Examples of a Creator include a person, an organization, or a service. Typically, the name of a Creator should be used to indicate the entity."@en ;
 	dct:hasVersion <http://dublincore.org/usage/terms/history/#creator-006> ;
 	skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
 	dct:issued "1999-07-02"^^xsd:date .
 # 
 
-<http://purl.org/dc/elements/1.1/date> skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
-	dct:issued "1999-07-02"^^xsd:date ;
+<http://purl.org/dc/elements/1.1/date> dct:issued "1999-07-02"^^xsd:date ;
+	skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
 	dct:modified "2008-01-14"^^xsd:date ;
 	rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/> ;
 	dct:hasVersion <http://dublincore.org/usage/terms/history/#date-006> ;
 	rdfs:comment "A point or period of time associated with an event in the lifecycle of the resource."@en ;
-	rdfs:label "Date"@en ;
-	dct:description "Date may be used to express temporal information at any level of granularity.  Recommended best practice is to use an encoding scheme, such as the W3CDTF profile of ISO 8601 [W3CDTF]."@en .
+	dct:description "Date may be used to express temporal information at any level of granularity.  Recommended best practice is to use an encoding scheme, such as the W3CDTF profile of ISO 8601 [W3CDTF]."@en ;
+	rdfs:label "Date"@en .
 # 
 
 <http://purl.org/dc/elements/1.1/description> dct:description "Description may include but is not limited to: an abstract, a table of contents, a graphical representation, or a free-text account of the resource."@en ;
 	rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/> ;
-	skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
 	dct:issued "1999-07-02"^^xsd:date ;
+	skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
 	rdfs:comment "An account of the resource."@en ;
 	dct:modified "2008-01-14"^^xsd:date ;
 	rdfs:label "Description"@en ;
@@ -1372,8 +1419,8 @@ _:genid81 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 # 
 
 <http://purl.org/dc/elements/1.1/identifier> dct:hasVersion <http://dublincore.org/usage/terms/history/#identifier-006> ;
-	dct:description "Recommended best practice is to identify the resource by means of a string conforming to a formal identification system. "@en ;
 	rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/> ;
+	dct:description "Recommended best practice is to identify the resource by means of a string conforming to a formal identification system. "@en ;
 	rdfs:comment "An unambiguous reference to the resource within a given context."@en ;
 	dct:issued "1999-07-02"^^xsd:date ;
 	dct:modified "2008-01-14"^^xsd:date ;
@@ -1384,8 +1431,8 @@ _:genid81 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 <http://purl.org/dc/elements/1.1/language> dct:modified "2008-01-14"^^xsd:date ;
 	dct:issued "1999-07-02"^^xsd:date ;
 	skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
-	rdfs:label "Language"@en ;
 	dct:hasVersion <http://dublincore.org/usage/terms/history/#language-007> ;
+	rdfs:label "Language"@en ;
 	dct:description "Recommended best practice is to use a controlled vocabulary such as RFC 4646 [RFC4646]."@en ;
 	rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/> ;
 	rdfs:comment "A language of the resource."@en ;
@@ -1397,17 +1444,17 @@ _:genid81 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 	dct:issued "1999-07-02"^^xsd:date ;
 	dct:modified "2008-01-14"^^xsd:date ;
 	rdfs:label "Publisher"@en ;
-	dct:description "Examples of a Publisher include a person, an organization, or a service. Typically, the name of a Publisher should be used to indicate the entity."@en ;
 	rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/> ;
+	dct:description "Examples of a Publisher include a person, an organization, or a service. Typically, the name of a Publisher should be used to indicate the entity."@en ;
 	rdfs:comment "An entity responsible for making the resource available."@en .
 # 
 
 <http://purl.org/dc/elements/1.1/relation> dct:hasVersion <http://dublincore.org/usage/terms/history/#relation-006> ;
-	rdfs:label "Relation"@en ;
 	dct:description "Recommended best practice is to identify the related resource by means of a string conforming to a formal identification system. "@en ;
+	rdfs:label "Relation"@en ;
 	dct:modified "2008-01-14"^^xsd:date ;
-	skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
 	dct:issued "1999-07-02"^^xsd:date ;
+	skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
 	rdfs:comment "A related resource."@en ;
 	rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/> .
 # 
@@ -1415,8 +1462,8 @@ _:genid81 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 <http://purl.org/dc/elements/1.1/rights> dct:hasVersion <http://dublincore.org/usage/terms/history/#rights-006> ;
 	rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/> ;
 	skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
-	dct:description "Typically, rights information includes a statement about various property rights associated with the resource, including intellectual property rights."@en ;
 	dct:issued "1999-07-02"^^xsd:date ;
+	dct:description "Typically, rights information includes a statement about various property rights associated with the resource, including intellectual property rights."@en ;
 	rdfs:label "Rights"@en ;
 	dct:modified "2008-01-14"^^xsd:date ;
 	rdfs:comment "Information about rights held in and over the resource."@en .
@@ -1427,8 +1474,8 @@ _:genid81 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 	rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/> ;
 	rdfs:comment "A related resource from which the described resource is derived."@en ;
 	dct:modified "2008-01-14"^^xsd:date ;
-	dct:description "The described resource may be derived from the related resource in whole or in part. Recommended best practice is to identify the related resource by means of a string conforming to a formal identification system."@en ;
 	dct:issued "1999-07-02"^^xsd:date ;
+	dct:description "The described resource may be derived from the related resource in whole or in part. Recommended best practice is to identify the related resource by means of a string conforming to a formal identification system."@en ;
 	rdfs:label "Source"@en .
 # 
 
@@ -1445,14 +1492,14 @@ _:genid81 dct:identifier <http://orcid.org/0000-0002-3884-3420> ;
 <http://purl.org/dc/elements/1.1/title> rdfs:comment "A name given to the resource."@en ;
 	dct:modified "2008-01-14"^^xsd:date ;
 	skos:note "A second property with the same name as this property has been declared in the dcterms: namespace (http://purl.org/dc/terms/).  See the Introduction to the document \"DCMI Metadata Terms\" (http://dublincore.org/documents/dcmi-terms/) for an explanation."@en ;
-	dct:issued "1999-07-02"^^xsd:date ;
 	rdfs:label "Title"@en ;
+	dct:issued "1999-07-02"^^xsd:date ;
 	dct:hasVersion <http://dublincore.org/usage/terms/history/#title-006> ;
 	rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/> .
 # 
 
-<http://purl.org/dc/elements/1.1/type> dct:hasVersion <http://dublincore.org/usage/terms/history/#type-006> ;
-	rdfs:comment "The nature or genre of the resource."@en ;
+<http://purl.org/dc/elements/1.1/type> rdfs:comment "The nature or genre of the resource."@en ;
+	dct:hasVersion <http://dublincore.org/usage/terms/history/#type-006> ;
 	rdfs:label "Type"@en ;
 	rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/> ;
 	dct:description "Recommended best practice is to use a controlled vocabulary such as the DCMI Type Vocabulary [DCMITYPE]. To describe the file format, physical medium, or dimensions of the resource, use the Format element."@en ;

@@ -32,18 +32,24 @@ public class XMLCountQuery implements Query {
 	}
 	
 	private void setSparqlQuery(){
-		// Assuming the ontology sparqlEndpoint is in the same DB
-		String queryString = "SELECT ?event (count(?s) as ?count) WHERE { GRAPH ?context { ?s a ?event . \n"+
-				"SERVICE serviceURL { \n" +
-				"?event a ?o . \n" + 
-				"FILTER(regex(str(?event)," +
-				" \"NAMESPACE\"" + 
-				"))\n}}} \n" + 
-				"group by ?event \n" ;
-		String serviceURL = "<http://127.0.0.1:8080" + Endpoints.ONTOLOGY.getURL() + ">";
-		String namespace = EIG.NAMESPACE;
-		queryString = queryString.replaceAll("serviceURL", serviceURL);
-		queryString = queryString.replaceAll("NAMESPACE", namespace);
+//		// Assuming the ontology sparqlEndpoint is in the same DB
+//		String queryString = "SELECT ?event (count(?s) as ?count) WHERE { GRAPH ?context { ?s a ?event . \n"+
+//				"SERVICE serviceURL { \n" +
+//				"?event a ?o . \n" + 
+//				"FILTER(regex(str(?event)," +
+//				" \"NAMESPACE\"" + 
+//				"))\n}}} \n" + 
+//				"group by ?event \n" ;
+		
+		
+		String queryString = "SELECT ?className (count(?className) as ?count) WHERE { GRAPH ?context { \n"+
+				"?event "+  Query.formatIRI4query(EIG.HASTYPE) + " ?className .}} \n " + 
+				"group by ?className \n" ;
+		
+//		String serviceURL = "<http://127.0.0.1:8080" + Endpoints.ONTOLOGY.getURL() + ">";
+//		String namespace = EIG.NAMESPACE;
+//		queryString = queryString.replaceAll("serviceURL", serviceURL);
+//		queryString = queryString.replaceAll("NAMESPACE", namespace);
 		this.sparqlQuery = queryString;
 	}
 	public String getSPARQLQueryString() {
@@ -56,13 +62,13 @@ public class XMLCountQuery implements Query {
 	}
 
 	public String[] getVariableNames() {
-		String[] variablesNames = {"event","count"};
+		String[] variablesNames = {"className","count"};
 		return variablesNames;
 	}
 
 	public static void main (String[] args) throws NumberFormatException, UnfoundEventException, UnfoundPredicatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, ParserConfigurationException, SAXException, IOException, ParseException{
 		//QueryClass queryClass = new QueryClass(new File(Util.queryFolder+"queryMCOSSR3day.xml"));
-		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
+		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "countQuery2contexts.xml" );
 		XMLFile xml = new XMLFile(xmlFile);
 		Query query = new XMLCountQuery(xml);
 		System.out.println(query.getSPARQLQueryString());

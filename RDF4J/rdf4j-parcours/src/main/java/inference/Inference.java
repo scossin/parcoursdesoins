@@ -1,14 +1,16 @@
 package inference;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.eclipse.rdf4j.model.IRI;
@@ -28,7 +30,10 @@ import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.eclipse.rdf4j.sail.memory.model.CalendarMemLiteral;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import exceptions.InvalidOntology;
 import exceptions.UnfoundEventException;
 import ontologie.EIG;
 import ontologie.Event;
@@ -36,9 +41,38 @@ import ontologie.EventOntology;
 import ontologie.TIME;
 import parameters.MainResources;
 import parameters.Util;
+import query.Query;
 
 public class Inference{
+	final static Logger logger = LoggerFactory.getLogger(Inference.class);
 	
+	public static HashSet<Statement> setEIGtype (RepositoryConnection con) throws InvalidOntology{
+		RepositoryResult<Statement> statements = con.getStatements(null, RDF.TYPE, null);
+		HashSet<Statement> statements2 = new HashSet<Statement>() ;
+		
+		Set<Resource> eventType = new HashSet<Resource>();
+		
+		while(statements.hasNext()){
+			
+			Statement stat = statements.next();
+			Resource subject = stat.getSubject();
+			IRI typeIRI = (IRI) stat.getObject();
+			if (!EventOntology.isEvent(typeIRI.getLocalName())){
+				continue;
+			}
+			if (!typeIRI.getNamespace().equals(EIG.NAMESPACE)){ // timeInterval
+				continue;
+			}
+			if (eventType.contains(subject)){
+				throw new InvalidOntology(logger, "event must have only one type, do you run getSubClassOf inference before ?");
+			}
+			statements2.add(Util.vf.createStatement(subject, EIG.HASTYPE, stat.getObject()));
+			eventType.add(subject);
+		}
+		
+		return(statements2);
+		
+	}
 	
 	public static HashSet<Statement> getSubClassOf(RepositoryConnection con){
 		
@@ -72,8 +106,8 @@ public class Inference{
 		HashMap<XMLGregorianCalendar,ArrayList<Value>> linkDateIRI = new HashMap<XMLGregorianCalendar,ArrayList<Value>>();
 		
 		String queryString = "SELECT ?event ?date where{"
-				+ "?event <" + TIME.HASBEGINNING.stringValue() + "> ?eventStart . "
-				+ "?eventStart <" + TIME.INXSDDATETIME.stringValue() + "> ?date . }";
+				+ "?event " + Query.formatIRI4query(TIME.HASBEGINNING) + " ?eventStart . "
+				+ "?eventStart " + Query.formatIRI4query(TIME.INXSDDATETIME) + "?date . }";
 		
 		TreeSet<XMLGregorianCalendar> dates = new TreeSet<XMLGregorianCalendar>(
 				new Comparator<XMLGregorianCalendar>(){
@@ -99,36 +133,92 @@ public class Inference{
 			}
 			dates.add(test);
 		}
-		
+		results.close();
 		// 
 		int counter = 1;
-		IRI hasNum = Util.vf.createIRI(EIG.NAMESPACE, "hasNum");
 		for (XMLGregorianCalendar date : dates){
 			Literal number = Util.vf.createLiteral(counter);
 			ArrayList<Value> temp = linkDateIRI.get(date);
 			for (Value valeur : temp){
-				statements2.add(Util.vf.createStatement((Resource) valeur, hasNum, number));
+				statements2.add(Util.vf.createStatement((Resource) valeur, EIG.HASNUM, number));
 			}
 			counter ++ ;
 		}
 		return statements2;
 	}
 	
-	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException, UnfoundEventException{
+	
+	public static HashSet<Statement> hasDuration(RepositoryConnection con) throws DatatypeConfigurationException{
+		HashSet<Statement> statements2 = new HashSet<Statement>();
+		
+		HashMap<IRI,Integer> eventDuration = new HashMap<IRI,Integer>();
+		
+		String queryString = "SELECT ?event ?beginningDate ?endDate WHERE { \n "
+				+ "?event " + Query.formatIRI4query(TIME.HASBEGINNING) + " ?eventStart . \n"
+				+ "?eventStart " + Query.formatIRI4query(TIME.INXSDDATETIME) + " ?beginningDate . \n "
+				+ "?event " + Query.formatIRI4query(TIME.HASEND) + " ?eventEnd . \n "
+				+ "?eventEnd " + Query.formatIRI4query(TIME.INXSDDATETIME) + " ?endDate . \n }";
+		
+		TupleQuery query = con.prepareTupleQuery(queryString);
+		
+		TupleQueryResult results = query.evaluate();
+		while(results.hasNext()){
+			BindingSet row = results.next();
+			
+			CalendarMemLiteral beginningDateCal = (CalendarMemLiteral) row.getBinding("beginningDate").getValue();
+			CalendarMemLiteral endDateCal = (CalendarMemLiteral) row.getBinding("endDate").getValue();
+			XMLGregorianCalendar beginningDate = beginningDateCal.calendarValue();
+			XMLGregorianCalendar endDate = endDateCal.calendarValue();
+			IRI eventInstanceIRI = (IRI) row.getBinding("event").getValue();
+			int duration = diffInSeconds(beginningDate, endDate) ;
+			eventDuration.put(eventInstanceIRI, duration);
+		}
+		results.close();
+		
+		
+		for (Entry<IRI, Integer> entry : eventDuration.entrySet()) {
+		    IRI eventIRI = entry.getKey();
+		    Literal durationSeconds = Util.vf.createLiteral(entry.getValue());
+		    statements2.add(Util.vf.createStatement(eventIRI, EIG.HASDURATION, durationSeconds));
+		}
+		
+		return(statements2);
+	}
+	
+	private static int diffInSeconds(XMLGregorianCalendar o1, XMLGregorianCalendar o2) throws DatatypeConfigurationException{
+		long diffMs = o2.toGregorianCalendar().getTimeInMillis() - 
+				o1.toGregorianCalendar().getTimeInMillis();
+		int diffSeconds = (int) (diffMs / 1000);
+		return(diffSeconds);
+	}
+	
+	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException, UnfoundEventException, DatatypeConfigurationException, InvalidOntology{
 		Repository rep = new SailRepository(new MemoryStore());
 		rep.initialize();
 		RepositoryConnection con = rep.getConnection();
-		con.add(new File(MainResources.timelinesFolder + "p1.ttl"), null, Util.DefaultRDFformat);
+		InputStream in = Util.classLoader.getResourceAsStream(MainResources.timelinesFolder + "p1.ttl");
+		con.add(in, EIG.NAMESPACE, Util.DefaultRDFformat);
+		in.close();
 		HashSet<Statement> statements2 = Inference.getSubClassOf(con);
 		for (Statement stat : statements2){
 			System.out.println(stat.toString());
 		}
 		
-		
 		statements2 = getNumbering(con);
 		for (Statement stat : statements2){
 			System.out.println(stat.toString());
 		}
+		
+		statements2 = hasDuration(con);
+		for (Statement stat : statements2){
+			System.out.println(stat.toString());
+		}
+		
+		statements2 = setEIGtype(con);
+		for (Statement stat : statements2){
+			System.out.println(stat.toString());
+		}
+		
 	}
 	
 }

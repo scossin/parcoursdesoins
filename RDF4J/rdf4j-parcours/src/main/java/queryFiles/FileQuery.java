@@ -27,8 +27,8 @@ public interface FileQuery {
 	}
 	
 	public static FileQuery getFileQuery(String fileName) throws IOException {
-		if (fileName.equals(GetComments.fileName)){
-			return(new GetComments());
+		if (fileName.equals(GetPredicateDescription.fileName)){
+			return(new GetPredicateDescription());
 		} else if (fileName.equals(GetEventPredicateFrequency.fileName)){
 			return(new GetEventPredicateFrequency());
 		} else if (fileName.equals(GetSunburstHierarchy.fileName)){

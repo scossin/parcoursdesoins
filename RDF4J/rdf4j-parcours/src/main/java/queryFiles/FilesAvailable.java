@@ -2,7 +2,7 @@ package queryFiles;
 
 public enum FilesAvailable {
 
-	PredicatesDescription(GetComments.fileName, "get rdfs:comments and expected value of predicates"),
+	PredicatesDescription(GetPredicateDescription.fileName, "get rdfs:comments and expected value of predicates"),
 	PredicateFrequency(GetEventPredicateFrequency.fileName, "get the frequency of each predicate per event"),
 	EventHierarchy4Sunburst(GetSunburstHierarchy.fileName, "get a hierarchical structure of events to make a sunburst");
 

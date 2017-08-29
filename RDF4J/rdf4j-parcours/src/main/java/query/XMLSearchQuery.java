@@ -283,7 +283,7 @@ public class XMLSearchQuery implements Query {
   	      // ?event0hasNum : the event number in the timeline
 		for (int numberEvent : eventQuery.keySet()){
 			part1 += "?event" + numberEvent + " "; // ?event0
-			part1 += "?event" + numberEvent + EIG.hasNum + " "; 
+			part1 += "?event" + numberEvent + EIG.HASNUM + " "; 
 		}
 		queryString += part1 ; 
 		
@@ -314,7 +314,7 @@ public class XMLSearchQuery implements Query {
 		
 		// and numEvent : 
 		for (int numberEvent : eventQuery.keySet()){
-			queryString += "?event" + numberEvent + EIG.hasNum + " "; // ?event0hasNum : the event number in the timeline
+			queryString += "?event" + numberEvent + EIG.HASNUM + " "; // ?event0hasNum : the event number in the timeline
 		}
 		
 		return(queryString);

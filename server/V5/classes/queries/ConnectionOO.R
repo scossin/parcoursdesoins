@@ -5,7 +5,7 @@ Connection <- R6Class(
     filePredicateFrequency = "predicateFrequency.csv",
     fileEventHierarchy4Sunburst = "EventHierarchy4Sunburst.csv",
     
-    getFile = function(fileName){
+    getContent = function(fileName){
       fileNames=c(self$filePredicatesDescription,self$filePredicateFrequency,self$fileEventHierarchy4Sunburst)
       bool <- fileName %in% fileNames
       if (!any(bool)){
@@ -14,6 +14,12 @@ Connection <- R6Class(
       url <- paste0(private$webserverURL,private$GetFilePattern)
       response <- httr::GET(url, query=list(fileName=fileName))
       private$checkResponse(response)
+      return(rawToChar(response$content))
+    },
+    
+    readContentStandard = function(content){
+      results <- read.table(file=textConnection(content), sep="\t",header = T,
+                            comment.char ="",quote="")
     },
     
     sendQuery = function(XMLqueryInstance){
@@ -25,6 +31,9 @@ Connection <- R6Class(
       fileName <- XMLqueryInstance$fileName
       response <- httr::POST(url, body=list(filedata=upload_file(fileName)))
       private$checkResponse(response)
+      content <- rawToChar(response$content)
+      results <- self$readContentStandard (content)
+      return(results)
     }
   ), 
   private = list(
@@ -35,11 +44,7 @@ Connection <- R6Class(
     checkResponse = function(response){
       if (response$status_code!=200){
         stop("Request failed", rawToChar(response$content))
-      } else {
-        results <- read.table(file=textConnection(rawToChar(response$content)), sep="\t",header = T,
-                              comment.char ="",quote="")
       }
-      return(results)
     }
   )
 )

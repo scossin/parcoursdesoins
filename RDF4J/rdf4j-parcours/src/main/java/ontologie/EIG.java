@@ -1,7 +1,10 @@
 package ontologie;
 
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleNamespace;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 
 /**
  * A class containing static fields to describe the ontology
@@ -28,8 +31,19 @@ public class EIG {
 	 */
 	public static final String eventClassName = "Event";
 	
-	/**
-	 * The name of the predicate that number each event of a timeline
-	 */
-	public static final String hasNum = "hasNum";
+	/** http://www.eigsante2017.fr#hasNum  : number each event of a timeline */
+	public static final IRI HASNUM;
+	
+	/** http://www.eigsante2017.fr#hasDuration  : time duration of event of a timeline */
+	public static final IRI HASDURATION;
+
+	/** http://www.eigsante2017.fr#hasType  : original type of event */
+	public static final IRI HASTYPE ;
+	
+	static {
+		ValueFactory factory = SimpleValueFactory.getInstance();
+		HASNUM = factory.createIRI(EIG.NAMESPACE, "hasNum");
+		HASDURATION = factory.createIRI(EIG.NAMESPACE, "hasDuration");
+		HASTYPE = factory.createIRI(EIG.NAMESPACE, "hasType");
+	}
 }

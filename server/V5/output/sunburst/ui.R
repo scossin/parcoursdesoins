@@ -5,9 +5,9 @@ navbarPage("Parcours de soins", id="CartoParcours",
                       sidebarLayout(
                       sidebarPanel(
                         actionButton(inputId = "addEventTabpanel", 
-                                     label = "Add an event"),
+                                     label = GLOBALaddEventTabpanel),
                         actionButton(inputId = "removeEventTabpanel", 
-                                     label = "Remove an event"),
+                                     label = GLOBALremoveEventTabpanel),
                         selectInput(inputId = "eventToRemove",
                                     label = c(""), 
                                     choices = c(""))

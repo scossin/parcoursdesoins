@@ -23,13 +23,17 @@ HierarchicalSunburst <- R6::R6Class(
     }, 
     
     getHierarchicalDataFromServer = function(){
+      ## count
       GLOBALcon <- Connection$new()
       query <- XMLCountquery$new()
-      query$addContextNode(contextVector = self$context)
+      query$addContextNode(contextVector = "")
       query$listContextNode
       eventCount <- GLOBALcon$sendQuery(query)
-      hierarchy <- GLOBALcon$getFile(GLOBALcon$fileEventHierarchy4Sunburst)
-      hierarchicalData <- merge (hierarchy, eventCount, by="event", all.x=T)
+      
+      ## hierarchy
+      content <- GLOBALcon$getContent(GLOBALcon$fileEventHierarchy4Sunburst)
+      hierarchy <- GLOBALcon$readContentStandard(content)
+      hierarchicalData <- merge (hierarchy, eventCount, by.x="event", by.y="className",all.x=T)
       bool <- is.na(hierarchicalData$count)
       hierarchicalData$count[bool] <- 0
       colnames(hierarchicalData) <- c("event","hierarchy","size")
@@ -46,14 +50,13 @@ HierarchicalSunburst <- R6::R6Class(
       private$makePlot()
     },
     
-
-    
     finalize = function(){
       self$removeUI()
     },
     
-    getEvent = function(hierarchicalChoice){
+    getEventType = function(observerInput){
       # hierarchicalChoice is a vector with length the depth of the node in the hierarchy
+      hierarchicalChoice <- observerInput
       hierarchicalChoice <- paste(hierarchicalChoice, collapse="-")
       bool <- self$hierarchicalData$hierarchy %in% hierarchicalChoice  
       if (!any(bool)){
@@ -62,7 +65,7 @@ HierarchicalSunburst <- R6::R6Class(
       if (sum(bool) != 1){
         stop(hierarchicalChoice, " : many possibilities in hierarchicalData")
       }
-      return(self$hierarchicalData$event[bool])
+      return(as.character(self$hierarchicalData$event[bool]))
     }, 
   
     getInputObserver = function(){
@@ -72,7 +75,6 @@ HierarchicalSunburst <- R6::R6Class(
   ),
   
   private = list(
-
     
     checkHierarchicalData = function(hierarchicalData){
       columnsNames <- c("event","hierarchy","size")
@@ -86,15 +88,12 @@ HierarchicalSunburst <- R6::R6Class(
       return(subset(self$hierarchicalData, select=c("hierarchy","size")))
     },
     
-    getUI = function(){
-      return(sunburstOutput(self$getObjectId()))
-    },
-    
     insertUI = function(){
+      ui <- sunburstOutput(self$getObjectId())
       insertUI(
         selector = private$getJquerySelector(self$parentId),
         where = self$where,
-        ui = private$getUI(),
+        ui = ui,
         immediate = T
       )
     },

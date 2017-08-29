@@ -165,9 +165,8 @@ public class EventInXMLfile {
 	 * It's only used to order the results. 
 	 */
 	private void setHasNumStatement (){
-		IRI hasNum = Util.vf.createIRI(EIG.NAMESPACE, EIG.hasNum);
-		String numVariable = getVariableName(EIG.hasNum) ; 
-		addWhereStatement(eventVariable, Query.formatIRI4query(hasNum), numVariable);
+		String numVariable = getVariableName(EIG.HASNUM.getLocalName()) ; 
+		addWhereStatement(eventVariable, Query.formatIRI4query(EIG.HASNUM), numVariable);
 	}
 	
 	/**

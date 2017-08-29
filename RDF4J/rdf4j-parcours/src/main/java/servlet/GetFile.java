@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import parameters.MainResources;
 import queryFiles.FileQuery;
 import queryFiles.FilesAvailable;
-import queryFiles.GetComments;
+import queryFiles.GetPredicateDescription;
 import queryFiles.GetEventPredicateFrequency;
 
 public class GetFile extends HttpServlet {

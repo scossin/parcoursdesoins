@@ -13,3 +13,26 @@ sapply(classesFiles, source)
 
 GLOBALcon <- Connection$new()
 GLOBALeventTabSetPanel <- "eventTabset" # tabsetPanel id of events
+
+GLOBALlang <- "en"
+
+GLOBALpredicatesDescription <- Predicates$new(GLOBALlang)
+GLOBALpredicatesDescription$predicatesDf
+
+GLOBALpredicatesDescription$getPredicateOfEvent("Traitement")
+GLOBALpredicatesDescription$getPredicateDescriptionOfEvent("Traitement")
+GLOBALpredicatesDescription$predicatesDf
+
+### label
+if (GLOBALlang == "fr"){
+  GLOBALaddEventTabpanel <- "Ajout un évènement"
+  GLOBALremoveEventTabpanel <- "Retirer un évènement"
+} else if (GLOBALlang == "en"){
+  GLOBALaddEventTabpanel <- "Add an event"
+  GLOBALremoveEventTabpanel <- "removeEventTabpanel"
+}
+
+
+
+
+
