@@ -1,6 +1,6 @@
 Filter <- R6::R6Class(
-  inherit=uiObject,
   "Filter",
+  inherit=uiObject,
   
   public=list(
     eventNumber = numeric(),
@@ -8,7 +8,8 @@ Filter <- R6::R6Class(
     # domParentId = character(),
     dataFrame = data.frame(),
     
-    initialize = function(eventNumber, predicateName, dataFrame){
+    initialize = function(eventNumber, predicateName, dataFrame, parentId, where){
+      super$initialize(parentId = parentId, where = where)
       private$checkDataFrame(dataFrame)
       self$dataFrame <- dataFrame
       self$eventNumber <- eventNumber
@@ -28,7 +29,7 @@ Filter <- R6::R6Class(
   
   private=list(
     checkDataFrame = function(dataFrame){
-      columns <- c("context","event","value")
+      columns <- c("context","event","predicate","value")
       bool <- colnames(dataFrame) %in% columns
       if (!all(bool)){
         stop("Filter dataFrame must contain only : ", 

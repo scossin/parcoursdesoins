@@ -3,18 +3,16 @@ HierarchicalSunburst <- R6::R6Class(
   inherit = Hierarchical,
   
   public = list(
-    eventNumber = numeric(),
+    contextEnv = environment(),
     hierarchicalData = data.frame(),
     choice = character(),
     parentId = character(),
     where = character(),
-    context = character(),
     
-    initialize = function(eventNumber, context, parentId, where){
+    initialize = function(contextEnv, parentId, where){
+      self$contextEnv <- contextEnv
       self$parentId <- parentId
       self$where <- where
-      self$eventNumber <- eventNumber
-      self$context <- context
     }, 
     
     setHierarchicalData = function(hierarchicalData){
@@ -26,8 +24,7 @@ HierarchicalSunburst <- R6::R6Class(
       ## count
       GLOBALcon <- Connection$new()
       query <- XMLCountquery$new()
-      query$addContextNode(contextVector = "")
-      query$listContextNode
+      query$addContextNode(contextVector = self$contextEnv$context)
       eventCount <- GLOBALcon$sendQuery(query)
       
       ## hierarchy

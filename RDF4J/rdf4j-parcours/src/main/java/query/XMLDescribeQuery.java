@@ -214,9 +214,10 @@ public class XMLDescribeQuery implements Query {
 	
 	
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException{
-		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "testDescribe.xml" );
+		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
 		XMLFile file = new XMLFile(xmlFile);
 		XMLDescribeQuery describe = new XMLDescribeQuery(file);
 		System.out.println(describe.getSPARQLQueryString());
+		xmlFile.close();
 	}
 }

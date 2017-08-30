@@ -22,6 +22,10 @@ server <- function(input,output,session){
   source("../../classes/buttonFilter/ButtonFilterOO.R",local=T)
   source("../../classes/filter/FilterOO.R",local=T) ## order matters ! 
   source("../../classes/filter/FilterNumericOO.R",local=T)
+  source("../../classes/filter/STATICfilterCreator.R",local = T)
+  staticFilterCreator <- STATICfilterCreator$new()
+  source("../../classes/queries/STATICmakeQueriesOO.R",local=T)
+  staticMakeQueries <- STATICmakeQueries$new()
   source("globalFunctions.R", local = T)
   
   listEventTabpanel <- ListEventsTabpanel$new()
@@ -95,3 +99,4 @@ server <- function(input,output,session){
 # for (test1 in test){
 #   print(test1$filePredicatesDescription)
 # }
+

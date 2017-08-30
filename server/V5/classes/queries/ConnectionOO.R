@@ -43,6 +43,7 @@ Connection <- R6Class(
     
     checkResponse = function(response){
       if (response$status_code!=200){
+        write(file="ERROR.html",x=rawToChar(response$content))
         stop("Request failed", rawToChar(response$content))
       }
     }

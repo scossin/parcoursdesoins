@@ -1,0 +1,34 @@
+hr { 
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-top: dotted 2px;
+}
+
+[id^=HideShowButton]{
+	float:right;
+}
+
+[id^=switchesdivButton]{
+overflow:auto;
+}
+
+[id^=divNumericFilter]{
+display:flex;
+}
+
+[id^=divNumericFilter] > div:first-child{
+flex:1;
+}
+
+[id^=divNumericFilter] > div{
+margin-right:50px;
+}
+
+.NumericGraphics{
+height:400px;
+width:100%;
+margin:20px;
+}

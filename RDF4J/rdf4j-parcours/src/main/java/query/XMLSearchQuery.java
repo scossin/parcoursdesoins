@@ -283,7 +283,7 @@ public class XMLSearchQuery implements Query {
   	      // ?event0hasNum : the event number in the timeline
 		for (int numberEvent : eventQuery.keySet()){
 			part1 += "?event" + numberEvent + " "; // ?event0
-			part1 += "?event" + numberEvent + EIG.HASNUM + " "; 
+			part1 += "?event" + numberEvent + EIG.HASNUM.getLocalName() + " "; 
 		}
 		queryString += part1 ; 
 		
@@ -314,7 +314,7 @@ public class XMLSearchQuery implements Query {
 		
 		// and numEvent : 
 		for (int numberEvent : eventQuery.keySet()){
-			queryString += "?event" + numberEvent + EIG.HASNUM + " "; // ?event0hasNum : the event number in the timeline
+			queryString += "?event" + numberEvent + EIG.HASNUM.getLocalName() + " "; // ?event0hasNum : the event number in the timeline
 		}
 		
 		return(queryString);
@@ -323,8 +323,7 @@ public class XMLSearchQuery implements Query {
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat {
 		//QueryClass queryClass = new QueryClass(new File(Util.queryFolder+"queryMCOSSR3day.xml"));
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "queryMCOSSR3day.xml" );
-		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdSearchFile);
-		XMLSearchQuery queryClass = new XMLSearchQuery(new XMLFile(xmlFile, dtdFile));
+		XMLSearchQuery queryClass = new XMLSearchQuery(new XMLFile(xmlFile));
 		System.out.println(queryClass.getSPARQLQueryString());
 	}
 
