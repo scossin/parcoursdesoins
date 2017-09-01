@@ -17,7 +17,7 @@ ListEventsTabpanel <- R6::R6Class(
     removeEventTabpanel = function(liText){
       for (eventTabpanel in self$listEventTabpanel){
         if (eventTabpanel$getLiText() == liText){
-          eventTabpanel$finalize()
+          eventTabpanel$destroy()
           self$listEventTabpanel[[liText]] <- NULL
           return()
         }

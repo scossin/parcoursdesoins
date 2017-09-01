@@ -1,19 +1,32 @@
-# eventPredicates <- con$getFile(fileName = con$filePredicateFrequency)
-# 
-# predicatesDescription <- merge(predicatesDescription, eventPredicates, by="predicate")
-# predicatesDescription$eventType <- "SejourMCO"
-# predicatesDescription <- unique(predicatesDescription)
-# GLOBALpredicatesDescription <- predicatesDescription
 
-# logFile <- "logFile.txt"
-# if (!file.exists(logFile)){
-#   file.create(logFile)
-# }
-# con <- file(logFile)
-# sink(con, append=TRUE)
-# sink(con, append=TRUE, type="message")
 
 server <- function(input,output,session){
+  source("../../classes/logger/STATICLoggerOO.R",local = T)
+  staticLogger <- STATIClogger$new()
+  session$onSessionEnded(function() {
+    staticLogger$close()
+  })
+  
+  staticLogger$info("Loading classes ...")
+  
+  source("../../classes/queries/ConnectionOO.R",local=T)
+  GLOBALcon <- Connection$new()
+  
+  source("../../classes/queries/GetFileOO.R",local=T)
+  
+  source("../../classes/queries/PredicatesOO.R",local=T)
+  GLOBALpredicatesDescription <- Predicates$new(GLOBALlang)
+  
+  
+  source("../../classes/queries/STATICmakeQueriesOO.R",local=T)
+
+  source("../../classes/queries/XMLCountQueryOO.R",local=T)
+  source("../../classes/queries/XMLDescribeQueryOO.R",local=T)
+  source("../../classes/queries/XMLqueryOO.R",local=T)
+  source("../../classes/queries/XMLSearchQueryOO.R",local=T)
+  
+  
+  ## closing logger connection when user disconnect
   source("../../classes/superClasses/uiObject.R",local=T)
   source("../../classes/filter/HierarchicalOO.R",local = T)
   source("../../classes/filter/HierarchicalSunburstOO.R",local = T)
@@ -22,15 +35,20 @@ server <- function(input,output,session){
   source("../../classes/buttonFilter/ButtonFilterOO.R",local=T)
   source("../../classes/filter/FilterOO.R",local=T) ## order matters ! 
   source("../../classes/filter/FilterNumericOO.R",local=T)
+  source("../../classes/filter/FilterNumericDurationOO.R",local=T)
+  source("../../classes/graphics/numericGraphicsOO.R",local = T)
+  # an object to help others objects to create Filter Object
   source("../../classes/filter/STATICfilterCreator.R",local = T)
   staticFilterCreator <- STATICfilterCreator$new()
+  
+  # an object to help others object to make queries
   source("../../classes/queries/STATICmakeQueriesOO.R",local=T)
   staticMakeQueries <- STATICmakeQueries$new()
-  source("globalFunctions.R", local = T)
   
   listEventTabpanel <- ListEventsTabpanel$new()
   
   observeEvent(input$addEventTabpanel,{
+    staticLogger$user("addEventTabpanel clicked")
     nClick <- input$addEventTabpanel
     ## create new Tabpanel :
     eventTabpanel <- EventTabpanel$new(eventNumber=nClick, context="")
@@ -46,16 +64,16 @@ server <- function(input,output,session){
   })
   
   observeEvent(input$removeEventTabpanel,{
+    staticLogger$user("removeEventTabpanel")
     isolate({
       liText <- input[["eventToRemove"]]
+      staticLogger$user(liText, " to remove")
     })
     listEventTabpanel$removeEventTabpanel(liText = liText)
     choices <- c("",listEventTabpanel$getAllLiText())
     shiny::updateSelectInput(session,
                              inputId = "eventToRemove",
                              choices = choices)
-    
-    ## ajouter dans finalize eventTabPanel : une fonction retirant le li
   })
 }
 
@@ -99,4 +117,5 @@ server <- function(input,output,session){
 # for (test1 in test){
 #   print(test1$filePredicatesDescription)
 # }
+
 

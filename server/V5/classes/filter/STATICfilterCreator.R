@@ -17,6 +17,12 @@ STATICfilterCreator <- R6::R6Class(
         filterNumeric <- FilterNumeric$new(contextEnv, predicateName, dataFrame,
                                            parentId, where)
         return(filterNumeric)
+      } else if (filterType == "DURATION"){
+        dataFrame <- staticMakeQueries$getContextEventsPredicate(contextEnv = contextEnv,
+                                                                 predicateName = predicateName)
+        filterNumericDuration <- FilterNumericDuration$new(contextEnv, predicateName, dataFrame,
+                                           parentId, where)
+        return(filterNumericDuration)
       }
       return(NULL)
     },
@@ -27,6 +33,6 @@ STATICfilterCreator <- R6::R6Class(
   ),
   
   private = list(
-    availableFilters = c("NUMERIC","DATE","HIERARCHICAL","FACTOR")
+    availableFilters = c("NUMERIC","DATE","HIERARCHICAL","FACTOR","DURATION")
   )
 )

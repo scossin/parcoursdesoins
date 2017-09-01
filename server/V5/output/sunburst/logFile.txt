@@ -1,6 +1,0 @@
-testWarning: Error in server: it's over sorry
-Stack trace (innermost first):
-    42: server [/home/cossin/Documents/EIG/parcoursdesoins/server/V5/output/sunburst/server.R#54]
-     1: runApp
-Error in server(...) : it's over sorry
-

@@ -16,6 +16,7 @@ ButtonFilter <- R6::R6Class(
                           predicateComment, 
                           parentId, 
                           where){
+      
       super$initialize(parentId = parentId, where = where)
       private$checkEnvironment(contextEnv)
       self$contextEnv <- contextEnv
@@ -29,7 +30,7 @@ ButtonFilter <- R6::R6Class(
       
       private$hideHideShowButton()
       ## hide/show
-      
+      staticLogger$info("new ButtonFilter",self$getObjectId())
     },
     
     setFilterObject = function(filterObject){
@@ -82,34 +83,33 @@ ButtonFilter <- R6::R6Class(
     
     addButtonFilterObserver = function(){
       observeEvent(input[[self$getObjectId()]],{
-        isolate(isClickedButtonFilter <- input[[self$getObjectId()]])
-        cat("value of isClicked : ", isClickedButtonFilter, "\n")
+        isClickedButtonFilter <- input[[self$getObjectId()]]
+        staticLogger$user(self$getObjectId(), "was clicked")
         if (!isClickedButtonFilter){
-          cat ("\t button ", self$getObjectId(), " unclicked \n")
+          staticLogger$user("\t",self$getObjectId(), "turned off")
           if (!is.null(self$filterObject)){
-            cat ("\t \t removing filterObject of ",self$getObjectId(), "\n")
-            self$filterObject$finalize()
+            staticLogger$info(self$getObjectId(), "turned off")
+            staticLogger$info("\t \t removing filterObject of ",self$getObjectId())
+            self$filterObject$destroy()
             self$filterObject <- NULL
-            cat ("\t \t Hidding HideShow button : ",self$getHideShowId(), "\n")
+            staticLogger$info("\t \t Hidding HideShow button : ",self$getHideShowId())
             session$sendCustomMessage(type = "displayHideId",
                                       message = list(objectId = self$getHideShowId()))
           }
           return(NULL)
         }
         
-        cat ("button ", self$getObjectId(), " clicked \n")
+        staticLogger$user(self$getObjectId(), " turned on")
         
         ## moving the element
-        cat ("\t \t moving ",self$getDivId(), " to go first \n")
         private$goToFirstChild()
         
-        
-        cat ("\t \t new filterObject for ",self$getObjectId(), "\n")
+        staticLogger$info("\t \t new filterObject for ",self$getObjectId())
         self$filterObject <- staticFilterCreator$createFilterObject(contextEnv = self$contextEnv,
                                                                     predicateName= self$predicateName,
                                                                     parentId = self$getDivIdFilterObject(),
                                                                     where = "beforeEnd")
-        cat ("\t \t showing HideShow button : ",self$getHideShowId(), "\n")
+        staticLogger$info("\t \t showing HideShow button : ",self$getHideShowId())
         private$showHideShowButton()
       },ignoreInit=T)
     },
@@ -128,25 +128,30 @@ ButtonFilter <- R6::R6Class(
   
   private = list(
     hideHideShowButton = function(){
+      staticLogger$info("Sending Js function to hide ",self$getHideShowId())
       session$sendCustomMessage(type = "displayHideId",
                                 message = list(objectId = self$getHideShowId()))
     },
     showHideShowButton = function(){
+      staticLogger$info("Sending Js function to show ",self$getHideShowId())
       session$sendCustomMessage(type = "displayShowId",
                                 message = list(objectId = self$getHideShowId()))
     }, 
     
     hideDivIdFilterObject = function(){
+      staticLogger$info("Sending Js function to hide ",self$getDivIdFilterObject())
       session$sendCustomMessage(type = "displayHideId",
                                 message = list(objectId = self$getDivIdFilterObject()))
     }, 
     
     showDivIdFilterObject = function(){
+      staticLogger$info("Sending Js function to show ",self$getDivIdFilterObject())
       session$sendCustomMessage(type = "displayShowId",
                                 message = list(objectId = self$getDivIdFilterObject()))
     },
     
     goToFirstChild = function(){
+      staticLogger$info("\t \t moving ",self$getDivId(), " to go first")
       session$sendCustomMessage(type = "goFirstSibling",
                                 message = list(objectId = self$getDivId()))
     },

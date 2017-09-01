@@ -10,6 +10,7 @@ HierarchicalSunburst <- R6::R6Class(
     where = character(),
     
     initialize = function(contextEnv, parentId, where){
+      staticLogger$info("initiliazing a new HierarchicalSunburst")
       self$contextEnv <- contextEnv
       self$parentId <- parentId
       self$where <- where
@@ -21,17 +22,22 @@ HierarchicalSunburst <- R6::R6Class(
     }, 
     
     getHierarchicalDataFromServer = function(){
+      staticLogger$info("Trying to getHierarchicalDataFromServer")
       ## count
       GLOBALcon <- Connection$new()
       query <- XMLCountquery$new()
       query$addContextNode(contextVector = self$contextEnv$context)
+      staticLogger$info("Sending", query$fileName, "...")
       eventCount <- GLOBALcon$sendQuery(query)
       
       ## hierarchy
       content <- GLOBALcon$getContent(GLOBALcon$fileEventHierarchy4Sunburst)
+      staticLogger$info("Content received, reading content ...")
       hierarchy <- GLOBALcon$readContentStandard(content)
+      staticLogger$info("merging hierarchy and eventCount ...")
       hierarchicalData <- merge (hierarchy, eventCount, by.x="event", by.y="className",all.x=T)
       bool <- is.na(hierarchicalData$count)
+      staticLogger$info(sum(bool),"have 0 count in the hierarchy")
       hierarchicalData$count[bool] <- 0
       colnames(hierarchicalData) <- c("event","hierarchy","size")
       hierarchicalData <- rbind(hierarchicalData, data.frame(event="Event",hierarchy="Event",size=0))
@@ -47,12 +53,14 @@ HierarchicalSunburst <- R6::R6Class(
       private$makePlot()
     },
     
-    finalize = function(){
+    destroy = function(){
+      staticLogger$info("Finalizing",self$getObjectId())
       self$removeUI()
     },
     
     getEventType = function(observerInput){
       # hierarchicalChoice is a vector with length the depth of the node in the hierarchy
+      staticLogger$info("Getting event from choice : ", observerInput)
       hierarchicalChoice <- observerInput
       hierarchicalChoice <- paste(hierarchicalChoice, collapse="-")
       bool <- self$hierarchicalData$hierarchy %in% hierarchicalChoice  
@@ -62,7 +70,9 @@ HierarchicalSunburst <- R6::R6Class(
       if (sum(bool) != 1){
         stop(hierarchicalChoice, " : many possibilities in hierarchicalData")
       }
-      return(as.character(self$hierarchicalData$event[bool]))
+      eventType <- as.character(self$hierarchicalData$event[bool])
+      staticLogger$info("eventType found : ", eventType)
+      return(eventType)
     }, 
   
     getInputObserver = function(){
@@ -82,10 +92,12 @@ HierarchicalSunburst <- R6::R6Class(
     },
     
     getSunburstData = function(){
+      staticLogger$info("getSunburstData for HierarchicalSunburst")
       return(subset(self$hierarchicalData, select=c("hierarchy","size")))
     },
     
     insertUI = function(){
+      staticLogger$info("inserting HierarchicalSunburst", self$getObjectId(),self$where,self$parentId)
       ui <- sunburstOutput(self$getObjectId())
       insertUI(
         selector = private$getJquerySelector(self$parentId),
@@ -96,6 +108,7 @@ HierarchicalSunburst <- R6::R6Class(
     },
     
     makePlot = function(){
+      staticLogger$info("Plotting", self$getObjectId())
       output[[self$getObjectId()]] <- renderSunburst({
         sunburstData <- private$getSunburstData()
         add_shiny(sunburst(sunburstData, count=T,legend = list(w=200)))

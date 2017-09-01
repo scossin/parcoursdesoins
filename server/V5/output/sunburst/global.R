@@ -5,19 +5,16 @@ library(httr)
 library(XML)
 library(shinyWidgets)
 
-###################### Initialization
-### load classes
-classesFiles <- list.files("../../classes/queries/",full.names = T)
-sapply(classesFiles, source)
+
+# a logger to log message in file
+GLOBALlogFolder <- "./logs/"
 
 
-GLOBALcon <- Connection$new()
+
 GLOBALeventTabSetPanel <- "eventTabset" # tabsetPanel id of events
 
 GLOBALlang <- "fr"
 
-GLOBALpredicatesDescription <- Predicates$new(GLOBALlang)
-GLOBALpredicatesDescription$predicatesDf
 
 
 ### label
@@ -26,14 +23,26 @@ if (GLOBALlang == "fr"){
   GLOBALremoveEventTabpanel <- "Retirer un évènement"
   GLOBALhide <- "Masquer"
   GLOBALshow <- "Afficher"
+  
+  # duration
+  GLOBALminutes <- "minutes"
+  GLOBALhours <- "heures"
+  GLOBALdays <- "jours"
+  GLOBALweeks <- "semaines"
+  GLOBALmonths <- "mois"
+  
 } else if (GLOBALlang == "en"){
   GLOBALaddEventTabpanel <- "Add an event"
   GLOBALremoveEventTabpanel <- "removeEventTabpanel"
   GLOBALhide <- "Hide"
   GLOBALshow <- "Show"
+  
+  # duration
+  GLOBALminutes <- "minutes"
+  GLOBALhours <- "hours"
+  GLOBALdays <- "days"
+  GLOBALweeks <- "weeks"
+  GLOBALmonths <- "months"
 }
-
-
-
 
 

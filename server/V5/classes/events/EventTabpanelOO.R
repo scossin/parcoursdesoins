@@ -8,15 +8,18 @@ EventTabpanel <- R6::R6Class(
     listButtonFilterObserver = list(),
     
     initialize = function(eventNumber, context){
+      staticLogger$info("Creating EventTabpanel", eventNumber)
       self$contextEnv <- new.env()
       self$contextEnv$context <- context
       self$contextEnv$eventNumber <- eventNumber
       
-      jslink$newTabpanel(tabsetPanel = GLOBALeventTabSetPanel, 
+      private$newTabpanel(tabsetPanel = GLOBALeventTabSetPanel, 
                          liText = self$getLiText(),
                          contentId = self$getObjectId())
     },
+    
     setHierarchicalObject = function(){
+      staticLogger$info("setting a new HierarchicalObject for",self$getObjectId())
       hierarchicalObject <- HierarchicalSunburst$new(contextEnv = self$contextEnv,
                                                      parentId = private$getFirstDivOfEventId(),
                                                      where = "beforeEnd")
@@ -32,21 +35,28 @@ EventTabpanel <- R6::R6Class(
     
     addHierarchicalObserver = function(){
       observeEvent(input[[self$hierarchicalObject$getInputObserver()]],{
-        print("clicked ! ")
+        staticLogger$user(self$hierarchicalObject$getObjectId(),"clicked")
         if (!is.null(self$contextEnv$eventType)){
+          staticLogger$info("\t nothing to do : eventType already choosen")
           return(NULL)
         }
         ## choices are validated
         observerInput <- input[[self$hierarchicalObject$getInputObserver()]]
+        staticLogger$user("\t clicked value : ",observerInput)
         self$contextEnv$eventType <- self$hierarchicalObject$getEventType(observerInput)
+        staticLogger$info("\t event choosen : ", self$contextEnv$eventType)
         
+        staticLogger$info("\t getting events ...")
         staticMakeQueries$setContextEvents(self$contextEnv)
         
         ### insert new predicate
+        staticLogger$info("\t getting predicates...")
         predicatesDf <- GLOBALpredicatesDescription$predicatesDf
         
+        staticLogger$info("\t getting predicatesDescription...")
         predicateDescriptionOfEvent <- GLOBALpredicatesDescription$getPredicateDescriptionOfEvent(self$contextEnv$eventType)
         namesList <- NULL
+        staticLogger$info("Creating a list of ButtonFilter...")
         for (row in 1:nrow(predicateDescriptionOfEvent)){
           predicateName <- predicateDescriptionOfEvent$predicate[row]
           predicateLabel <- predicateDescriptionOfEvent$label[row]
@@ -62,14 +72,10 @@ EventTabpanel <- R6::R6Class(
           nObject <- length(self$listButtonFilterObject)
           self$listButtonFilterObject[[nObject+1]] <- buttonFilter
           namesList <- c(namesList, paste0(buttonFilter$getObjectId()))
-          ## add observer
-          #self$listButtonFilterObserver[[nObject+1]] <- self$addButtonFilterObserver(buttonFilter)
-          ## 
         }
         names(self$listButtonFilterObject) <- namesList
-        #names(self$listButtonFilterObserver) <- namesList
-        # names(self$listButtonFilterObserver[[nObject+1]]) <- buttonFilter$getObjectId()
-        self$hierarchicalObject$finalize()
+        staticLogger$info("Destroying hierarchical object")
+        self$hierarchicalObject$destroy()
         self$hierarchicalObject <- NULL
       },once = T)
     },
@@ -88,9 +94,10 @@ EventTabpanel <- R6::R6Class(
       removeUI(selector = liSelector)
     },
     
-    finalize = function(){
+    destroy = function(){
+      staticLogger$info("Finalizing hierarchical object",self$getObjectId())
       if (!is.null(self$hierarchicalObject)){
-        self$hierarchicalObject$finalize()
+        self$hierarchicalObject$destroy()
       }
       self$removeUI();
       self$removeLi();
@@ -101,5 +108,12 @@ EventTabpanel <- R6::R6Class(
   private = list(
     getFirstDivOfEventId = function(){
       return(paste0("firstDivOf",self$getObjectId()))
-    }
-    ))
+    },
+    
+    newTabpanel = function(tabsetPanel, liText, contentId){
+      staticLogger$info("Sending Js message to create a new tab", tabsetPanel, liText, contentId)
+      session$sendCustomMessage(type = "newTabpanel", 
+                                message = list(tabsetPanel = tabsetPanel,
+                                               liText = liText, contentId=contentId))}
+    )
+  )
