@@ -30,10 +30,9 @@ Connection <- R6Class(
       XMLqueryInstance$saveQuery()
       url <- paste0(private$webserverURL, private$XMLqueryPattern)
       fileName <- XMLqueryInstance$fileName
-      timeMesure <- system.time(
-        response <- httr::POST(url, body=list(filedata=upload_file(fileName)))
-      )
-      staticLogger$info("query time to getAnswer : ",timeMesure["elapsed"])
+      response <- httr::POST(url, body=list(filedata=upload_file(fileName)))
+      
+      # staticLogger$info("query time to getAnswer : ",timeMesure["elapsed"])
       private$checkResponse(response)
       content <- rawToChar(response$content)
       results <- self$readContentStandard (content)

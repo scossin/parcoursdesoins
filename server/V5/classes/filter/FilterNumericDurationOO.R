@@ -9,7 +9,6 @@ FilterNumericDuration <- R6::R6Class(
       self$addObserverMakeUI()
       staticLogger$info("Creating a new FilterNumericDuration object")
       self$addDurationObserver()
-      
     },
     
     insertDurationUI = function(){
@@ -49,9 +48,9 @@ FilterNumericDuration <- R6::R6Class(
     
     updateDuration = function(durationChoice){
       private$updateX(durationChoice)
-      self$updateNumericInputValues(private$getMin(), private$getMax())
-      self$updateSliderInputValues(private$getMin(), private$getMax())
-      self$makePlot(private$getMin(), private$getMax())
+      self$updateNumericInputValues()
+      self$updateSliderInputValues()
+      self$numericGraphics$remakePlot()
     },
     
     getDurationUIid = function(){
@@ -59,33 +58,36 @@ FilterNumericDuration <- R6::R6Class(
     }
   ),
   
-
-  
   private = list(
     updateX = function(durationChoice){
       x <- self$dataFrame$value
       if (durationChoice == GLOBALminutes){
-        self$x <- x / 60
+        x <- x / 60
+        self$valueEnv$numericValue$setX(x) 
         return(NULL)
       }
       
       if (durationChoice == GLOBALhours){
-        self$x <- x / (60*60)
+        x <- x / (60*60)
+        self$valueEnv$numericValue$setX(x) 
         return(NULL)
       }
       
       if (durationChoice == GLOBALdays){
-        self$x <- x / (60*60*24)
+        x <- x / (60*60*24)
+        self$valueEnv$numericValue$setX(x) 
         return(NULL)
       }
       
       if (durationChoice == GLOBALweeks){
-        self$x <- x / (60*60*24*7)
+        x <- x / (60*60*24*7)
+        self$valueEnv$numericValue$setX(x) 
         return(NULL)
       }
       
       if (durationChoice == GLOBALmonths){
-        self$x <- x / (60*60*24*30.42)
+        x <- x / (60*60*24*30.42)
+        self$valueEnv$numericValue$setX(x)
         return(NULL)
       }
       

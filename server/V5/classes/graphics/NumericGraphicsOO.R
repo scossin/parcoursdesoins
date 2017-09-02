@@ -4,18 +4,23 @@ NumericGraphics <- R6::R6Class(
  
   
   public = list(
-    x = numeric(),
     lastChoice = character(),
+    valueEnv = environment(),
     
-    initialize = function(x, parentId, where){
+    initialize = function(valueEnv, parentId, where){
       staticLogger$user("Creating a new NumericGraphics ", where, parentId)
       super$initialize(parentId, where)
-      self$x <- x
-      self$insertUIandPlot(private$firstChoice)
+      self$valueEnv <- valueEnv
+      self$lastChoice <- private$firstChoice
+      self$insertUIandPlot()
       self$observerButton()
+      
     },
   
-    insertUIandPlot = function(plotChoice){
+    insertUIandPlot = function(plotChoice = NULL){
+      if (is.null(plotChoice)){
+        plotChoice <- self$lastChoice
+      }
       if (plotChoice == "SCATTERPLOT"){
         self$scatterplotInsertUI()
         self$scatterplotMakePlot()
@@ -25,9 +30,18 @@ NumericGraphics <- R6::R6Class(
       }
       self$lastChoice <- plotChoice
       return(NULL)
-      
+    },
+  
+    remakePlot = function(){
+      plotChoice <- self$lastChoice
+      if (plotChoice == "SCATTERPLOT"){
+        self$scatterplotMakePlot()
+      } else if (plotChoice == "BOXPLOT"){
+        self$boxplotMakePlot()
+      }
     },
     
+      
   scatterplotInsertUI = function(){
     ui <- shiny::plotOutput(outputId = self$getPlotId(),width = "80%", height="300px")
     jQuerySelector = paste0("#",self$parentId)
@@ -38,7 +52,18 @@ NumericGraphics <- R6::R6Class(
   
   scatterplotMakePlot = function(){
     output[[self$getPlotId()]] <- renderPlot({
-      plot(self$x)
+        staticLogger$info("Setting or reseting plot")
+        output[[self$getPlotId()]] <- renderPlot({
+          x <- self$valueEnv$numericValue$x
+          minimum <- self$valueEnv$numericValue$minChosen
+          maximum <- self$valueEnv$numericValue$maxChosen
+          bool <- x >= minimum &  x <= maximum
+          colors <- ifelse (bool, "blue","black")
+          filling <- ifelse (bool, 19, 1)
+          plot(x, col=colors, pch = filling, xlab="",ylab="")
+          abline(h=minimum, col="blue")
+          abline(h=maximum, col="blue")
+        }, width="auto",height="auto")
     })
   },
   
@@ -52,14 +77,23 @@ NumericGraphics <- R6::R6Class(
   
   boxplotMakePlot = function(){
     output[[self$getPlotId()]] <- renderPlot({
-      boxplot(self$x)
+      x <- self$valueEnv$numericValue$x
+      minimum <- self$valueEnv$numericValue$minChosen
+      maximum <- self$valueEnv$numericValue$maxChosen
+      bool <- x >= minimum &  x <= maximum
+      selectedX <- x[bool]
+      bplt <- boxplot(x, selectedX,col = c("grey","blue"), na.action = NULL, xlab="")
+      axis(side=1, at=c(1,2), labels=c(GLOBALinitialBoxplot,GLOBALselectedBoxplot))
+      text(x=1.5, y=fivenum(x), labels=as.character(round(fivenum(x),1)), col="grey")
+      text(x=2.5, y=fivenum(selectedX), labels=as.character(round(fivenum(selectedX),1)), col="blue")
     })
   },
   
   getUI = function(uiPlot){
     div(id=self$getDivId(),
-        shiny::actionButton(inputId = self$getButtonId(), label="Change"),
-        uiPlot
+        uiPlot,
+        shiny::actionButton(inputId = self$getButtonId(), label="",
+                            icon = icon("refresh"))
         )
   },
   
@@ -84,8 +118,6 @@ NumericGraphics <- R6::R6Class(
   getPlotId = function(){
     return(paste0("Plot1"))
   },
-
-  
   
   removeDiv = function(){
     jQuerySelector = paste0("#",self$getDivId())

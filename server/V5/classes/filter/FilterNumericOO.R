@@ -6,24 +6,22 @@ FilterNumeric <- R6::R6Class(
   public=list(
     contextEnv = environment(),
     observersList = list(),
-    x = numeric(),
+    valueEnv = environment(),
     numericGraphics = NULL,
     
     initialize = function(contextEnv, predicateName, dataFrame, parentId, where){
       staticLogger$info("Creating a new FilterNumeric object")
       super$initialize(contextEnv$eventNumber, predicateName, dataFrame, parentId, where)
       self$contextEnv <- contextEnv
-      private$toNumeric()
-      self$x <- dataFrame$value
+      
+      self$valueEnv <- new.env()
+      self$valueEnv$numericValue <- NumericValues$new(dataFrame$value)
+      
+      self$makeUI()
       self$addNumericInputObservers()
       self$addSliderObserver()
-      self$makeUI()
       staticLogger$info("Trying to make plot")
-     
-      #self$makePlot(minimum = private$getMin(), maximum = private$getMax())
     },
-    
-
     
     makeUI = function(){
       staticLogger$info("Inserting FilterNumeric")
@@ -35,45 +33,35 @@ FilterNumeric <- R6::R6Class(
       staticLogger$info("End inserting")
     },
     
-    updateSliderInputValues = function(minValue, maxValue){
+    updateSliderInputValues = function(){
       staticLogger$info("Updating slider")
       isolate({
-        if (any(is.na(as.numeric(minValue, maxValue)))){
-          staticLogger$info("minValue and maxValue Incorrect !")
-          return(NULL)
-        }
-        
-        if (maxValue < minValue){
-          staticLogger$info("MaxValue less to minvalue !")
-          staticLogger$info("Reseting NumericInputValues")
-          self$updateNumericInputValues(minValue = minValue, maxValue = minValue)
-          return(NULL)
-        }
         shiny::updateSliderInput(session,
                                  self$getObjectId(),
                                  label = NULL, 
-                                 min=private$getMin(), 
-                                 max=private$getMax(),
-                                 value = c(minValue,maxValue))
+                                 min = self$valueEnv$numericValue$minFloor,
+                                 max =  self$valueEnv$numericValue$maxCeiling,
+                                 value = c(self$valueEnv$numericValue$minChosen,
+                                           self$valueEnv$numericValue$maxChosen))
       })
     },
     
-    updateNumericInputValues = function(minValue, maxValue){
+    updateNumericInputValues = function(){
       staticLogger$info("Updating NumericInputValues")
       isolate({
       shiny::updateNumericInput(session, 
                                 inputId = self$getNumericInputMinId(),
                                 label="min",
-                                value=minValue,
-                                min=private$getMin(),
-                                max=private$getMax(),step = 1)
+                                value = self$valueEnv$numericValue$minChosen,
+                                min = self$valueEnv$numericValue$minFloor,
+                                max =  self$valueEnv$numericValue$maxCeiling,step = 1)
       
       shiny::updateNumericInput(session, 
                                 inputId = self$getNumericInputMaxId(),
                                 label="max",
-                                value=maxValue,
-                                min=private$getMin(),
-                                max=private$getMax(),step = 1)
+                                value = self$valueEnv$numericValue$maxChosen,
+                                min = self$valueEnv$numericValue$min,
+                                max =  self$valueEnv$numericValue$max,step = 1)
       })
     },
     
@@ -81,7 +69,7 @@ FilterNumeric <- R6::R6Class(
     addSliderObserver = function(){
       o <- observeEvent(input[[self$getObjectId()]],{
         if (private$bugSlider){
-          self$numericGraphics <- NumericGraphics$new(self$x, self$getGraphicsId(),where="beforeEnd")
+          self$numericGraphics <- NumericGraphics$new(self$valueEnv, self$getGraphicsId(),where="beforeEnd")
           private$bugSlider <- FALSE
           return(NULL)
         }
@@ -89,8 +77,9 @@ FilterNumeric <- R6::R6Class(
         numericValues <- input[[self$getObjectId()]]
         minValue <- numericValues[1]
         maxValue <- numericValues[2]
-        self$updateNumericInputValues(minValue,maxValue)
-        #self$makePlot(minValue,maxValue)
+        self$valueEnv$numericValue$setMinMaxChosen(minValue,maxValue)
+        self$updateNumericInputValues()
+        self$numericGraphics$remakePlot()
       })
       
       lengthList <- length(self$observersList)
@@ -100,20 +89,22 @@ FilterNumeric <- R6::R6Class(
     
     addNumericInputObservers = function(){
       ## a list of observeEvent
-      o <- observeEvent(c(input[[self$getNumericInputMinId()]],
-                     input[[self$getNumericInputMaxId()]]),{
-                       if (private$bugNumericInput){
-                         private$bugNumericInput <- FALSE
-                         return(NULL)
-                       }            
-                       staticLogger$user(self$getNumericInputMinId(), "or",
-                                         self$getNumericInputMaxId(), "changed")
-                       minValue <- input[[self$getNumericInputMinId()]]
-                       maxValue <- input[[self$getNumericInputMaxId()]]
-                       
-                       ### updating
-                       self$updateSliderInputValues(minValue, maxValue)
-                       #self$makePlot(minValue,maxValue)
+      o <- observeEvent(
+        c(input[[self$getNumericInputMinId()]],
+          input[[self$getNumericInputMaxId()]]),{
+            if (private$bugNumericInput){
+              private$bugNumericInput <- FALSE
+              return(NULL)
+            }
+            minValue <- input[[self$getNumericInputMinId()]]
+            maxValue <- input[[self$getNumericInputMaxId()]]
+            staticLogger$user(self$getNumericInputMinId(), "or",
+                              self$getNumericInputMaxId(), "changed")
+            self$valueEnv$numericValue$setMinMaxChosen(minValue,maxValue)
+            
+            ### updating
+            self$updateSliderInputValues()
+            self$numericGraphics$remakePlot()
       })
       lengthList <- length(self$observersList)
       self$observersList[[lengthList+1]] <- o
@@ -132,26 +123,28 @@ FilterNumeric <- R6::R6Class(
       # session$sendCustomMessage(type = "removeId", 
       #                           message = list(objectId = private$getDivId()))
     },
-    
+
     getUI = function(){
+      self$valueEnv$numericValue$describe()
       ui <- div(id = self$getDivId(),
           div(id = private$getDivNumericFilterId(),
           shiny::sliderInput(self$getObjectId(),
-                              label = NULL, 
-                             min=private$getMin(), 
-                             max=private$getMax(),
-                             value = c(private$getMin(),private$getMax())),
+                             label = NULL, 
+                             min = self$valueEnv$numericValue$minFloor, 
+                             max = self$valueEnv$numericValue$maxCeiling,
+                             value = c(self$valueEnv$numericValue$minFloor,
+                                       self$valueEnv$numericValue$maxCeiling)),
           shiny::numericInput(self$getNumericInputMinId(),
                               label="min",
-                              value=private$getMin(),
-                              min=private$getMin(),
-                              max=private$getMax(),step = 1,
+                              value = self$valueEnv$numericValue$minFloor,
+                              min = self$valueEnv$numericValue$minFloor,
+                              max = self$valueEnv$numericValue$maxCeiling,step = 1,
                               width = "100px"),
           shiny::numericInput(self$getNumericInputMaxId(),
                               label="max",
-                              value=private$getMax(),
-                              min=private$getMin(),
-                              max=private$getMax(),step = 1,
+                              value = self$valueEnv$numericValue$maxCeiling,
+                              min = self$valueEnv$numericValue$minFloor,
+                              max = self$valueEnv$numericValue$maxCeiling,step = 1,
                               width = "100px")
       ), ## end first div, 
       
@@ -164,19 +157,6 @@ FilterNumeric <- R6::R6Class(
     getDivId = function(){
       return(paste0("divGraphicsAndFilter", self$contextEnv$eventNumber, self$predicateName))
     },
-    
-    # makePlot = function(minimum, maximum){
-    #   staticLogger$info("Setting or reseting plot")
-    #   output[[self$getPlotId()]] <- renderPlot({
-    #     x <- self$x
-    #     bool <- x >= minimum &  x <= maximum
-    #     colors <- ifelse (bool, "blue","black")
-    #     filling <- ifelse (bool, 19, 1)
-    #     plot(x, col=colors, pch = filling)
-    #     abline(h=minimum, col="blue")
-    #     abline(h=maximum, col="blue")
-    #   }, width="auto",height="auto")
-    # },
     
     getGraphicsId = function(){
       return(paste0("Graphics",self$contextEnv$eventNumber, self$predicateName))
@@ -211,25 +191,6 @@ FilterNumeric <- R6::R6Class(
     getDivNumericFilterId = function(){
       filterId <- self$getObjectId()
       return(paste0("divNumericFilter",filterId))
-    },
-    
-    toNumeric = function(){
-      staticLogger$info("Setting value to numeric for FilterNumeric")
-      self$dataFrame$value <- as.numeric(self$dataFrame$value)
-      bool <- is.na(self$dataFrame$value)
-      if (all(bool)){
-        stop("dataFrame for NumericFilter contains only NA value")
-      }
-      staticLogger$info(sum(bool), "NA value")
-      return(NULL)
-    },
-
-    getMin = function(){
-      return(floor(min(self$x, na.rm=T)))
-    },
-    
-    getMax = function(){
-      return(ceiling(max(self$x, na.rm=T)))
     },
     
     bugSlider = T,

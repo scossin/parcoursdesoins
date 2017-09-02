@@ -1,5 +1,4 @@
 
-
 server <- function(input,output,session){
   source("../../classes/logger/STATICLoggerOO.R",local = T)
   staticLogger <- STATIClogger$new()
@@ -36,7 +35,12 @@ server <- function(input,output,session){
   source("../../classes/filter/FilterOO.R",local=T) ## order matters ! 
   source("../../classes/filter/FilterNumericOO.R",local=T)
   source("../../classes/filter/FilterNumericDurationOO.R",local=T)
-  source("../../classes/graphics/numericGraphicsOO.R",local = T)
+  source("../../classes/graphics/NumericGraphicsOO.R",local = T)
+  
+  source("../../classes/values/NumericValuesOO.R",local = T)
+  
+  
+  
   # an object to help others objects to create Filter Object
   source("../../classes/filter/STATICfilterCreator.R",local = T)
   staticFilterCreator <- STATICfilterCreator$new()

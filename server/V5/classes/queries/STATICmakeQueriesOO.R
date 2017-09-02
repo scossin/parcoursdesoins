@@ -31,15 +31,28 @@ STATICmakeQueries <- R6::R6Class(
       context <- sort(contextEnv$context)
       contextList <- private$splitContext(context)
       results <- NULL
-      for (context in contextList){
-        bool <- contextEnv$contextEvents$context %in% context
-        events <- contextEnv$contextEvents$event[bool]
-        query <- private$getQuery(contextEnv$eventType, predicateName, events, context)
-        results <- rbind (results, GLOBALcon$sendQuery(query))
-      }
-      return(results)
+      shiny::withProgress(message = "Sending query", value = 0, {
+        totalIter <- length(contextList)
+        nIter <- 1
+        for (context in contextList){
+          bool <- contextEnv$contextEvents$context %in% context
+          events <- contextEnv$contextEvents$event[bool]
+          query <- private$getQuery(contextEnv$eventType, predicateName, events, context)
+          timeMesure <- system.time(
+            results <- rbind (results, GLOBALcon$sendQuery(query))
+          )
+          timeElapsed <- timeMesure["elapsed"]
+          if (nIter != totalIter){
+            remainingTime <- private$estimateRemainingTime(nIter, totalIter, timeElapsed)
+            incProgress(nIter/totalIter, detail = paste("Remaining times : ", remainingTime, " seconds"))
+          }
+          nIter <- nIter + 1
+        }
+        return(results)
+      })
     }
   ),
+  
   
   private = list(
     splitContext = function(context){
@@ -48,6 +61,14 @@ STATICmakeQueries <- R6::R6Class(
       r <- rep(1:ceiling(n/chunk),each=chunk)[1:n]
       d <- split(context, r)
       return(d)
+    },
+    
+    estimateRemainingTime = function(nIter, totalIter, timeElapsed){
+      meanTime <- timeElapsed / nIter
+      nIterRemain <- totalIter - nIter
+      timeRemaining <- meanTime * nIterRemain
+      timeRemaining <- ceiling(timeRemaining)
+      return(timeRemaining)
     },
     
     getQuery = function(eventType, predicateName, events, context){

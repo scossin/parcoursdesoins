@@ -13,7 +13,7 @@ GLOBALlogFolder <- "./logs/"
 
 GLOBALeventTabSetPanel <- "eventTabset" # tabsetPanel id of events
 
-GLOBALlang <- "fr"
+GLOBALlang <- "en"
 
 
 
@@ -31,6 +31,10 @@ if (GLOBALlang == "fr"){
   GLOBALweeks <- "semaines"
   GLOBALmonths <- "mois"
   
+  ## boxplot
+  GLOBALinitialBoxplot <- "valeurs initiales"
+  GLOBALselectedBoxplot <- "valeurs sélectionnées"
+  
 } else if (GLOBALlang == "en"){
   GLOBALaddEventTabpanel <- "Add an event"
   GLOBALremoveEventTabpanel <- "removeEventTabpanel"
@@ -43,6 +47,10 @@ if (GLOBALlang == "fr"){
   GLOBALdays <- "days"
   GLOBALweeks <- "weeks"
   GLOBALmonths <- "months"
+  
+  ## boxplot
+  GLOBALinitialBoxplot <- "initial values"
+  GLOBALselectedBoxplot <- "selected values"
 }
 
 
