@@ -1,7 +1,6 @@
 package integration;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +24,7 @@ import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
 import parameters.Util;
+import terminology.Terminology.TerminoEnum;
 import terminology.TerminologyServer;
 
 /**
@@ -98,7 +98,19 @@ public class Integration {
 	public static void main(String[] args) throws Exception {
 		
 		
-		HashMap<IRI, Set<IRI>> instancesOfTerminology = TerminologyServer.getInstancesOfTerminology();
+		HashMap<IRI, Set<IRI>> instancesOfTerminology = new HashMap<IRI, Set<IRI>>();
+		
+		Set<TerminoEnum> terminos = new HashSet<TerminoEnum>();
+		terminos.add(TerminoEnum.FINESS);
+		terminos.add(TerminoEnum.RPPS);
+		
+		for (TerminoEnum termino : terminos){
+			TerminologyServer terminoServer = new TerminologyServer(termino);
+			IRI terminoIRI = termino.getTermino().getClassNameIRI();
+			instancesOfTerminology.put(terminoIRI, terminoServer.getInstancesOfTerminology());
+			terminoServer.countInstances();
+			terminoServer.getCon().close();
+		}
 		
 		// TODO Auto-generated method stub
 		Integration integration = new Integration();

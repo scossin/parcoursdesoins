@@ -276,15 +276,18 @@ public class LineStatement {
 	
 	
 	public static void main(String[] args) throws Exception  {
-		String sparqlEndpoint = DockerDB.getEndpointIPadress(Endpoints.TERMINOLOGIES);
-		TerminologyServer terminoServer = new TerminologyServer(sparqlEndpoint);
 		HashMap<IRI, Set<IRI>> instancesOfTerminology = new HashMap<IRI, Set<IRI>>();
-		for (TerminoEnum termino : TerminoEnum.values()){
-			IRI className = termino.getTermino().getClassNameIRI();
-			Set<IRI> instancesIRI = terminoServer.getInstancesOfTerminology(termino);
-			instancesOfTerminology.put(className, instancesIRI);
+		Set<TerminoEnum> terminos = new HashSet<TerminoEnum>();
+		terminos.add(TerminoEnum.FINESS);
+		terminos.add(TerminoEnum.RPPS);
+		
+		for (TerminoEnum termino : terminos){
+			TerminologyServer terminoServer = new TerminologyServer(termino);
+			IRI terminoIRI = termino.getTermino().getClassNameIRI();
+			instancesOfTerminology.put(terminoIRI, terminoServer.getInstancesOfTerminology());
+			terminoServer.countInstances();
+			terminoServer.getCon().close();
 		}
-		terminoServer.getCon().close();
 		
 		// TODO Auto-generated method stub
 		//String line = "p1\tSejourMCO\t2017_02_28_23_59_59\thasEnd\t2017_02_28_23_59_59";

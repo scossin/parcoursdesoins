@@ -14,8 +14,11 @@ server <- function(input,output,session){
   source("../../classes/queries/GetFileOO.R",local=T)
   
   source("../../classes/queries/PredicatesOO.R",local=T)
-  GLOBALpredicatesDescription <- Predicates$new(GLOBALlang)
-  
+  GLOBALterminologyDescription <- list(
+    Event = Predicates$new(GLOBALcon$terminology$Event,GLOBALlang),
+    RPPS = Predicates$new(GLOBALcon$terminology$RPPS,GLOBALlang),
+    FINESS = Predicates$new(GLOBALcon$terminology$FINESS,GLOBALlang)
+    )
   
   source("../../classes/queries/STATICmakeQueriesOO.R",local=T)
 

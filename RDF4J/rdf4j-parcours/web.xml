@@ -47,13 +47,13 @@
   
   
   <servlet>
-    <servlet-name>GetFile</servlet-name>
-    <servlet-class>servlet.GetFile</servlet-class>
+    <servlet-name>GetTerminologyDescriptionFile</servlet-name>
+    <servlet-class>servlet.GetTerminologyDescriptionFile</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>GetFile</servlet-name>
-    <url-pattern>/GetFile</url-pattern>
+    <servlet-name>GetTerminologyDescriptionFile</servlet-name>
+    <url-pattern>/GetTerminologyDescriptionFile</url-pattern>
   </servlet-mapping>
   
   

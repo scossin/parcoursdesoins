@@ -25,7 +25,9 @@ public class DockerDB {
 	public enum Endpoints {
 		TIMELINES("/bigdata/namespace/timelines/sparql"),
 		TERMINOLOGIES("/bigdata/namespace/terminologies/sparql"),
-		ONTOLOGY("/bigdata/namespace/ontology/sparql");
+		ONTOLOGY("/bigdata/namespace/ontology/sparql"), 
+		RPPS("/bigdata/namespace/RPPS/sparql"),
+		FINESS("/bigdata/namespace/FINESS/sparql");
 		
 		private final String url;
 		

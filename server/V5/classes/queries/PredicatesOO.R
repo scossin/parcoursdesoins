@@ -3,10 +3,12 @@ Predicates <- R6::R6Class(
   "Predicates",
   
   public = list(
+    terminologyName = character(),
     predicatesDf = list(),
     lang = character(),
     
-    initialize = function(lang){
+    initialize = function(terminologyName, lang){
+      self$terminologyName = terminologyName
       private$checkLang(lang)
       self$lang <- lang
       private$setPredicatesDf()
@@ -46,7 +48,9 @@ Predicates <- R6::R6Class(
     categories = c("category","comment","label"),
     
     setPredicatesDf = function(){
-      content <- GLOBALcon$getContent(GLOBALcon$filePredicatesDescription)
+      content <- GLOBALcon$getContent(self$terminologyName, 
+                                      information = GLOBALcon$information$predicateDescription)
+      
       predicates <- paste(content, collapse = "\n")
       predicates <- unlist(strsplit(predicates, split = "DATAFRAMESEPARATOR",fixed = T))
       predicates <- lapply(predicates, function(x){
@@ -71,7 +75,8 @@ Predicates <- R6::R6Class(
     },
     
     addEventPredicateFrequency = function(){
-      content <- GLOBALcon$getContent(GLOBALcon$filePredicateFrequency)
+      content <- GLOBALcon$getContent(self$terminologyName, 
+                                      information = GLOBALcon$information$predicateFrequency)
       predicatesFrequency <- GLOBALcon$readContentStandard(content)
       ## keep only known predicates : 
       knownPredicates <- unique(unlist(lapply(self$predicatesDf, function(x){

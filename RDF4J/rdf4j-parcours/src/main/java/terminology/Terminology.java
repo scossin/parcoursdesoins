@@ -8,19 +8,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exceptions.UnfoundTerminologyException;
+import ontologie.EIG;
 import parameters.MainResources;
 import parameters.Util;
-
+import servlet.DockerDB.Endpoints;
 
 public class Terminology {
 	final static Logger logger = LoggerFactory.getLogger(Terminology.class);
 	
 	public enum TerminoEnum {
 
-		RPPS(new Terminology("http://esante.gouv.fr#","asip","RPPS","RPPS.ttl")),
+		RPPS(new Terminology("http://esante.gouv.fr#","asip","RPPS", "RPPS-ontology.owl","RPPS.ttl",
+				Endpoints.RPPS)),
 		
 		// FINESS code is a french terminology for healthcare institution
-		FINESS(new Terminology("https://www.data.gouv.fr/FINESS#","datagouv","Etablissement","FINESS.ttl"));
+		FINESS(new Terminology("https://www.data.gouv.fr/FINESS#","datagouv","Etablissement","FINESS-ontology.owl",
+				"FINESS.ttl", Endpoints.FINESS)),
+		
+		EVENTS(new Terminology(EIG.NAMESPACE,EIG.PREFIX,EIG.eventClassName,"events-ontology.owl",
+				null, Endpoints.TIMELINES));
 		
 		private Terminology terminology;
 		
@@ -30,6 +36,10 @@ public class Terminology {
 		
 		public Terminology getTermino(){
 			return(terminology);
+		}
+		
+		public String getTerminologyName(){
+			return(terminology.className);
 		}
 	}
 	
@@ -50,16 +60,27 @@ public class Terminology {
 	 */
 	 private String className ;
 	 
-	 private String fileName ;
+	 private String dataFileName ;
+	 
+	 private String ontologyFileName ; 
+	 
+	 private Endpoints endpoint ; 
 	
-	 public Terminology(String NAMESPACE, String PREFIX, String className, String fileName){
+	 public Terminology(String NAMESPACE, String PREFIX, String className, String ontologyFileName, 
+			 String dataFileName, Endpoints endpoint){
 		 this.NAMESPACE = NAMESPACE;
 		 this.PREFIX = PREFIX;
 		 this.className = className;
-		 this.fileName = fileName;
+		 this.dataFileName = dataFileName;
+		 this.ontologyFileName = ontologyFileName;
+		 this.endpoint = endpoint;
 		 //this.NS = new SimpleNamespace(PREFIX, NAMESPACE);
 	 }
 	
+	 public Endpoints getEndpoint() {
+		 return endpoint;
+	 }
+	 
 	 public String getPrefix(){
 		 return(this.PREFIX);
 	 }
@@ -68,8 +89,12 @@ public class Terminology {
 		 return(this.NAMESPACE);
 	 }
 	 
-	 public String getFileName(){
-		 return(fileName);
+	 public String getDataFileName(){
+		 return(dataFileName);
+	 }
+	 
+	 public String getOntologyFileName(){
+		 return(ontologyFileName);
 	 }
 	 
 	/**
@@ -110,5 +135,7 @@ public class Terminology {
 		return(Util.vf.createIRI(NAMESPACE,className + instanceName));
 	}
 	
+
+
 	public static final String terminologiesFolder = MainResources.terminologiesFolder;
 }

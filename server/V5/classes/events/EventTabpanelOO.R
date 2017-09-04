@@ -12,6 +12,7 @@ EventTabpanel <- R6::R6Class(
       self$contextEnv <- new.env()
       self$contextEnv$context <- context
       self$contextEnv$eventNumber <- eventNumber
+      self$contextEnv$terminologyName <- GLOBALcon$terminology$Event
       
       private$newTabpanel(tabsetPanel = GLOBALeventTabSetPanel, 
                          liText = self$getLiText(),
@@ -51,10 +52,10 @@ EventTabpanel <- R6::R6Class(
         
         ### insert new predicate
         staticLogger$info("\t getting predicates...")
-        predicatesDf <- GLOBALpredicatesDescription$predicatesDf
+        predicatesDf <- GLOBALterminologyDescription[[self$contextEnv$terminologyName]]$predicatesDf
         
         staticLogger$info("\t getting predicatesDescription...")
-        predicateDescriptionOfEvent <- GLOBALpredicatesDescription$getPredicateDescriptionOfEvent(self$contextEnv$eventType)
+        predicateDescriptionOfEvent <- GLOBALterminologyDescription[[self$contextEnv$terminologyName]]$getPredicateDescriptionOfEvent(self$contextEnv$eventType)
         namesList <- NULL
         staticLogger$info("Creating a list of ButtonFilter...")
         for (row in 1:nrow(predicateDescriptionOfEvent)){

@@ -1,18 +1,23 @@
-Connection <- R6Class(
+Connection <- R6::R6Class(
   "Connection",
   public = list(
-    filePredicatesDescription = "predicatesDescription.csv",
-    filePredicateFrequency = "predicateFrequency.csv",
-    fileEventHierarchy4Sunburst = "EventHierarchy4Sunburst.csv",
+    terminology = list(
+      Event = "Event",
+      RPPS = "RPPS",
+      FINESS = "Etablissement"),
+    information = list(
+      predicateDescription = "predicateDescription",
+      predicateFrequency = "predicateFrequency",
+      hierarchy = "hierarchy"
+    ),
+    # filePredicatesDescription = "predicatesDescription.csv",
+    # filePredicateFrequency = "predicateFrequency.csv",
+    # fileEventHierarchy4Sunburst = "EventHierarchy4Sunburst.csv",
     
-    getContent = function(fileName){
-      fileNames=c(self$filePredicatesDescription,self$filePredicateFrequency,self$fileEventHierarchy4Sunburst)
-      bool <- fileName %in% fileNames
-      if (!any(bool)){
-        stop("choose fileName among ",fileNames)
-      }
+    getContent = function(terminologyName, information){
       url <- paste0(private$webserverURL,private$GetFilePattern)
-      response <- httr::GET(url, query=list(fileName=fileName))
+      response <- httr::GET(url, query=list(terminologyName=terminologyName,
+                                            information = information))
       private$checkResponse(response)
       return(rawToChar(response$content))
     },
@@ -42,7 +47,7 @@ Connection <- R6Class(
   private = list(
     webserverURL = "http://localhost:8080/parcoursdesoins-0.0.1/",
     XMLqueryPattern = "XMLQuery",
-    GetFilePattern = "GetFile",
+    GetFilePattern = "GetTerminologyDescriptionFile",
     
     checkResponse = function(response){
       if (response$status_code!=200){

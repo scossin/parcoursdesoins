@@ -4,7 +4,8 @@ STATICfilterCreator <- R6::R6Class(
   public = list(
     
     createFilterObject = function(contextEnv, predicateName, parentId, where){
-      filterType <- GLOBALpredicatesDescription$getPredicateDescription(predicateName)$category
+      terminologyDescription <- GLOBALterminologyDescription[[contextEnv$terminologyName]]
+      filterType <- terminologyDescription$getPredicateDescription(predicateName)$category
       filterType <- as.character(filterType)
       bool <- filterType %in% private$availableFilters
       if (!bool){

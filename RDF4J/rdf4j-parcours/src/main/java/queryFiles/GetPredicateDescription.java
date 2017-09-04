@@ -25,6 +25,7 @@ import ontologie.EIG;
 import parameters.MainResources;
 import parameters.Util;
 import terminology.Terminology;
+import terminology.Terminology.TerminoEnum;
 
 public class GetPredicateDescription implements FileQuery{
 
@@ -34,7 +35,6 @@ public class GetPredicateDescription implements FileQuery{
 	
 	public final static String fileName = "predicatesDescription.csv";
 	private final static String MIMEtype = "text/csv";
-	private final static String ontologyFileName = MainResources.ontologyFileName;
 	
 	public String getFileName(){
 		return(fileName);
@@ -57,13 +57,13 @@ public class GetPredicateDescription implements FileQuery{
 		while(values.hasNext()){
 			Statement statement = values.next();
 			IRI predicateIRI = (IRI) statement.getSubject();
-			if (predicateIRI.getNamespace().equals(EIG.NAMESPACE)){
+			//if (predicateIRI.getNamespace().equals(EIG.NAMESPACE)){
 				if (!predicates.containsKey(predicateIRI)){
 					predicates.put(predicateIRI, new Predicates(predicateIRI));
 				}
 				Value value = statement.getObject();
 				predicates.get(predicateIRI).setValue(value);
-			}
+			//}
 		}
 		values.close();
 	}
@@ -179,12 +179,13 @@ public class GetPredicateDescription implements FileQuery{
 		return(line.toString());
 	}
 	
-	public GetPredicateDescription() throws IOException{
-		InputStream ontologyInput = Util.classLoader.getResourceAsStream(ontologyFileName);
+	public GetPredicateDescription(TerminoEnum terminoEnum) throws IOException{
+		String path = MainResources.terminologiesFolder + terminoEnum.getTermino().getOntologyFileName();
+		InputStream ontologyInput = Util.classLoader.getResourceAsStream(path);
 		Repository rep = new SailRepository(new MemoryStore());
 		rep.initialize();
 		RepositoryConnection ontologyCon = rep.getConnection();		
-		ontologyCon.add(ontologyInput, EIG.NAMESPACE, RDFFormat.TURTLE);
+		ontologyCon.add(ontologyInput, terminoEnum.getTermino().getNAMESPACE(), RDFFormat.TURTLE);
 		
 		setPredicates(ontologyCon);
 		setPredicateComment(ontologyCon);
@@ -226,7 +227,7 @@ public class GetPredicateDescription implements FileQuery{
 	}
 	
 	public static void main(String[] args) throws IOException{
-		GetPredicateDescription comments = new GetPredicateDescription();
+		GetPredicateDescription comments = new GetPredicateDescription(TerminoEnum.RPPS);
 		File file = new File("commentaires.csv");
 		OutputStream os = new FileOutputStream(file);
 		comments.sendBytes(os);

@@ -13,7 +13,7 @@ import query.PreparedQuery;
 import query.Query;
 import query.Results;
 import servlet.DockerDB;
-import servlet.DockerDB.Endpoints;
+import terminology.Terminology.TerminoEnum;
 
 public class GetEventPredicateFrequency implements FileQuery{
 	final static Logger logger = LoggerFactory.getLogger(GetEventPredicateFrequency.class);
@@ -21,10 +21,15 @@ public class GetEventPredicateFrequency implements FileQuery{
 	public static final String fileName = "predicateFrequency.csv";
 	private final String MIMEType = "text/csv";
 	
-	private final String sparqlQueryString  = "SELECT ?eventType ?predicate (count(?predicate) as ?frequency) WHERE { \n" +
+	private String sparqlQueryString  = "SELECT ?eventType ?predicate (count(?predicate) as ?frequency) WHERE { \n" +
 		  "?s a ?eventType . \n" + 
 				  "?s ?predicate ?o . } \n" + 
-				"GROUP BY ?predicate ?eventType";
+				"GROUP BY ?predicate ?eventType \n" + 
+				  "#TERMINOLOGY"; // each query will be different for cache
+	
+	private void setSparqlQueryString (String terminologyName){
+		sparqlQueryString = sparqlQueryString.replace("#TERMINOLOGY", "#"+terminologyName);
+	}
 	
 	private final String[] variableNames = {"predicate","eventType","frequency"};
 	
@@ -52,16 +57,17 @@ public class GetEventPredicateFrequency implements FileQuery{
 		return MIMEType;
 	}
 	
-	public GetEventPredicateFrequency() throws IOException{
+	public GetEventPredicateFrequency(TerminoEnum terminoEnum) throws IOException{
+		setSparqlQueryString(terminoEnum.getTermino().getNAMESPACE());
 		Query query = new PreparedQuery(sparqlQueryString, variableNames);
-		String sparqlEndpoint = DockerDB.getEndpointIPadress(Endpoints.TIMELINES);
+		String sparqlEndpoint = DockerDB.getEndpointIPadress(terminoEnum.getTermino().getEndpoint());
 		Results results = new Results(sparqlEndpoint, query);
 		results.serializeResult();
 		this.fileToSend = results.getFile();
 	}
 	
 	public static void main(String[] args) throws IOException{
-		GetEventPredicateFrequency eventPredicateFrequency = new GetEventPredicateFrequency();
+		GetEventPredicateFrequency eventPredicateFrequency = new GetEventPredicateFrequency(TerminoEnum.EVENTS);
 		File file = new File("commentaires.csv");
 		OutputStream os = new FileOutputStream(file);
 		eventPredicateFrequency.sendBytes(os);

@@ -13,7 +13,7 @@ GLOBALlogFolder <- "./logs/"
 
 GLOBALeventTabSetPanel <- "eventTabset" # tabsetPanel id of events
 
-GLOBALlang <- "en"
+GLOBALlang <- "fr"
 
 
 
