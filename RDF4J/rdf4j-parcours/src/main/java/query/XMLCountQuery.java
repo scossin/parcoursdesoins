@@ -76,6 +76,10 @@ public class XMLCountQuery implements Query {
 		Results result = new Results(DockerDB.getEndpointIPadress(Endpoints.TIMELINES),query);
 		result.serializeResult();
 	}
+
+	public Endpoints getEndpoint() {
+		return Endpoints.TIMELINES; // request is specific to this Endpoint
+	}
 }
 
 /**

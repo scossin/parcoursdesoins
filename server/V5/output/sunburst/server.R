@@ -20,10 +20,13 @@ server <- function(input,output,session){
     FINESS = Predicates$new(GLOBALcon$terminology$FINESS,GLOBALlang)
     )
   
+  #print(GLOBALterminologyDescription[[GLOBALcon$terminology$Event]])
+  
   source("../../classes/queries/STATICmakeQueriesOO.R",local=T)
 
   source("../../classes/queries/XMLCountQueryOO.R",local=T)
   source("../../classes/queries/XMLDescribeQueryOO.R",local=T)
+  source("../../classes/queries/XMLDescribeTerminologyQueryOO.R",local = T)
   source("../../classes/queries/XMLqueryOO.R",local=T)
   source("../../classes/queries/XMLSearchQueryOO.R",local=T)
   
@@ -42,6 +45,7 @@ server <- function(input,output,session){
   
   source("../../classes/values/NumericValuesOO.R",local = T)
   
+  source("../../classes/events/InstancesSelection.R",local = T)
   
   
   # an object to help others objects to create Filter Object
@@ -125,4 +129,5 @@ server <- function(input,output,session){
 #   print(test1$filePredicatesDescription)
 # }
 
-
+# test <- GLOBALterminologyDescription[[GLOBALcon$terminology$Event]]
+# test$predicatesDf

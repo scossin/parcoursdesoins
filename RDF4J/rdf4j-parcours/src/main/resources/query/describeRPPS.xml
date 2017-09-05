@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE eventslinks SYSTEM "describeTerminology.dtd" > 
+<eventslinks>
+ <event>
+  <terminologyName>RPPS</terminologyName>
+  <predicate>
+   <predicateType>Nom</predicateType>
+  </predicate>
+  <value>RPPS810100499945</value>
+ </event>
+</eventslinks>

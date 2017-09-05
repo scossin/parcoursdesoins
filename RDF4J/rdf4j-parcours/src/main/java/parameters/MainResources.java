@@ -58,4 +58,6 @@ public class MainResources {
 	public final static String dtdDescribeFile = queryFolder + "describe.dtd";
 	
 	public final static String dtdCountFile = queryFolder + "count.dtd";
+
+	public final static String dtdDescribeTerminologyFile = queryFolder + "describeTerminology.dtd";
 }

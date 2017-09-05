@@ -29,6 +29,8 @@ import integration.DBconnection;
 import ontologie.EIG;
 import parameters.MainResources;
 import parameters.Util;
+import query.XMLFile.DTDFiles;
+import servlet.DockerDB;
 
 /**
  * This class manages the results of a SPARQL query. <br>
@@ -192,23 +194,27 @@ public class Results {
 	
 	public static void main(String[] args) throws NumberFormatException, ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat {
 		SimpleDataset dataset = new SimpleDataset();
-		int n = 10;
-		IRI patients[] = new IRI[n];
-		for (int i = 0; i<n ; i++){
-			String patient_n = "p" + (i+1);
-			IRI patient1 = Util.vf.createIRI(EIG.NAMESPACE,patient_n);
-			System.out.println(patient1);
-			patients[i] = patient1;
-			dataset.addNamedGraph(patients[i]);
-		} 
+//		int n = 10;
+//		IRI patients[] = new IRI[n];
+//		for (int i = 0; i<n ; i++){
+//			String patient_n = "p" + (i+1);
+//			IRI patient1 = Util.vf.createIRI(EIG.NAMESPACE,patient_n);
+//			System.out.println(patient1);
+//			patients[i] = patient1;
+//			dataset.addNamedGraph(patients[i]);
+//		} 
+//		
+//		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "queryMCOContext.xml" );
+//		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdSearchFile);
+//		Query query = new XMLSearchQuery(new XMLFile(xmlFile, dtdFile));
 		
-		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "queryMCOContext.xml" );
-		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdSearchFile);
-		Query query = new XMLSearchQuery(new XMLFile(xmlFile, dtdFile));
-		
-		Results results = new Results(Util.sparqlEndpoint,query);
+		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeRPPS.xml" );
+		//InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdSearchFile);
+		XMLFile xml = new XMLFile(xmlFile);
+		Query query = new XMLDescribeTerminologyQuery(xml);
+		Results results = new Results(DockerDB.getEndpointIPadress(query.getEndpoint()),query);
 		results.serializeResult();
-
 		results.getCon().close();
+		xmlFile.close();
 	}
 }

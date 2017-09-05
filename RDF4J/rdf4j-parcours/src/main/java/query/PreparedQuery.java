@@ -2,6 +2,8 @@ package query;
 
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
 
+import servlet.DockerDB.Endpoints;
+
 public class PreparedQuery implements Query {
 
 	private String[] variableNames;
@@ -23,6 +25,12 @@ public class PreparedQuery implements Query {
 
 	public String[] getVariableNames() {
 		return variableNames;
+	}
+
+	@Override
+	public Endpoints getEndpoint() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

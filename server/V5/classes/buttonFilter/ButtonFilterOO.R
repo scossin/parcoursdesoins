@@ -13,7 +13,7 @@ ButtonFilter <- R6::R6Class(
     initialize = function(contextEnv, 
                           predicateName, 
                           predicateLabel, 
-                          predicateComment, 
+                          predicateComment,
                           parentId, 
                           where){
       
@@ -24,7 +24,6 @@ ButtonFilter <- R6::R6Class(
       self$predicateComment <- predicateComment
       self$predicateLabel <- predicateLabel
       self$makeUI()
-      
       self$addButtonFilterObserver()
       self$addHideShowObserver()
       
@@ -58,6 +57,13 @@ ButtonFilter <- R6::R6Class(
       return(paste0("FilterObject",self$getDivId()))
     },
     
+    removeUI = function(){
+      session$sendCustomMessage(type = "removeId",
+                                message = list(objectId = self$getObjectId()))
+      session$sendCustomMessage(type = "removeId",
+                                message = list(objectId = self$getDivId()))
+    },
+    
     makeUI = function(){
       ## bold predicate
       htmlText <- paste0("<b>", self$predicateLabel, "</b> (", self$predicateComment, ")")
@@ -87,15 +93,12 @@ ButtonFilter <- R6::R6Class(
         staticLogger$user(self$getObjectId(), "was clicked")
         if (!isClickedButtonFilter){
           staticLogger$user("\t",self$getObjectId(), "turned off")
-          if (!is.null(self$filterObject)){
-            staticLogger$info(self$getObjectId(), "turned off")
-            staticLogger$info("\t \t removing filterObject of ",self$getObjectId())
-            self$filterObject$destroy()
-            self$filterObject <- NULL
-            staticLogger$info("\t \t Hidding HideShow button : ",self$getHideShowId())
-            session$sendCustomMessage(type = "displayHideId",
-                                      message = list(objectId = self$getHideShowId()))
-          }
+          staticLogger$info(self$getObjectId(), "turned off")
+          staticLogger$info("\t \t removing filterObject of ",self$getObjectId())
+          self$contextEnv$instanceSelection$removeFilter(self$predicateName)
+          staticLogger$info("\t \t Hidding HideShow button : ",self$getHideShowId())
+          session$sendCustomMessage(type = "displayHideId",
+                                    message = list(objectId = self$getHideShowId()))
           return(NULL)
         }
         
@@ -105,10 +108,23 @@ ButtonFilter <- R6::R6Class(
         private$goToFirstChild()
         
         staticLogger$info("\t \t new filterObject for ",self$getObjectId())
-        self$filterObject <- staticFilterCreator$createFilterObject(contextEnv = self$contextEnv,
-                                                                    predicateName= self$predicateName,
-                                                                    parentId = self$getDivIdFilterObject(),
-                                                                    where = "beforeEnd")
+        contextEvents <- self$contextEnv$instanceSelection$getContextEvents()
+        filterType <- self$contextEnv$instanceSelection$terminologyDescription$getPredicateDescription(self$predicateName)$category
+        expectedValue <- self$contextEnv$instanceSelection$terminologyDescription$getPredicateDescription(self$predicateName)$value
+        eventNumber <- self$contextEnv$eventNumber
+        eventType <- self$contextEnv$instanceSelection$className
+        terminologyName <- self$contextEnv$instanceSelection$terminologyName
+        filterObject <- staticFilterCreator$createFilterObject(eventNumber = eventNumber, 
+                                                               eventType = eventType, 
+                                                               contextEvents = contextEvents, 
+                                                               filterType = filterType,
+                                                               predicateName= self$predicateName,
+                                                               expectedValue = expectedValue,
+                                                               terminologyName = terminologyName,
+                                                               parentId = self$getDivIdFilterObject(),
+                                                               where = "beforeEnd"
+                                                               )
+        self$contextEnv$instanceSelection$addFilter(filterObject, self$predicateName)
         staticLogger$info("\t \t showing HideShow button : ",self$getHideShowId())
         private$showHideShowButton()
       },ignoreInit=T)
@@ -161,7 +177,8 @@ ButtonFilter <- R6::R6Class(
         stop("contextEnv must be an environment")
       }
       envObjects <- ls(contextEnv)
-      expectedObjects <- c("eventNumber", "context")
+      print(envObjects)
+      expectedObjects <- c("eventNumber")
       bool <-  expectedObjects %in% envObjects
       if (!all(bool)){
         stop("Missing ", expectedObjects[bool], " in context environment for ButtonFilter to work")

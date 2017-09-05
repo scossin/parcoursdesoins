@@ -168,12 +168,13 @@ public class GetPredicateDescription implements FileQuery{
 		while (iter.hasNext()){
 			Predicates predicate = iter.next();
 			String category = predicate.getCategory().toString();
-			String expectedValue = predicate.getExpectedValue().stringValue();
+			Value value = predicate.getExpectedValue();
+			IRI expectedValue =  (IRI) value;
 			line.append(predicate.getPredicateIRI().getLocalName());
 			line.append("\t");
 			line.append(category);
 			line.append("\t");
-			line.append(expectedValue);
+			line.append(expectedValue.getLocalName());
 			line.append("\n");
 		}
 		return(line.toString());
@@ -227,7 +228,7 @@ public class GetPredicateDescription implements FileQuery{
 	}
 	
 	public static void main(String[] args) throws IOException{
-		GetPredicateDescription comments = new GetPredicateDescription(TerminoEnum.RPPS);
+		GetPredicateDescription comments = new GetPredicateDescription(TerminoEnum.EVENTS);
 		File file = new File("commentaires.csv");
 		OutputStream os = new FileOutputStream(file);
 		comments.sendBytes(os);

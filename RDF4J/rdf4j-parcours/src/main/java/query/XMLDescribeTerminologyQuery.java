@@ -19,20 +19,22 @@ import org.xml.sax.SAXException;
 import exceptions.InvalidContextException;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
-import ontologie.EIG;
+import exceptions.UnfoundTerminologyException;
 import ontologie.TIME;
 import parameters.MainResources;
 import parameters.Util;
 import query.XMLFile.XMLelement;
 import servlet.DockerDB.Endpoints;
+import terminology.Terminology;
+import terminology.Terminology.TerminoEnum;
 
 /**
  * The describe event query return predicate and value of a particular event
  * @author cossin
  *
  */
-public class XMLDescribeQuery implements Query {
-	final static Logger logger = LoggerFactory.getLogger(XMLDescribeQuery.class);
+public class XMLDescribeTerminologyQuery implements Query {
+	final static Logger logger = LoggerFactory.getLogger(XMLDescribeTerminologyQuery.class);
 	/**
 	 * The initial query is a XML file
 	 */
@@ -53,30 +55,32 @@ public class XMLDescribeQuery implements Query {
 	 */
 	private Set<IRI> predicateValuesTime = new HashSet<IRI>();
 	
-	
-	
-	
 	private final String eventReplacementString = "EVENTSINSTANCESgoHERE";
 	private final String basicReplacementString = "PREDICATESgoHERE";
-	private final String timeReplacementString = "PREDICATESTIMEvaluesGOhere";
 	
-	String startOfQuery = "SELECT * WHERE { \n " +
+	private Terminology terminology; 
+	
+	private void setEndpoint(Node eventNode) throws UnfoundTerminologyException{
+		Element element = (Element) eventNode;
+		NodeList eventInstance = element.getElementsByTagName(XMLelement.terminologyName.toString());
+		Node eventInstances = eventInstance.item(0);
+		String terminologyName = eventInstances.getTextContent();
+		for (TerminoEnum termino : TerminoEnum.values()){
+			if (termino.getTerminologyName().equals(terminologyName)){
+				this.terminology = termino.getTermino();
+				return;
+			}
+		}
+		throw new UnfoundTerminologyException(logger, terminologyName);
+	}
+	
+	String basicQuery = "SELECT ?event ?predicate ?value WHERE { \n"+
 			"VALUES ?event {" +             eventReplacementString                           + "} \n"+
-			"{";
-	
-	String basicQuery = "SELECT ?context ?event ?predicate ?value WHERE {graph ?context { \n"+
 			"VALUES ?predicate {" +             basicReplacementString            +"} . \n" + 
 			"?event ?predicate ?value . \n" + 
-			"}}"
+			"}"
 	;
 	
-	String timeOntologyQuery = "SELECT ?context ?event ?predicate ?value WHERE {graph ?context { \n" + 
-			"VALUES ?predicate {"+            timeReplacementString            + "} . \n" + 
-			"?event ?predicate ?startORend . \n"+
-			"?startORend a "+ Query.formatIRI4query(TIME.INSTANT) + " . \n" + 
-			"?startORend "+ Query.formatIRI4query(TIME.INXSDDATETIME) + " ?value . \n"+
-			"}}";
-	;
 	
 	
 	/**
@@ -88,10 +92,12 @@ public class XMLDescribeQuery implements Query {
 	 * @throws UnfoundEventException
 	 * @throws UnfoundPredicatException
 	 * @throws InvalidContextException
+	 * @throws UnfoundTerminologyException 
 	 */
-	public XMLDescribeQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException{
+	public XMLDescribeTerminologyQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException{
 		this.xml = xml;
 		Node eventNode = xml.getEventNodes().item(0);
+		setEndpoint(eventNode);
 		setEventValuesSPARQL(eventNode);
 		setPredicatesValues(eventNode);
 		replacePredicatesValues();
@@ -101,13 +107,7 @@ public class XMLDescribeQuery implements Query {
 	 * main function of the Query type : return a SPARQL query
 	 */
 	public String getSPARQLQueryString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(startOfQuery);
-		sb.append(basicQuery);
-		sb.append("} UNION { \n");
-		sb.append(timeOntologyQuery);
-		sb.append("}} \n");
-		return(sb.toString());
+		return(basicQuery);
 	}
 	
 	/**
@@ -124,7 +124,7 @@ public class XMLDescribeQuery implements Query {
 			if (TIME.isRecognizedTimePredicate(predicateName)){
 				predicateValuesTime.add(Util.vf.createIRI(TIME.NAMESPACE, predicateName));
 			} else {
-				predicateValuesBasic.add(Util.vf.createIRI(EIG.NAMESPACE, predicateName));
+				predicateValuesBasic.add(Util.vf.createIRI(terminology.getNAMESPACE(), predicateName));
 			}
 		}
 	}
@@ -139,15 +139,6 @@ public class XMLDescribeQuery implements Query {
 		}
 		this.basicQuery = basicQuery.replace(basicReplacementString, sb.toString());
 		
-		// time : 
-		sb.setLength(0);
-		sb.append(" ");
-		for (IRI predicateIRI : predicateValuesTime){
-			sb.append(Query.formatIRI4query(predicateIRI));
-			sb.append(" ");
-		}
-		this.timeOntologyQuery = timeOntologyQuery.replace(timeReplacementString, sb.toString());
-		
 		// events : 
 		sb.setLength(0);
 		sb.append(" ");
@@ -155,7 +146,7 @@ public class XMLDescribeQuery implements Query {
 			sb.append(Query.formatIRI4query(predicateIRI));
 			sb.append(" ");
 		}
-		this.startOfQuery = startOfQuery.replace(eventReplacementString, sb.toString());
+		this.basicQuery = basicQuery.replace(eventReplacementString, sb.toString());
 	}
 	
 	/*
@@ -186,7 +177,7 @@ public class XMLDescribeQuery implements Query {
 		Node eventInstances = eventInstance.item(0);
 		String eventInstancesNames[] = eventInstances.getTextContent().split("\t");
 		for (String eventInstanceName : eventInstancesNames){
-			eventValuesSPARQL.add(Util.vf.createIRI(EIG.NAMESPACE, eventInstanceName));
+			eventValuesSPARQL.add(Util.vf.createIRI(terminology.getNAMESPACE(), eventInstanceName));
 		}
 	}
 
@@ -202,7 +193,7 @@ public class XMLDescribeQuery implements Query {
 	 */
 	public String[] getVariableNames() {
 		// TODO Auto-generated method stub
-		String[] variablesNames = {"context","event","predicate","value"};
+		String[] variablesNames = {"event","predicate","value"};
 		return(variablesNames);
 	}
 
@@ -214,16 +205,17 @@ public class XMLDescribeQuery implements Query {
 	}
 	
 	
-	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException{
-		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
+	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException{
+		//InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
+		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeRPPS.xml" );
 		XMLFile file = new XMLFile(xmlFile);
-		XMLDescribeQuery describe = new XMLDescribeQuery(file);
+		XMLDescribeTerminologyQuery describe = new XMLDescribeTerminologyQuery(file);
 		System.out.println(describe.getSPARQLQueryString());
 		xmlFile.close();
 	}
 
 	@Override
 	public Endpoints getEndpoint() {
-		return Endpoints.TIMELINES;
+		return terminology.getEndpoint();
 	}
 }

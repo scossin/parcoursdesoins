@@ -2,7 +2,7 @@
 <!DOCTYPE eventslinks SYSTEM "describe.dtd">
 <eventslinks>
 	<event>
-		<eventType>SejourMCO</eventType>
+		<eventType>Event</eventType>
 		<predicate>
 		<predicateType>inEtab</predicateType>
 		</predicate>

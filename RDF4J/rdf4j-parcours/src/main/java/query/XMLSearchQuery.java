@@ -34,6 +34,7 @@ import parameters.MainResources;
 import parameters.Util;
 import query.XMLFile.DTDFiles;
 import query.XMLFile.XMLelement;
+import servlet.DockerDB.Endpoints;
 
 
 /**
@@ -330,5 +331,10 @@ public class XMLSearchQuery implements Query {
 	@Override
 	public SimpleDataset getContextDataset() {
 		return(xml.getContextDataSet());
+	}
+
+	@Override
+	public Endpoints getEndpoint() {
+		return(Endpoints.TIMELINES);
 	}
 }

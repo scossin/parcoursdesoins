@@ -69,13 +69,14 @@ public class XMLFile {
 	 * <li> predicate1 : for link only, the predicate name of the second event
 	 * <li> operator : for link only, the name of the operator to compare values
 	 * <li> context : in which contexts to search
+	 * <li> terminologyName : for describing instances of a terminology only 
 	 * </ul> 
 	 * @author cossin
 	 *
 	 */
 	public static enum XMLelement {
 		event, link, minValue, maxValue, value, predicateType, eventType, event1, event2, predicate1, predicate2, operator,
-		context;
+		context, terminologyName;
 	}
 	
 	/**
@@ -187,7 +188,9 @@ public class XMLFile {
 	public enum DTDFiles {
 		SearchQuery(MainResources.dtdSearchFile),
 		DescribeQuery(MainResources.dtdDescribeFile),
-		CountQuery(MainResources.dtdCountFile);
+		CountQuery(MainResources.dtdCountFile),
+		DescribeTerminologyQuery(MainResources.dtdDescribeTerminologyFile);
+		
 		
 		private final String filePath;
 		

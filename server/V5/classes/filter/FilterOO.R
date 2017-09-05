@@ -23,14 +23,19 @@ Filter <- R6::R6Class(
     
     setContext = function(){
       stop("setContext not implemented !")
+    },
+    destroy = function(){
+      
     }
-    
   ),
+  
+
   
   private=list(
     checkDataFrame = function(dataFrame){
-      columns <- c("context","event","predicate","value")
-      bool <- colnames(dataFrame) %in% columns
+      #columns <- c("context","event","predicate","value")
+      columns <- c("event","predicate","value")
+      bool <-  columns %in%  colnames(dataFrame)
       if (!all(bool)){
         stop("Filter dataFrame must contain only : ", 
              paste(columns, collapse=" "), " \n not : ", paste(colnames(dataFrame), collapse=" "))

@@ -31,16 +31,14 @@ import exceptions.UnfoundDTDFile;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
-import parameters.MainResources;
-import parameters.Util;
-import query.XMLCountQuery;
 import query.Query;
 import query.Results;
+import query.XMLCountQuery;
 import query.XMLDescribeQuery;
+import query.XMLDescribeTerminologyQuery;
 import query.XMLFile;
 import query.XMLFile.DTDFiles;
 import query.XMLSearchQuery;
-import servlet.DockerDB.Endpoints;
 
 // Extend HttpServlet class
 public class HandleXMLQuery extends HttpServlet {
@@ -82,6 +80,8 @@ public class HandleXMLQuery extends HttpServlet {
 				query = new XMLDescribeQuery(xml);
 			} else if (xml.getDTDFile() == DTDFiles.CountQuery){
 				query = new XMLCountQuery(xml);
+			} else if (xml.getDTDFile() == DTDFiles.DescribeTerminologyQuery){
+				query = new XMLDescribeTerminologyQuery(xml);
 			} else {
 				throw new UnfoundDTDFile(logger, xml.getDTDFile().getFilePath());
 			}
@@ -97,7 +97,7 @@ public class HandleXMLQuery extends HttpServlet {
 			xmlFileIn.close();
 		}
 
-		String sparqlEndpoint = DockerDB.getEndpointIPadress(Endpoints.TIMELINES);
+		String sparqlEndpoint = DockerDB.getEndpointIPadress(query.getEndpoint());
 		Results results = new Results(sparqlEndpoint,query);
 		results.serializeResult();
 		File file = results.getFile();

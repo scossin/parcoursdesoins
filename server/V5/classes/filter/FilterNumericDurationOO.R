@@ -3,8 +3,8 @@ FilterNumericDuration <- R6::R6Class(
   inherit = FilterNumeric,
   
   public = list(
-    initialize = function(contextEnv, predicateName, dataFrame, parentId, where){
-      super$initialize(contextEnv, predicateName, dataFrame, parentId, where)
+    initialize = function(eventNumber, predicateName, dataFrame, parentId, where){
+      super$initialize(eventNumber,predicateName, dataFrame, parentId, where)
       staticLogger$info("Adding Observer Make UI")
       self$addObserverMakeUI()
       staticLogger$info("Creating a new FilterNumericDuration object")

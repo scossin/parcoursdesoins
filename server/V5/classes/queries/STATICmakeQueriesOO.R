@@ -6,38 +6,39 @@ STATICmakeQueries <- R6::R6Class(
       staticLogger$info("Initializing a new STATICmakeQueries")
     },
     
-    setContextEvents = function(contextEnv){
-      staticLogger$info("getting Events for",contextEnv$eventNumber, "of type : ", contextEnv$eventType)
+    getContextEvents = function(eventNumber, eventType, context){
+      staticLogger$info("getting Events for",eventNumber, "of type : ", eventType)
       query <- XMLSearchQuery$new()
-      query$addContextNode(contextEnv$context)
-      query$addEventNode(eventNumber = contextEnv$eventNumber,
-                         eventType = contextEnv$eventType,predicatesNodes = NULL)
+      query$addContextNode(context)
+      query$addEventNode(eventNumber = eventNumber,
+                         eventType = eventType,predicatesNodes = NULL)
       results <- GLOBALcon$sendQuery(query)
       colnames(results) <- c("context","event")
       staticLogger$info("Number of events : ",nrow(results))
-      contextEnv$contextEvents <- results
-      if (contextEnv$context == ""){
-        contextEnv$context <- unique(contextEnv$contextEvents$context)
-      }
-      return(NULL)
+      return(results)
+      # contextEnv$contextEvents <- results
+      # if (contextEnv$context == ""){
+      #   contextEnv$context <- unique(contextEnv$contextEvents$context)
+      # }
+      # return(NULL)
     }, 
     
     ### add a check contextEnv here
-    getContextEventsPredicate = function(contextEnv, predicateName){
+    getContextEventsPredicate = function(eventType, contextEvents, predicateName,terminologyName){
       staticLogger$info("getting values for a predicate",predicateName)
-      staticLogger$info("eventType : ",contextEnv$eventType)
-      staticLogger$info("Nevents : ",length(contextEnv$contextEvents$event))
-      private$checkEnvironmentGetContextEventsPredicate(contextEnv)
-      context <- sort(contextEnv$context)
+      staticLogger$info("eventType : ",eventType)
+      staticLogger$info("Nevents : ",length(contextEvents$event))
+      staticLogger$info("Looking into : ",terminologyName)
+      context <- sort(contextEvents$context)
       contextList <- private$splitContext(context)
       results <- NULL
       shiny::withProgress(message = "Sending query", value = 0, {
         totalIter <- length(contextList)
         nIter <- 1
         for (context in contextList){
-          bool <- contextEnv$contextEvents$context %in% context
-          events <- contextEnv$contextEvents$event[bool]
-          query <- private$getQuery(contextEnv$eventType, predicateName, events, context)
+          bool <- contextEvents$context %in% context
+          events <- contextEvents$event[bool]
+          query <- private$getQuery(eventType, predicateName, events, context,terminologyName)
           timeMesure <- system.time(
             results <- rbind (results, GLOBALcon$sendQuery(query))
           )
@@ -71,7 +72,16 @@ STATICmakeQueries <- R6::R6Class(
       return(timeRemaining)
     },
     
-    getQuery = function(eventType, predicateName, events, context){
+    getQuery = function(eventType, predicateName, events, context, terminologyName){
+      if (terminologyName == GLOBALcon$terminology$Event){
+        return(private$getQueryEvent(eventType, predicateName, events, context))
+      } else {
+        return(private$getQueryTerminology(eventType, predicateName, events, terminologyName))
+      }
+
+    },
+    
+    getQueryEvent = function(eventType, predicateName, events, context){
       query <- XMLDescribeQuery$new()
       ## the order for making this query is important !!
       query$addEventTypeNode(eventType)
@@ -81,17 +91,12 @@ STATICmakeQueries <- R6::R6Class(
       return(query)
     },
     
-    checkEnvironmentGetContextEventsPredicate = function(contextEnv){
-      if (!is.environment(contextEnv)){
-        stop("contextEnv must be an environment")
-      }
-      envObjects <- ls(contextEnv)
-      expectedObjects <- c("eventNumber", "context", "eventType", "contextEvents")
-      bool <-  expectedObjects %in% envObjects
-      if (!all(bool)){
-        stop("Missing ", expectedObjects[bool], " in context environment for ButtonFilter to work")
-      }
-      return(NULL)
+    getQueryTerminology = function(eventType, predicateName, events, terminologyName){
+      query <- XMLDescribeTerminologyQuery$new()
+      query$addTerminologyName(terminologyName)
+      query$addPredicateTypeNode(predicateName)
+      query$addEventInstances(events)
+      return(query)
     }
   )
 )

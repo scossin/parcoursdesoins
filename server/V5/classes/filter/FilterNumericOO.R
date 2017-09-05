@@ -4,15 +4,13 @@ FilterNumeric <- R6::R6Class(
   
   
   public=list(
-    contextEnv = environment(),
     observersList = list(),
     valueEnv = environment(),
     numericGraphics = NULL,
     
-    initialize = function(contextEnv, predicateName, dataFrame, parentId, where){
+    initialize = function(eventNumber, predicateName, dataFrame, parentId, where){
       staticLogger$info("Creating a new FilterNumeric object")
-      super$initialize(contextEnv$eventNumber, predicateName, dataFrame, parentId, where)
-      self$contextEnv <- contextEnv
+      super$initialize(eventNumber, predicateName, dataFrame, parentId, where)
       
       self$valueEnv <- new.env()
       self$valueEnv$numericValue <- NumericValues$new(dataFrame$value)
@@ -155,27 +153,27 @@ FilterNumeric <- R6::R6Class(
     }, 
     
     getDivId = function(){
-      return(paste0("divGraphicsAndFilter", self$contextEnv$eventNumber, self$predicateName))
+      return(paste0("divGraphicsAndFilter", self$eventNumber, self$predicateName))
     },
     
     getGraphicsId = function(){
-      return(paste0("Graphics",self$contextEnv$eventNumber, self$predicateName))
+      return(paste0("Graphics",self$eventNumber, self$predicateName))
     },
     
     getPlotId = function(){
-      return(paste0("Plot",self$contextEnv$eventNumber, self$predicateName))
+      return(paste0("Plot",self$eventNumber, self$predicateName))
     },
     
     getNumericInputMaxId = function(){
-      return(paste0("numericMax",self$contextEnv$eventNumber, self$predicateName))
+      return(paste0("numericMax",self$eventNumber, self$predicateName))
     },
     
     getNumericInputMinId = function(){
-      return(paste0("numericMin",self$contextEnv$eventNumber, self$predicateName))
+      return(paste0("numericMin",self$eventNumber, self$predicateName))
     },
     
     getObjectId = function(){
-      return(paste0("slider",self$contextEnv$eventNumber, self$predicateName))
+      return(paste0("slider",self$eventNumber, self$predicateName))
     },
     
     getChoosenEvents = function(){
