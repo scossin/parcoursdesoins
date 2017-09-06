@@ -4,17 +4,12 @@ EventTabpanel <- R6::R6Class(
   public=list(
     contextEnv = environment(),
     hierarchicalObject = NULL,
-    # listButtonFilterObject = list(),
-    # listButtonFilterObserver = list(),
-    instanceSelection = NULL,
     
     initialize = function(eventNumber, context){
       staticLogger$info("Creating EventTabpanel", eventNumber)
       self$contextEnv <- new.env()
       self$contextEnv$context <- context
       self$contextEnv$eventNumber <- eventNumber
-      #self$contextEnv$terminologyName <- GLOBALcon$terminology$Event
-      
       private$newTabpanel(tabsetPanel = GLOBALeventTabSetPanel, 
                          liText = self$getLiText(),
                          contentId = self$getObjectId())
@@ -62,33 +57,6 @@ EventTabpanel <- R6::R6Class(
                                                         where = where
                                                         )
 
-        # staticMakeQueries$getContextEvents(self$contextEnv)
-        
-        ### insert new predicate
-        # staticLogger$info("\t getting predicates...")
-        # predicatesDf <- GLOBALterminologyDescription[[self$contextEnv$terminologyName]]$predicatesDf
-        # 
-        # staticLogger$info("\t getting predicatesDescription...")
-        # predicateDescriptionOfEvent <- GLOBALterminologyDescription[[self$contextEnv$terminologyName]]$getPredicateDescriptionOfEvent(self$contextEnv$eventType)
-        # namesList <- NULL
-        # staticLogger$info("Creating a list of ButtonFilter...")
-        # for (row in 1:nrow(predicateDescriptionOfEvent)){
-        #   predicateName <- predicateDescriptionOfEvent$predicate[row]
-        #   predicateLabel <- predicateDescriptionOfEvent$label[row]
-        #   predicateComment <- predicateDescriptionOfEvent$comment[row]
-        #   parentId = private$getFirstDivOfEventId()
-        #   buttonFilter <- ButtonFilter$new(contextEnv = self$contextEnv,
-        #                                    predicateName = predicateName,
-        #                                    predicateLabel = predicateLabel,
-        #                                    predicateComment = predicateComment, 
-        #                                    parentId = parentId, 
-        #                                    where = "beforeEnd")
-        #   ## add buttonFilter to the list
-        #   nObject <- length(self$listButtonFilterObject)
-        #   self$listButtonFilterObject[[nObject+1]] <- buttonFilter
-        #   namesList <- c(namesList, paste0(buttonFilter$getObjectId()))
-        # }
-        # names(self$listButtonFilterObject) <- namesList
         staticLogger$info("Destroying hierarchical object")
         self$hierarchicalObject$destroy()
         self$hierarchicalObject <- NULL
@@ -110,9 +78,12 @@ EventTabpanel <- R6::R6Class(
     },
     
     destroy = function(){
-      staticLogger$info("Finalizing hierarchical object",self$getObjectId())
+      staticLogger$info("Destroying EventTabPanel ", self$getObjectId())
       if (!is.null(self$hierarchicalObject)){
         self$hierarchicalObject$destroy()
+      }
+      if (!is.null(self$contextEnv$instanceSelection)){
+        self$contextEnv$instanceSelection$destroy()
       }
       self$removeUI();
       self$removeLi();

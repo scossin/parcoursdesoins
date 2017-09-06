@@ -35,6 +35,12 @@ if (GLOBALlang == "fr"){
   GLOBALinitialBoxplot <- "valeurs initiales"
   GLOBALselectedBoxplot <- "valeurs sélectionnées"
   
+  ## TextInfo
+  GLOBALvaluesSelectedOutOf <- "valeurs sélectionnées sur"
+  
+  ## and
+  GLOBALand <- "et"
+  
 } else if (GLOBALlang == "en"){
   GLOBALaddEventTabpanel <- "Add an event"
   GLOBALremoveEventTabpanel <- "removeEventTabpanel"
@@ -51,6 +57,12 @@ if (GLOBALlang == "fr"){
   ## boxplot
   GLOBALinitialBoxplot <- "initial values"
   GLOBALselectedBoxplot <- "selected values"
+  
+  ## TextInfo
+  GLOBALvaluesSelectedOutOf <- "values selected out of"
+  
+  ## and
+  GLOBALand <- "and"
 }
 
 

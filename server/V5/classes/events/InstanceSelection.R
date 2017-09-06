@@ -7,20 +7,53 @@ InstanceSelection <- R6::R6Class(
     className = character(),
     contextEvents = list(),
     context = "",
+    parentId = character(),
     terminologyDescription = list(),
     listButtonFilterObject = list(),
     listFilters = list(),
+    filterReactive = NULL,
     
     initialize = function(contextEnv, terminologyName, className, contextEvents, parentId, where){
-      self$contextEnv = contextEnv
-      print(ls(contextEnv))
-      self$terminologyName = terminologyName
-      self$className = className
-      self$contextEvents = contextEvents
-      self$context = unique(contextEvents$context)
+      self$contextEnv <- contextEnv
+      self$terminologyName <- terminologyName
+      self$className <- className
+      self$contextEvents <- contextEvents
+      self$context <- unique(contextEvents$context)
       self$terminologyDescription <- GLOBALterminologyDescription[[terminologyName]]
+      self$parentId <- parentId
       self$setButtonFilter(parentId, where)
-      staticLogger$info("\t new instanceSelection created of terminology : ", terminologyName)
+      staticLogger$info("new instanceSelection terminology : ", terminologyName,
+                        "location : ", parentId)
+      
+    },
+    
+    getEventsSelected = function(){
+      if (length(self$listFilters) == 0){
+        return(contextEvents$event)
+      }
+      iter <- 1
+      events <- NULL
+      for (filter in self$listFilters){
+        if (iter == 1){
+          events <- filter$getEventsSelected()
+        } else {
+          events <- base::intersect(events, filter$getEventsSelected())
+        }
+        iter <- iter + 1
+      }
+      return(events)
+    }, 
+    
+    getContextsSelected = function(){
+      eventsSelected <- self$getEventsSelected()
+      bool <- self$contextEvents$event %in% eventsSelected
+      contextsSelected <- unique(as.character(self$contextEvents$context[bool]))
+      return(contextsSelected)
+    },
+    
+    printFunction = function(){
+      staticLogger$info("FAIT QUELQUE CHOSE YA EU DU CHANGEMENT !! :")
+      # print(self$getEventsSelected())
     },
     
     getContextEvents = function(){
@@ -29,7 +62,8 @@ InstanceSelection <- R6::R6Class(
     
     addFilter = function(filter, predicateName){
       predicateName <- as.character(predicateName)
-      staticLogger$info("\t Adding a filter ", predicateName, "to instanceSelection")
+      staticLogger$info("\t Adding filter ", predicateName, "to instanceSelection",
+                        "located in ", self$parentId)
       lengthList <- length(self$listFilters)
       namesList <- names(self$listFilters)
       self$listFilters[[lengthList+1]] <- filter
@@ -39,7 +73,8 @@ InstanceSelection <- R6::R6Class(
     
     removeFilter = function(predicateName){
       predicateName <- as.character(predicateName)
-      staticLogger$info("\t Trying to remove filter", predicateName, "of instanceSelection")
+      staticLogger$info("\t Trying to remove filter", predicateName, "of instanceSelection",
+                        "located in ", self$parentId)
       if (length(self$listFilters) == 0){
         return(NULL)
       }
@@ -53,18 +88,18 @@ InstanceSelection <- R6::R6Class(
         staticLogger$info("\t" , predicateName, "not found in ", namesList)
       }
       return(NULL)
-
     },
     
     setButtonFilter = function(parentId, where){
+      staticLogger$info("\t setting Button filter in ", self$parentId, "...")
       ### insert new predicate
-      staticLogger$info("\t getting predicates...")
+      staticLogger$info("\t \t getting predicates...")
       predicatesDf <- self$terminologyDescription$predicatesDf
       
-      staticLogger$info("\t getting predicatesDescription of ", self$className)
+      staticLogger$info("\t \t getting predicatesDescription of ", self$className)
       predicateDescriptionOfEvent <- self$terminologyDescription$getPredicateDescriptionOfEvent(self$className)
       namesList <- NULL
-      staticLogger$info("Creating a list of ButtonFilter...")
+      staticLogger$info("\t creating a list of ButtonFilter...")
       for (row in 1:nrow(predicateDescriptionOfEvent)){
         predicateName <- predicateDescriptionOfEvent$predicate[row]
         predicateLabel <- predicateDescriptionOfEvent$label[row]
@@ -84,14 +119,20 @@ InstanceSelection <- R6::R6Class(
     },
     
     destroy = function(){
-      for (button in self$listButtonFilterObject){
-        staticLogger$info("Removing ButtonFilterObject before destroying")
-        button$removeUI()
-      }
+      staticLogger$info("Destroying instanceSelection located in : ", self$parentId)
+      staticLogger$info("\t Removing every ButtonFilterObject")
+      
+      staticLogger$info("\t Removing every Filters")
       for (filter in self$listFilters){
-        staticLogger$info("Removing listFilters before destroying")
         filter$destroy()
       }
+      self$listFilters <- NULL
+      
+      for (button in self$listButtonFilterObject){
+        button$destroy()
+      }
+      self$listButtonFilterObject <- NULL
+      return(NULL)
     }
   )
 )
@@ -108,6 +149,33 @@ PointerEnv <- R6::R6Class(
     
     destroy = function(){
       self$contextEnv$instanceSelection$destroy()
+      self$contextEnv <- NULL
+      return(NULL)
+    },
+    
+    getEventsSelected = function(){
+      self$contextEnv$instanceSelection$getContextsSelected() ### context corresponds to events
     }
   )
 )
+
+# library(digest)
+# test <- new.env()
+# test <- NULL
+# test
+# Test <- R6::R6Class(
+#   "Test",
+#   public = list(
+#     value = numeric(),
+#     getHash = function(){digest::sha1(self$value)},
+#     initialize = function(value){
+#       self$value <- value
+#     }
+#   )
+# )
+# test <- Test$new(10)
+
+# test$getHash()
+# digest::sha1(test)
+# hash::hash(test)
+# ls(test)

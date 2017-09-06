@@ -24,6 +24,7 @@ import ontologie.TIME;
 import parameters.MainResources;
 import parameters.Util;
 import query.XMLFile.XMLelement;
+import queryFiles.GetPredicateDescription;
 import servlet.DockerDB.Endpoints;
 import terminology.Terminology;
 import terminology.Terminology.TerminoEnum;
@@ -50,17 +51,23 @@ public class XMLDescribeTerminologyQuery implements Query {
 	 */
 	private Set<IRI> predicateValuesBasic = new HashSet<IRI>();
 	
-	/**
-	 * A string containing VALUES { value1 value2 ... valueN} where value1 ... valueN are predicatesInstances of Time Ontology
-	 */
-	private Set<IRI> predicateValuesTime = new HashSet<IRI>();
-	
 	private final String eventReplacementString = "EVENTSINSTANCESgoHERE";
 	private final String basicReplacementString = "PREDICATESgoHERE";
 	
 	private Terminology terminology; 
 	
-	private void setEndpoint(Node eventNode) throws UnfoundTerminologyException{
+	private GetPredicateDescription predicateDescription;
+	
+	private IRI getPredicateIRI(String predicateName) throws UnfoundPredicatException{
+		for (IRI predicatesIRI : predicateDescription.getPredicates().keySet()){
+			if (predicatesIRI.getLocalName().equals(predicateName)){
+				return(predicatesIRI);
+			}
+		}
+		throw new UnfoundPredicatException(logger, predicateName);
+	}
+	
+	private void setEndpoint(Node eventNode) throws UnfoundTerminologyException, IOException{
 		Element element = (Element) eventNode;
 		NodeList eventInstance = element.getElementsByTagName(XMLelement.terminologyName.toString());
 		Node eventInstances = eventInstance.item(0);
@@ -68,6 +75,7 @@ public class XMLDescribeTerminologyQuery implements Query {
 		for (TerminoEnum termino : TerminoEnum.values()){
 			if (termino.getTerminologyName().equals(terminologyName)){
 				this.terminology = termino.getTermino();
+				this.predicateDescription = new GetPredicateDescription (termino);
 				return;
 			}
 		}
@@ -121,11 +129,7 @@ public class XMLDescribeTerminologyQuery implements Query {
 		Node predicate = predicates.item(0);
 		String predicateNames[] = predicate.getTextContent().split("\t");
 		for (String predicateName : predicateNames){
-			if (TIME.isRecognizedTimePredicate(predicateName)){
-				predicateValuesTime.add(Util.vf.createIRI(TIME.NAMESPACE, predicateName));
-			} else {
-				predicateValuesBasic.add(Util.vf.createIRI(terminology.getNAMESPACE(), predicateName));
-			}
+			predicateValuesBasic.add(getPredicateIRI(predicateName));
 		}
 	}
 	
@@ -207,7 +211,7 @@ public class XMLDescribeTerminologyQuery implements Query {
 	
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException{
 		//InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
-		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeRPPS.xml" );
+		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "XMLquerydescribeTerminologyFINESSlong.xml" );
 		XMLFile file = new XMLFile(xmlFile);
 		XMLDescribeTerminologyQuery describe = new XMLDescribeTerminologyQuery(file);
 		System.out.println(describe.getSPARQLQueryString());

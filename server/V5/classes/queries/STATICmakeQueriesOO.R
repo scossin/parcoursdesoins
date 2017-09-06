@@ -16,11 +16,6 @@ STATICmakeQueries <- R6::R6Class(
       colnames(results) <- c("context","event")
       staticLogger$info("Number of events : ",nrow(results))
       return(results)
-      # contextEnv$contextEvents <- results
-      # if (contextEnv$context == ""){
-      #   contextEnv$context <- unique(contextEnv$contextEvents$context)
-      # }
-      # return(NULL)
     }, 
     
     ### add a check contextEnv here

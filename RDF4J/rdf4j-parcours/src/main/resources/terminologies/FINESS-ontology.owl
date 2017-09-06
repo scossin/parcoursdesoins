@@ -4,61 +4,61 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://www.eigsante2017.fr/FINESS-ontology> .
 
-<http://www.eigsante2017.fr/FINESS-ontology> rdf:type owl:Ontology .
+<http://www.eigsante2017.fr/FINESS-ontology> a owl:Ontology .
+# 
+# 
+# #################################################################
+# #
+# #    Data properties
+# #
+# #################################################################
+# 
+# 
+# http://www.data.gouv.fr/FINESS#RaisonSociale
 
-#################################################################
-#    Data properties
-#################################################################
+<http://www.data.gouv.fr/FINESS#RaisonSociale> a owl:DatatypeProperty ;
+	rdfs:subPropertyOf owl:topDataProperty ;
+	rdfs:domain <http://www.data.gouv.fr/FINESS#Etablissement> ;
+	rdfs:range xsd:string ;
+	rdfs:comment "Institution's name"@en , "Nom de l'établissement"@fr ;
+	rdfs:label "Company name"@en , "Raison sociale"@fr .
+# 
+# http://www.data.gouv.fr/FINESS#hasCode
 
-###  http://www.data.gouv.fr/FINESS#RaisonSociale
-<http://www.data.gouv.fr/FINESS#RaisonSociale> rdf:type owl:DatatypeProperty ;
-                                               rdfs:subPropertyOf owl:topDataProperty ;
-                                               rdfs:domain <http://www.data.gouv.fr/FINESS#Etablissement> ;
-                                               rdfs:range xsd:string ;
-                                               rdfs:comment "Nom de l'établissement"@fr ;
-                                               rdfs:label "Company name"@en ,
-                                                          "Institution's name"@en ,
-                                                          "Raison sociale"@fr .
+<http://www.data.gouv.fr/FINESS#hasCode> a owl:DatatypeProperty ;
+	rdfs:domain <http://www.data.gouv.fr/FINESS#Etablissement> ;
+	rdfs:range xsd:string ;
+	rdfs:comment "Code FINESS de l'établissement"@fr , "Institution's code"@en ;
+	rdfs:label "Code"@en , "Code"@fr .
+# 
+# http://www.w3.org/2003/01/geo/wgs84_pos#lat
 
+<http://www.w3.org/2003/01/geo/wgs84_pos#lat> a owl:DatatypeProperty ;
+	rdfs:domain <http://www.data.gouv.fr/FINESS#Etablissement> ;
+	rdfs:range xsd:float ;
+	rdfs:comment "Coordonnées"@fr , "Latitude coordinate"@en ;
+	rdfs:label "Latitude"@en , "Latitude"@fr .
+# 
+# http://www.w3.org/2003/01/geo/wgs84_pos#long
 
-###  http://www.data.gouv.fr/FINESS#hasCode
-<http://www.data.gouv.fr/FINESS#hasCode> rdf:type owl:DatatypeProperty ;
-                                         rdfs:domain <http://www.data.gouv.fr/FINESS#Etablissement> ;
-                                         rdfs:range xsd:string ;
-                                         rdfs:comment "Code"@fr ,
-                                                      "Code FINESS de l'établissement"@fr ,
-                                                      "Institution's code"@en ;
-                                         rdfs:label "Code"@en .
+<http://www.w3.org/2003/01/geo/wgs84_pos#long> a owl:DatatypeProperty ;
+	rdfs:domain <http://www.data.gouv.fr/FINESS#Etablissement> ;
+	rdfs:range xsd:float ;
+	rdfs:comment "Coordonnées"@fr , "Longitude coordinate"@en ;
+	rdfs:label "Longitude"@en , "Longitude"@fr .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Classes
+# #
+# #################################################################
+# 
+# 
+# http://www.data.gouv.fr/FINESS#Etablissement
 
-
-###  http://www.w3.org/2003/01/geo/wgs84_pos#lat
-<http://www.w3.org/2003/01/geo/wgs84_pos#lat> rdf:type owl:DatatypeProperty ;
-                                              rdfs:domain <http://www.data.gouv.fr/FINESS#Etablissement> ;
-                                              rdfs:range xsd:float ;
-                                              rdfs:comment "Coordonnées"@fr ,
-                                                           "Latitude"@en ,
-                                                           "Latitude"@fr ,
-                                                           "Latitude coordinate"@en .
-
-
-###  http://www.w3.org/2003/01/geo/wgs84_pos#long
-<http://www.w3.org/2003/01/geo/wgs84_pos#long> rdf:type owl:DatatypeProperty ;
-                                               rdfs:domain <http://www.data.gouv.fr/FINESS#Etablissement> ;
-                                               rdfs:range xsd:float ;
-                                               rdfs:comment "Coordonnées"@fr ,
-                                                            "Longitude coordinate"@en ;
-                                               rdfs:label "Longitude"@en ,
-                                                          "Longitude"@fr .
-
-
-#################################################################
-#    Classes
-#################################################################
-
-###  http://www.data.gouv.fr/FINESS#Etablissement
-<http://www.data.gouv.fr/FINESS#Etablissement> rdf:type owl:Class .
-
-
-###  Generated by the OWL API (version 4.2.5.20160517-0735) https://github.com/owlcs/owlapi
+<http://www.data.gouv.fr/FINESS#Etablissement> a owl:Class .
+# 
+# Generated by the OWL API (version 4.2.5.20160517-0735) https://github.com/owlcs/owlapi

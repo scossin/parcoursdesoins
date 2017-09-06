@@ -2,13 +2,15 @@ FilterNumericDuration <- R6::R6Class(
   "FilterNumericDuration",
   inherit = FilterNumeric,
   
+  
   public = list(
-    initialize = function(eventNumber, predicateName, dataFrame, parentId, where){
-      super$initialize(eventNumber,predicateName, dataFrame, parentId, where)
-      staticLogger$info("Adding Observer Make UI")
+    durationObserver = NULL,
+    
+    initialize = function(contextEnv, predicateName, dataFrame, parentId, where){
+      super$initialize(contextEnv,predicateName, dataFrame, parentId, where)
       self$addObserverMakeUI()
-      staticLogger$info("Creating a new FilterNumericDuration object")
       self$addDurationObserver()
+      staticLogger$info("Creating new FilterNumericDuration object : ", self$getObjectId())
     },
     
     insertDurationUI = function(){
@@ -18,9 +20,9 @@ FilterNumericDuration <- R6::R6Class(
               ui = self$getDurationUI())
     },
     
-    # getObjectId = function(){
-    #   return(self$getDurationUIid())
-    # },
+    getObjectId = function(){
+      return(paste0("FilterNumericDuration-",self$parentId))
+    },
     
     getDurationUI = function(){
       shinyWidgets::awesomeRadio(inputId = self$getDurationUIid(),
@@ -31,8 +33,7 @@ FilterNumericDuration <- R6::R6Class(
     },
     
     addObserverMakeUI = function(){
-      staticLogger$info("Inserting duration UI")
-      observeEvent(input[[self$getObjectId()]],{
+      observeEvent(input[[self$getSliderId()]],{
         self$insertDurationUI()
         self$updateDuration(GLOBALdays)
       },once = T)
@@ -40,10 +41,21 @@ FilterNumericDuration <- R6::R6Class(
     },
     
     addDurationObserver = function(){
-      o <- observeEvent(input[[self$getDurationUIid()]],{
+      self$durationObserver <- observeEvent(input[[self$getDurationUIid()]],{
         durationChoice <- input[[self$getDurationUIid()]]
         self$updateDuration(durationChoice)
       })
+    },
+    
+    destroy = function(){
+      staticLogger$info("Destroying FilterNumericDuration object : ", self$getObjectId())
+      staticLogger$info("\t Removing duration observer ... ")
+      if (!is.null(self$durationObserver)){
+        self$durationObserver$destroy()
+        staticLogger$info("\t \t done")
+      }
+      super$destroy()
+      staticLogger$info("End destroying FilterNumericDuration object : ", self$getObjectId())
     },
     
     updateDuration = function(durationChoice){

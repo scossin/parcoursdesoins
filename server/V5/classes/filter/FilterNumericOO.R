@@ -2,40 +2,36 @@ FilterNumeric <- R6::R6Class(
   "FilterNumeric",
   inherit = Filter,
   
-  
   public=list(
+    contextEnv = environment(),
     observersList = list(),
     valueEnv = environment(),
     numericGraphics = NULL,
     
-    initialize = function(eventNumber, predicateName, dataFrame, parentId, where){
+    initialize = function(contextEnv, predicateName, dataFrame, parentId, where){
       staticLogger$info("Creating a new FilterNumeric object")
-      super$initialize(eventNumber, predicateName, dataFrame, parentId, where)
-      
+      super$initialize(contextEnv, predicateName, dataFrame, parentId, where)
       self$valueEnv <- new.env()
       self$valueEnv$numericValue <- NumericValues$new(dataFrame$value)
       
       self$makeUI()
       self$addNumericInputObservers()
       self$addSliderObserver()
-      staticLogger$info("Trying to make plot")
     },
     
     makeUI = function(){
-      staticLogger$info("Inserting FilterNumeric")
       jquerySelector <- private$getJquerySelector(self$parentId)
       insertUI(selector = jquerySelector, 
                where = self$where,
                ui = self$getUI(),
                immediate = T)
-      staticLogger$info("End inserting")
     },
     
     updateSliderInputValues = function(){
-      staticLogger$info("Updating slider")
+      staticLogger$info("Updating slider : ", self$getSliderId())
       isolate({
         shiny::updateSliderInput(session,
-                                 self$getObjectId(),
+                                 self$getSliderId(),
                                  label = NULL, 
                                  min = self$valueEnv$numericValue$minFloor,
                                  max =  self$valueEnv$numericValue$maxCeiling,
@@ -45,7 +41,7 @@ FilterNumeric <- R6::R6Class(
     },
     
     updateNumericInputValues = function(){
-      staticLogger$info("Updating NumericInputValues")
+      staticLogger$info("Updating NumericInputValues : ", self$getDivNumericFilterId())
       isolate({
       shiny::updateNumericInput(session, 
                                 inputId = self$getNumericInputMinId(),
@@ -65,19 +61,24 @@ FilterNumeric <- R6::R6Class(
     
     
     addSliderObserver = function(){
-      o <- observeEvent(input[[self$getObjectId()]],{
+      o <- observeEvent(input[[self$getSliderId()]],{
         if (private$bugSlider){
-          self$numericGraphics <- NumericGraphics$new(self$valueEnv, self$getGraphicsId(),where="beforeEnd")
+          self$numericGraphics <- NumericGraphics$new(self$valueEnv, 
+                                                      self$getGraphicsId(),
+                                                      where="beforeEnd")
+          self$renderTextInfo()
           private$bugSlider <- FALSE
           return(NULL)
         }
-        staticLogger$user("slider", self$getObjectId(), "changed")
-        numericValues <- input[[self$getObjectId()]]
+        staticLogger$user("slider", self$getSliderId(), "changed")
+        numericValues <- input[[self$getSliderId()]]
         minValue <- numericValues[1]
         maxValue <- numericValues[2]
         self$valueEnv$numericValue$setMinMaxChosen(minValue,maxValue)
         self$updateNumericInputValues()
         self$numericGraphics$remakePlot()
+        self$renderTextInfo()
+        self$contextEnv$instanceSelection$printFunction()
       })
       
       lengthList <- length(self$observersList)
@@ -103,30 +104,60 @@ FilterNumeric <- R6::R6Class(
             ### updating
             self$updateSliderInputValues()
             self$numericGraphics$remakePlot()
+            self$renderTextInfo()
+            self$contextEnv$instanceSelection$printFunction()
       })
       lengthList <- length(self$observersList)
       self$observersList[[lengthList+1]] <- o
       return(NULL)
     },
     
+    getEventsSelected = function(){
+      x <- self$valueEnv$numericValue$x
+      minimum <- self$valueEnv$numericValue$minChosen
+      maximum <- self$valueEnv$numericValue$maxChosen
+      bool <- x >= minimum &  x <= maximum & !is.na(x)
+      eventsSelected <- self$dataFrame$event[bool]
+      return(as.character(eventsSelected))
+    },
+    
+    renderTextInfo = function(){
+      output[[self$getTextInfoId()]] <- renderText({
+        eventsSelected <- unique(self$getEventsSelected())
+        totalEvents <- unique(self$dataFrame$event)
+        return(paste0(length(eventsSelected), " values selected out of ", length(totalEvents)))
+      })
+    },
+    
+    removeUI = function(){
+      jQuerySelector <- private$getJquerySelector(self$getDivId())
+      removeUI(selector = jQuerySelector)
+      removeUI(selector = paste0("#testplot"))
+    },
+    
     destroy = function(){
-      cat("destroying", self$getObjectId(), "\n")
+      staticLogger$info("Destroying FilterNumeric :", self$getObjectId())
+      
+      staticLogger$info("\t removing numericGraphics")
+      if (!is.null(self$numericGraphics)){
+        self$numericGraphics$destroy()
+      }
+      staticLogger$info("\t removing every observer")
       for (observer in self$observersList){
+        staticLogger$info("\t \t done")
         observer$destroy()
       }
       self$observersList <- NULL
-      jQuerySelector <- private$getJquerySelector(self$getDivId())
-      try(removeUI(selector = jQuerySelector))
-      removeUI(selector = paste0("#testplot"))
-      # session$sendCustomMessage(type = "removeId", 
-      #                           message = list(objectId = private$getDivId()))
+      staticLogger$info("\t removing UI")
+      self$removeUI()
+      staticLogger$info("End destroying FilterNumeric :", self$getObjectId())
     },
 
     getUI = function(){
       self$valueEnv$numericValue$describe()
       ui <- div(id = self$getDivId(),
-          div(id = private$getDivNumericFilterId(),
-          shiny::sliderInput(self$getObjectId(),
+          div(id = self$getDivNumericFilterId(),
+          shiny::sliderInput(self$getSliderId(),
                              label = NULL, 
                              min = self$valueEnv$numericValue$minFloor, 
                              max = self$valueEnv$numericValue$maxCeiling,
@@ -146,34 +177,43 @@ FilterNumeric <- R6::R6Class(
                               width = "100px")
       ), ## end first div, 
       
-      div(id = self$getGraphicsId(), class = "NumericGraphics")
-          #shiny::plotOutput(outputId = self$getPlotId(),width = "80%", height="300px"))
-      ) ## end second
+      div(id = self$getGraphicsId(), class = "NumericGraphics"),
+      
+      div(class="textOutputSelection",shiny::textOutput(self$getTextInfoId(),inline = T))
+      )
       return(ui)
     }, 
     
+    getObjectId = function(){
+      return(paste0("FilterNumeric-",self$parentId))
+    },
+    
     getDivId = function(){
-      return(paste0("divGraphicsAndFilter", self$eventNumber, self$predicateName))
+      return(paste0("div",self$getObjectId()))
+    },
+    
+    getTextInfoId = function(){
+      return(paste0("TextInfo",self$getDivId()))
+    },
+    
+    getSliderId = function(){
+      return(paste0("Slider",self$getDivId()))
     },
     
     getGraphicsId = function(){
-      return(paste0("Graphics",self$eventNumber, self$predicateName))
+      return(paste0("Graphics",self$getDivId()))
     },
     
-    getPlotId = function(){
-      return(paste0("Plot",self$eventNumber, self$predicateName))
+    getDivNumericFilterId = function(){
+      return(paste0("divNumericFilter",self$getDivId()))
     },
     
     getNumericInputMaxId = function(){
-      return(paste0("numericMax",self$eventNumber, self$predicateName))
+      return(paste0("numericMax",self$getDivNumericFilterId()))
     },
     
     getNumericInputMinId = function(){
-      return(paste0("numericMin",self$eventNumber, self$predicateName))
-    },
-    
-    getObjectId = function(){
-      return(paste0("slider",self$eventNumber, self$predicateName))
+      return(paste0("numericMin",self$getDivNumericFilterId()))
     },
     
     getChoosenEvents = function(){
@@ -186,11 +226,6 @@ FilterNumeric <- R6::R6Class(
   ),
   
   private=list(
-    getDivNumericFilterId = function(){
-      filterId <- self$getObjectId()
-      return(paste0("divNumericFilter",filterId))
-    },
-    
     bugSlider = T,
     bugNumericInput = T
   )

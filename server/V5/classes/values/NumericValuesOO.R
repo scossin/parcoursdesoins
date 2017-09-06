@@ -73,10 +73,11 @@ NumericValues <- R6::R6Class(
   
   private = list(
     toNumeric = function(x){
+      print(x)
       self$x <- as.numeric(x)
       bool <- is.na(self$x)
       if (all(bool)){
-        stop("vector x dataFrame contains only NA value")
+        # stop("vector x dataFrame contains only NA value")
       }
       self$naNumber <- sum(bool)
       staticLogger$info(self$naNumber, "NA value")

@@ -7,8 +7,9 @@ ButtonFilter <- R6::R6Class(
     predicateName = character(),
     predicateComment = character(),
     predicateLabel = character(),
-    filterObject = NULL,
     isChecked = logical(),
+    hideShowObserver = NULL,
+    buttonFilterObserver = NULL,
     
     initialize = function(contextEnv, 
                           predicateName, 
@@ -26,18 +27,13 @@ ButtonFilter <- R6::R6Class(
       self$makeUI()
       self$addButtonFilterObserver()
       self$addHideShowObserver()
-      
       private$hideHideShowButton()
       ## hide/show
       staticLogger$info("new ButtonFilter",self$getObjectId())
     },
     
-    setFilterObject = function(filterObject){
-      self$filterObject <- filterObject
-    },
-    
     getObjectId = function(){
-      return(paste0("Button",self$contextEnv$eventNumber, self$predicateName))
+      return(paste0("ButtonFilter", self$predicateName, "-",self$parentId))
     },
     
     getDivId = function(){
@@ -57,11 +53,35 @@ ButtonFilter <- R6::R6Class(
       return(paste0("FilterObject",self$getDivId()))
     },
     
-    removeUI = function(){
-      session$sendCustomMessage(type = "removeId",
-                                message = list(objectId = self$getObjectId()))
-      session$sendCustomMessage(type = "removeId",
-                                message = list(objectId = self$getDivId()))
+    # removeUI = function(){
+    #   session$sendCustomMessage(type = "removeId",
+    #                             message = list(objectId = self$getObjectId()))
+    #   session$sendCustomMessage(type = "removeId",
+    #                             message = list(objectId = self$getDivId()))
+    # },
+    
+    destroy = function(){
+      staticLogger$info("Destroying Button Filter",self$getObjectId())
+      jQuerySelector <- paste0("#", self$getHideShowId())
+      removeUI(jQuerySelector)
+      jQuerySelector <- paste0("#", self$getObjectId())
+      removeUI(jQuerySelector)
+      jQuerySelector <- paste0("#", self$getDivIdSwitches())
+      removeUI(jQuerySelector)
+      jQuerySelector <- paste0("#", self$getDivId())
+      removeUI(jQuerySelector)
+      
+      staticLogger$info("\t Removing hideShowObserver")
+      if (!is.null(self$hideShowObserver)){
+        self$hideShowObserver$destroy()
+        staticLogger$info("\t \t done")
+      }
+      staticLogger$info("\t Removing buttonFilterObserver")
+      if (!is.null(self$buttonFilterObserver)){
+        self$buttonFilterObserver$destroy()
+        staticLogger$info("\t \t done")
+      }
+      staticLogger$info("End destroying Button Filter",self$getObjectId())
     },
     
     makeUI = function(){
@@ -88,17 +108,20 @@ ButtonFilter <- R6::R6Class(
     },
     
     addButtonFilterObserver = function(){
-      observeEvent(input[[self$getObjectId()]],{
+      self$buttonFilterObserver <- observeEvent(input[[self$getObjectId()]],{
         isClickedButtonFilter <- input[[self$getObjectId()]]
         staticLogger$user(self$getObjectId(), "was clicked")
         if (!isClickedButtonFilter){
           staticLogger$user("\t",self$getObjectId(), "turned off")
-          staticLogger$info(self$getObjectId(), "turned off")
-          staticLogger$info("\t \t removing filterObject of ",self$getObjectId())
+          staticLogger$info("\t removing filterObject of ",self$getObjectId())
           self$contextEnv$instanceSelection$removeFilter(self$predicateName)
-          staticLogger$info("\t \t Hidding HideShow button : ",self$getHideShowId())
+          staticLogger$info("\t Hidding HideShow button : ",self$getHideShowId())
           session$sendCustomMessage(type = "displayHideId",
                                     message = list(objectId = self$getHideShowId()))
+          staticLogger$info("\t GLOBALshow HideShow button : ",self$getHideShowId())
+          shinyWidgets::updateRadioGroupButtons(session,inputId = self$getHideShowId(),
+                                          label="",choices = c(GLOBALshow, GLOBALhide),
+                                          selected = GLOBALshow)
           return(NULL)
         }
         
@@ -114,7 +137,7 @@ ButtonFilter <- R6::R6Class(
         eventNumber <- self$contextEnv$eventNumber
         eventType <- self$contextEnv$instanceSelection$className
         terminologyName <- self$contextEnv$instanceSelection$terminologyName
-        filterObject <- staticFilterCreator$createFilterObject(eventNumber = eventNumber, 
+        filterObject <- staticFilterCreator$createFilterObject(contextEnv = self$contextEnv,
                                                                eventType = eventType, 
                                                                contextEvents = contextEvents, 
                                                                filterType = filterType,
@@ -123,22 +146,22 @@ ButtonFilter <- R6::R6Class(
                                                                terminologyName = terminologyName,
                                                                parentId = self$getDivIdFilterObject(),
                                                                where = "beforeEnd"
-                                                               )
+        )
         self$contextEnv$instanceSelection$addFilter(filterObject, self$predicateName)
         staticLogger$info("\t \t showing HideShow button : ",self$getHideShowId())
         private$showHideShowButton()
-      },ignoreInit=T)
+      },ignoreInit = T)
     },
     
     addHideShowObserver = function(){
-      observeEvent(input[[self$getHideShowId()]],{
+      self$hideShowObserver <- observeEvent(input[[self$getHideShowId()]],{
         hideShow <- input[[self$getHideShowId()]]
         if (hideShow == GLOBALshow){
           private$showDivIdFilterObject()
         } else {
           private$hideDivIdFilterObject()
         }
-      },ignoreInit=T)
+      },ignoreInit = T)
     }
   ),
   
