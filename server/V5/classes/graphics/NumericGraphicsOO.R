@@ -21,7 +21,7 @@ NumericGraphics <- R6::R6Class(
         plotChoice <- self$lastChoice
       }
       
-      self$plotInsertUI()
+      self$insertUIplot()
       if (plotChoice == "SCATTERPLOT"){
         self$scatterplotMakePlot()
       } else if (plotChoice == "BOXPLOT"){
@@ -40,7 +40,7 @@ NumericGraphics <- R6::R6Class(
       }
     },
     
-    plotInsertUI = function(){
+    insertUIplot = function(){
       ui <- shiny::plotOutput(outputId = self$getPlotId(),width = "100%", height="400px")
       jQuerySelector = paste0("#",self$parentId)
       insertUI(selector = jQuerySelector,

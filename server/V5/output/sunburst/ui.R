@@ -27,7 +27,8 @@ navbarPage("Parcours de soins", id="CartoParcours",
                       includeScript("../../www/js/removeId.js"),
                       includeScript("../../www/js/displayId.js"),
                       includeScript("../../www/js/goFirstSibling.js"),
-                      includeCSS("../../www/css/ButtonFilter.css")
+                      includeCSS("../../www/css/ButtonFilter.css"),
+                      includeCSS("../../www/css/Graphics.css")
                     ), # fin tag$head
                     # pour retirer le tabset et le boutton permet de le retirer !
                     

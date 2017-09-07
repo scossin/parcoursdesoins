@@ -15,10 +15,9 @@ uiObject <- R6::R6Class(
     },
     
     removeUI = function(){
-      # removeUI(selector = private$getJquerySelector(self$getObjectId()))
-      ## removeId.js => document.getElementById(objectId).remove()
-      session$sendCustomMessage(type = "removeId",
-                                message = list(objectId = self$getObjectId()))
+      stop("Please, provide a method to remove the UI in the DOM")
+      # session$sendCustomMessage(type = "removeId",
+      #                           message = list(objectId = self$getObjectId()))
     }, 
     
     getObjectId = function(){

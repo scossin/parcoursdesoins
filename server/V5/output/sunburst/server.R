@@ -4,6 +4,8 @@
 server <- function(input,output,session){
   source("../../classes/logger/STATICLoggerOO.R",local = T)
   staticLogger <- STATIClogger$new()
+  
+  ## closing logger connection when user disconnect
   session$onSessionEnded(function() {
     staticLogger$close()
   })
@@ -32,7 +34,7 @@ server <- function(input,output,session){
   source("../../classes/queries/XMLSearchQueryOO.R",local=T)
   
   
-  ## closing logger connection when user disconnect
+
   source("../../classes/superClasses/uiObject.R",local=T)
   source("../../classes/filter/HierarchicalOO.R",local = T)
   source("../../classes/filter/HierarchicalSunburstOO.R",local = T)
@@ -43,13 +45,16 @@ server <- function(input,output,session){
   source("../../classes/filter/FilterNumericOO.R",local=T)
   source("../../classes/filter/FilterNumericDurationOO.R",local=T)
   source("../../classes/graphics/NumericGraphicsOO.R",local = T)
-  
   source("../../classes/values/NumericValuesOO.R",local = T)
+
+  source("../../classes/filter/FilterCategoricalOO.R",local = T)
+  source("../../classes/graphics/CategoricalGraphicsOO.R",local = T)
+  source("../../classes/values/CategoricalValuesOO.R",local=T)
   
   source("../../classes/events/InstanceSelection.R",local = T)
   
   # an object to help others objects to create Filter Object
-  source("../../classes/filter/STATICfilterCreator.R",local = T)
+  source("../../classes/filter/STATICfilterCreatorOO.R",local = T)
   staticFilterCreator <- STATICfilterCreator$new()
   
   # an object to help others object to make queries
@@ -87,18 +92,19 @@ server <- function(input,output,session){
                              choices = choices)
   })
   
+  # AllInputs <- reactive({
+  #   x <- reactiveValuesToList(input)
+  #   df <- data.frame(
+  #     names = names(x),
+  #     values = paste(unlist(x, use.names = FALSE), collapse="\t")
+  #   )
+  #   print(df)
+  #   return(df)
+  # })
 }
 
 #o$destroy()
-# AllInputs <- reactive({
-#   x <- reactiveValuesToList(input)
-#   df <- data.frame(
-#     names = names(x),
-#     values = paste(unlist(x, use.names = FALSE), collapse="\t")
-#   )
-#   print(df)
-#   return(df)
-# })
+
 # 
 # output$show_inputs <- renderTable({
 #   AllInputs()

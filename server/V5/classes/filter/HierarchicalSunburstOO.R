@@ -55,6 +55,11 @@ HierarchicalSunburst <- R6::R6Class(
       private$makePlot()
     },
     
+    removeUI = function(){
+      session$sendCustomMessage(type = "removeId",
+                                message = list(objectId = self$getObjectId()))
+    },
+    
     destroy = function(){
       staticLogger$info("Finalizing",self$getObjectId())
       self$removeUI()

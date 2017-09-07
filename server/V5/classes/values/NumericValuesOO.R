@@ -11,12 +11,6 @@ NumericValues <- R6::R6Class(
     maxChosen = numeric(),
     naNumber = numeric(),
     
-    
-    describe = function(){
-      staticLogger$info("minValue :", self$minFloor)
-      staticLogger$info("maxValue :", self$maxCeiling)
-    },
-    
     initialize = function(x){
       staticLogger$info("new NumericValues")
       self$setX(x)
@@ -73,7 +67,6 @@ NumericValues <- R6::R6Class(
   
   private = list(
     toNumeric = function(x){
-      print(x)
       self$x <- as.numeric(x)
       bool <- is.na(self$x)
       if (all(bool)){

@@ -4,7 +4,7 @@ library(R6)
 library(httr)
 library(XML)
 library(shinyWidgets)
-
+library(plotly)
 
 # a logger to log message in file
 GLOBALlogFolder <- "./logs/"
@@ -35,6 +35,10 @@ if (GLOBALlang == "fr"){
   GLOBALinitialBoxplot <- "valeurs initiales"
   GLOBALselectedBoxplot <- "valeurs sélectionnées"
   
+  ## pieChart : 
+  GLOBALinitialPieChart <- "valeurs initiales"
+  GLOBALselectedPieChart <- "valeurs sélectionnées"
+  
   ## TextInfo
   GLOBALvaluesSelectedOutOf <- "valeurs sélectionnées sur"
   
@@ -57,6 +61,10 @@ if (GLOBALlang == "fr"){
   ## boxplot
   GLOBALinitialBoxplot <- "initial values"
   GLOBALselectedBoxplot <- "selected values"
+  
+  ## pieChart : 
+  GLOBALinitialPieChart <- "initial values"
+  GLOBALselectedPieChart <- "selected values"
   
   ## TextInfo
   GLOBALvaluesSelectedOutOf <- "values selected out of"

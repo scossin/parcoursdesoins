@@ -86,8 +86,12 @@ STATICfilterCreator <- R6::R6Class(
         pointerEnv <- PointerEnv$new(contextEnv2)
         return(pointerEnv)
       } else if (filterType == "FACTOR"){
-        pointerEnv <- PointerEnv$new(new.env())
-        return(pointerEnv)
+        filterCategorical <- FilterCategorical$new(contextEnv = contextEnv, 
+                                                   predicateName = predicateName, 
+                                                   dataFrame = dataFrame,
+                                                   parentId = parentId, 
+                                                   where = where)
+        return(filterCategorical)
       }
       return(NULL)
     },

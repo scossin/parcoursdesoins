@@ -3,7 +3,6 @@ FilterNumeric <- R6::R6Class(
   inherit = Filter,
   
   public=list(
-    contextEnv = environment(),
     observersList = list(),
     valueEnv = environment(),
     numericGraphics = NULL,
@@ -26,6 +25,37 @@ FilterNumeric <- R6::R6Class(
                ui = self$getUI(),
                immediate = T)
     },
+    
+    getUI = function(){
+      ui <- div(id = self$getDivId(),
+                div(id = self$getDivNumericFilterId(),
+                    shiny::sliderInput(self$getSliderId(),
+                                       label = NULL, 
+                                       min = self$valueEnv$numericValue$minFloor, 
+                                       max = self$valueEnv$numericValue$maxCeiling,
+                                       value = c(self$valueEnv$numericValue$minFloor,
+                                                 self$valueEnv$numericValue$maxCeiling)),
+                    shiny::numericInput(self$getNumericInputMinId(),
+                                        label="min",
+                                        value = self$valueEnv$numericValue$minFloor,
+                                        min = self$valueEnv$numericValue$minFloor,
+                                        max = self$valueEnv$numericValue$maxCeiling,step = 1,
+                                        width = "100px"),
+                    shiny::numericInput(self$getNumericInputMaxId(),
+                                        label="max",
+                                        value = self$valueEnv$numericValue$maxCeiling,
+                                        min = self$valueEnv$numericValue$minFloor,
+                                        max = self$valueEnv$numericValue$maxCeiling,step = 1,
+                                        width = "100px")
+                ), ## end first div, 
+                
+                div(id = self$getGraphicsId(), class = "NumericGraphics"),
+                
+                div(class="textOutputSelection",shiny::textOutput(self$getTextInfoId(),inline = T))
+      )
+      return(ui)
+    }, 
+    
     
     updateSliderInputValues = function(){
       staticLogger$info("Updating slider : ", self$getSliderId())
@@ -62,7 +92,7 @@ FilterNumeric <- R6::R6Class(
     
     addSliderObserver = function(){
       o <- observeEvent(input[[self$getSliderId()]],{
-        if (private$bugSlider){
+        if (private$bugSlider){ ## NumericGraphics created here !
           self$numericGraphics <- NumericGraphics$new(self$valueEnv, 
                                                       self$getGraphicsId(),
                                                       where="beforeEnd")
@@ -132,7 +162,6 @@ FilterNumeric <- R6::R6Class(
     removeUI = function(){
       jQuerySelector <- private$getJquerySelector(self$getDivId())
       removeUI(selector = jQuerySelector)
-      removeUI(selector = paste0("#testplot"))
     },
     
     destroy = function(){
@@ -152,37 +181,6 @@ FilterNumeric <- R6::R6Class(
       self$removeUI()
       staticLogger$info("End destroying FilterNumeric :", self$getObjectId())
     },
-
-    getUI = function(){
-      self$valueEnv$numericValue$describe()
-      ui <- div(id = self$getDivId(),
-          div(id = self$getDivNumericFilterId(),
-          shiny::sliderInput(self$getSliderId(),
-                             label = NULL, 
-                             min = self$valueEnv$numericValue$minFloor, 
-                             max = self$valueEnv$numericValue$maxCeiling,
-                             value = c(self$valueEnv$numericValue$minFloor,
-                                       self$valueEnv$numericValue$maxCeiling)),
-          shiny::numericInput(self$getNumericInputMinId(),
-                              label="min",
-                              value = self$valueEnv$numericValue$minFloor,
-                              min = self$valueEnv$numericValue$minFloor,
-                              max = self$valueEnv$numericValue$maxCeiling,step = 1,
-                              width = "100px"),
-          shiny::numericInput(self$getNumericInputMaxId(),
-                              label="max",
-                              value = self$valueEnv$numericValue$maxCeiling,
-                              min = self$valueEnv$numericValue$minFloor,
-                              max = self$valueEnv$numericValue$maxCeiling,step = 1,
-                              width = "100px")
-      ), ## end first div, 
-      
-      div(id = self$getGraphicsId(), class = "NumericGraphics"),
-      
-      div(class="textOutputSelection",shiny::textOutput(self$getTextInfoId(),inline = T))
-      )
-      return(ui)
-    }, 
     
     getObjectId = function(){
       return(paste0("FilterNumeric-",self$parentId))

@@ -25,7 +25,7 @@ Filter <- R6::R6Class(
       stop("setContext not implemented !")
     },
     destroy = function(){
-      
+      stop("destroy not implemented ! ")
     }
   ),
   

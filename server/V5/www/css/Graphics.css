@@ -1,0 +1,4 @@
+/* pour aligner les piecharts : */
+[id^=piechartCategorical] {
+display: inline-block;
+}
