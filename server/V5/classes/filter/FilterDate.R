@@ -1,37 +1,25 @@
-FilterCategorical <- R6::R6Class(
-  "FilterCategorical",
+FilterDate <- R6::R6Class(
+  "FilterDate",
   inherit = Filter,
   
   public = list(
     observersList = list(),
     valueEnv = environment(),
-    categoricalGraphics = NULL,
+    dateGraphics = NULL,
     
     initialize = function(contextEnv, predicateName, dataFrame, parentId, where){
-      staticLogger$info("Creating a new FilterCategorical object")
+      staticLogger$info("Creating a new FilterDate object")
       super$initialize(contextEnv, predicateName, dataFrame, parentId, where)
-      self$valueEnv <- new.env()
-      self$valueEnv$categoricalValues <- CategoricalValues$new(dataFrame$value)
+      dateValues <- DateValues$new(dataFrame$value)
       self$makeUI()
-      self$categoricalGraphics <- CategoricalGraphics$new(self$valueEnv, 
-                                                          self$getDivFilterId(),
-                                                          where="beforeEnd")
+      self$dateGraphics <- DateGraphics$new(dateValues, 
+                                            self$getDivFilterId(),
+                                            where="beforeEnd")
     },
     
     getDescription = function(){
-      namesChosen <- names(self$valueEnv$categoricalValues$tableChosenValues)
-      lengthChosen <- length(namesChosen)
-      if (lengthChosen > 10){
-        namesChosen <- namesChosen[1:10]
-        namesChosen <- append(namesChosen, "...")
-      }
-      if (lengthChosen == 0){
-        namesChosen <- ""
-      } else {
-        namesChosen <- paste(namesChosen, collapse = " ; ")
-      }
-      description <- paste0(self$predicateName,"\t ", lengthChosen, " values chosen (",
-                            namesChosen, ")")
+      description <- paste0(self$predicateName,"\t minDate: ",self$dateGraphics$dateValues$getMinDate(),
+                            "\n\t maxDate: ", self$dateGraphics$dateValues$getMinDate())
       return(description)
     },
     
@@ -52,7 +40,7 @@ FilterCategorical <- R6::R6Class(
     }, 
     
     getObjectId = function(){
-      return(paste0("FilterCategorical-",self$parentId))
+      return(paste0("FilterDate-",self$parentId))
     },
     
     getDivId = function(){
@@ -77,11 +65,11 @@ FilterCategorical <- R6::R6Class(
     },
     
     destroy = function(){
-      staticLogger$info("Destroying FilterCategorical :", self$getObjectId())
+      staticLogger$info("Destroying FilterDate :", self$getObjectId())
       
-      staticLogger$info("\t removing categoricalGraphics")
-      if (!is.null(self$categoricalGraphics)){
-        self$categoricalGraphics$destroy()
+      staticLogger$info("\t removing dateGraphics")
+      if (!is.null(self$dateGraphics)){
+        self$dateGraphics$destroy()
       }
       staticLogger$info("\t removing every observer")
       for (observer in self$observersList){
@@ -90,12 +78,9 @@ FilterCategorical <- R6::R6Class(
       }
       self$observersList <- NULL
       
-      staticLogger$info("\t removing environment")
-      self$valueEnv <- NULL
-      
       staticLogger$info("\t removing UI")
       self$removeUI()
-      staticLogger$info("End destroying FilterCategorical :", self$getObjectId())
+      staticLogger$info("End destroying FilterDate :", self$getObjectId())
     }
     
   ),

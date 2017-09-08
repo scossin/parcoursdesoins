@@ -180,7 +180,7 @@ CategoricalGraphics <- R6::R6Class(
           df <- rbind (df, others)
         }
         plotly::plot_ly(df, labels = ~labels, values = ~values, type = 'pie',source=self$getPieChart2Id()) %>%
-          layout(title = GLOBALselectedPieChart, showlegend = FALSE,
+          layout(title = GLOBALinitialPieChart, showlegend = FALSE,
                  xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                  yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
       })

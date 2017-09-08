@@ -5,6 +5,7 @@ library(httr)
 library(XML)
 library(shinyWidgets)
 library(plotly)
+library(dygraphs)
 
 # a logger to log message in file
 GLOBALlogFolder <- "./logs/"

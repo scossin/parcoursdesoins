@@ -60,6 +60,14 @@
 # #################################################################
 # 
 # 
+# http://www.eigsante2017.fr#hasBeginning
+
+<http://www.eigsante2017.fr#hasBeginning> a owl:DatatypeProperty ;
+	rdfs:domain <http://www.eigsante2017.fr#Event> ;
+	rdfs:range xsd:dateTime ;
+	rdfs:comment "Beginning date"@en , "Début de l'évènement"@fr ;
+	rdfs:label "Beginning date"@en , "Début"@fr .
+# 
 # http://www.eigsante2017.fr#hasDuration
 
 <http://www.eigsante2017.fr#hasDuration> a owl:DatatypeProperty ;

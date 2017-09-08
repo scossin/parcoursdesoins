@@ -20,6 +20,14 @@ FilterNumericDuration <- R6::R6Class(
               ui = self$getDurationUI())
     },
     
+    getDescription = function(){
+      durationChoice <- input[[self$getDurationUIid()]]
+      description <- paste0(self$predicateName,
+                            "\t minValue: ",self$valueEnv$numericValue$minChosen, " ", durationChoice,
+                            "\n\t maxValue: ", self$valueEnv$numericValue$maxChosen, " ", durationChoice)
+      return(description)
+    },
+    
     getObjectId = function(){
       return(paste0("FilterNumericDuration-",self$parentId))
     },

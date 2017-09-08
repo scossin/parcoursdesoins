@@ -5,6 +5,18 @@ library(R6)
 library(XML)
 library(httr)
 ### load classes
+# a logger to log message in file
+GLOBALlogFolder <- "./"
+
+source("../../classes/logger/STATICLoggerOO.R",local = T)
+staticLogger <- STATIClogger$new()
+
+## closing logger connection when user disconnect
+session$onSessionEnded(function() {
+  staticLogger$close()
+})
+
+staticLogger$info("Loading classes ...")
 classesFiles <- list.files("../../classes/queries/",full.names = T)
 sapply(classesFiles, source)
 
@@ -25,7 +37,7 @@ context <- "p109"
 
 bool <- results$context == context
 sum(bool)
-event0 <- subset (results, bool)
+event0 <- results
 
 describeEvents <- XMLDescribeQuery$new()
 describeEvents$addEventTypeNode("SejourMCO") ## getEventType de TabPanepl
@@ -35,10 +47,20 @@ describeEvents$addPredicateTypeNode(predicateTypes = c("hasBeginning","hasEnd"))
 describeEvents$addEventInstances(event0$event0)
 describeEvents$listEventNodes
 results0 <- con$sendQuery(describeEvents)
+
+# results0 <- subset (results0, c("event","value"))
+# save(results0,file = "../../dev/test/datesValues.rdata")
 ## date format : 
 results0$value <- gsub("T|Z"," ",results0$value )
 results0$value <- gsub("\\.[0-9]+ $","",results0$value )
-results0$value 
+results0$value
+str(results0)
+# x <- results0$value
+# x <- gsub("T|Z"," ",x )
+# x <- gsub("\\.[0-9]+ $","",x)
+# tab <- table(x)
+# tab <- data.frame(date=as.Date(names(tab)), frequency = as.numeric(tab))
+# str(tab)
 ## 2 columns : start and end
 beginning <- subset (results0, predicate == "hasBeginning")
 beginning$predicate <- NULL

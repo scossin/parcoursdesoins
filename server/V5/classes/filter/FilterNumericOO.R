@@ -12,7 +12,6 @@ FilterNumeric <- R6::R6Class(
       super$initialize(contextEnv, predicateName, dataFrame, parentId, where)
       self$valueEnv <- new.env()
       self$valueEnv$numericValue <- NumericValues$new(dataFrame$value)
-      
       self$makeUI()
       self$addNumericInputObservers()
       self$addSliderObserver()
@@ -24,6 +23,12 @@ FilterNumeric <- R6::R6Class(
                where = self$where,
                ui = self$getUI(),
                immediate = T)
+    },
+    
+    getDescription = function(){
+      description <- paste0(self$predicateName,"\t minValue: ",self$valueEnv$numericValue$minChosen,
+                            "\n\t maxValue: ", self$valueEnv$numericValue$maxChosen)
+      return(description)
     },
     
     getUI = function(){

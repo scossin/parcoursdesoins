@@ -1,5 +1,3 @@
-
-
 # source("global.R")
 server <- function(input,output,session){
   source("../../classes/logger/STATICLoggerOO.R",local = T)
@@ -21,10 +19,10 @@ server <- function(input,output,session){
   GLOBALterminologyDescription <- list(
     Event = Predicates$new(GLOBALcon$terminology$Event,GLOBALlang),
     RPPS = Predicates$new(GLOBALcon$terminology$RPPS,GLOBALlang),
-    FINESS = Predicates$new(GLOBALcon$terminology$FINESS,GLOBALlang)
+    Etablissement = Predicates$new(GLOBALcon$terminology$FINESS,GLOBALlang)
     )
 
-  GLOBALterminologyDescription$FINESS$predicatesDf
+    #GLOBALterminologyDescription$Event$predicatesDf$category
   source("../../classes/queries/STATICmakeQueriesOO.R",local=T)
 
   source("../../classes/queries/XMLCountQueryOO.R",local=T)
@@ -50,6 +48,10 @@ server <- function(input,output,session){
   source("../../classes/filter/FilterCategoricalOO.R",local = T)
   source("../../classes/graphics/CategoricalGraphicsOO.R",local = T)
   source("../../classes/values/CategoricalValuesOO.R",local=T)
+  
+  source("../../classes/filter/FilterDate.R",local = T)
+  source("../../classes/graphics/DateGraphics.R",local = T)
+  source("../../classes/values/DateValuesOO.R",local=T)
   
   source("../../classes/events/InstanceSelection.R",local = T)
   

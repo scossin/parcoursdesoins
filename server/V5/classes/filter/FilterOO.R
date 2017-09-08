@@ -17,7 +17,7 @@ Filter <- R6::R6Class(
       # self$domParentId <- domParentId
     },
     
-    getChosenEvents = function(){
+    getEventsSelected = function(){
       stop("getChoosenEvents not implemented !")
     },
     

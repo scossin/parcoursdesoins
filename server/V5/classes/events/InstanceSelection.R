@@ -15,11 +15,11 @@ InstanceSelection <- R6::R6Class(
     
     initialize = function(contextEnv, terminologyName, className, contextEvents, parentId, where){
       self$contextEnv <- contextEnv
-      self$terminologyName <- terminologyName
+      self$terminologyName <- as.character(terminologyName)
       self$className <- className
       self$contextEvents <- contextEvents
       self$context <- unique(contextEvents$context)
-      self$terminologyDescription <- GLOBALterminologyDescription[[terminologyName]]
+      self$terminologyDescription <- GLOBALterminologyDescription[[self$terminologyName]]
       self$parentId <- parentId
       self$setButtonFilter(parentId, where)
       staticLogger$info("new instanceSelection terminology : ", terminologyName,
@@ -42,6 +42,17 @@ InstanceSelection <- R6::R6Class(
         iter <- iter + 1
       }
       return(events)
+    }, 
+    
+    getDescription = function(){
+      if (length(self$listFilters) == 0){
+        return(NULL)
+      }
+      description <- NULL
+      for (filter in self$listFilters){
+        description <- append(filter$getDescription(),description)
+      }
+      return(description)
     }, 
     
     getContextsSelected = function(){
@@ -155,6 +166,16 @@ PointerEnv <- R6::R6Class(
     
     getEventsSelected = function(){
       self$contextEnv$instanceSelection$getContextsSelected() ### context corresponds to events
+    },
+    
+    getDescription = function(){
+      subDescription <- self$contextEnv$instanceSelection$getDescription()
+      if (!is.null(subDescription)){
+        subDescription <- paste0("\t", subDescription)
+        subDescription <- append(self$contextEnv$instanceSelection$terminologyName, subDescription)
+        subDescription <- paste(subDescription, collapse="\n")
+      }
+      return(subDescription)
     }
   )
 )

@@ -77,6 +77,7 @@ STATICfilterCreator <- R6::R6Class(
         contextEnv2 <- new.env()
         contextEnv2$eventNumber <- as.numeric(paste0(contextEnv$eventNumber),"11")## 111 111111 ...
         contextEnv2$eventType <- expectedValue
+        print(expectedValue)
         contextEnv2$instanceSelection <- InstanceSelection$new(contextEnv = contextEnv2, 
                                                                terminologyName = expectedValue, 
                                                                className = expectedValue, 
@@ -92,6 +93,13 @@ STATICfilterCreator <- R6::R6Class(
                                                    parentId = parentId, 
                                                    where = where)
         return(filterCategorical)
+      } else if (filterType == "DATE"){
+        filterDate <- FilterDate$new(contextEnv = contextEnv, 
+                                                   predicateName = predicateName, 
+                                                   dataFrame = dataFrame,
+                                                   parentId = parentId, 
+                                                   where = where)
+        return(filterDate)
       }
       return(NULL)
     },

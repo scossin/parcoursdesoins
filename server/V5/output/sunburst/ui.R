@@ -9,12 +9,15 @@ navbarPage("Parcours de soins", id="CartoParcours",
                                      ),
                         actionButton(inputId = "removeEventTabpanel", 
                                      label = GLOBALremoveEventTabpanel),
+                        actionButton(inputId = "ButtonTest", 
+                                     label = "Description"),
                         selectInput(inputId = "eventToRemove",
                                     label = c(""), 
                                     choices = c(""))
                       ),
+                      
                       mainPanel(
-                        HTML("Developement")
+                        verbatimTextOutput(outputId = "DescriptionText")
                       )
                       
                       )
