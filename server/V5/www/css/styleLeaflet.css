@@ -1,0 +1,27 @@
+.outer { /* Leaflet */
+  position: fixed; /* indispensable sinon n'affiche rien ++++++++++ */ 
+  top: 41px; /* pour faire descendre le + du zoom */ 
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /*overflow: hidden; interet ici ? */
+  padding: 0;
+}
+
+h2{
+  text-align:center;
+}
+
+/* pour aligner les piecharts : */
+[id^=piechartN] {
+display: inline-block;
+}
+
+/* Aligner les checkbox UNV et SSR */
+#UNVSSRcheckbox > div{
+	display: ruby;
+}
+
+#affichermapdiv {
+text-align:center;
+}
