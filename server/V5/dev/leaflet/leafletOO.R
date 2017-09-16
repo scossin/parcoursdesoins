@@ -55,12 +55,12 @@ MapObject <- R6::R6Class(
       observeEvent(input$add, {
         if (length(self$spatialFilterList) ==0){
           dataFrame2 <- data.frame(lat=c(46,47), long = c(0,-0.1),
-                                   label=c("test3","test4"))
+                                   label=c("test3","test4"), N=c(100,10))
           spatialFilter <- SpatialFilterPoint$new("event2",dataFrame2)
           self$addSpatialFilter("event2",spatialFilter)
         } else {
           dataFrame <- data.frame(lat=c(44.8672714490391,44.9), long = c(-0.617864221255729,-0.62),
-                                  label=c("test1","test2"))
+                                  label=c("test1","test2"), N=c(100,10))
           spatialFilter <- SpatialFilterPoint$new("event1",dataFrame)
           self$addSpatialFilter("event1",spatialFilter)
         }
@@ -80,8 +80,10 @@ MapObject <- R6::R6Class(
           spatialFilter <- self$spatialFilterList[[spatialFilterName]]
           UIcontrollerId <- spatialFilter$getUIcontrollerId()
           if (spatialFilterName == choice){
+            cat("showing ...")
             self$showId(UIcontrollerId)
           } else {
+            cat("hidding ...")
             self$hideId(UIcontrollerId)
           }
         }
@@ -90,12 +92,12 @@ MapObject <- R6::R6Class(
     
     showId = function(objectId){
       #staticLogger$info("Sending Js function to hide ",self$getHideShowId())
-      session$sendCustomMessage(type = "displayHideId",
+      session$sendCustomMessage(type = "displayShowId",
                                 message = list(objectId = objectId))
     },
     hideId = function(objectId){
       #staticLogger$info("Sending Js function to show ",self$getHideShowId())
-      session$sendCustomMessage(type = "displayShowId",
+      session$sendCustomMessage(type = "displayHideId",
                                 message = list(objectId = objectId))
     }, 
     
