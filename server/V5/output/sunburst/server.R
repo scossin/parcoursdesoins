@@ -19,10 +19,13 @@ server <- function(input,output,session){
   GLOBALterminologyDescription <- list(
     Event = Predicates$new(GLOBALcon$terminology$Event,GLOBALlang),
     RPPS = Predicates$new(GLOBALcon$terminology$RPPS,GLOBALlang),
-    Etablissement = Predicates$new(GLOBALcon$terminology$FINESS,GLOBALlang)
+    Etablissement = Predicates$new(GLOBALcon$terminology$FINESS,GLOBALlang),
+    Graph = Predicates$new(GLOBALcon$terminology$Graph,GLOBALlang)
     )
 
-    #GLOBALterminologyDescription$Event$predicatesDf$category
+    # GLOBALterminologyDescription$CONTEXT$getPredicateDescriptionOfEvent("Graph")
+    #   getPredicateDescriptionOfEvent("")
+    # GLOBALterminologyDescription$Etablissement$predicatesDf
   source("../../classes/queries/STATICmakeQueriesOO.R",local=T)
 
   source("../../classes/queries/XMLCountQueryOO.R",local=T)
@@ -65,11 +68,33 @@ server <- function(input,output,session){
   
   listEventTabpanel <- ListEventsTabpanel$new()
   
+  
+  
+  ### Context : 
+  staticLogger$info("creating Context...")
+  # get a sample ...
+  
+  contextEvents <- data.frame(context=paste0("p",1:100),event=paste0("p",1:100))
+  parentId = "contextId"
+  where = "beforeEnd"
+  contextEnv <- new.env()
+  contextEnv$eventNumber <- 99999
+  contextEnv$instanceSelection <- InstanceSelection$new(contextEnv = contextEnv, 
+                                                        terminologyName = "Graph", 
+                                                        className = "Graph", 
+                                                        contextEvents = contextEvents, 
+                                                        parentId = parentId, 
+                                                        where = where)
+  rm(contextEvents)
+  staticLogger$info("ContextEnv added")
+  
+  
   observeEvent(input$addEventTabpanel,{
     staticLogger$user("addEventTabpanel clicked")
     nClick <- input$addEventTabpanel
     ## create new Tabpanel :
-    eventTabpanel <- EventTabpanel$new(eventNumber=nClick, context="")
+    eventTabpanel <- EventTabpanel$new(eventNumber=nClick, 
+                                       context = contextEnv$instanceSelection$context)
     eventTabpanel$setHierarchicalObject()
     listEventTabpanel$addEventTabpanel(eventTabpanel)
     
@@ -93,6 +118,7 @@ server <- function(input,output,session){
                              inputId = "eventToRemove",
                              choices = choices)
   })
+  
   
   # AllInputs <- reactive({
   #   x <- reactiveValuesToList(input)

@@ -17,7 +17,11 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
     },
     
     addPredicateNode = function(eventNumber,predicateClass, predicateType, values, minValue, maxValue){
-      predicateNode <- private$makePredicateNode(predicateClass, predicateType, values, minValue, maxValue)
+      predicateNode <- self$makePredicateNode(predicateClass, predicateType, values, minValue, maxValue)
+      self$addPredicateNode2(eventNumber,predicateNode)
+    },
+    
+    addPredicateNode2 = function(eventNumber, predicateNode){
       eventName <- paste0("event",eventNumber)
       ## add PredicateNode to eventNode :
       if (is.null(self$listEventNodes[[eventName]])){
@@ -46,16 +50,6 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
                                                     self$listContextNode)
       super$setFileName()
       saveXML(eventLinksNode, file=self$fileName,doctype = self$docType)
-    }
-    
-  ),
-  
-  private=list(
-    name = "eventslinks",
-    system = "eventslinks.dtd",
-    
-    makeContextNode = function(contextNode,values){
-      super$makeContextNode(contextNode,values)
     },
     
     makePredicateNode = function(predicateClass, predicateType, values, minValue, maxValue){
@@ -110,8 +104,19 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
       predicateNode <- addChildren(predicateNode,predicateClassNode)
       class(predicateNode) <- c(class(predicateNode),"predicateNode")
       return(predicateNode)
-    },
+    }
     
+    
+  ),
+  
+  private=list(
+    name = "eventslinks",
+    system = "eventslinks.dtd",
+    
+    makeContextNode = function(contextNode,values){
+      super$makeContextNode(contextNode,values)
+    },
+
     makeEventNode = function(eventNumber, eventType, predicatesNodes = NULL){
       if (!is.numeric(eventNumber) || length(eventNumber) != 1){
         stop("eventNumber must be numeric and length 1")

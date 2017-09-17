@@ -4,7 +4,8 @@ Connection <- R6::R6Class(
     terminology = list(
       Event = "Event",
       RPPS = "RPPS",
-      FINESS = "Etablissement"),
+      FINESS = "Etablissement",
+      Graph = "Graph"),
     information = list(
       predicateDescription = "predicateDescription",
       predicateFrequency = "predicateFrequency",

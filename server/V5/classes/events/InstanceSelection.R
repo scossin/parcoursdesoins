@@ -21,10 +21,70 @@ InstanceSelection <- R6::R6Class(
       self$context <- unique(contextEvents$context)
       self$terminologyDescription <- GLOBALterminologyDescription[[self$terminologyName]]
       self$parentId <- parentId
-      self$setButtonFilter(parentId, where)
+      self$adduiSelection()
+      self$makeDescription()
+      self$setButtonFilter(self$getDivFiltersId(), where)
       staticLogger$info("new instanceSelection terminology : ", terminologyName,
                         "location : ", parentId)
-      
+
+    },
+    
+    # getXMLpredicateNodes = function(){
+    #   predicatesNodes <- list()
+    #   if (length(self$listFilters) == 0){
+    #     predicatesNodes <- NULL
+    #   } else {
+    #     for (filter in self$listFilters){
+    #       predicatesNodes <- append(filter$getXMLpredicateNode(),predicatesNodes)
+    #     } 
+    #   }
+    #   query <- XMLSearchQuery$new()
+    #   query$addContextNode(self$context)
+    #   query$addEventNode(eventNumber = self$contextEnv$eventNumber,
+    #                      eventType = self$className,
+    #                      predicatesNodes = predicatesNodes)
+    # },
+    
+    adduiSelection = function(){
+      ui <- div(id=self$getUISelectionId(),
+                actionButton(inputId = self$getButtonDescriptionId(), 
+                             label = "Description"),
+                verbatimTextOutput(outputId = self$getTextDescriptionId()),
+                div(id=self$getDivFiltersId())
+      )
+      jQuerySelector = paste0("#", self$parentId)
+      insertUI(selector = jQuerySelector,
+               where = "afterBegin",
+               ui = ui)
+    },
+    
+    makeDescription = function(){
+      observeEvent(input[[self$getButtonDescriptionId()]],{
+        description <- self$getDescription()
+        description <- paste(description, collapse="\n")
+        Nevents <- length(unique(self$contextEvents$event))
+        Ncontexts <- length(unique(self$contextEvents$context))
+        text <- paste0(self$terminologyName, " : ", self$className, "\t",Nevents," instances",
+                       "\t", Ncontexts, " graphes",
+                       "\n",description)
+        output[[self$getTextDescriptionId()]] <- shiny::renderText(text)
+      })
+    },
+    
+    getDivFiltersId = function(){
+      return(paste0("UIdescription",self$getUISelectionId()))
+    },
+    
+    getUISelectionId = function(){
+      return(paste0("UIdescription",self$parentId))
+    },
+    
+    getTextDescriptionId = function(){
+      return(paste0("Text",self$getUISelectionId()))
+    },
+    
+    getButtonDescriptionId = function(){
+      return(paste0("ButtonDescription",self$getUISelectionId()))
     },
     
     getEventsSelected = function(){
@@ -64,7 +124,6 @@ InstanceSelection <- R6::R6Class(
     
     printFunction = function(){
       staticLogger$info("FAIT QUELQUE CHOSE YA EU DU CHANGEMENT !! :")
-      # print(self$getEventsSelected())
     },
     
     getContextEvents = function(){

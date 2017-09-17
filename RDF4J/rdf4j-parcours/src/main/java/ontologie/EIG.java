@@ -36,14 +36,22 @@ public class EIG {
 	
 	/** http://www.eigsante2017.fr#hasDuration  : time duration of event of a timeline */
 	public static final IRI HASDURATION;
+	
+	/** http://www.eigsante2017.fr#hasPolygon  : a reference to a spatial polygon */
+	public static final IRI HASPOLYGON;
 
 	/** http://www.eigsante2017.fr#hasType  : original type of event */
 	public static final IRI HASTYPE ;
+	
+	public static final String GRAPH;
+	
 	
 	static {
 		ValueFactory factory = SimpleValueFactory.getInstance();
 		HASNUM = factory.createIRI(EIG.NAMESPACE, "hasNum");
 		HASDURATION = factory.createIRI(EIG.NAMESPACE, "hasDuration");
 		HASTYPE = factory.createIRI(EIG.NAMESPACE, "hasType");
+		HASPOLYGON = factory.createIRI(EIG.NAMESPACE, "hasPolygon");
+		GRAPH = "Graph";
 	}
 }

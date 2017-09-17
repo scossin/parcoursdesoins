@@ -36,7 +36,8 @@ navbarPage("Parcours de soins", id="CartoParcours",
                     # pour retirer le tabset et le boutton permet de le retirer !
                     
                       tabsetPanel(id = GLOBALeventTabSetPanel,
-                                  tabPanel("Context")
+                                  tabPanel("Context",
+                                           div(id="contextId"))
                       )
                     )
            )

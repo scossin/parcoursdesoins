@@ -8,6 +8,7 @@ flux/blazegraph/triplets/timelines/*
 RDF4J/rdf4j-parcours/src/main/resources/timelines/*
 .Rproj.user
 server/V5/dev/*
-*/logs
+logs/
 catalog-v001.xml
 !server/V5/dev/leaflet
+target/

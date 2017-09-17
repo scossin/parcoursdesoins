@@ -26,16 +26,15 @@ HierarchicalSunburst <- R6::R6Class(
       ## count
       GLOBALcon <- Connection$new()
       query <- XMLCountquery$new()
+      staticLogger$info("\t ", length(self$contextEnv$context), " contexts")
       query$addContextNode(contextVector = self$contextEnv$context)
       staticLogger$info("Sending", query$fileName, "...")
       eventCount <- GLOBALcon$sendQuery(query)
-      print(eventCount)
       ## hierarchy
       content <- GLOBALcon$getContent(terminologyName = GLOBALcon$terminology$Event,
                                       information = GLOBALcon$information$hierarchy)
       staticLogger$info("Content received, reading content ...")
       hierarchy <- GLOBALcon$readContentStandard(content)
-      print(hierarchy)
       staticLogger$info("merging hierarchy and eventCount ...")
       hierarchicalData <- merge (hierarchy, eventCount, by.x="event", by.y="className",all.x=T)
       bool <- is.na(hierarchicalData$count)

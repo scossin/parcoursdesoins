@@ -26,7 +26,10 @@ public class Terminology {
 				"FINESS.ttl", Endpoints.FINESS)),
 		
 		EVENTS(new Terminology(EIG.NAMESPACE,EIG.PREFIX,EIG.eventClassName,"events-ontology.owl",
-				null, Endpoints.TIMELINES));
+				null, Endpoints.TIMELINES)),
+		
+		CONTEXT(new Terminology(EIG.NAMESPACE,EIG.PREFIX,EIG.GRAPH,"Context-ontology.owl",
+				"context.ttl", Endpoints.CONTEXT));
 		
 		private Terminology terminology;
 		

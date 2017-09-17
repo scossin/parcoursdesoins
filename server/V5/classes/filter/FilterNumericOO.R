@@ -25,6 +25,15 @@ FilterNumeric <- R6::R6Class(
                immediate = T)
     },
     
+    getXMLpredicateNode = function(){
+      tempQuery <- XMLSearchQuery$new()
+      predicateNode <- tempQuery$makePredicateNode(predicateClass = "numeric",
+                                                   predicateType = self$predicateName,
+                                              minValue=self$valueEnv$numericValue$minChosen,
+                                              maxValue = self$valueEnv$numericValue$maxChosen)
+      return(predicateNode)
+    },
+    
     getDescription = function(){
       description <- paste0(self$predicateName,"\t minValue: ",self$valueEnv$numericValue$minChosen,
                             "\n\t maxValue: ", self$valueEnv$numericValue$maxChosen)

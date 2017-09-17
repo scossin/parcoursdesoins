@@ -145,8 +145,9 @@ public class TerminologyServer {
 	public static void main (String[] args) throws Exception{
 		
 		Set<TerminoEnum> terminoToLoad = new HashSet<TerminoEnum>();
-		terminoToLoad.add(TerminoEnum.FINESS);
-		terminoToLoad.add(TerminoEnum.RPPS);
+		//terminoToLoad.add(TerminoEnum.FINESS);
+		//terminoToLoad.add(TerminoEnum.RPPS);
+		terminoToLoad.add(TerminoEnum.CONTEXT);
 		
 		for (TerminoEnum termino : terminoToLoad){
 			TerminologyServer terminoServer = new TerminologyServer(termino);

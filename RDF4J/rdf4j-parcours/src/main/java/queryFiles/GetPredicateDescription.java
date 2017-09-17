@@ -30,7 +30,7 @@ import terminology.Terminology.TerminoEnum;
 public class GetPredicateDescription implements FileQuery{
 
 	public enum ValueCategory {
-		NUMERIC, DURATION, DATE, FACTOR, TERMINOLOGY;
+		NUMERIC, DURATION, DATE, FACTOR, TERMINOLOGY, SPATIALPOLYGON;
 	}
 	
 	public final static String fileName = "predicatesDescription.csv";
@@ -200,6 +200,10 @@ public class GetPredicateDescription implements FileQuery{
 	
 	private ValueCategory getValueCategory (IRI predicateIRI, Value value){
 		IRI valueIRI = (IRI) value;
+		
+		if (predicateIRI.equals(EIG.HASPOLYGON)){
+			return(ValueCategory.SPATIALPOLYGON);
+		}
 		
 		if (XMLDatatypeUtil.isNumericDatatype(valueIRI)){
 			// Special case : 

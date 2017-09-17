@@ -58,7 +58,7 @@ public class GetEventPredicateFrequency implements FileQuery{
 	}
 	
 	public GetEventPredicateFrequency(TerminoEnum terminoEnum) throws IOException{
-		setSparqlQueryString(terminoEnum.getTermino().getNAMESPACE());
+		setSparqlQueryString(terminoEnum.getTermino().getNAMESPACE() + terminoEnum.getTerminologyName());
 		Query query = new PreparedQuery(sparqlQueryString, variableNames);
 		String sparqlEndpoint = DockerDB.getEndpointIPadress(terminoEnum.getTermino().getEndpoint());
 		Results results = new Results(sparqlEndpoint, query);
@@ -67,7 +67,7 @@ public class GetEventPredicateFrequency implements FileQuery{
 	}
 	
 	public static void main(String[] args) throws IOException{
-		GetEventPredicateFrequency eventPredicateFrequency = new GetEventPredicateFrequency(TerminoEnum.EVENTS);
+		GetEventPredicateFrequency eventPredicateFrequency = new GetEventPredicateFrequency(TerminoEnum.CONTEXT);
 		File file = new File("commentaires.csv");
 		OutputStream os = new FileOutputStream(file);
 		eventPredicateFrequency.sendBytes(os);

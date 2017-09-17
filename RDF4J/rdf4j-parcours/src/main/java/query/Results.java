@@ -148,7 +148,7 @@ public class Results {
 		String timelinesFolderPath = Util.classLoader.getResource(cacheFolder).getPath();
 		int queryHashCode = query.getSPARQLQueryString().hashCode(); // queryString hash
 		int contextHashCode = query.getContextDataset().getNamedGraphs().hashCode(); // same query in a different context is possible
-		String fileName = timelinesFolderPath + queryHashCode + "_" + contextHashCode  + ".csv";
+		String fileName = timelinesFolderPath + "Cache" + queryHashCode + "_" + contextHashCode  + ".csv";
 		resultFile = new File(fileName);
 	}
 	
