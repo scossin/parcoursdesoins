@@ -13,6 +13,20 @@ FilterNumericDuration <- R6::R6Class(
       staticLogger$info("Creating new FilterNumericDuration object : ", self$getObjectId())
     },
     
+    updateDataFrame = function(){
+      super$updateDataFrame()
+      self$updateDuration(private$durationChoice)
+    },
+
+    getXMLpredicateNode = function(){
+      tempQuery <- XMLSearchQuery$new()
+      predicateNode <- tempQuery$makePredicateNode(predicateClass = "numeric",
+                                                   predicateType = self$predicateName,
+                                                   minValue = private$toSeconds(self$valueEnv$numericValue$minChosen),
+                                                   maxValue = private$toSeconds(self$valueEnv$numericValue$maxChosen))
+      return(predicateNode)
+    },
+    
     insertDurationUI = function(){
       jQuerySelector = paste0("#",self$getGraphicsId())
       insertUI(selector = jQuerySelector,
@@ -36,7 +50,7 @@ FilterNumericDuration <- R6::R6Class(
       shinyWidgets::awesomeRadio(inputId = self$getDurationUIid(),
                                  label = "",
                                  choices=c(GLOBALminutes,GLOBALhours,GLOBALdays,GLOBALweeks,GLOBALmonths),
-                                 selected = GLOBALdays,
+                                 selected = private$durationChoice,
                                  inline=T)
     },
     
@@ -79,7 +93,11 @@ FilterNumericDuration <- R6::R6Class(
   ),
   
   private = list(
+    durationChoice = GLOBALdays,
+    
     updateX = function(durationChoice){
+      private$durationChoice <- durationChoice
+      
       x <- self$dataFrame$value
       if (durationChoice == GLOBALminutes){
         x <- x / 60
@@ -111,6 +129,34 @@ FilterNumericDuration <- R6::R6Class(
         return(NULL)
       }
       
+    },
+    
+    toSeconds = function(x){
+      durationChoice <- private$durationChoice
+      if (durationChoice == GLOBALminutes){
+        x <- x * 60
+        return(x)
+      }
+      
+      if (durationChoice == GLOBALhours){
+        x <- x * (60*60)
+        return(x)
+      }
+      
+      if (durationChoice == GLOBALdays){
+        x <- x * (60*60*24)
+        return(x)
+      }
+      
+      if (durationChoice == GLOBALweeks){
+        x <- x * (60*60*24*7)
+        return(x)
+      }
+      
+      if (durationChoice == GLOBALmonths){
+        x <- x * (60*60*24*30.42)
+        return(x)
+      }
     }
   )
 )

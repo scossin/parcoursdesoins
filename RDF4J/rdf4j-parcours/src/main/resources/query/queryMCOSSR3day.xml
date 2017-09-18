@@ -6,8 +6,7 @@
 		<predicate>
 			<factor>
 					<predicateType>inEtab</predicateType>
-					<value>330000555</value>
-					<value>330000217</value>
+					<value>Etablissement330000555</value>
 			</factor>
 		</predicate>
 	</event>

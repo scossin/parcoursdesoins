@@ -17,21 +17,33 @@ FilterNumeric <- R6::R6Class(
       self$addSliderObserver()
     },
     
-    makeUI = function(){
-      jquerySelector <- private$getJquerySelector(self$parentId)
-      insertUI(selector = jquerySelector, 
-               where = self$where,
-               ui = self$getUI(),
-               immediate = T)
+    updateDataFrame = function(){
+      staticLogger$info("updateDataFrame of FilterNumeric")
+      eventType <- self$contextEnv$instanceSelection$className
+      terminologyName <- self$contextEnv$instanceSelection$terminologyName
+      predicateName <- self$predicateName
+      contextEvents <- self$contextEnv$instanceSelection$getContextEvents()
+      self$dataFrame <- staticFilterCreator$getDataFrame(terminologyName, eventType, contextEvents, predicateName)
+      self$valueEnv$numericValue$setX(self$dataFrame$value)
+      self$updateSliderInputValues()
+      self$numericGraphics$remakePlot()
     },
     
     getXMLpredicateNode = function(){
       tempQuery <- XMLSearchQuery$new()
       predicateNode <- tempQuery$makePredicateNode(predicateClass = "numeric",
                                                    predicateType = self$predicateName,
-                                              minValue=self$valueEnv$numericValue$minChosen,
-                                              maxValue = self$valueEnv$numericValue$maxChosen)
+                                                   minValue = self$valueEnv$numericValue$minChosen,
+                                                   maxValue = self$valueEnv$numericValue$maxChosen)
       return(predicateNode)
+    },
+    
+    makeUI = function(){
+      jquerySelector <- private$getJquerySelector(self$parentId)
+      insertUI(selector = jquerySelector, 
+               where = self$where,
+               ui = self$getUI(),
+               immediate = T)
     },
     
     getDescription = function(){

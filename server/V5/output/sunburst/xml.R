@@ -6,8 +6,31 @@ rm(list=ls())
 require(R6)
 require(httr)
 require(XML)
-source("XMLqueryOO.R")
-source("XMLDescribeQueryOO.R")
+source("../../classes/queries/XMLqueryOO.R")
+source("../../classes/queries/XMLDescribeQueryOO.R")
+source("../../classes/queries/XMLSearchQueryOO.R")
+
+tempQuery <- XMLSearchQuery$new()
+predicateNodes <- list()
+predicateNode <- tempQuery$makePredicateNode(predicateClass = "numeric",
+                                             predicateType = "hasPrice",
+                                             minValue = 1247,
+                                             maxValue = 5000)
+
+predicateNode <- tempQuery$makePredicateNode(predicateClass = "factor",
+                                             predicateType = "Etablissement",
+                                             values=paste0(1:10))
+context <- paste0("p",1:100)
+tempQuery$addContextNode(context)
+tempQuery$addEventNode(eventNumber = 1,
+                   eventType = "SejourSSR",
+                   predicatesNodes = predicateNodes)
+query$addEventNode(eventNumber = 1,
+                  eventType = "SejourSSR")
+query$addPredicateNode2(eventNumber = 1,predicateNode = predicateNode)
+query$saveQuery()
+query$listEventNodes
+
 source("ConnectionOO.R")
 con <- Connection$new()
 
@@ -23,7 +46,7 @@ eventInstances <- c("p1_SejourMCO_2009_11_21T02_08_00_000_01_00",
                     "p10_SejourMCO_2009_10_06T04_32_00_000_02_00")
 query$addEventInstances(eventInstances)
 con$sendQuery(query)
-
+class(predicateNode)
 #### Test search query : 
 source("XMLSearchQueryOO.R")
 query <- XMLSearchQuery$new()

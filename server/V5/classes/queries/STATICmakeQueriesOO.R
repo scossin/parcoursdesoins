@@ -12,11 +12,19 @@ STATICmakeQueries <- R6::R6Class(
       query$addContextNode(context)
       query$addEventNode(eventNumber = eventNumber,
                          eventType = eventType,predicatesNodes = NULL)
+      results <- self$getContextEventsQuery(query)
+      # results <- GLOBALcon$sendQuery(query)
+      # colnames(results) <- c("context","event")
+      # staticLogger$info("Number of events : ",nrow(results))
+      return(results)
+    }, 
+    
+    getContextEventsQuery = function(query){
       results <- GLOBALcon$sendQuery(query)
       colnames(results) <- c("context","event")
       staticLogger$info("Number of events : ",nrow(results))
       return(results)
-    }, 
+    },
     
     ### add a check contextEnv here
     getContextEventsPredicate = function(eventType, contextEvents, predicateName,terminologyName){

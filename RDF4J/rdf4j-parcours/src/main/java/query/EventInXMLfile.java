@@ -417,6 +417,7 @@ public class EventInXMLfile {
 		IRI predicateIRI = predicateValue.keySet().iterator().next();		
 		Value value = predicateValue.get(predicateIRI);
 		IRI terminologyIRI = (IRI) value;
+		String namespaceTerminoIRI = terminologyIRI.getNamespace();
 
 		// add the filter statement : 
 		NodeList factorValuesNodes = factorPredicate.getElementsByTagName(XMLelement.value.toString());
@@ -427,7 +428,7 @@ public class EventInXMLfile {
 		String instanceNames[] = factorValuesNodes.item(0).getTextContent().split("\t"); // only one item
 		String filter = "VALUES ("+ factorVariable + ") {";
 		for (String instanceName : instanceNames){
-			IRI instanceIRI = Util.vf.createIRI(terminologyIRI.stringValue(), instanceName);
+			IRI instanceIRI = Util.vf.createIRI(namespaceTerminoIRI, instanceName);
 			filter += "("+Query.formatIRI4query(instanceIRI) + ") ";	
 		}
 		filter = filter + "}";

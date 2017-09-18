@@ -18,6 +18,36 @@ FilterCategorical <- R6::R6Class(
                                                           where="beforeEnd")
     },
     
+    getEventsSelected = function(){
+      namesChosen <- names(self$valueEnv$categoricalValues$tableChosenValues)
+      bool <- self$dataFrame$value %in% namesChosen
+      eventsSelected <- self$dataFrame$event[bool]
+      return(as.character(eventsSelected))
+    },
+    
+    updateDataFrame = function(){
+      staticLogger$info("updateDataFrame of FilterCategorical")
+      namesChosen <- names(self$valueEnv$categoricalValues$tableChosenValues)
+      eventType <- self$contextEnv$instanceSelection$className
+      terminologyName <- self$contextEnv$instanceSelection$terminologyName
+      predicateName <- self$predicateName
+      contextEvents <- self$contextEnv$instanceSelection$getContextEvents()
+      self$dataFrame <- staticFilterCreator$getDataFrame(terminologyName, eventType, contextEvents, predicateName)
+      self$valueEnv$categoricalValues$setX(self$dataFrame$value)
+      self$valueEnv$categoricalValues$setTableChosenValuesSelectize(namesChosen) ## updating previous choices
+      self$categoricalGraphics$updateSelection()
+      self$categoricalGraphics$remakePlot(all=T)
+    },
+    
+    getXMLpredicateNode = function(){
+      tempQuery <- XMLSearchQuery$new()
+      namesChosen <- names(self$valueEnv$categoricalValues$tableChosenValues)
+      predicateNode <- tempQuery$makePredicateNode(predicateClass = "factor",
+                                                   predicateType = self$predicateName,
+                                                   values = namesChosen)
+      return(predicateNode)
+    },
+    
     getDescription = function(){
       namesChosen <- names(self$valueEnv$categoricalValues$tableChosenValues)
       lengthChosen <- length(namesChosen)

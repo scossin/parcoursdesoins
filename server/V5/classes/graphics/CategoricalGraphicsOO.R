@@ -46,11 +46,17 @@ CategoricalGraphics <- R6::R6Class(
     
     updateSelection = function(){
       staticLogger$info("Updating selection")
+      choices <- names(self$valueEnv$categoricalValues$tableX)
+      selected <- self$valueEnv$categoricalValues$getChosenValues()
+      if (is.null(choices)){
+        choices <- "empty"
+        selected <- "empty"
+      }
       updateSelectizeInput(session = session, 
                            inputId = self$getSelectizeId(),
                            label="",
-                           choices = names(self$valueEnv$categoricalValues$tableX),
-                           selected = self$valueEnv$categoricalValues$getChosenValues(),
+                           choices = choices,
+                           selected = selected,
                            server = TRUE)
       return(NULL)
     },
@@ -198,7 +204,7 @@ CategoricalGraphics <- R6::R6Class(
         staticLogger$info("\t updating plot and categoricalValues")
         self$valueEnv$categoricalValues$setTableChosenValuesSelectize(chosenValues)
         self$remakePlot()
-      })
+      },ignoreNULL = F)
     },
     
     addObserverPiechart2 = function(){
@@ -238,12 +244,15 @@ CategoricalGraphics <- R6::R6Class(
     },
     
 
-    remakePlot = function(){
+    remakePlot = function(allPlots = F){
       plotChoice <- self$lastChoice
       if (plotChoice == "BARPLOT"){
-        print("do something for god sake")
+        print("do something for god's sake")
       } else if (plotChoice == "PIE"){
         self$makePlotpiechart1()
+        if (allPlots){
+          self$makePlotpiechart2()
+        }
       }
     },
     

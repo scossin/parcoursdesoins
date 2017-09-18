@@ -35,7 +35,8 @@ XMLquery <- R6Class(
       ## private functions
       getValuesNodes_ <- function(contextNode, values){
         if (is.null(values) || length(values) == 0){
-          stop("values must be have length > 0")
+          values <- ""
+          #stop("values must be have length > 0")
         }
         values <- paste(values, collapse="\t")
         valueNode <- xmlNode("value",text=values)

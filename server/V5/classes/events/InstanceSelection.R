@@ -22,33 +22,51 @@ InstanceSelection <- R6::R6Class(
       self$terminologyDescription <- GLOBALterminologyDescription[[self$terminologyName]]
       self$parentId <- parentId
       self$adduiSelection()
-      self$makeDescription()
+      self$addButtonDescriptionObserver()
+      self$addButtonSearchEventsObserver()
       self$setButtonFilter(self$getDivFiltersId(), where)
+
       staticLogger$info("new instanceSelection terminology : ", terminologyName,
                         "location : ", parentId)
-
     },
     
-    # getXMLpredicateNodes = function(){
-    #   predicatesNodes <- list()
-    #   if (length(self$listFilters) == 0){
-    #     predicatesNodes <- NULL
-    #   } else {
-    #     for (filter in self$listFilters){
-    #       predicatesNodes <- append(filter$getXMLpredicateNode(),predicatesNodes)
-    #     } 
-    #   }
-    #   query <- XMLSearchQuery$new()
-    #   query$addContextNode(self$context)
-    #   query$addEventNode(eventNumber = self$contextEnv$eventNumber,
-    #                      eventType = self$className,
-    #                      predicatesNodes = predicatesNodes)
-    # },
+    searchAndUpdate = function(){
+      staticLogger$info("Searching new events...")
+      
+      staticLogger$info("\t getting predicatesNodes")
+      query <- XMLSearchQuery$new()
+      query$addContextNode(self$context)
+      query$addEventNode(eventNumber = self$contextEnv$eventNumber,
+                         eventType = self$className)
+      if (!length(self$listFilters) == 0){
+        for (filter in self$listFilters){
+          predicateNode <- filter$getXMLpredicateNode()
+          query$addPredicateNode2(eventNumber = self$contextEnv$eventNumber,predicateNode = predicateNode)
+        }
+      }
+      
+      ## updatingContextEvents 
+      staticLogger$info("\t updating ContextEvents")
+      self$contextEvents <- staticMakeQueries$getContextEventsQuery(query)
+      
+      ## updateFilter :
+      self$updateFilters()
+    },
+    
+    updateFilters = function(){
+      ## updateFilter :
+      staticLogger$info("\t updating Filer with new events")
+      for (filter in self$listFilters){
+        filter$updateDataFrame()
+      }
+    },
     
     adduiSelection = function(){
       ui <- div(id=self$getUISelectionId(),
                 actionButton(inputId = self$getButtonDescriptionId(), 
                              label = "Description"),
+                actionButton(inputId = self$getButtonSearchEventsId(), 
+                             label = "Search"),
                 verbatimTextOutput(outputId = self$getTextDescriptionId()),
                 div(id=self$getDivFiltersId())
       )
@@ -58,7 +76,19 @@ InstanceSelection <- R6::R6Class(
                ui = ui)
     },
     
-    makeDescription = function(){
+    addButtonSearchEventsObserver = function(){
+      observeEvent(input[[self$getButtonSearchEventsId()]], {
+        staticLogger$info("Search Events clicked !")
+        self$searchAndUpdate()
+        return(NULL)
+      })
+    },
+    
+    getButtonSearchEventsId = function(){
+      return(paste0("SearchEvents",self$getUISelectionId()))
+    },
+    
+    addButtonDescriptionObserver = function(){
       observeEvent(input[[self$getButtonDescriptionId()]],{
         description <- self$getDescription()
         description <- paste(description, collapse="\n")
@@ -89,7 +119,7 @@ InstanceSelection <- R6::R6Class(
     
     getEventsSelected = function(){
       if (length(self$listFilters) == 0){
-        return(contextEvents$event)
+        return(self$contextEvents$event)
       }
       iter <- 1
       events <- NULL
@@ -212,8 +242,10 @@ PointerEnv <- R6::R6Class(
   "PointerEnv",
   
   public=list(
-    contextEnv = environment(), 
-    initialize=function(contextEnv){
+    contextEnvParent = environment(),
+    contextEnv = environment(),
+    initialize=function(contextEnvParent, contextEnv){
+      self$contextEnvParent <- contextEnvParent
       self$contextEnv <- contextEnv
     },
     
@@ -222,6 +254,34 @@ PointerEnv <- R6::R6Class(
       self$contextEnv <- NULL
       return(NULL)
     },
+    
+    updateDataFrame = function(){
+      staticLogger$info("update Instance Selection")
+      eventType <- self$contextEnv$instanceSelection$className
+      terminologyName <- self$contextEnvParent$instanceSelection$terminologyName
+      predicateName <- self$contextEnv$predicateName
+      contextEvents <- self$contextEnvParent$instanceSelection$getContextEvents()
+      self$contextEnv$instanceSelection$contextEvents <- staticFilterCreator$getDataFrame(terminologyName, 
+                                                                                          eventType, 
+                                                                                          contextEvents, 
+                                                                                          predicateName)
+      colnames(self$contextEnv$instanceSelection$contextEvents) <- c("context","event")
+      print(self$contextEnv$instanceSelection$contextEvents)
+      self$contextEnv$instanceSelection$updateFilters()
+    },
+    
+    getXMLpredicateNode = function(){
+      tempQuery <- XMLSearchQuery$new()
+      chosenValues <- self$contextEnv$instanceSelection$getEventsSelected()
+      chosenValues <- unique(chosenValues)
+      predicateName <- self$contextEnv$predicateName
+      staticLogger$info("PointerEnv chosenValues : ",chosenValues)
+      predicateNode <- tempQuery$makePredicateNode(predicateClass = "factor",
+                                                   predicateType = predicateName,
+                                                   values = chosenValues)
+      return(predicateNode)
+    },
+    
     
     getEventsSelected = function(){
       self$contextEnv$instanceSelection$getContextsSelected() ### context corresponds to events

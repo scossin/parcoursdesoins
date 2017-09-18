@@ -8,7 +8,7 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
     },
 
     addEventNode = function(eventNumber, eventType, predicatesNodes = NULL){
-      eventNode <- private$makeEventNode(eventNumber, eventType, predicatesNodes = NULL)
+      eventNode <- private$makeEventNode(eventNumber, eventType, predicatesNodes)
       eventName <- paste0("event",eventNumber)
       if (!is.null(self$listEventNodes[[eventName]])){
         warning("Replacing an exist event ")
@@ -56,7 +56,8 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
       ## private functions
       getFactorNodes_ <- function(predicateClassNode, values){
         if (is.null(values) || length(values) == 0){
-          stop("values must be have length > 0")
+          values <- ""
+          #stop("values must be have length > 0")
         }
         values <- paste(values, collapse="\t")
         valueNode <- xmlNode("value",text=values)
@@ -139,13 +140,13 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
     ## can't overload methods in R...
     makeEventNode2 = function(eventNode,predicatesNodes= NULL){
       if (!inherits(eventNode,"eventNode")){
-        stop("eventNode must be instance of eventNode classe")
+        stop("eventNode must be instance of eventNode class")
       }
       
       if (!is.null(predicatesNodes)){
         for (predicateNode in predicatesNodes){
           if (!inherits(predicateNode,"predicateNode")){
-            stop("predicatesNodes must be instances of predicateNode classe")
+            stop("predicatesNodes must be instances of predicateNode class")
           }
           eventNode <- addChildren(eventNode, predicateNode)
         }

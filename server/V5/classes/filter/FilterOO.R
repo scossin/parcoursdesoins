@@ -18,7 +18,7 @@ Filter <- R6::R6Class(
     },
     
     getEventsSelected = function(){
-      stop("getChoosenEvents not implemented !")
+      stop("getEventsSelected not implemented !")
     },
     
     setContext = function(){

@@ -3,21 +3,13 @@ STATICfilterCreator <- R6::R6Class(
   
   public = list(
     
-    createFilterObject = function(contextEnv, eventType, contextEvents, 
-                                  filterType, predicateName, expectedValue, 
-                                  terminologyName, parentId, where){
-      
-      staticLogger$info("\t Filter type : ",filterType)
-      
-      bool <- filterType %in% private$availableFilters
-      if (!bool){
-        stop("filterType of ",predicateName,"(",filterType,") not in : ",
-             paste0(private$availableFilters, collapse = " "))
+    getDataFrame = function(terminologyName, eventType, contextEvents, predicateName){
+      if (nrow(contextEvents) == 0){
+        dataFrame <- data.frame(event = character(), value=character())
+        return(dataFrame)
       }
       
-      filterType <- as.character(filterType)
-      
-      #if (filterType != "TERMINOLOGY"){
+      # separating Event and others 
       if (terminologyName == GLOBALterminologyDescription$Event$terminologyName){
         dataFrame <- staticMakeQueries$getContextEventsPredicate(eventType = eventType,
                                                                  contextEvents = contextEvents,
@@ -33,7 +25,7 @@ STATICfilterCreator <- R6::R6Class(
           addingNA <- data.frame(event = missingEvents, value=NA)
           dataFrame <- rbind(dataFrame, addingNA)
         }
-        
+        return(dataFrame)
       } else {
         ### context is not need - so simply remove it
         tempContextEvents <- contextEvents
@@ -46,10 +38,25 @@ STATICfilterCreator <- R6::R6Class(
         dataFrame <- subset (dataFrame, select=c("event","value"))
         contextEvents <- data.frame(event = contextEvents$event)
         dataFrame <- merge (contextEvents, dataFrame, by="event", all.x=T)
+        return(dataFrame)
       }
-
-
-      #}
+    },
+    
+    createFilterObject = function(contextEnv, eventType, contextEvents, 
+                                  filterType, predicateName, expectedValue, 
+                                  terminologyName, parentId, where){
+      
+      staticLogger$info("\t Filter type : ",filterType)
+      
+      bool <- filterType %in% private$availableFilters
+      if (!bool){
+        stop("filterType of ",predicateName,"(",filterType,") not in : ",
+             paste0(private$availableFilters, collapse = " "))
+      }
+      
+      dataFrame <- self$getDataFrame(terminologyName, eventType, contextEvents, predicateName)
+      
+      filterType <- as.character(filterType)
       
       if (filterType == "NUMERIC"){
         filterNumeric <- FilterNumeric$new(contextEnv = contextEnv,
@@ -77,14 +84,15 @@ STATICfilterCreator <- R6::R6Class(
         contextEnv2 <- new.env()
         contextEnv2$eventNumber <- as.numeric(paste0(contextEnv$eventNumber),"11")## 111 111111 ...
         contextEnv2$eventType <- expectedValue
-        print(expectedValue)
+        contextEnv2$predicateName <- predicateName
         contextEnv2$instanceSelection <- InstanceSelection$new(contextEnv = contextEnv2, 
                                                                terminologyName = expectedValue, 
                                                                className = expectedValue, 
                                                                contextEvents = dataFrame, 
                                                                parentId = parentId, 
                                                                where = where)
-        pointerEnv <- PointerEnv$new(contextEnv2)
+        pointerEnv <- PointerEnv$new(contextEnvParent = contextEnv,
+                                     contextEnv = contextEnv2)
         return(pointerEnv)
       } else if (filterType == "FACTOR"){
         filterCategorical <- FilterCategorical$new(contextEnv = contextEnv, 

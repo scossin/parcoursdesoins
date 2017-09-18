@@ -23,6 +23,8 @@ server <- function(input,output,session){
     Graph = Predicates$new(GLOBALcon$terminology$Graph,GLOBALlang)
     )
 
+  # GLOBALterminologyDescription$Etablissement$getPredicateDescription("E")
+  # GLOBALterminologyDescription$Event$predicatesDf
     # GLOBALterminologyDescription$CONTEXT$getPredicateDescriptionOfEvent("Graph")
     #   getPredicateDescriptionOfEvent("")
     # GLOBALterminologyDescription$Etablissement$predicatesDf

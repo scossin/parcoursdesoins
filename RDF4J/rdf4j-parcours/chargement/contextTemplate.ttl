@@ -1,0 +1,9 @@
+@prefix eig:     <http://www.eigsante2017.fr#> .
+@prefix atlasante: <https://www.atlasante.fr/GEOPMSI2014#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+eig:${patient} a eig:Graph ;
+	eig:CatAge "${age}"	;
+	eig:hasPolygon atlasante:Polygon${domicile}	;
+	eig:dep "${dep}"	;
+	eig:Sex "${sex}"	.
