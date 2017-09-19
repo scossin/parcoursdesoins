@@ -13,7 +13,7 @@ import query.PreparedQuery;
 import query.Query;
 import query.Results;
 import servlet.DockerDB;
-import terminology.Terminology.TerminoEnum;
+import terminology.TerminoEnum;
 
 public class GetEventPredicateFrequency implements FileQuery{
 	final static Logger logger = LoggerFactory.getLogger(GetEventPredicateFrequency.class);

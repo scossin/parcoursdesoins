@@ -24,7 +24,7 @@ import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
 import parameters.Util;
-import terminology.Terminology.TerminoEnum;
+import terminology.TerminoEnum;
 import terminology.TerminologyServer;
 
 /**
@@ -106,7 +106,7 @@ public class Integration {
 		
 		for (TerminoEnum termino : terminos){
 			TerminologyServer terminoServer = new TerminologyServer(termino);
-			IRI terminoIRI = termino.getTermino().getClassNameIRI();
+			IRI terminoIRI = termino.getTermino().getMainClassIRI();
 			instancesOfTerminology.put(terminoIRI, terminoServer.getInstancesOfTerminology());
 			terminoServer.countInstances();
 			terminoServer.getCon().close();

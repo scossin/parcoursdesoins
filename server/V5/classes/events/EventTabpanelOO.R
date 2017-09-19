@@ -49,7 +49,7 @@ EventTabpanel <- R6::R6Class(
                                            context = self$contextEnv$context)
         parentId = private$getFirstDivOfEventId()
         where = "beforeEnd"
-        self$contextEnv$instanceSelection <- InstanceSelection$new(contextEnv = self$contextEnv, 
+        self$contextEnv$instanceSelection <- InstanceSelectionEvent$new(contextEnv = self$contextEnv, 
                                                         terminologyName = GLOBALcon$terminology$Event, 
                                                         className = self$contextEnv$eventType, 
                                                         contextEvents = contextEvents, 

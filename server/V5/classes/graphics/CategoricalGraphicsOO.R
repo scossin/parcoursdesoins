@@ -141,8 +141,10 @@ CategoricalGraphics <- R6::R6Class(
     makePlotpiechart1 = function(){
       output[[self$getPieChart1Id()]] <- plotly::renderPlotly({
         tab <- self$valueEnv$categoricalValues$tableChosenValues
+        colors <- NULL
         if (length(tab) == 0){
           df <- data.frame(labels = "empty", values = 1)
+          colors <- c('rgb(0,0,0)')
         } else {
           Nfirst <- self$Nfirst
           if (Nfirst > length(tab)){
@@ -158,7 +160,13 @@ CategoricalGraphics <- R6::R6Class(
           df <- subset (df, values != 0)
           df <- rbind (df, others)
         }
-        plotly::plot_ly(df, labels = ~labels, values = ~values, type = 'pie') %>%
+        plotly::plot_ly(df, labels = ~labels, values = ~values, type = 'pie',
+                        textposition = 'inside',
+                        text = ~paste0(labels,'\n',values),
+                        textinfo = 'label+percent',
+                        hoverinfo = 'text',
+                        marker = list(colors = colors,
+                        line = list(color = '#FFFFFF', width = 1))) %>%
           layout(title = GLOBALselectedPieChart, showlegend = FALSE,
                  xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                  yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
@@ -185,7 +193,13 @@ CategoricalGraphics <- R6::R6Class(
           df <- subset (df, values != 0)
           df <- rbind (df, others)
         }
-        plotly::plot_ly(df, labels = ~labels, values = ~values, type = 'pie',source=self$getPieChart2Id()) %>%
+        plotly::plot_ly(df, labels = ~labels, values = ~values, type = 'pie',
+                        text = ~paste0(labels,'\n',values),
+                        textposition = 'inside',
+                        textinfo = 'label+percent',
+                        hoverinfo = 'text',
+                        marker = list(line = list(color = '#FFFFFF', width = 1)),
+                        source=self$getPieChart2Id()) %>%
           layout(title = GLOBALinitialPieChart, showlegend = FALSE,
                  xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                  yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))

@@ -20,14 +20,11 @@ import exceptions.InvalidContextException;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
-import ontologie.TIME;
 import parameters.MainResources;
 import parameters.Util;
 import query.XMLFile.XMLelement;
-import queryFiles.GetPredicateDescription;
 import servlet.DockerDB.Endpoints;
 import terminology.Terminology;
-import terminology.Terminology.TerminoEnum;
 
 /**
  * The describe event query return predicate and value of a particular event
@@ -56,40 +53,11 @@ public class XMLDescribeTerminologyQuery implements Query {
 	
 	private Terminology terminology; 
 	
-	private GetPredicateDescription predicateDescription;
-	
-	private IRI getPredicateIRI(String predicateName) throws UnfoundPredicatException{
-		for (IRI predicatesIRI : predicateDescription.getPredicates().keySet()){
-			if (predicatesIRI.getLocalName().equals(predicateName)){
-				return(predicatesIRI);
-			}
-		}
-		throw new UnfoundPredicatException(logger, predicateName);
-	}
-	
-	private void setEndpoint(Node eventNode) throws UnfoundTerminologyException, IOException{
-		Element element = (Element) eventNode;
-		NodeList eventInstance = element.getElementsByTagName(XMLelement.terminologyName.toString());
-		Node eventInstances = eventInstance.item(0);
-		String terminologyName = eventInstances.getTextContent();
-		for (TerminoEnum termino : TerminoEnum.values()){
-			if (termino.getTerminologyName().equals(terminologyName)){
-				this.terminology = termino.getTermino();
-				this.predicateDescription = new GetPredicateDescription (termino);
-				return;
-			}
-		}
-		throw new UnfoundTerminologyException(logger, terminologyName);
-	}
-	
 	String basicQuery = "SELECT ?event ?predicate ?value WHERE { \n"+
 			"VALUES ?event {" +             eventReplacementString                           + "} \n"+
 			"VALUES ?predicate {" +             basicReplacementString            +"} . \n" + 
 			"?event ?predicate ?value . \n" + 
-			"}"
-	;
-	
-	
+			"}" ;
 	
 	/**
 	 * 
@@ -105,7 +73,7 @@ public class XMLDescribeTerminologyQuery implements Query {
 	public XMLDescribeTerminologyQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException{
 		this.xml = xml;
 		Node eventNode = xml.getEventNodes().item(0);
-		setEndpoint(eventNode);
+		this.terminology = xml.getTerminology(eventNode);
 		setEventValuesSPARQL(eventNode);
 		setPredicatesValues(eventNode);
 		replacePredicatesValues();
@@ -129,7 +97,8 @@ public class XMLDescribeTerminologyQuery implements Query {
 		Node predicate = predicates.item(0);
 		String predicateNames[] = predicate.getTextContent().split("\t");
 		for (String predicateName : predicateNames){
-			predicateValuesBasic.add(getPredicateIRI(predicateName));
+			IRI predicateIRI = terminology.getPredicateDescription().getPredicate(predicateName).getPredicateIRI();
+			predicateValuesBasic.add(predicateIRI);
 		}
 	}
 	
@@ -208,7 +177,6 @@ public class XMLDescribeTerminologyQuery implements Query {
 		return xml.getContextDataSet();
 	}
 	
-	
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException{
 		//InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "XMLquerydescribeTerminologyFINESSlong.xml" );
@@ -221,5 +189,10 @@ public class XMLDescribeTerminologyQuery implements Query {
 	@Override
 	public Endpoints getEndpoint() {
 		return terminology.getEndpoint();
+	}
+
+	@Override
+	public Terminology getTerminology() {
+		return terminology;
 	}
 }

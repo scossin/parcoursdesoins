@@ -1,5 +1,6 @@
 package parameters;
 
+import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
 
 public class Test {
@@ -10,11 +11,7 @@ public class Test {
 		return(dataset);
 	}
 	public static void main (String[] args){
-		Test test = new Test();
-		
-		if (test.getDataSet() == null){
-			System.out.println("c'est nulle");
-		}
-		System.out.println(test.getDataSet().getNamedGraphs().hashCode());
+		Literal literal = Util.vf.createLiteral("18-");
+		System.out.println(literal.toString());
 	}
 }

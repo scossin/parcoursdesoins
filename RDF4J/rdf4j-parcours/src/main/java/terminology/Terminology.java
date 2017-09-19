@@ -1,50 +1,27 @@
 package terminology;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import exceptions.UnfoundTerminologyException;
-import ontologie.EIG;
+import exceptions.UnfoundEventException;
+import exceptions.UnfoundPredicatException;
+import ontologie.ClassDescription;
+import ontologie.OneClass;
 import parameters.MainResources;
 import parameters.Util;
+import queryFiles.PredicateDescription;
+import queryFiles.Predicates;
 import servlet.DockerDB.Endpoints;
 
 public class Terminology {
 	final static Logger logger = LoggerFactory.getLogger(Terminology.class);
-	
-	public enum TerminoEnum {
-
-		RPPS(new Terminology("http://esante.gouv.fr#","asip","RPPS", "RPPS-ontology.owl","RPPS.ttl",
-				Endpoints.RPPS)),
-		
-		// FINESS code is a french terminology for healthcare institution
-		FINESS(new Terminology("https://www.data.gouv.fr/FINESS#","datagouv","Etablissement","FINESS-ontology.owl",
-				"FINESS.ttl", Endpoints.FINESS)),
-		
-		EVENTS(new Terminology(EIG.NAMESPACE,EIG.PREFIX,EIG.eventClassName,"events-ontology.owl",
-				null, Endpoints.TIMELINES)),
-		
-		CONTEXT(new Terminology(EIG.NAMESPACE,EIG.PREFIX,EIG.GRAPH,"Context-ontology.owl",
-				"context.ttl", Endpoints.CONTEXT));
-		
-		private Terminology terminology;
-		
-		private TerminoEnum(Terminology terminology){
-			this.terminology = terminology;
-		}
-		
-		public Terminology getTermino(){
-			return(terminology);
-		}
-		
-		public String getTerminologyName(){
-			return(terminology.className);
-		}
-	}
 	
 	private final String NAMESPACE ;
 
@@ -61,25 +38,90 @@ public class Terminology {
 	/**
 	 * Every instance of the terminology is rdf:type <https://www.data.gouv.fr/FINESS#Etablissement>
 	 */
-	 private String className ;
+	 private String mainClassName ;
+	 
+	 private String terminologyName ;
 	 
 	 private String dataFileName ;
 	 
 	 private String ontologyFileName ; 
 	 
 	 private Endpoints endpoint ; 
-	
-	 public Terminology(String NAMESPACE, String PREFIX, String className, String ontologyFileName, 
+	 
+	 private PredicateDescription predicateDescription ; 
+	 
+	 private ClassDescription classDescription ;
+	 
+	 public String getTerminologyName(){
+		 return(terminologyName);
+	 }
+	 
+	 public PredicateDescription getPredicateDescription(){
+		 return(predicateDescription);
+	 }
+	 
+	 public ClassDescription getClassDescription(){
+		 return(classDescription);
+	 }
+	 
+	 public Terminology(String terminologyName, String NAMESPACE, String PREFIX, String className, String ontologyFileName, 
 			 String dataFileName, Endpoints endpoint){
+		 this.terminologyName = terminologyName ;
 		 this.NAMESPACE = NAMESPACE;
 		 this.PREFIX = PREFIX;
-		 this.className = className;
-		 this.dataFileName = dataFileName;
+		 this.mainClassName = className;
 		 this.ontologyFileName = ontologyFileName;
+		 this.dataFileName = dataFileName;
 		 this.endpoint = endpoint;
-		 //this.NS = new SimpleNamespace(PREFIX, NAMESPACE);
+	 }
+	 
+	 public Terminology initialize() throws RDFParseException, RepositoryException, IOException{
+		 this.classDescription = new ClassDescription(this);
+		 this.predicateDescription = new PredicateDescription(this);
+		 return(this);
+	 }
+	 
+	 /**
+	  * Get all the predicates and expected value (for each predicate) for this class and its parents
+	  * @param class An instance of class {@link OneClass}
+	  * @return a HashMap : predicateIRI and its associate expected value
+	  * @throws UnfoundPredicatException 
+	  * @throws UnfoundEventException 
+	  */
+	 public HashSet<Predicates> getPredicatesOfClass(OneClass oneClass) throws UnfoundEventException, UnfoundPredicatException{
+		 HashSet<Predicates> predicates = new HashSet<Predicates>();
+		 Set<IRI> predicatesIRI = oneClass.getPredicatesIRI();
+		 for (IRI parent : oneClass.getParents()){ // get all parent predicates recursively
+			 OneClass parentClass = classDescription.getClass(parent);
+			 predicatesIRI.addAll(parentClass.getPredicatesIRI());
+		 }
+		 
+		 for (IRI predicateIRI : predicatesIRI){
+			 predicates.add(predicateDescription.getPredicate(predicateIRI));
+		 }
+		 return(predicates);
 	 }
 	
+	 public boolean isPredicateOfClass (String predicateName, OneClass oneClass) throws UnfoundEventException, UnfoundPredicatException{
+		 HashSet<Predicates> predicates = getPredicatesOfClass(oneClass);
+		 for (Predicates predicate : predicates){
+			 if (predicate.getPredicateIRI().getLocalName().equals(predicateName)){
+				 return(true);
+			 }
+		 }
+		 return(false);
+	 }
+	 
+	 public Predicates getOnePredicate(String predicateName, OneClass oneClass) throws UnfoundPredicatException, UnfoundEventException{
+		 HashSet<Predicates> predicates = getPredicatesOfClass(oneClass);
+		 for (Predicates predicate : predicates){
+			 if (predicate.getPredicateIRI().getLocalName().equals(predicateName)){
+				 return(predicate);
+			 }
+		 }
+		 throw new UnfoundPredicatException(logger, predicateName);
+	 }
+	 
 	 public Endpoints getEndpoint() {
 		 return endpoint;
 	 }
@@ -97,48 +139,25 @@ public class Terminology {
 	 }
 	 
 	 public String getOntologyFileName(){
-		 return(ontologyFileName);
+		 return(MainResources.terminologiesFolder + ontologyFileName);
 	 }
 	 
 	/**
 	 * Get the class name IRI
 	 * @return IRI className
 	 */
-	public IRI getClassNameIRI(){
-		return(Util.vf.createIRI(NAMESPACE,className));
+	public IRI getMainClassIRI(){
+		return(Util.vf.createIRI(NAMESPACE,mainClassName));
 	}
 	
-	public static boolean isRecognizedClassName(IRI className){
-		for (TerminoEnum enumTermino : TerminoEnum.values()) {
-			if (enumTermino.getTermino().getClassNameIRI().equals(className)){
-				return(true);
-			}
-		}
-		return(false);
+	public String getClassName(){
+		return(this.mainClassName);
 	}
 	
-	public static Terminology getTerminology(IRI className) throws UnfoundTerminologyException{
-		for (TerminoEnum enumTermino : TerminoEnum.values()) {
-			if (enumTermino.getTermino().getClassNameIRI().equals(className)){
-				return(enumTermino.getTermino());
-			}
-		}
-		throw new UnfoundTerminologyException(logger, className.stringValue() + "does not belong to a terminology");
-	}
-	
-	public static Set<IRI> getClassNames(){
-		Set<IRI> classNamesIRI = new HashSet<IRI>();
-		for (TerminoEnum terminology : TerminoEnum.values()){
-			classNamesIRI.add(terminology.getTermino().getClassNameIRI());
-		}
-		return(classNamesIRI);
-	}
 	
 	public IRI makeInstanceIRI (String instanceName){
-		return(Util.vf.createIRI(NAMESPACE,className + instanceName));
+		return(Util.vf.createIRI(NAMESPACE,mainClassName + instanceName));
 	}
 	
-
-
 	public static final String terminologiesFolder = MainResources.terminologiesFolder;
 }

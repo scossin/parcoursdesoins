@@ -11,7 +11,6 @@ InstanceSelection <- R6::R6Class(
     terminologyDescription = list(),
     listButtonFilterObject = list(),
     listFilters = list(),
-    filterReactive = NULL,
     
     initialize = function(contextEnv, terminologyName, className, contextEvents, parentId, where){
       self$contextEnv <- contextEnv
@@ -21,101 +20,20 @@ InstanceSelection <- R6::R6Class(
       self$context <- unique(contextEvents$context)
       self$terminologyDescription <- GLOBALterminologyDescription[[self$terminologyName]]
       self$parentId <- parentId
-      self$adduiSelection()
-      self$addButtonDescriptionObserver()
-      self$addButtonSearchEventsObserver()
-      self$setButtonFilter(self$getDivFiltersId(), where)
-
+      self$setButtonFilter(parentId, where)
       staticLogger$info("new instanceSelection terminology : ", terminologyName,
                         "location : ", parentId)
     },
     
-    searchAndUpdate = function(){
-      staticLogger$info("Searching new events...")
-      
-      staticLogger$info("\t getting predicatesNodes")
-      query <- XMLSearchQuery$new()
-      query$addContextNode(self$context)
-      query$addEventNode(eventNumber = self$contextEnv$eventNumber,
-                         eventType = self$className)
-      if (!length(self$listFilters) == 0){
-        for (filter in self$listFilters){
-          predicateNode <- filter$getXMLpredicateNode()
-          query$addPredicateNode2(eventNumber = self$contextEnv$eventNumber,predicateNode = predicateNode)
-        }
-      }
-      
-      ## updatingContextEvents 
-      staticLogger$info("\t updating ContextEvents")
-      self$contextEvents <- staticMakeQueries$getContextEventsQuery(query)
-      
-      ## updateFilter :
-      self$updateFilters()
-    },
     
     updateFilters = function(){
       ## updateFilter :
-      staticLogger$info("\t updating Filer with new events")
+      staticLogger$info("\t updating Filter with new events")
       for (filter in self$listFilters){
         filter$updateDataFrame()
       }
     },
     
-    adduiSelection = function(){
-      ui <- div(id=self$getUISelectionId(),
-                actionButton(inputId = self$getButtonDescriptionId(), 
-                             label = "Description"),
-                actionButton(inputId = self$getButtonSearchEventsId(), 
-                             label = "Search"),
-                verbatimTextOutput(outputId = self$getTextDescriptionId()),
-                div(id=self$getDivFiltersId())
-      )
-      jQuerySelector = paste0("#", self$parentId)
-      insertUI(selector = jQuerySelector,
-               where = "afterBegin",
-               ui = ui)
-    },
-    
-    addButtonSearchEventsObserver = function(){
-      observeEvent(input[[self$getButtonSearchEventsId()]], {
-        staticLogger$info("Search Events clicked !")
-        self$searchAndUpdate()
-        return(NULL)
-      })
-    },
-    
-    getButtonSearchEventsId = function(){
-      return(paste0("SearchEvents",self$getUISelectionId()))
-    },
-    
-    addButtonDescriptionObserver = function(){
-      observeEvent(input[[self$getButtonDescriptionId()]],{
-        description <- self$getDescription()
-        description <- paste(description, collapse="\n")
-        Nevents <- length(unique(self$contextEvents$event))
-        Ncontexts <- length(unique(self$contextEvents$context))
-        text <- paste0(self$terminologyName, " : ", self$className, "\t",Nevents," instances",
-                       "\t", Ncontexts, " graphes",
-                       "\n",description)
-        output[[self$getTextDescriptionId()]] <- shiny::renderText(text)
-      })
-    },
-    
-    getDivFiltersId = function(){
-      return(paste0("UIdescription",self$getUISelectionId()))
-    },
-    
-    getUISelectionId = function(){
-      return(paste0("UIdescription",self$parentId))
-    },
-    
-    getTextDescriptionId = function(){
-      return(paste0("Text",self$getUISelectionId()))
-    },
-    
-    getButtonDescriptionId = function(){
-      return(paste0("ButtonDescription",self$getUISelectionId()))
-    },
     
     getEventsSelected = function(){
       if (length(self$listFilters) == 0){

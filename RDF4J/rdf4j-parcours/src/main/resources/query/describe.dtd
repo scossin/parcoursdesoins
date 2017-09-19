@@ -1,5 +1,6 @@
 <!ELEMENT eventslinks (event, context)>
-<!ELEMENT event (eventType,predicate, value)>
+<!ELEMENT event (terminologyName, eventType,predicate, value)>
+<!ELEMENT terminologyName (#PCDATA)>
 <!ELEMENT eventType (#PCDATA)>
 <!ELEMENT predicate (predicateType)>
 <!ELEMENT predicateType (#PCDATA)>

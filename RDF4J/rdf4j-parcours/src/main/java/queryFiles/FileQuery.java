@@ -7,7 +7,7 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.rio.RDFParseException;
 
 import parameters.MainResources;
-import terminology.Terminology.TerminoEnum;
+import terminology.TerminoEnum;
 
 public interface FileQuery {
 	
@@ -28,14 +28,14 @@ public interface FileQuery {
 	}
 	
 	public static FileQuery getHierarchy() throws RDFParseException, RepositoryException, IOException{
-		return(new GetSunburstHierarchy(MainResources.ontologyFileName,TerminoEnum.EVENTS.getTermino().getClassNameIRI()));
+		return(new GetSunburstHierarchy(MainResources.ontologyFileName,TerminoEnum.EVENTS.getTermino().getMainClassIRI()));
 	}
 	
 	public static FileQuery getPredicateDescription(String className) throws IOException {
 		for (TerminoEnum termino : TerminoEnum.values()){
 			String localName = termino.getTerminologyName();
 			if (localName.equals(className)){
-				return(new GetPredicateDescription(termino));
+				return(new GetPredicateDescription(termino.getTermino()));
 			}
 		}
 		throw new IOException();

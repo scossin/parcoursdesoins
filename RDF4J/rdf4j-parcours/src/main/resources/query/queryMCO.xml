@@ -2,6 +2,7 @@
 <!DOCTYPE eventslinks SYSTEM "eventslinks.dtd">
 <eventslinks>
 	<event number="0">
-		<eventType>SejourMCO</eventType>	
+		<terminologyName>Event</terminologyName>
+		<eventType>SejourMCO</eventType>
 	</event>
 </eventslinks>

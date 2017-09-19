@@ -21,35 +21,28 @@ import parameters.MainResources;
 import parameters.Util;
 import servlet.DockerDB;
 import servlet.DockerDB.Endpoints;
+import terminology.TerminoEnum;
+import terminology.Terminology;
+import terminology.TerminologyInstances;
 
 public class XMLCountQuery implements Query {
 
 	private XMLFile xml;
+	
 	private String sparqlQuery;
-	public XMLCountQuery(XMLFile xml){
+	
+	private Terminology terminology;
+	
+	public XMLCountQuery(XMLFile xml) throws UnfoundTerminologyException{
 		this.xml = xml;
+		this.terminology = TerminologyInstances.getTerminology(TerminoEnum.EVENTS.getTerminologyName());
 		setSparqlQuery();
 	}
 	
 	private void setSparqlQuery(){
-//		// Assuming the ontology sparqlEndpoint is in the same DB
-//		String queryString = "SELECT ?event (count(?s) as ?count) WHERE { GRAPH ?context { ?s a ?event . \n"+
-//				"SERVICE serviceURL { \n" +
-//				"?event a ?o . \n" + 
-//				"FILTER(regex(str(?event)," +
-//				" \"NAMESPACE\"" + 
-//				"))\n}}} \n" + 
-//				"group by ?event \n" ;
-		
-		
 		String queryString = "SELECT ?className (count(?className) as ?count) WHERE { GRAPH ?context { \n"+
 				"?event "+  Query.formatIRI4query(EIG.HASTYPE) + " ?className .}} \n " + 
 				"group by ?className \n" ;
-		
-//		String serviceURL = "<http://127.0.0.1:8080" + Endpoints.ONTOLOGY.getURL() + ">";
-//		String namespace = EIG.NAMESPACE;
-//		queryString = queryString.replaceAll("serviceURL", serviceURL);
-//		queryString = queryString.replaceAll("NAMESPACE", namespace);
 		this.sparqlQuery = queryString;
 	}
 	public String getSPARQLQueryString() {
@@ -79,6 +72,11 @@ public class XMLCountQuery implements Query {
 
 	public Endpoints getEndpoint() {
 		return Endpoints.TIMELINES; // request is specific to this Endpoint
+	}
+
+	@Override
+	public Terminology getTerminology() {
+		return terminology;
 	}
 }
 

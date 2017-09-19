@@ -6,20 +6,27 @@ import java.util.Set;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Value;
-import org.omg.PortableServer.ServantRetentionPolicyValue;
 
-import queryFiles.GetPredicateDescription.ValueCategory;
+import queryFiles.PredicateDescription.ValueCategory;
 
 public class Predicates{
 
 	private Set<Literal> labels = new HashSet<Literal>();
 	private Set<Literal> comments = new HashSet<Literal>();
 	private Value expectedValue ;
-	boolean isObjectProperty ;
+	private boolean isObjectProperty ;
+	
+	public void setIsObjectProperty(boolean isObjectProperty){
+		this.isObjectProperty = isObjectProperty;
+	}
+	
+	public boolean getIsObjectProperty(){
+		return(this.isObjectProperty);
+	}
 	
 	private ValueCategory category;
 	
-	public  void setValueCategory(ValueCategory category){
+	public void setValueCategory(ValueCategory category){
 		this.category = category;
 	}
 	

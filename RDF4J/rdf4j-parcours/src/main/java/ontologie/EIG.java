@@ -5,6 +5,11 @@ import org.eclipse.rdf4j.model.Namespace;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleNamespace;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import exceptions.InvalidContextException;
+import parameters.Util;
 
 /**
  * A class containing static fields to describe the ontology
@@ -14,6 +19,8 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
  */
 
 public class EIG {
+	final static Logger logger = LoggerFactory.getLogger(EIG.class);
+	
 	public static final String NAMESPACE = "http://www.eigsante2017.fr#";
 
 	/**
@@ -53,5 +60,20 @@ public class EIG {
 		HASTYPE = factory.createIRI(EIG.NAMESPACE, "hasType");
 		HASPOLYGON = factory.createIRI(EIG.NAMESPACE, "hasPolygon");
 		GRAPH = "Graph";
+	}
+	
+	/**
+	 * Check if the context String is correct and return the IRI of the context (named graph)
+	 * @param contextName A string of the context localName (ex : p20)
+	 * @return an IRI of the contextName in the namespace of my ontology
+	 * @throws InvalidContextException if contextName is not valid
+	 */
+	public static IRI getContextIRI(String contextName) throws InvalidContextException{
+		if (Util.isValidContextName(contextName)){
+			IRI contextIRI = Util.vf.createIRI(EIG.NAMESPACE, contextName);
+			return contextIRI;
+		} else {
+			throw new InvalidContextException(logger, contextName);
+		}
 	}
 }

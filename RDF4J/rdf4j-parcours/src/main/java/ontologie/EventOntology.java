@@ -35,7 +35,7 @@ import exceptions.UnfoundPredicatException;
 import parameters.MainResources;
 import parameters.Util;
 import query.Query;
-import terminology.Terminology;
+import terminology.TerminologyInstances;
 
 /**
  * This class represents an ontology of events. 
@@ -361,7 +361,7 @@ public class EventOntology {
 
 	
 	public static boolean isRecognizedDatatype(IRI datatypeIRI){ 
-		return(Terminology.isRecognizedClassName(datatypeIRI) || new XMLSchemaDatatypeHandler().isRecognizedDatatype(datatypeIRI));
+		return(TerminologyInstances.isRecognizedClassName(datatypeIRI) || new XMLSchemaDatatypeHandler().isRecognizedDatatype(datatypeIRI));
 	}
 	
 }

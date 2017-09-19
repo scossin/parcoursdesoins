@@ -23,7 +23,7 @@ import ontologie.EIG;
 import ontologie.TIME;
 import parameters.MainResources;
 import parameters.Util;
-import terminology.Terminology.TerminoEnum;
+import terminology.TerminoEnum;
 
 public class TimelineFile {
 	

@@ -59,7 +59,7 @@ server <- function(input,output,session){
   source("../../classes/values/DateValuesOO.R",local=T)
   
   source("../../classes/events/InstanceSelection.R",local = T)
-  
+  source("../../classes/events/InstanceSelectionEvent.R",local = T)
   # an object to help others objects to create Filter Object
   source("../../classes/filter/STATICfilterCreatorOO.R",local = T)
   staticFilterCreator <- STATICfilterCreator$new()

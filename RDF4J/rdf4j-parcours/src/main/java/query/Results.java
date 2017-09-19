@@ -26,10 +26,8 @@ import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import integration.DBconnection;
-import ontologie.EIG;
 import parameters.MainResources;
 import parameters.Util;
-import query.XMLFile.DTDFiles;
 import servlet.DockerDB;
 
 /**

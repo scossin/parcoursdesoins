@@ -25,9 +25,14 @@ import org.xml.sax.SAXParseException;
 import exceptions.InvalidContextException;
 import exceptions.MyExceptions;
 import exceptions.UnfoundDTDFile;
+import exceptions.UnfoundTerminologyException;
 import ontologie.EventOntology;
 import parameters.MainResources;
 import parameters.Util;
+import query.XMLFile.XMLelement;
+import terminology.TerminoEnum;
+import terminology.Terminology;
+import terminology.TerminologyInstances;
 
 /**
  * This class handles a XML file containing the query. <br>
@@ -184,25 +189,6 @@ public class XMLFile {
 	    setContextDataSet(doc.getElementsByTagName(XMLelement.context.toString()));
 	}
 	
-	
-	public enum DTDFiles {
-		SearchQuery(MainResources.dtdSearchFile),
-		DescribeQuery(MainResources.dtdDescribeFile),
-		CountQuery(MainResources.dtdCountFile),
-		DescribeTerminologyQuery(MainResources.dtdDescribeTerminologyFile);
-		
-		
-		private final String filePath;
-		
-		public String getFilePath(){
-			return(filePath);
-		}
-		
-		private DTDFiles (String filePath) {
-			this.filePath = filePath;
-		}
-	}
-	
 	private void setDTDFile(DTDFiles DTDFile){
 		this.DTDFile = DTDFile;
 	}
@@ -314,6 +300,15 @@ public class XMLFile {
 		return(element.getElementsByTagName(XMLvariableType.date.toString()));
 	}
 	
+	
+	public static Terminology getTerminology(Node eventNode) throws UnfoundTerminologyException{
+		Element element = (Element) eventNode;
+		NodeList terminolyNameNodes = element.getElementsByTagName(XMLelement.terminologyName.toString());
+		Node terminolyNameNode = terminolyNameNodes.item(0);
+		String terminologyName = terminolyNameNode.getTextContent();
+		Terminology terminology = TerminologyInstances.getTerminology(terminologyName);
+		return(terminology);
+	}
 	
 	
 	public static void main(String[] args) throws SAXException, IOException, ParserConfigurationException, InvalidContextException {

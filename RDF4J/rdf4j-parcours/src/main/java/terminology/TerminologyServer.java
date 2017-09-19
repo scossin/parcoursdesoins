@@ -19,7 +19,6 @@ import integration.DBconnection;
 import parameters.Util;
 import query.Query;
 import servlet.DockerDB;
-import terminology.Terminology.TerminoEnum;
 
 public class TerminologyServer {
 
@@ -55,7 +54,7 @@ public class TerminologyServer {
 
 	
 	public void countInstances(){
-		IRI classNameIRI = termino.getTermino().getClassNameIRI();
+		IRI classNameIRI = termino.getTermino().getMainClassIRI();
 		logger.info("Counting number of instances of " + classNameIRI.stringValue());
 		String query = countInstancesQuery(classNameIRI);
 		TupleQueryResult queryResult = con.getDBcon().prepareTupleQuery(query).evaluate();
@@ -105,7 +104,7 @@ public class TerminologyServer {
 	
 	public Set<IRI> getInstancesOfTerminology(){
 		Set<IRI> instancesIRI = new HashSet<IRI>();
-		IRI className = termino.getTermino().getClassNameIRI();
+		IRI className = termino.getTermino().getMainClassIRI();
 		String query = getInstancesQuery(className);
 		
 		logger.info("Trying to get instances of "+ className.stringValue() + "...");
@@ -182,7 +181,7 @@ public class TerminologyServer {
 
 	
 	public boolean isInstanceOfTerminology(String instanceName, IRI classNameIRI) throws UnfoundTerminologyException{
-		IRI instanceIRI = Terminology.getTerminology(classNameIRI).makeInstanceIRI(instanceName);
+		IRI instanceIRI = TerminologyInstances.getTerminology(classNameIRI).makeInstanceIRI(instanceName);
 		String query = makeBooleanQuery(instanceIRI, classNameIRI);
 		boolean answer = con.getDBcon().prepareBooleanQuery(query).evaluate();
 		return(answer);

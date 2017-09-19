@@ -1,0 +1,15 @@
+<!ELEMENT eventslinks (event)>
+<!ELEMENT event (terminologyName,eventType, predicate+)>
+<!ELEMENT terminologyName (#PCDATA)>
+<!ELEMENT eventType (#PCDATA)>
+<!ELEMENT predicate (numeric|factor|date)>
+
+<!ELEMENT numeric (predicateType, minValue, maxValue)>
+<!ELEMENT date (predicateType, minValue, maxValue)>
+
+<!ELEMENT predicateType (#PCDATA)>
+<!ELEMENT minValue (#PCDATA)>
+<!ELEMENT maxValue (#PCDATA)>
+
+<!ELEMENT factor (predicateType, value+)>
+<!ELEMENT value (#PCDATA)>

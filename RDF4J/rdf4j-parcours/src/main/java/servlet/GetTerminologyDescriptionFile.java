@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import queryFiles.FileQuery;
 import queryFiles.FilesAvailable;
-import terminology.Terminology.TerminoEnum;
+import terminology.TerminoEnum;
 
 public class GetTerminologyDescriptionFile extends HttpServlet {
 

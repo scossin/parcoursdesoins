@@ -19,12 +19,14 @@ import org.xml.sax.SAXException;
 import exceptions.InvalidContextException;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
+import exceptions.UnfoundTerminologyException;
 import ontologie.EIG;
 import ontologie.TIME;
 import parameters.MainResources;
 import parameters.Util;
 import query.XMLFile.XMLelement;
 import servlet.DockerDB.Endpoints;
+import terminology.Terminology;
 
 /**
  * The describe event query return predicate and value of a particular event
@@ -53,7 +55,7 @@ public class XMLDescribeQuery implements Query {
 	 */
 	private Set<IRI> predicateValuesTime = new HashSet<IRI>();
 	
-	
+	private Terminology terminology ;
 	
 	
 	private final String eventReplacementString = "EVENTSINSTANCESgoHERE";
@@ -88,10 +90,12 @@ public class XMLDescribeQuery implements Query {
 	 * @throws UnfoundEventException
 	 * @throws UnfoundPredicatException
 	 * @throws InvalidContextException
+	 * @throws UnfoundTerminologyException 
 	 */
-	public XMLDescribeQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException{
+	public XMLDescribeQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException{
 		this.xml = xml;
 		Node eventNode = xml.getEventNodes().item(0);
+		this.terminology = xml.getTerminology(eventNode);
 		setEventValuesSPARQL(eventNode);
 		setPredicatesValues(eventNode);
 		replacePredicatesValues();
@@ -214,7 +218,7 @@ public class XMLDescribeQuery implements Query {
 	}
 	
 	
-	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException{
+	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException{
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
 		XMLFile file = new XMLFile(xmlFile);
 		XMLDescribeQuery describe = new XMLDescribeQuery(file);
@@ -224,6 +228,11 @@ public class XMLDescribeQuery implements Query {
 
 	@Override
 	public Endpoints getEndpoint() {
-		return Endpoints.TIMELINES;
+		return terminology.getEndpoint();
+	}
+
+	@Override
+	public Terminology getTerminology() {
+		return terminology;
 	}
 }

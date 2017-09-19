@@ -25,11 +25,9 @@ import ontologie.Event;
 import ontologie.EventOntology;
 import ontologie.TIME;
 import parameters.Util;
-import servlet.DockerDB;
-import servlet.DockerDB.Endpoints;
+import terminology.TerminoEnum;
 import terminology.Terminology;
 import terminology.TerminologyServer;
-import terminology.Terminology.TerminoEnum;
 
 /**
  * A class to transform statements in a CSV file to statements in RDF. <br>
@@ -283,7 +281,7 @@ public class LineStatement {
 		
 		for (TerminoEnum termino : terminos){
 			TerminologyServer terminoServer = new TerminologyServer(termino);
-			IRI terminoIRI = termino.getTermino().getClassNameIRI();
+			IRI terminoIRI = termino.getTermino().getMainClassIRI();
 			instancesOfTerminology.put(terminoIRI, terminoServer.getInstancesOfTerminology());
 			terminoServer.countInstances();
 			terminoServer.getCon().close();

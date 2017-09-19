@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE eventslinks SYSTEM "eventslinks.dtd">
+<eventslinks>
+	<event number="0">
+		<terminologyName>Graph</terminologyName>
+		<eventType>Graph</eventType>
+		<predicate>
+			<factor>
+				<predicateType>CatAge</predicateType>
+				<value>18-75	+75</value>
+			</factor>
+		</predicate>
+	</event>
+</eventslinks>

@@ -2,6 +2,7 @@
 <!DOCTYPE eventslinks SYSTEM "eventslinks.dtd">
 <eventslinks>
 	<event number="0">
+		<terminologyName>Event</terminologyName>
 		<eventType>SejourMCO</eventType>	
 		<predicate>
 			<factor>
@@ -11,6 +12,7 @@
 		</predicate>
 	</event>
 		<event number="1">
+		<terminologyName>Event</terminologyName>
 		<eventType>SejourSSR</eventType>
 		
 	</event>
