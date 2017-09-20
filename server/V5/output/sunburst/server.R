@@ -24,7 +24,7 @@ server <- function(input,output,session){
     )
 
   # GLOBALterminologyDescription$Etablissement$getPredicateDescription("E")
-  # GLOBALterminologyDescription$Event$predicatesDf
+  # GLOBALterminologyDescription$RPPS$predicatesDf
     # GLOBALterminologyDescription$CONTEXT$getPredicateDescriptionOfEvent("Graph")
     #   getPredicateDescriptionOfEvent("")
     # GLOBALterminologyDescription$Etablissement$predicatesDf
@@ -35,7 +35,7 @@ server <- function(input,output,session){
   source("../../classes/queries/XMLDescribeTerminologyQueryOO.R",local = T)
   source("../../classes/queries/XMLqueryOO.R",local=T)
   source("../../classes/queries/XMLSearchQueryOO.R",local=T)
-  
+  source("../../classes/queries/XMLSearchQueryTerminologyOO.R",local=T)
   
 
   source("../../classes/superClasses/uiObject.R",local=T)
@@ -60,6 +60,7 @@ server <- function(input,output,session){
   
   source("../../classes/events/InstanceSelection.R",local = T)
   source("../../classes/events/InstanceSelectionEvent.R",local = T)
+  source("../../classes/events/InstanceSelectionContext.R",local = T)
   # an object to help others objects to create Filter Object
   source("../../classes/filter/STATICfilterCreatorOO.R",local = T)
   staticFilterCreator <- STATICfilterCreator$new()
@@ -75,13 +76,12 @@ server <- function(input,output,session){
   ### Context : 
   staticLogger$info("creating Context...")
   # get a sample ...
-  
   contextEvents <- data.frame(context=paste0("p",1:100),event=paste0("p",1:100))
   parentId = "contextId"
   where = "beforeEnd"
   contextEnv <- new.env()
-  contextEnv$eventNumber <- 99999
-  contextEnv$instanceSelection <- InstanceSelection$new(contextEnv = contextEnv, 
+  contextEnv$eventNumber <- 0
+  contextEnv$instanceSelection <- InstanceSelectionContext$new(contextEnv = contextEnv, 
                                                         terminologyName = "Graph", 
                                                         className = "Graph", 
                                                         contextEvents = contextEvents, 

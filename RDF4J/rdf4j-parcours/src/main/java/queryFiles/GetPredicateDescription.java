@@ -12,6 +12,8 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.rio.RDFParseException;
 
+import terminology.PredicateDescription;
+import terminology.Predicates;
 import terminology.TerminoEnum;
 import terminology.Terminology;
 

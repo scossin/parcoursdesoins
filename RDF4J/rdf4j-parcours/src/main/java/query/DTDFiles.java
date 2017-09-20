@@ -3,7 +3,8 @@ package query;
 import parameters.MainResources;
 
 public enum DTDFiles {
-	SearchQuery(MainResources.dtdSearchFile),
+	SearchQueryTerminology(MainResources.dtdSearchTerminology),
+	SearchQueryTimelines(MainResources.dtdSearchTimelines),
 	DescribeQuery(MainResources.dtdDescribeFile),
 	CountQuery(MainResources.dtdCountFile),
 	DescribeTerminologyQuery(MainResources.dtdDescribeTerminologyFile);

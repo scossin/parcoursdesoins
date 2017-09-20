@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import exceptions.UnfoundResultVariable;
 import queryFiles.FileQuery;
 import queryFiles.FilesAvailable;
 import terminology.TerminoEnum;
@@ -75,7 +76,11 @@ public class GetTerminologyDescriptionFile extends HttpServlet {
 		if (information.equals("predicateDescription")){
 			fileQuery = FileQuery.getPredicateDescription(terminologyName);
 		} else if (information.equals("predicateFrequency")){
-			fileQuery = FileQuery.getPredicateFrequency(terminologyName);
+			try {
+				fileQuery = FileQuery.getPredicateFrequency(terminologyName);
+			} catch (UnfoundResultVariable e) {
+				e.printStackTrace();
+			}
 		} else if (information.equals("hierarchy")){
 			fileQuery = FileQuery.getHierarchy();
 		}

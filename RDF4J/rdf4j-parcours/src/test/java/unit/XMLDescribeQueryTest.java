@@ -13,19 +13,19 @@ import org.xml.sax.SAXException;
 import exceptions.InvalidContextException;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
+import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
 import parameters.Util;
-import query.XMLDescribeQuery;
+import query.XMLDescribeTimelinesQuery;
 import query.XMLFile;
 
 public class XMLDescribeQueryTest {
 	
 	@Test
-	public void testQueryString() throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException{
+	public void testQueryString() throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException{
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
-		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdDescribeFile);
-		XMLFile file = new XMLFile(xmlFile, dtdFile);
-		XMLDescribeQuery describe = new XMLDescribeQuery(file);
+		XMLFile file = new XMLFile(xmlFile);
+		XMLDescribeTimelinesQuery describe = new XMLDescribeTimelinesQuery(file);
 		System.out.println(describe.getSPARQLQueryString());
 		assertTrue(true);
 	}

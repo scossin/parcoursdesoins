@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import exceptions.UnfoundResultVariable;
 import query.PreparedQuery;
 import query.Query;
 import query.Results;
@@ -57,7 +58,7 @@ public class GetEventPredicateFrequency implements FileQuery{
 		return MIMEType;
 	}
 	
-	public GetEventPredicateFrequency(TerminoEnum terminoEnum) throws IOException{
+	public GetEventPredicateFrequency(TerminoEnum terminoEnum) throws IOException, UnfoundResultVariable{
 		setSparqlQueryString(terminoEnum.getTermino().getNAMESPACE() + terminoEnum.getTerminologyName());
 		Query query = new PreparedQuery(sparqlQueryString, variableNames);
 		String sparqlEndpoint = DockerDB.getEndpointIPadress(terminoEnum.getTermino().getEndpoint());
@@ -66,7 +67,7 @@ public class GetEventPredicateFrequency implements FileQuery{
 		this.fileToSend = results.getFile();
 	}
 	
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws IOException, UnfoundResultVariable{
 		GetEventPredicateFrequency eventPredicateFrequency = new GetEventPredicateFrequency(TerminoEnum.CONTEXT);
 		File file = new File("commentaires.csv");
 		OutputStream os = new FileOutputStream(file);

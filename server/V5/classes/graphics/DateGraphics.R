@@ -19,7 +19,6 @@ DateGraphics <- R6::R6Class(
       self$addChangePlotObserver()
       self$addDygraphObserver()
       self$addDateRangeObserver()
-      
     },
     
     insertDateRangeInput = function(){
@@ -35,11 +34,11 @@ DateGraphics <- R6::R6Class(
     },
     
     getDateRangeId = function(){
-      return(paste0("dateRange",self$parent))
+      return(paste0("dateRange",self$parentId))
     },
     
     updateDateRange = function(){
-      staticLogger$info("Updating DateRange")
+      staticLogger$info("Updating DateRange", self$getDateRangeId())
       shiny::updateDateRangeInput(session = session, 
                            inputId = self$getDateRangeId(),
                            start = self$dateValues$getMinDate(), 
@@ -95,9 +94,9 @@ DateGraphics <- R6::R6Class(
       self$dygraphObserver <- observeEvent(input[[dateWindowInput]],{
         staticLogger$info("date_window changed ! ")
         chosen <- input[[dateWindowInput]]
-        minDate <- strftime(req(chosen[[1]]), "%Y-%m-%d")
-        maxDate <- strftime(req(chosen[[2]]), "%Y-%m-%d")
-        staticLogger$info("minDate : ", as.character(minDate), "maxDate : ", as.character(maxDate))
+        minDate <- as.character(strftime(req(chosen[[1]]), "%Y-%m-%d"))
+        maxDate <- as.character(strftime(req(chosen[[2]]), "%Y-%m-%d"))
+        staticLogger$info("minDate : ", minDate, "maxDate : ", maxDate)
         self$dateValues$setXTSobjectSelection(minDate, maxDate)
         self$updateDateRange()
       })
@@ -114,7 +113,7 @@ DateGraphics <- R6::R6Class(
         }
         minDate <- as.character(values[[1]])
         maxDate <- as.character(values[[2]])
-        if (minDate == self$dateValues$getMinDate() & maxDate == self$dateValues$getMinDate()){
+        if (minDate == self$dateValues$getMinDate() & maxDate == self$dateValues$getMaxDate()){
           staticLogger$info("\t it was an update")
           return(NULL)
         }

@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,8 +23,7 @@ import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
 import parameters.Util;
-import terminology.TerminoEnum;
-import terminology.TerminologyServer;
+import terminology.TerminologyInstances;
 
 /**
  * This class transforms a CSV file containing statements in RDF with {@link LineStatement}
@@ -94,24 +92,13 @@ public class Integration {
 		return(contexts);
 	}
 	
+	public void close(){
+		this.con.close();
+		this.rep.shutDown();
+	}
+	
 	
 	public static void main(String[] args) throws Exception {
-		
-		
-		HashMap<IRI, Set<IRI>> instancesOfTerminology = new HashMap<IRI, Set<IRI>>();
-		
-		Set<TerminoEnum> terminos = new HashSet<TerminoEnum>();
-		terminos.add(TerminoEnum.FINESS);
-		terminos.add(TerminoEnum.RPPS);
-		
-		for (TerminoEnum termino : terminos){
-			TerminologyServer terminoServer = new TerminologyServer(termino);
-			IRI terminoIRI = termino.getTermino().getMainClassIRI();
-			instancesOfTerminology.put(terminoIRI, terminoServer.getInstancesOfTerminology());
-			terminoServer.countInstances();
-			terminoServer.getCon().close();
-		}
-		
 		// TODO Auto-generated method stub
 		Integration integration = new Integration();
 		
@@ -122,16 +109,16 @@ public class Integration {
 		String line = br.readLine();
 		// loop until all lines are read
 		int numLine = 1 ; 
-		LineStatement lineStatement = new LineStatement("\t",instancesOfTerminology);
+		LineStatement lineStatement = new LineStatement("\t",TerminologyInstances.getTerminology("Event"));
 		while (line != null) {
 			try {
 				lineStatement.addLineStatement(line);
 				integration.getCon().add(lineStatement.getStatements());
-				integration.addContext(lineStatement.getContexte());
+				integration.addContext(lineStatement.getContext());
 			} catch (ParseException | UnfoundEventException | UnfoundTerminologyException 
 					| UnfoundPredicatException e) {
 				// TODO Auto-generated catch block
-				System.out.println("Erreur survenue ligne : " + numLine);
+				System.out.println("An error occured line : " + numLine);
 				e.getMessage();
 				e.printStackTrace();
 			}
@@ -147,7 +134,11 @@ public class Integration {
 			TimelineFile.addTriplesInFile(contextIRI, model);
 			integration.getCon().remove(statementsContext,contextIRI);
 		}
-		
 
+		br.close();
+		TimelineFile.close();
+		integration.close();
+		TerminologyInstances.closeConnections();
+		System.out.println("End!");
 }
 }

@@ -30,8 +30,8 @@ import ontologie.EIG;
 import parameters.MainResources;
 import parameters.Util;
 import query.XMLFile.XMLelement;
-import queryFiles.Predicates;
 import servlet.DockerDB.Endpoints;
+import terminology.Predicates;
 import terminology.Terminology;
 
 
@@ -261,7 +261,7 @@ public class XMLSearchQuery implements Query {
 	 * </ul>
 	 */
 	public String[] getVariableNames() {
-		String[] variableNames = {"event"};
+		String[] variableNames = {"event0"};
 		return(variableNames);
 	}
 	

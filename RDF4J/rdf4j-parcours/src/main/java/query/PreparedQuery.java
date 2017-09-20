@@ -3,12 +3,15 @@ package query;
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
 
 import servlet.DockerDB.Endpoints;
+import terminology.Terminology;
 
 public class PreparedQuery implements Query {
 
 	private String[] variableNames;
 	
 	private String sparqlQueryString;
+	
+	Terminology terminology ; 
 	
 	public PreparedQuery(String sparqlQueryString, String[] variableNames){
 		this.variableNames = variableNames;
@@ -29,8 +32,12 @@ public class PreparedQuery implements Query {
 
 	@Override
 	public Endpoints getEndpoint() {
-		// TODO Auto-generated method stub
-		return null;
+		return(terminology.getEndpoint());
+	}
+
+	@Override
+	public Terminology getTerminology() {
+		return(terminology);
 	}
 
 }

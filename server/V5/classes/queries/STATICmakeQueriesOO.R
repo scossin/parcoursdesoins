@@ -6,12 +6,26 @@ STATICmakeQueries <- R6::R6Class(
       staticLogger$info("Initializing a new STATICmakeQueries")
     },
     
-    getContextEvents = function(eventNumber, eventType, context){
+    getContext = function(query){
+      results <- GLOBALcon$sendQuery(query)
+      colnames(results) <- c("context")
+      if (nrow(results)!=0){
+        results$event <- results$context
+      } else {
+        results <- data.frame(context=character(), event=character())
+      }
+      staticLogger$info("Number of context : ",nrow(results))
+      return(results)
+    },
+    
+    getContextEvents = function(eventNumber, terminologyName, eventType, context){
       staticLogger$info("getting Events for",eventNumber, "of type : ", eventType)
       query <- XMLSearchQuery$new()
       query$addContextNode(context)
       query$addEventNode(eventNumber = eventNumber,
-                         eventType = eventType,predicatesNodes = NULL)
+                         terminologyName = terminologyName,
+                         eventType = eventType,
+                         predicatesNodes = NULL)
       results <- self$getContextEventsQuery(query)
       # results <- GLOBALcon$sendQuery(query)
       # colnames(results) <- c("context","event")
@@ -77,17 +91,17 @@ STATICmakeQueries <- R6::R6Class(
     
     getQuery = function(eventType, predicateName, events, context, terminologyName){
       if (terminologyName == GLOBALcon$terminology$Event){
-        return(private$getQueryEvent(eventType, predicateName, events, context))
+        return(private$getQueryEvent(eventType, predicateName, events,terminologyName, context))
       } else {
         return(private$getQueryTerminology(eventType, predicateName, events, terminologyName))
       }
 
     },
     
-    getQueryEvent = function(eventType, predicateName, events, context){
+    getQueryEvent = function(eventType, predicateName, events, terminologyName, context){
       query <- XMLDescribeQuery$new()
       ## the order for making this query is important !!
-      query$addEventTypeNode(eventType)
+      query$addEventTypeNode(eventType, terminologyName)
       query$addPredicateTypeNode(predicateName)
       query$addEventInstances(events)
       query$addContextNode(context)
@@ -96,7 +110,7 @@ STATICmakeQueries <- R6::R6Class(
     
     getQueryTerminology = function(eventType, predicateName, events, terminologyName){
       query <- XMLDescribeTerminologyQuery$new()
-      query$addTerminologyName(terminologyName)
+      query$addTerminologyName(eventType, terminologyName)
       query$addPredicateTypeNode(predicateName)
       query$addEventInstances(events)
       return(query)

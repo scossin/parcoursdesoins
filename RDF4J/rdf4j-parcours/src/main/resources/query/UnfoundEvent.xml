@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE eventslinks SYSTEM "eventslinks.dtd">
+<!DOCTYPE eventslinks SYSTEM "searchTimelines.dtd">
 <eventslinks>
 	<event number="0">
+		<terminologyName>Event</terminologyName>
 		<eventType>SejourMCO2</eventType>
 	</event>
 </eventslinks>

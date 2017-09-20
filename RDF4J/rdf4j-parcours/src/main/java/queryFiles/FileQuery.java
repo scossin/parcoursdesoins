@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.rio.RDFParseException;
 
+import exceptions.UnfoundResultVariable;
 import parameters.MainResources;
 import terminology.TerminoEnum;
 
@@ -41,7 +42,7 @@ public interface FileQuery {
 		throw new IOException();
 	}
 	
-	public static FileQuery getPredicateFrequency(String className) throws IOException {
+	public static FileQuery getPredicateFrequency(String className) throws IOException, UnfoundResultVariable {
 		for (TerminoEnum termino : TerminoEnum.values()){
 			String localName = termino.getTerminologyName();
 			if (localName.equals(className)){

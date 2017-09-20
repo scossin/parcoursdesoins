@@ -26,11 +26,9 @@ import exceptions.InvalidContextException;
 import exceptions.MyExceptions;
 import exceptions.UnfoundDTDFile;
 import exceptions.UnfoundTerminologyException;
-import ontologie.EventOntology;
+import ontologie.EIG;
 import parameters.MainResources;
 import parameters.Util;
-import query.XMLFile.XMLelement;
-import terminology.TerminoEnum;
 import terminology.Terminology;
 import terminology.TerminologyInstances;
 
@@ -310,11 +308,15 @@ public class XMLFile {
 		return(terminology);
 	}
 	
+	public String getTerminologyNameFirstEventNode() throws UnfoundTerminologyException{
+		Terminology terminology = getTerminology(eventNodes.item(0));
+		return(terminology.getTerminologyName());
+	}
 	
 	public static void main(String[] args) throws SAXException, IOException, ParserConfigurationException, InvalidContextException {
 
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "test.xml" );
-		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdSearchFile);
+		InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdSearchTimelines);
 		
 		XMLFile xml = new XMLFile(xmlFile, dtdFile);
 		
@@ -352,7 +354,7 @@ public class XMLFile {
 			return;
 		}
 		for (String contextName : contextValues){
-			IRI contextIRI = EventOntology.getContextIRI(contextName);
+			IRI contextIRI = EIG.getContextIRI(contextName);
 			dataset.addNamedGraph(contextIRI);
 		}
 		logger.info("\t number of contexts in query : " + contextValues.length);

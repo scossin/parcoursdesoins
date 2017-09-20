@@ -1,4 +1,4 @@
-package ontologie;
+package terminology;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
 import parameters.Util;
-import terminology.Terminology;
 
 public class ClassDescription {
 
@@ -41,6 +40,10 @@ public class ClassDescription {
 	
 	public boolean isClassName(String className){
 		IRI classIRI = Util.vf.createIRI(terminologyNS, className);
+		return(isClassName(classIRI));
+	}
+	
+	public boolean isClassName(IRI classIRI){
 		Iterator<OneClass> iter = classes.iterator();
 		while (iter.hasNext()){
 			OneClass oneClass = iter.next();
@@ -51,7 +54,6 @@ public class ClassDescription {
 		}
 		return(false);
 	}
-	
 	
 	/**
 	 * Retrieve the instance of class {@link OneClass} with the IRI of the class

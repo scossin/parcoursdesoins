@@ -10,6 +10,7 @@ import java.text.ParseException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
@@ -24,6 +25,7 @@ import exceptions.InvalidXMLFormat;
 import exceptions.OperatorException;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
+import exceptions.UnfoundResultVariable;
 import exceptions.UnfoundTerminologyException;
 import integration.DBconnection;
 import parameters.MainResources;
@@ -92,8 +94,9 @@ public class Results {
 	 * Write the result of a SPARQL query to file
 	 * @param tupleResult a result of a SPARQL query 
 	 * @throws IOException
+	 * @throws UnfoundResultVariable 
 	 */
-	private void writeResults(TupleQueryResult tupleResult) throws IOException{
+	private void writeResults(TupleQueryResult tupleResult) throws IOException, UnfoundResultVariable{
 		logger.info("Writing results to file : "+ resultFile.getAbsolutePath());
 		
 		setUpBufferWriter(); // create a new instance
@@ -112,8 +115,12 @@ public class Results {
 			sb.setLength(0);
 			BindingSet set = tupleResult.next();
 			for (String variable : query.getVariableNames()){
+				Value value = set.getValue(variable);
+				if (value == null){
+					throw new UnfoundResultVariable(logger, variable, query);
+				}
 				try{
-					IRI variableIRI = (IRI) set.getValue(variable);
+					IRI variableIRI = (IRI) value;
 					sb.append(variableIRI.getLocalName());
 				} catch (ClassCastException e){
 					sb.append(set.getValue(variable).stringValue());
@@ -180,8 +187,9 @@ public class Results {
 	/**
 	 * Check if a result file already exists or send the query and save result on disk.
 	 * @throws IOException
+	 * @throws UnfoundResultVariable 
 	 */
-	public void serializeResult() throws IOException{
+	public void serializeResult() throws IOException, UnfoundResultVariable{
 		if (isFileAlreadyExists()){
 			logger.info("Query not sent : file already exists");
 		} else {
@@ -190,7 +198,7 @@ public class Results {
 		}
 	}
 	
-	public static void main(String[] args) throws NumberFormatException, ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat {
+	public static void main(String[] args) throws NumberFormatException, ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, UnfoundResultVariable {
 		SimpleDataset dataset = new SimpleDataset();
 //		int n = 10;
 //		IRI patients[] = new IRI[n];

@@ -1,4 +1,4 @@
-package queryFiles;
+package terminology;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,15 +26,13 @@ import exceptions.UnfoundPredicatException;
 import ontologie.EIG;
 import parameters.Util;
 import query.Query;
-import terminology.Terminology;
-import terminology.TerminologyInstances;
 
 public class PredicateDescription {
 
 	final static Logger logger = LoggerFactory.getLogger(PredicateDescription.class);
 	
 	public enum ValueCategory {
-		NUMERIC, DURATION, DATE, FACTOR, TERMINOLOGY, SPATIALPOLYGON;
+		NUMERIC, DURATION, DATE, STRING, HIERARCHY, TERMINOLOGY, SPATIALPOLYGON;
 	}
 	
 	private HashMap<IRI, Predicates> predicatesMap = new HashMap<IRI, Predicates>();
@@ -149,6 +147,10 @@ public class PredicateDescription {
 			return(ValueCategory.SPATIALPOLYGON);
 		}
 		
+		if (predicateIRI.equals(EIG.HASTYPE)){
+			return(ValueCategory.HIERARCHY);
+		}
+		
 		if (XMLDatatypeUtil.isNumericDatatype(valueIRI)){
 			// Special case : 
 			if (predicateIRI.equals(EIG.HASDURATION)){
@@ -164,6 +166,6 @@ public class PredicateDescription {
 		if (TerminologyInstances.isRecognizedClassName(valueIRI)){
 			return(ValueCategory.TERMINOLOGY);
 		}
-		return(ValueCategory.FACTOR); // default
+		return(ValueCategory.STRING); // default
 	}
 }

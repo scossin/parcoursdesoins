@@ -12,12 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
-import ontologie.ClassDescription;
-import ontologie.OneClass;
 import parameters.MainResources;
 import parameters.Util;
-import queryFiles.PredicateDescription;
-import queryFiles.Predicates;
 import servlet.DockerDB.Endpoints;
 
 public class Terminology {
@@ -52,6 +48,8 @@ public class Terminology {
 	 
 	 private ClassDescription classDescription ;
 	 
+	 private TerminologyServer terminologyServer ;
+	 
 	 public String getTerminologyName(){
 		 return(terminologyName);
 	 }
@@ -62,6 +60,10 @@ public class Terminology {
 	 
 	 public ClassDescription getClassDescription(){
 		 return(classDescription);
+	 }
+	 
+	 public TerminologyServer getTerminologyServer(){
+		 return(terminologyServer);
 	 }
 	 
 	 public Terminology(String terminologyName, String NAMESPACE, String PREFIX, String className, String ontologyFileName, 
@@ -78,6 +80,7 @@ public class Terminology {
 	 public Terminology initialize() throws RDFParseException, RepositoryException, IOException{
 		 this.classDescription = new ClassDescription(this);
 		 this.predicateDescription = new PredicateDescription(this);
+		 this.terminologyServer = new TerminologyServer(this);
 		 return(this);
 	 }
 	 

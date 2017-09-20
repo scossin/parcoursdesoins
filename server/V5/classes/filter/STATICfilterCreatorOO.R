@@ -94,7 +94,7 @@ STATICfilterCreator <- R6::R6Class(
         pointerEnv <- PointerEnv$new(contextEnvParent = contextEnv,
                                      contextEnv = contextEnv2)
         return(pointerEnv)
-      } else if (filterType == "FACTOR"){
+      } else if (filterType == "STRING"){
         filterCategorical <- FilterCategorical$new(contextEnv = contextEnv, 
                                                    predicateName = predicateName, 
                                                    dataFrame = dataFrame,
@@ -118,7 +118,7 @@ STATICfilterCreator <- R6::R6Class(
   ),
   
   private = list(
-    availableFilters = c("NUMERIC","DATE","HIERARCHICAL","FACTOR","DURATION", "TERMINOLOGY"),
+    availableFilters = c("NUMERIC","DATE","HIERARCHICAL","STRING","DURATION", "TERMINOLOGY"),
     ## DEPRECATED
     checkEnvironment = function(contextEnv){
       objectsList <- ls(contextEnv)

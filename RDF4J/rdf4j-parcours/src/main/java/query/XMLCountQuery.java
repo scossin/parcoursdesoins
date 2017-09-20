@@ -15,6 +15,7 @@ import exceptions.InvalidXMLFormat;
 import exceptions.OperatorException;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
+import exceptions.UnfoundResultVariable;
 import exceptions.UnfoundTerminologyException;
 import ontologie.EIG;
 import parameters.MainResources;
@@ -59,7 +60,7 @@ public class XMLCountQuery implements Query {
 		return variablesNames;
 	}
 
-	public static void main (String[] args) throws NumberFormatException, UnfoundEventException, UnfoundPredicatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, ParserConfigurationException, SAXException, IOException, ParseException{
+	public static void main (String[] args) throws NumberFormatException, UnfoundEventException, UnfoundPredicatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, ParserConfigurationException, SAXException, IOException, ParseException, UnfoundResultVariable{
 		//QueryClass queryClass = new QueryClass(new File(Util.queryFolder+"queryMCOSSR3day.xml"));
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "countQuery2contexts.xml" );
 		XMLFile xml = new XMLFile(xmlFile);

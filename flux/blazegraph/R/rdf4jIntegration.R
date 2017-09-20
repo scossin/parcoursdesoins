@@ -9,16 +9,27 @@ load("listeevents_consultation.rdata") ### cette data.frame est obtenue par le s
 
 eventstype <- read.table("eventstype.csv",sep="\t", header=T)
 listeevents <- merge (listeevents, eventstype, by="nature", all.x=T)
+
+### date de début après date de fin ! : inversion
+bool <- listeevents$start > listeevents$end & !is.na(listeevents$end)
+sum(bool,na.rm = T)
+SSR <- subset (listeevents,bool)
+listeevents <- subset(listeevents,!bool)
+colnames(SSR) <- c("nature","patientid","id","finess","end","start","group","type")
+listeevents <- rbind(listeevents, SSR)
+
+###
 bool <- is.na(listeevents$type)
+sum(bool)
 listeevents$start <- format(listeevents$start, "%Y_%m_%d_%H_%M_%S")
 listeevents$end <- format(listeevents$end, "%Y_%m_%d_%H_%M_%S")
-sum(bool)
+
 ## ce sont les consultations 
 listeevents$type <- as.character(listeevents$type)
 listeevents$type[bool] <- "Consultation"
 listeevents$type <- as.factor(listeevents$type)
 listeevents$patientid <- gsub("patient","p", listeevents$patientid)
-colnames(listeevents)
+table(listeevents$type)
 
 ### sélection d'un seul patient : 
 addPredicateValue <- function(df, contexte, variable, relation){
@@ -48,6 +59,7 @@ hasBeginning <- addPredicateValue(listeevents, contexte,"start","hasBeginning")
 ## description hospitalisation
 hospit <- subset(listeevents, group=="Hospitalisation")
 inEtab <- addPredicateValue(hospit, contexte,"finess","inEtab")
+inEtab$value <- paste0("Etablissement",inEtab$value)
 
 ## prix des events : 
 hasPrice <- addPredicateValue(hospit, contexte,"price","hasPrice")
@@ -55,6 +67,7 @@ hasPrice <- addPredicateValue(hospit, contexte,"price","hasPrice")
 ## description consultation : 
 consultation <- subset(listeevents, group=="Consultation")
 inDoctor <- addPredicateValue(consultation, contexte,"nature","inDoctor")
+inDoctor$value <- paste0("RPPS",inDoctor$value)
 #write.table(inDoctor,"inDoctor.csv",sep="\t",col.names = F, row.names = F,quote=F)
 
 allRelations <- rbind (hasEnd, hasBeginning, inEtab,inDoctor,hasPrice)

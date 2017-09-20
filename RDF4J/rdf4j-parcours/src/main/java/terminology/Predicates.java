@@ -1,4 +1,4 @@
-package queryFiles;
+package terminology;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,7 +7,7 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Value;
 
-import queryFiles.PredicateDescription.ValueCategory;
+import terminology.PredicateDescription.ValueCategory;
 
 public class Predicates{
 

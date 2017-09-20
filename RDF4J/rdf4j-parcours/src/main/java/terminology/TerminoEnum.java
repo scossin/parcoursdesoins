@@ -1,5 +1,10 @@
 package terminology;
 
+import java.io.IOException;
+
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
+
 import ontologie.EIG;
 import servlet.DockerDB.Endpoints;
 
@@ -12,7 +17,7 @@ public enum TerminoEnum {
 	FINESS(new Terminology("Etablissement","https://www.data.gouv.fr/FINESS#","datagouv","Etablissement","FINESS-ontology.owl",
 			"FINESS.ttl", Endpoints.FINESS)),
 	
-	EVENTS(new Terminology("Event",EIG.NAMESPACE,EIG.PREFIX,EIG.eventClassName,"events-ontology.owl",
+	EVENTS(new Terminology(EIG.TerminologyName,EIG.NAMESPACE,EIG.PREFIX,EIG.eventClassName,"events-ontology.owl",
 			null, Endpoints.TIMELINES)),
 	
 	CONTEXT(new Terminology("Graph",EIG.NAMESPACE,EIG.PREFIX,EIG.GRAPH,"Context-ontology.owl",
@@ -24,8 +29,8 @@ public enum TerminoEnum {
 		this.terminology = terminology;
 	}
 	
-	public Terminology getTermino(){
-		return(terminology);
+	public Terminology getTermino() throws RDFParseException, RepositoryException, IOException{
+		return(terminology.initialize());
 	}
 	
 	public String getTerminologyName(){

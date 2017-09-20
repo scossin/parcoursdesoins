@@ -1,10 +1,10 @@
-InstanceSelectionEvent <- R6::R6Class(
+InstanceSelectionContext <- R6::R6Class(
   inherit = InstanceSelection,
-  "InstanceSelectionEvent",
+  "InstanceSelectionContext",
   
   public = list(
     buttonDescriptionObserver = NULL,
-    buttonSearchEventsObserver = NULL,
+    buttonSearchContextsObserver = NULL,
     
     initialize = function(contextEnv, terminologyName, className, contextEvents, parentId, where){
       self$contextEnv <- contextEnv
@@ -16,18 +16,17 @@ InstanceSelectionEvent <- R6::R6Class(
       self$parentId <- parentId
       self$addUIselection()
       self$addButtonDescriptionObserver()
-      self$addButtonSearchEventsObserver()
+      self$addButtonSearchContextsObserver()
       self$setButtonFilter(self$getDivFiltersId(), where)
 
-      staticLogger$info("new instanceSelectionEvent")
+      staticLogger$info("new instanceSelectionContext")
     },
     
     searchAndUpdate = function(){
-      staticLogger$info("Searching new events...")
+      staticLogger$info("Searching new contexts...")
       
       staticLogger$info("\t getting predicatesNodes")
-      query <- XMLSearchQuery$new()
-      query$addContextNode(self$context)
+      query <- XMLSearchQueryTerminology$new()
       query$addEventNode(eventNumber = self$contextEnv$eventNumber,
                          terminologyName = self$terminologyName,
                          eventType = self$className)
@@ -37,11 +36,9 @@ InstanceSelectionEvent <- R6::R6Class(
           query$addPredicateNode2(eventNumber = self$contextEnv$eventNumber,predicateNode = predicateNode)
         }
       }
-      
       ## updatingContextEvents 
       staticLogger$info("\t updating ContextEvents")
-      self$contextEvents <- staticMakeQueries$getContextEventsQuery(query)
-      
+      self$contextEvents <- staticMakeQueries$getContext(query)
       ## updateFilter :
       self$updateFilters()
     },
@@ -50,7 +47,7 @@ InstanceSelectionEvent <- R6::R6Class(
       ui <- div(id=self$getUISelectionId(),
                 actionButton(inputId = self$getButtonDescriptionId(), 
                              label = "Description"),
-                actionButton(inputId = self$getButtonSearchEventsId(), 
+                actionButton(inputId = self$getButtonSearchContextsId(), 
                              label = "Search"),
                 verbatimTextOutput(outputId = self$getTextDescriptionId()),
                 div(id=self$getDivFiltersId())
@@ -66,16 +63,16 @@ InstanceSelectionEvent <- R6::R6Class(
       removeUI(selector = jQuerySelector)
     },
     
-    addButtonSearchEventsObserver = function(){
-      self$buttonSearchEventsObserver <- observeEvent(input[[self$getButtonSearchEventsId()]], {
+    addButtonSearchContextsObserver = function(){
+      self$buttonSearchContextsObserver <- observeEvent(input[[self$getButtonSearchContextsId()]], {
         staticLogger$info("Search Events clicked !")
         self$searchAndUpdate()
         return(NULL)
       })
     },
     
-    getButtonSearchEventsId = function(){
-      return(paste0("SearchEvents",self$getUISelectionId()))
+    getButtonSearchContextsId = function(){
+      return(paste0("SearchContexts",self$getUISelectionId()))
     },
     
     addButtonDescriptionObserver = function(){
@@ -113,9 +110,9 @@ InstanceSelectionEvent <- R6::R6Class(
       staticLogger$info("Destroying InstanceSelectionEvent")
       super$destroy()
       
-      staticLogger$info("\t Destroying buttonSearchEventsObserver")
-      if (!is.null(self$buttonSearchEventsObserver )){
-        self$buttonSearchEventsObserver$destroy()
+      staticLogger$info("\t Destroying buttonSearchContextsObserver")
+      if (!is.null(self$buttonSearchContextsObserver )){
+        self$buttonSearchContextsObserver$destroy()
         staticLogger$info("\t  \t done")
       }
       staticLogger$info("\t Destroying buttonDescriptionObserver")

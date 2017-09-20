@@ -30,8 +30,8 @@ import ontologie.EIG;
 import parameters.MainResources;
 import parameters.Util;
 import query.XMLFile.XMLelement;
-import queryFiles.Predicates;
 import servlet.DockerDB.Endpoints;
+import terminology.Predicates;
 import terminology.Terminology;
 
 

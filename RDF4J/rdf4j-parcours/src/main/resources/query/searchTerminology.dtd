@@ -1,5 +1,6 @@
 <!ELEMENT eventslinks (event)>
 <!ELEMENT event (terminologyName,eventType, predicate+)>
+<!ATTLIST event number CDATA #REQUIRED>
 <!ELEMENT terminologyName (#PCDATA)>
 <!ELEMENT eventType (#PCDATA)>
 <!ELEMENT predicate (numeric|factor|date)>

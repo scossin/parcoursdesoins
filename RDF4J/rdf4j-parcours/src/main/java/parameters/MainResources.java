@@ -53,7 +53,9 @@ public class MainResources {
 	/**
 	 * The name of the DTD file of a user XML query
 	 */
-	public final static String dtdSearchFile = queryFolder + "eventslinks.dtd";
+	public final static String dtdSearchTerminology = queryFolder + "searchTerminology.dtd";
+	
+	public final static String dtdSearchTimelines = queryFolder + "searchTimelines.dtd";
 	
 	public final static String dtdDescribeFile = queryFolder + "describe.dtd";
 	

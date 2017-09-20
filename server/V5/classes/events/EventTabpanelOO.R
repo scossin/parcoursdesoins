@@ -44,7 +44,8 @@ EventTabpanel <- R6::R6Class(
         staticLogger$info("\t event choosen : ",  self$contextEnv$eventType )
         
         staticLogger$info("\t getting events ...")
-        contextEvents <- staticMakeQueries$getContextEvents(eventNumber = self$contextEnv$eventNumber, 
+        contextEvents <- staticMakeQueries$getContextEvents(eventNumber = self$contextEnv$eventNumber,
+                                           terminologyName = GLOBALcon$terminology$Event,
                                            eventType = self$contextEnv$eventType, 
                                            context = self$contextEnv$context)
         parentId = private$getFirstDivOfEventId()

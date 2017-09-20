@@ -40,7 +40,7 @@ FilterDate <- R6::R6Class(
     }, 
     
     getObjectId = function(){
-      return(paste0("FilterDate-",self$parentId))
+      return(paste0("FilterDate-",self$predicateName,"-",self$parentId))
     },
     
     getDivId = function(){

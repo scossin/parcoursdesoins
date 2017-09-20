@@ -7,8 +7,8 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
       super$initialize()
     },
 
-    addEventNode = function(eventNumber, eventType, predicatesNodes = NULL){
-      eventNode <- private$makeEventNode(eventNumber, eventType, predicatesNodes)
+    addEventNode = function(eventNumber, terminologyName, eventType, predicatesNodes = NULL){
+      eventNode <- private$makeEventNode(eventNumber, terminologyName, eventType, predicatesNodes)
       eventName <- paste0("event",eventNumber)
       if (!is.null(self$listEventNodes[[eventName]])){
         warning("Replacing an exist event ")
@@ -112,13 +112,13 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
   
   private=list(
     name = "eventslinks",
-    system = "eventslinks.dtd",
+    system = "searchTimelines.dtd",
     
     makeContextNode = function(contextNode,values){
       super$makeContextNode(contextNode,values)
     },
 
-    makeEventNode = function(eventNumber, eventType, predicatesNodes = NULL){
+    makeEventNode = function(eventNumber, terminologyName, eventType, predicatesNodes = NULL){
       if (!is.numeric(eventNumber) || length(eventNumber) != 1){
         stop("eventNumber must be numeric and length 1")
       }
@@ -127,8 +127,10 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
       }
       
       eventTypeNode <- xmlNode("eventType",text=eventType)
+      terminologyNameNode <- xmlNode("terminologyName",text=terminologyName)
       names(eventNumber) <- "number"
       eventNode <- xmlNode("event",attrs=eventNumber, text="")
+      eventNode <- addChildren(eventNode, terminologyNameNode)
       eventNode <- addChildren(eventNode, eventTypeNode)
       
       class(eventNode) <- c(class(eventNode),"eventNode")

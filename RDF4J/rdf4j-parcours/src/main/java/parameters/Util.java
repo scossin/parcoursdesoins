@@ -121,8 +121,7 @@ public class Util {
 		if (datatypeUri.equals(XMLSchema.DATE) || datatypeUri.equals(XMLSchema.DATETIME)){
 			return(Util.dateStringToLiteral(literal));
 		} else {
-			return Util.vf.createLiteral(XMLDatatypeUtil.normalize(literal, datatypeUri),
-					datatypeUri);
+			return Util.vf.createLiteral(XMLDatatypeUtil.normalize(literal, datatypeUri),datatypeUri);
 		}
 }
 	

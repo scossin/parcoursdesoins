@@ -1,4 +1,4 @@
-package ontologie;
+package terminology;
 
 import java.util.HashSet;
 import java.util.Set;

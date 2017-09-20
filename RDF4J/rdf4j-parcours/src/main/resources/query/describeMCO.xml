@@ -2,9 +2,10 @@
 <!DOCTYPE eventslinks SYSTEM "describe.dtd">
 <eventslinks>
 	<event>
-		<eventType>Event</eventType>
+		<terminologyName>Event</terminologyName>
+		<eventType>SejourMCO</eventType>
 		<predicate>
-		<predicateType>inEtab</predicateType>
+		<predicateType>hasBeginning</predicateType>
 		</predicate>
 		<value>p1_SejourMCO_2009_11_21T02_08_00_000_01_00	p10_SejourMCO_2009_10_06T04_32_00_000_02_00</value>
 	</event>

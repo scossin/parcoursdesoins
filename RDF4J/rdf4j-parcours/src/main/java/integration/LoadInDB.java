@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import exceptions.InvalidContextFormatException;
 import ontologie.EIG;
-import ontologie.EventOntology;
 import parameters.MainResources;
 import parameters.Util;
 
@@ -40,7 +39,7 @@ public class LoadInDB {
 		if (!Util.isValidContextFileFormat(file)){
 			throw new InvalidContextFormatException(logger,file.getName());
 		}
-		IRI contextIRI = EventOntology.getContextIRI(file);
+		IRI contextIRI = EIG.getContextIRI(file);
 		con.getDBcon().clear(contextIRI); // remove previous statements
 		con.getDBcon().add(file, EIG.NAMESPACE, Util.DefaultRDFformat,contextIRI);
 	}

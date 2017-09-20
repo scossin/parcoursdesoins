@@ -8,7 +8,7 @@ public class UnfoundPredicatException extends MyExceptions  {
 	}
 	
 	private static String getMessage (String predicat){
-		String message = "\"" + predicat + "\""+ " non trouvé dans la liste des prédicats" ;
+		String message = "\"" + predicat + "\""+ " unfound in predicate list" ;
 		return(message);
 	}
 }

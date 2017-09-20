@@ -35,18 +35,20 @@ import org.slf4j.LoggerFactory;
 
 import exceptions.InvalidOntology;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundTerminologyException;
 import ontologie.EIG;
-import ontologie.Event;
-import ontologie.EventOntology;
-import ontologie.TIME;
 import parameters.MainResources;
 import parameters.Util;
 import query.Query;
+import terminology.OneClass;
+import terminology.Terminology;
+import terminology.TerminologyInstances;
 
 public class Inference{
 	final static Logger logger = LoggerFactory.getLogger(Inference.class);
 	
-	public static HashSet<Statement> setEIGtype (RepositoryConnection con) throws InvalidOntology{
+	public static HashSet<Statement> setEIGtype (RepositoryConnection con) throws InvalidOntology, UnfoundTerminologyException{
+		Terminology eventTerminology = TerminologyInstances.getTerminology(EIG.TerminologyName);
 		RepositoryResult<Statement> statements = con.getStatements(null, RDF.TYPE, null);
 		HashSet<Statement> statements2 = new HashSet<Statement>() ;
 		
@@ -57,10 +59,8 @@ public class Inference{
 			Statement stat = statements.next();
 			Resource subject = stat.getSubject();
 			IRI typeIRI = (IRI) stat.getObject();
-			if (!EventOntology.isEvent(typeIRI.getLocalName())){
-				continue;
-			}
-			if (!typeIRI.getNamespace().equals(EIG.NAMESPACE)){ // timeInterval
+			boolean isClassName = eventTerminology.getClassDescription().isClassName(typeIRI);
+			if (!isClassName){
 				continue;
 			}
 			if (eventType.contains(subject)){
@@ -69,13 +69,11 @@ public class Inference{
 			statements2.add(Util.vf.createStatement(subject, EIG.HASTYPE, stat.getObject()));
 			eventType.add(subject);
 		}
-		
 		return(statements2);
-		
 	}
 	
-	public static HashSet<Statement> getSubClassOf(RepositoryConnection con){
-		
+	public static HashSet<Statement> getSubClassOf(RepositoryConnection con) throws UnfoundTerminologyException{
+		Terminology eventTerminology = TerminologyInstances.getTerminology(EIG.TerminologyName);
 		RepositoryResult<Statement> statements = con.getStatements(null, RDF.TYPE, null);
 		HashSet<Statement> statements2 = new HashSet<Statement>() ;
 		
@@ -83,12 +81,13 @@ public class Inference{
 			Statement stat = statements.next();
 			Resource subject = stat.getSubject();
 			IRI typeIRI = (IRI) stat.getObject();
-			if (!EventOntology.isEvent(typeIRI.getLocalName())){
+			boolean isClassName = eventTerminology.getClassDescription().isClassName(typeIRI);
+			if (!isClassName){
 				continue;
 			}
 			try {
-				Event event = EventOntology.getEvent(typeIRI.getLocalName());
-				Set<IRI> parents = event.getParents();
+				OneClass oneClass = eventTerminology.getClassDescription().getClass(typeIRI);
+				Set<IRI> parents = oneClass.getParents();
 				for (IRI parent : parents){
 					statements2.add(Util.vf.createStatement(subject, RDF.TYPE, parent));
 				}
@@ -105,9 +104,12 @@ public class Inference{
 		HashSet<Statement> statements2 = new HashSet<Statement>();
 		HashMap<XMLGregorianCalendar,ArrayList<Value>> linkDateIRI = new HashMap<XMLGregorianCalendar,ArrayList<Value>>();
 		
+//		String queryString = "SELECT ?event ?date where{"
+//				+ "?event " + Query.formatIRI4query(TIME.HASBEGINNING) + " ?eventStart . "
+//				+ "?eventStart " + Query.formatIRI4query(TIME.INXSDDATETIME) + "?date . }";
+		
 		String queryString = "SELECT ?event ?date where{"
-				+ "?event " + Query.formatIRI4query(TIME.HASBEGINNING) + " ?eventStart . "
-				+ "?eventStart " + Query.formatIRI4query(TIME.INXSDDATETIME) + "?date . }";
+				+ "?event " + Query.formatIRI4query(EIG.HASBEGINNING) + " ?date . }";
 		
 		TreeSet<XMLGregorianCalendar> dates = new TreeSet<XMLGregorianCalendar>(
 				new Comparator<XMLGregorianCalendar>(){
@@ -153,11 +155,15 @@ public class Inference{
 		
 		HashMap<IRI,Integer> eventDuration = new HashMap<IRI,Integer>();
 		
+//		String queryString = "SELECT ?event ?beginningDate ?endDate WHERE { \n "
+//				+ "?event " + Query.formatIRI4query(TIME.HASBEGINNING) + " ?eventStart . \n"
+//				+ "?eventStart " + Query.formatIRI4query(TIME.INXSDDATETIME) + " ?beginningDate . \n "
+//				+ "?event " + Query.formatIRI4query(TIME.HASEND) + " ?eventEnd . \n "
+//				+ "?eventEnd " + Query.formatIRI4query(TIME.INXSDDATETIME) + " ?endDate . \n }";
+		
 		String queryString = "SELECT ?event ?beginningDate ?endDate WHERE { \n "
-				+ "?event " + Query.formatIRI4query(TIME.HASBEGINNING) + " ?eventStart . \n"
-				+ "?eventStart " + Query.formatIRI4query(TIME.INXSDDATETIME) + " ?beginningDate . \n "
-				+ "?event " + Query.formatIRI4query(TIME.HASEND) + " ?eventEnd . \n "
-				+ "?eventEnd " + Query.formatIRI4query(TIME.INXSDDATETIME) + " ?endDate . \n }";
+				+ "?event " + Query.formatIRI4query(EIG.HASBEGINNING) + " ?beginningDate . \n"
+				+ "?event " + Query.formatIRI4query(EIG.HASEND) + " ?endDate . \n }";
 		
 		TupleQuery query = con.prepareTupleQuery(queryString);
 		
@@ -192,11 +198,11 @@ public class Inference{
 		return(diffSeconds);
 	}
 	
-	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException, UnfoundEventException, DatatypeConfigurationException, InvalidOntology{
+	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException, UnfoundEventException, DatatypeConfigurationException, InvalidOntology, UnfoundTerminologyException{
 		Repository rep = new SailRepository(new MemoryStore());
 		rep.initialize();
 		RepositoryConnection con = rep.getConnection();
-		InputStream in = Util.classLoader.getResourceAsStream(MainResources.timelinesFolder + "p1.ttl");
+		InputStream in = Util.classLoader.getResourceAsStream(MainResources.timelinesFolder + "p1000.ttl");
 		con.add(in, EIG.NAMESPACE, Util.DefaultRDFformat);
 		in.close();
 		HashSet<Statement> statements2 = Inference.getSubClassOf(con);

@@ -1,5 +1,7 @@
 package ontologie;
 
+import java.io.File;
+
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Namespace;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -9,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exceptions.InvalidContextException;
+import exceptions.InvalidContextFormatException;
 import parameters.Util;
 
 /**
@@ -23,6 +26,9 @@ public class EIG {
 	
 	public static final String NAMESPACE = "http://www.eigsante2017.fr#";
 
+	
+	public static final String TerminologyName = "Event";
+	
 	/**
 	 * Recommended prefix for my ontology namespace: "eig"
 	 */
@@ -52,9 +58,13 @@ public class EIG {
 	
 	public static final String GRAPH;
 	
+	public static final IRI HASBEGINNING;
+	public static final IRI HASEND;
 	
 	static {
 		ValueFactory factory = SimpleValueFactory.getInstance();
+		HASBEGINNING = factory.createIRI(EIG.NAMESPACE, "hasBeginning");
+		HASEND = factory.createIRI(EIG.NAMESPACE, "hasEnd");
 		HASNUM = factory.createIRI(EIG.NAMESPACE, "hasNum");
 		HASDURATION = factory.createIRI(EIG.NAMESPACE, "hasDuration");
 		HASTYPE = factory.createIRI(EIG.NAMESPACE, "hasType");
@@ -76,4 +86,14 @@ public class EIG {
 			throw new InvalidContextException(logger, contextName);
 		}
 	}
+	
+	public static IRI getContextIRI (File file) throws InvalidContextFormatException{
+	if (Util.isValidContextFileFormat(file)){
+		String context = file.getName().replaceAll(Util.fileExtensionRegex, "");
+		IRI contextIRI = Util.vf.createIRI(EIG.NAMESPACE, context);
+		return contextIRI;
+	} else {
+		throw new InvalidContextFormatException(logger, file.getName());
+	}
+}
 }

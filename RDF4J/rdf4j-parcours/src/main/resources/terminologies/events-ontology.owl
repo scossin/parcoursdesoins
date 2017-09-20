@@ -76,6 +76,14 @@
 	rdfs:comment "durée de l'évènement"@fr , "event duration"@en ;
 	rdfs:label "duration"@en , "durée"@fr .
 # 
+# http://www.eigsante2017.fr#hasEnd
+
+<http://www.eigsante2017.fr#hasEnd> a owl:DatatypeProperty ;
+	rdfs:domain <http://www.eigsante2017.fr#Event> ;
+	rdfs:range xsd:dateTime ;
+	rdfs:comment "Date de fin de l'évènement"@fr , "End of event"@en ;
+	rdfs:label "end date"@en , "fin"@fr .
+# 
 # http://www.eigsante2017.fr#hasPrice
 
 <http://www.eigsante2017.fr#hasPrice> a owl:DatatypeProperty ;

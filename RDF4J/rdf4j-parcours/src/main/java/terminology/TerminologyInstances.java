@@ -2,6 +2,7 @@ package terminology;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.rdf4j.model.IRI;
@@ -13,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundTerminologyException;
-import ontologie.OneClass;
 
 public class TerminologyInstances {
 	
@@ -24,7 +24,7 @@ public class TerminologyInstances {
 	static {
 		for (TerminoEnum termino : TerminoEnum.values()){
 			try {
-				terminologies.add(termino.getTermino().initialize());
+				terminologies.add(termino.getTermino());
 			} catch (RDFParseException | RepositoryException | IOException e) {
 				e.printStackTrace();
 			}
@@ -62,7 +62,7 @@ public class TerminologyInstances {
 		throw new UnfoundTerminologyException(logger, terminologyName + "does not belong to a terminology");
 	}
 	
-	public static Set<IRI> getClassNames(){
+	public static Set<IRI> getClassNames() throws RDFParseException, RepositoryException, IOException{
 		Set<IRI> classNamesIRI = new HashSet<IRI>();
 		for (TerminoEnum terminology : TerminoEnum.values()){
 			classNamesIRI.add(terminology.getTermino().getMainClassIRI());
@@ -70,6 +70,13 @@ public class TerminologyInstances {
 		return(classNamesIRI);
 	}
 	
+	public static void closeConnections(){
+		Iterator<Terminology> iter = TerminologyInstances.terminologies.iterator();
+		while(iter.hasNext()){
+			Terminology terminology = iter.next();
+			terminology.getTerminologyServer().getCon().close();
+		}
+	}
 	
 	public static void main(String[] args) throws UnfoundTerminologyException, UnfoundEventException{
 		for (Terminology terminology : TerminologyInstances.terminologies){

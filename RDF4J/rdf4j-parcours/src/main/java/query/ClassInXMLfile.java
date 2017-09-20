@@ -20,10 +20,10 @@ import exceptions.InvalidXMLFormat;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
-import ontologie.OneClass;
 import parameters.Util;
 import query.XMLFile.XMLelement;
-import queryFiles.Predicates;
+import terminology.OneClass;
+import terminology.Predicates;
 import terminology.Terminology;
 
 
@@ -290,12 +290,12 @@ public class ClassInXMLfile {
 		try {
 			if (isSetMin){
 				double min = Double.parseDouble(minValue);
-				minStat = numericVariableName + " > " + min;
+				minStat = numericVariableName + " >= " + min;
 			}
 			
 			if (isSetMax){
 				double max = Double.parseDouble(maxValue);
-				maxStat = numericVariableName + " < " + max ;
+				maxStat = numericVariableName + " <= " + max ;
 			}
 			
 			if (isSetMin && isSetMax){

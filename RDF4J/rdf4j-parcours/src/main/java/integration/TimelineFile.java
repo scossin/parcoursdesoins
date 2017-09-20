@@ -3,6 +3,7 @@ package integration;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -23,7 +24,8 @@ import ontologie.EIG;
 import ontologie.TIME;
 import parameters.MainResources;
 import parameters.Util;
-import terminology.TerminoEnum;
+import terminology.Terminology;
+import terminology.TerminologyInstances;
 
 public class TimelineFile {
 	
@@ -31,15 +33,19 @@ public class TimelineFile {
 	private final static RepositoryConnection con;
 	private static Model model;
 	
+	public static void close(){
+		con.close();
+		rep.shutDown();
+	}
+	
 	public static Model modelInitialize(){
 		Model model = new LinkedHashModel();
-		model.setNamespace(TIME.PREFIX, TIME.NAMESPACE);
-		model.setNamespace(EIG.PREFIX, EIG.NAMESPACE);
 		model.setNamespace(XMLSchema.PREFIX, XMLSchema.NAMESPACE);
-		
-		// loop over terminologies
-		for (TerminoEnum termino : TerminoEnum.values()){
-			model.setNamespace(termino.getTermino().getPrefix(), termino.getTermino().getNAMESPACE());
+		// loop over terminologies to get prefix and namespace
+		Iterator<Terminology> iter = TerminologyInstances.terminologies.iterator();
+		while(iter.hasNext()){
+			Terminology terminology = iter.next();
+			model.setNamespace(terminology.getPrefix(), terminology.getNAMESPACE());
 		}
 		return(model);
 	}
@@ -59,7 +65,7 @@ public class TimelineFile {
 		String fileName = timelinesFolderPath + contextIRI.getLocalName() + ".ttl";
 		File file = new File(fileName);
 		if (file.exists()){
-			con.add(file, EIG.NAMESPACE, RDFFormat.TURTLE,contextIRI);
+			con.add(file, EIG.NAMESPACE, Util.DefaultRDFformat,contextIRI);
 			RepositoryResult<Statement> statementsContext = con.getStatements(null, null, null);
 			while(statementsContext.hasNext()){
 				Statement nextStatement = statementsContext.next();

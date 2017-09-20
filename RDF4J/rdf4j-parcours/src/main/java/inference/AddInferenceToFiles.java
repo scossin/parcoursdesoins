@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
 
 import exceptions.InvalidContextFormatException;
 import exceptions.InvalidOntology;
+import exceptions.UnfoundTerminologyException;
 import integration.TimelineFile;
 import ontologie.EIG;
-import ontologie.EventOntology;
 import parameters.MainResources;
 import parameters.Util;
 
@@ -44,11 +44,11 @@ public class AddInferenceToFiles {
 	}
 
 	
-	public void addInference(File file) throws RDFParseException, RepositoryException, IOException, InvalidContextFormatException, DatatypeConfigurationException, InvalidOntology{
+	public void addInference(File file) throws RDFParseException, RepositoryException, IOException, InvalidContextFormatException, DatatypeConfigurationException, InvalidOntology, UnfoundTerminologyException{
 		if (!Util.isValidContextFileFormat(file)){
 			throw new InvalidContextFormatException(logger, file.getName());
 		}
-		IRI contextIRI = EventOntology.getContextIRI(file);
+		IRI contextIRI = EIG.getContextIRI(file);
 		con.add(file, EIG.NAMESPACE, Util.DefaultRDFformat,contextIRI);
 		con.add(Inference.hasDuration(con));
 		con.add(Inference.setEIGtype(con));
@@ -64,7 +64,7 @@ public class AddInferenceToFiles {
 		}
 	}
 	
-	public void addInferenceToTimelines(File folder) throws IOException, InvalidContextFormatException, InvalidOntology, DatatypeConfigurationException{
+	public void addInferenceToTimelines(File folder) throws IOException, InvalidContextFormatException, InvalidOntology, DatatypeConfigurationException, UnfoundTerminologyException{
 		if (!folder.isDirectory()){
 			throw new IOException(folder.getAbsolutePath() + " is not a directory");
 		}
@@ -80,7 +80,7 @@ public class AddInferenceToFiles {
 		}
 	}
 	
-	public static void main(String args[]) throws IOException, InvalidContextFormatException, InvalidOntology, DatatypeConfigurationException{
+	public static void main(String args[]) throws IOException, InvalidContextFormatException, InvalidOntology, DatatypeConfigurationException, UnfoundTerminologyException{
 		AddInferenceToFiles inferences = new AddInferenceToFiles();
 		String timelinesFolderPath = Util.classLoader.getResource(MainResources.timelinesFolder).getPath();
 		File timelinesFolder = new File(timelinesFolderPath);

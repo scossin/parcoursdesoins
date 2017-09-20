@@ -9,9 +9,12 @@ XMLDescribeTerminologyQuery <- R6Class("XMLDescribeTerminologyQuery",
       self$listEventNodes <- list(xmlNode("event"))
     },
     
-    addTerminologyName = function(terminologyName){
-      eventNode <- xmlNode("terminologyName", text = terminologyName)
-      self$listEventNodes <- list(addChildren(self$listEventNodes[[1]],eventNode))
+    addTerminologyName = function(eventType, terminologyName){
+      eventTypeNode <- xmlNode("eventType", text = eventType)
+      terminologyNameNode <- xmlNode("terminologyName", text = terminologyName)
+      self$listEventNodes <- list(addChildren(self$listEventNodes[[1]],terminologyNameNode))
+      self$listEventNodes <- list(addChildren(self$listEventNodes[[1]],eventTypeNode))
+
     },
     
     addPredicateTypeNode = function(predicateTypes){

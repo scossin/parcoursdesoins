@@ -1,9 +1,7 @@
 package integration;
 
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.rdf4j.model.IRI;
@@ -11,7 +9,6 @@ import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
-import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,13 +18,11 @@ import exceptions.UnfoundInstanceOfTerminologyException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import ontologie.EIG;
-import ontologie.Event;
-import ontologie.EventOntology;
-import ontologie.TIME;
 import parameters.Util;
-import terminology.TerminoEnum;
+import terminology.OneClass;
+import terminology.Predicates;
 import terminology.Terminology;
-import terminology.TerminologyServer;
+import terminology.TerminologyInstances;
 
 /**
  * A class to transform statements in a CSV file to statements in RDF. <br>
@@ -65,7 +60,7 @@ public class LineStatement {
 	/**
 	 * Object of class Event retrieved with the eventName(eventType)
 	 */
-	private Event event;
+	private OneClass oneClass;
 	
 	/**
 	 * IRI of the predicate retrieved with the predicateName
@@ -82,9 +77,7 @@ public class LineStatement {
 	 */
 	private IRI idEventIRI;
 	
-
-	
-	private HashMap<IRI, Set<IRI>> instancesOfTerminology ;
+	private Terminology terminology;
 	
 	/**
 	 * 
@@ -97,9 +90,9 @@ public class LineStatement {
 	 * @throws UnfoundTerminologyException if predicate is an objectProperty and instance is not found in terminology
 	 */
 	
-	public LineStatement (String columnSeparator, HashMap<IRI, Set<IRI>> instancesOfTerminology) {
-		this.instancesOfTerminology = instancesOfTerminology;
+	public LineStatement (String columnSeparator, Terminology terminology) {
 		this.columnSeparator = columnSeparator;
+		this.terminology = terminology;
 	}
 	
 	public void addLineStatement (String line) throws UnfoundEventException, UnfoundPredicatException, InvalidContextException, ParseException, UnfoundTerminologyException, UnfoundInstanceOfTerminologyException{
@@ -109,11 +102,11 @@ public class LineStatement {
 		
 		// first column
 		String contextName = columns[0];
-		this.contextIRI = EventOntology.getContextIRI(contextName);
+		this.contextIRI = EIG.getContextIRI(contextName);
 		
 		// Column 2 : type of Event
 		String eventName = columns[1];
-		this.event = EventOntology.getEvent(eventName);
+		this.oneClass = terminology.getClassDescription().getClass(eventName);
 		
 		// Column3 : setIdEvent with contextName + typeofEvent + dateStart
 		String dateStart = columns[2];
@@ -136,38 +129,38 @@ public class LineStatement {
 		Set<Statement> statements = new HashSet<Statement>() ;
 		
 		// first statement : RDF.TYPE of event : 
-		statements.add(Util.vf.createStatement(this.idEventIRI, RDF.TYPE, this.event.getEventIRI(),contextIRI));
+		statements.add(Util.vf.createStatement(this.idEventIRI, RDF.TYPE, this.oneClass.getClassIRI(),contextIRI));
 		
-		// check if predicateIRI is a time Ontology predicate
-		if (this.predicateIRI.equals(TIME.HASBEGINNING) || this.predicateIRI.equals(TIME.HASEND)){
-			// Every event is a timeInterval
-			statements.add(Util.vf.createStatement(this.idEventIRI, RDF.TYPE, TIME.INTERVAL,contextIRI));
-			if (this.predicateIRI.equals(TIME.HASBEGINNING)){
-				// create node timeInstantStart
-				IRI timeInstantStart = Util.vf.createIRI(TIME.NAMESPACE, idEventIRI.getLocalName()+"Start");
-				// this event hasBeginning this node 
-				statements.add(Util.vf.createStatement(this.idEventIRI, TIME.HASBEGINNING, timeInstantStart,contextIRI));
-				// the start of the event is a timeInstant
-				statements.add(Util.vf.createStatement(timeInstantStart, RDF.TYPE, TIME.INSTANT,contextIRI));
-				// the date value is
-				statements.add(Util.vf.createStatement(timeInstantStart, TIME.INXSDDATETIME, this.value,contextIRI));
-			} else {
-				// create node timeInstantEnd
-				IRI timeInstantEnd = Util.vf.createIRI(TIME.NAMESPACE, idEventIRI.getLocalName()+"End");
-				// this event hasEnd this node 
-				statements.add(Util.vf.createStatement(this.idEventIRI, TIME.HASEND, timeInstantEnd,contextIRI));;
-				// the end of the event is a timeInstant
-				statements.add(Util.vf.createStatement(timeInstantEnd, RDF.TYPE, TIME.INSTANT,contextIRI));
-				// the date value is
-				statements.add(Util.vf.createStatement(timeInstantEnd, TIME.INXSDDATETIME, this.value,contextIRI));
-			}
-		
-		// if predicateIRI is not a time Ontology predicate
-		} else {
-			statements.add(Util.vf.createStatement(this.idEventIRI, predicateIRI, value,contextIRI));
-		}
+	    statements.add(Util.vf.createStatement(this.idEventIRI, predicateIRI, value, contextIRI));
 		return(statements);
 	}
+		// check if predicateIRI is a time Ontology predicate
+//		if (this.predicateIRI.equals(TIME.HASBEGINNING) || this.predicateIRI.equals(TIME.HASEND)){
+//			// Every event is a timeInterval
+//			statements.add(Util.vf.createStatement(this.idEventIRI, RDF.TYPE, TIME.INTERVAL,contextIRI));
+//			if (this.predicateIRI.equals(TIME.HASBEGINNING)){
+//				// create node timeInstantStart
+//				IRI timeInstantStart = Util.vf.createIRI(TIME.NAMESPACE, idEventIRI.getLocalName()+"Start");
+//				// this event hasBeginning this node 
+//				statements.add(Util.vf.createStatement(this.idEventIRI, TIME.HASBEGINNING, timeInstantStart,contextIRI));
+//				// the start of the event is a timeInstant
+//				statements.add(Util.vf.createStatement(timeInstantStart, RDF.TYPE, TIME.INSTANT,contextIRI));
+//				// the date value is
+//				statements.add(Util.vf.createStatement(timeInstantStart, TIME.INXSDDATETIME, this.value,contextIRI));
+//			} else {
+//				// create node timeInstantEnd
+//				IRI timeInstantEnd = Util.vf.createIRI(TIME.NAMESPACE, idEventIRI.getLocalName()+"End");
+//				// this event hasEnd this node 
+//				statements.add(Util.vf.createStatement(this.idEventIRI, TIME.HASEND, timeInstantEnd,contextIRI));;
+//				// the end of the event is a timeInstant
+//				statements.add(Util.vf.createStatement(timeInstantEnd, RDF.TYPE, TIME.INSTANT,contextIRI));
+//				// the date value is
+//				statements.add(Util.vf.createStatement(timeInstantEnd, TIME.INXSDDATETIME, this.value,contextIRI));
+//			}
+//		
+//		// if predicateIRI is not a time Ontology predicate
+//		} 
+
 
 
 	/**
@@ -177,7 +170,7 @@ public class LineStatement {
 	 */
 	private void checknColumns(int lengthExpected) throws ParseException {
 		if (lengthExpected != nColumns){
-			String message = "Incorrect number of columns ("+lengthExpected+")";
+			String message = "Incorrect number of columns : " + nColumns + " ("+lengthExpected+" expected)";
 			throw new java.text.ParseException(message,0);
 		}
 	}
@@ -195,60 +188,53 @@ public class LineStatement {
 		Literal hasBeginning = Util.dateStringToLiteral(dateStart);
 		String hasBeginningString = hasBeginning.stringValue();
 		hasBeginningString = hasBeginningString.replaceAll("[-:.+]", "_"); // IRI must be correct format
-		String idEvent = this.contextIRI.getLocalName() + "_" + this.event.getEventIRI().getLocalName() 
+		String idEvent = this.contextIRI.getLocalName() + "_" + this.oneClass.getClassIRI().getLocalName() 
 				+ "_" + hasBeginningString ;	
 		this.idEventIRI = Util.vf.createIRI(EIG.NAMESPACE, idEvent);
 	}
 	
 	/**
 	 * Check the predicate (a known predicate in the ontology), transform it to IRI ; check the value, transform it to a literal
-	 * @param predicate Must be known in the ontology {@link EventOntology}
+	 * @param predicateName Must be known in the ontology {@link EventOntology}
 	 * @param objValue Must be a valid object value according to the predicate
 	 * @throws ParseException If the literal can't be made
 	 * @throws UnfoundPredicatException If the predicate is not found
 	 * @throws UnfoundTerminologyException If the instance is not described in the terminology
 	 * @throws UnfoundInstanceOfTerminologyException 
+	 * @throws UnfoundEventException 
 	 */
 
-	private void setPredicateValue(String predicate, String objValue) throws UnfoundPredicatException, ParseException, UnfoundTerminologyException, UnfoundInstanceOfTerminologyException {	
+	private void setPredicateValue(String predicateName, String objValue) throws UnfoundPredicatException, ParseException, UnfoundTerminologyException, UnfoundInstanceOfTerminologyException, UnfoundEventException {	
 		
 		// check if it's a timePredicate
-		if (TIME.isRecognizedTimePredicate(predicate)){
-			this.predicateIRI = Util.vf.createIRI(TIME.NAMESPACE, predicate);
-			this.value = Util.makeLiteral(XMLSchema.DATETIME, objValue);
-		} else { // not a timePredicate
+//		if (TIME.isRecognizedTimePredicate(predicate)){
+//			this.predicateIRI = Util.vf.createIRI(TIME.NAMESPACE, predicate);
+//			this.value = Util.makeLiteral(XMLSchema.DATETIME, objValue);
+//		} else { // not a timePredicate
 			// is it a DataTypeProperty or ObjectProperty
-			Map<IRI, Value> predsValue = EventOntology.getPredicatesValueOfEvent(event);
-			IRI predicateIRI = EventOntology.getPredicateIRI(predicate, predsValue);
-			this.predicateIRI = predicateIRI;
-			Value obj = predsValue.get(predicateIRI);
-			IRI objIRI = (IRI) obj;
-			
-			// 2 possibilities : predicate is a datatype property or an object property
-			boolean isDataType = EventOntology.getPredicatesIsDataTypeOfEvent(event).get(predicateIRI);
-			if (isDataType){
-				
-				this.value = Util.makeLiteral(objIRI, objValue);
-				
+		Predicates predicate = terminology.getOnePredicate(predicateName, this.oneClass);
+		this.predicateIRI = predicate.getPredicateIRI();
+		Value expectedValue = predicate.getExpectedValue();
+		IRI expectedValueIRI = (IRI) expectedValue;
+
+		// 2 possibilities : predicate is a datatype property or an object property
+		boolean isDataType = !predicate.getIsObjectProperty();
+		if (isDataType){
+			this.value = Util.makeLiteral(expectedValueIRI, objValue);
+		} else {
+			// check if instance is known in the other terminology
+			IRI mainClassNameIRI = expectedValueIRI;
+			Terminology terminologyTarget = TerminologyInstances.getTerminologyByMainClassIRI(mainClassNameIRI);
+			String instanceName = objValue;
+			IRI instanceIRI = Util.vf.createIRI(mainClassNameIRI.getNamespace(), instanceName);
+			boolean isInstance = terminologyTarget.getTerminologyServer().isInstanceOfTerminology(instanceIRI);
+			if (isInstance){
+				this.value = instanceIRI ;
 			} else {
-				// check is value is known
-				IRI classNameIRI = objIRI;
-				String instanceName = objValue;
-				IRI instanceIRI = Terminology.getTerminology(classNameIRI).makeInstanceIRI(instanceName);
-				if (isInstanceOfTerminology(objIRI, instanceIRI)){
-					this.value = Util.vf.createIRI(objIRI.stringValue(), objValue) ;
-				} else {
-					throw new UnfoundInstanceOfTerminologyException(logger,instanceIRI.stringValue(), 
-							objIRI.stringValue());
-				}
+				throw new UnfoundInstanceOfTerminologyException(logger,instanceIRI.stringValue(), 
+						expectedValueIRI.stringValue());
 			}
 		}
-	}
-
-	
-	private boolean isInstanceOfTerminology(IRI classNameIRI, IRI instanceIRI) throws UnfoundTerminologyException {
-		boolean search = instancesOfTerminology.get(classNameIRI).contains(instanceIRI);
-		return search;
 	}
 
 	/* Getters ....................................*/
@@ -264,34 +250,21 @@ public class LineStatement {
 		return value;
 	}
 	
-	public IRI getContexte() {
+	public IRI getContext() {
 		return contextIRI;
 	}
 
-	public Event getEvent() {
-		return event;
+	public OneClass getOneClass() {
+		return oneClass;
 	}
 	
 	
 	public static void main(String[] args) throws Exception  {
-		HashMap<IRI, Set<IRI>> instancesOfTerminology = new HashMap<IRI, Set<IRI>>();
-		Set<TerminoEnum> terminos = new HashSet<TerminoEnum>();
-		terminos.add(TerminoEnum.FINESS);
-		terminos.add(TerminoEnum.RPPS);
-		
-		for (TerminoEnum termino : terminos){
-			TerminologyServer terminoServer = new TerminologyServer(termino);
-			IRI terminoIRI = termino.getTermino().getMainClassIRI();
-			instancesOfTerminology.put(terminoIRI, terminoServer.getInstancesOfTerminology());
-			terminoServer.countInstances();
-			terminoServer.getCon().close();
-		}
-		
 		// TODO Auto-generated method stub
 		//String line = "p1\tSejourMCO\t2017_02_28_23_59_59\thasEnd\t2017_02_28_23_59_59";
-		String line = "p1\tSejourMCO\t2017_02_28_23_59_59\tinEtab\t330781360";
+		String line = "p1\tSejourMCO\t2017_02_28_23_59_59\tinEtab\tEtablissement330781360";
 		String separator = "\t";
-			LineStatement newStatement = new LineStatement(separator,instancesOfTerminology);
+			LineStatement newStatement = new LineStatement(separator, TerminologyInstances.getTerminology("Event"));
 			
 			try {
 				newStatement.addLineStatement(line);

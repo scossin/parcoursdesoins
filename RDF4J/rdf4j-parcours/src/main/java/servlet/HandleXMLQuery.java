@@ -30,15 +30,17 @@ import exceptions.OperatorException;
 import exceptions.UnfoundDTDFile;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundPredicatException;
+import exceptions.UnfoundResultVariable;
 import exceptions.UnfoundTerminologyException;
+import query.DTDFiles;
 import query.Query;
 import query.Results;
 import query.XMLCountQuery;
-import query.XMLDescribeQuery;
+import query.XMLDescribeTimelinesQuery;
 import query.XMLDescribeTerminologyQuery;
 import query.XMLFile;
-import query.XMLFile.DTDFiles;
 import query.XMLSearchQuery;
+import query.XMLSearchQueryTimeLines;
 
 // Extend HttpServlet class
 public class HandleXMLQuery extends HttpServlet {
@@ -46,7 +48,6 @@ public class HandleXMLQuery extends HttpServlet {
 	final static Logger logger = LoggerFactory.getLogger(HandleXMLQuery.class);
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException ,IOException {
-
 
 		resp.setContentType("text/csv");
 		resp.setHeader("Content-Disposition","attachment;filename="+"results.csv");
@@ -74,10 +75,12 @@ public class HandleXMLQuery extends HttpServlet {
 		}
 		
 		try {
-			if (xml.getDTDFile() == DTDFiles.SearchQuery){
+			if (xml.getDTDFile() == DTDFiles.SearchQueryTimelines){
+				query = new XMLSearchQueryTimeLines(xml);
+			} else if (xml.getDTDFile() == DTDFiles.SearchQueryTerminology){
 				query = new XMLSearchQuery(xml);
 			} else if (xml.getDTDFile() == DTDFiles.DescribeQuery) {
-				query = new XMLDescribeQuery(xml);
+				query = new XMLDescribeTimelinesQuery(xml);
 			} else if (xml.getDTDFile() == DTDFiles.CountQuery){
 				query = new XMLCountQuery(xml);
 			} else if (xml.getDTDFile() == DTDFiles.DescribeTerminologyQuery){
@@ -99,7 +102,12 @@ public class HandleXMLQuery extends HttpServlet {
 
 		String sparqlEndpoint = DockerDB.getEndpointIPadress(query.getEndpoint());
 		Results results = new Results(sparqlEndpoint,query);
-		results.serializeResult();
+		try {
+			results.serializeResult();
+		} catch (UnfoundResultVariable e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		File file = results.getFile();
 		FileInputStream fis = null;
 
