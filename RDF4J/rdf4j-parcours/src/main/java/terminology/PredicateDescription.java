@@ -32,7 +32,7 @@ public class PredicateDescription {
 	final static Logger logger = LoggerFactory.getLogger(PredicateDescription.class);
 	
 	public enum ValueCategory {
-		NUMERIC, DURATION, DATE, STRING, HIERARCHY, TERMINOLOGY, SPATIALPOLYGON;
+		NUMERIC, DURATION, DATE, STRING, HIERARCHY, TERMINOLOGY, SPATIALPOLYGON, SPATIALPOINT;
 	}
 	
 	private HashMap<IRI, Predicates> predicatesMap = new HashMap<IRI, Predicates>();
@@ -142,6 +142,10 @@ public class PredicateDescription {
 	
 	private ValueCategory getValueCategory (IRI predicateIRI, Value value){
 		IRI valueIRI = (IRI) value;
+		
+		if (predicateIRI.equals(EIG.HASCOORDINATE)){
+			return(ValueCategory.SPATIALPOINT);
+		}
 		
 		if (predicateIRI.equals(EIG.HASPOLYGON)){
 			return(ValueCategory.SPATIALPOLYGON);

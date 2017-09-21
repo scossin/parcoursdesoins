@@ -8,6 +8,12 @@ ListEventsTabpanel <- R6::R6Class(
       self$getDescription()
     },
     
+    updateContext = function(context){
+      for (eventTabPanel in self$listEventTabpanel){
+        eventTabPanel$updateContext(context)
+      }
+    },
+    
     addEventTabpanel = function(eventTabpanel){
       bool <- inherits(eventTabpanel, "EventTabpanel")
       if (!bool){

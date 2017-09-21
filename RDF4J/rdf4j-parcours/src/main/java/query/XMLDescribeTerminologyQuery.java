@@ -2,18 +2,11 @@ package query;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.query.impl.SimpleDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import exceptions.InvalidContextException;
@@ -22,9 +15,6 @@ import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
 import parameters.Util;
-import query.XMLFile.XMLelement;
-import servlet.DockerDB.Endpoints;
-import terminology.Terminology;
 
 /**
  * The describe event query return predicate and value of a particular event
@@ -34,7 +24,7 @@ import terminology.Terminology;
 public class XMLDescribeTerminologyQuery extends XMLDescribeQuery implements Query {
 	final static Logger logger = LoggerFactory.getLogger(XMLDescribeTerminologyQuery.class);
 	
-	public XMLDescribeTerminologyQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException{
+	public XMLDescribeTerminologyQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException, UnfoundEventException{
 		super(xml);
 		setBasicQuery("SELECT ?event ?predicate ?value WHERE { \n"+
 		"VALUES ?event {" +             eventReplacementString                           + "} \n"+
@@ -61,6 +51,8 @@ public class XMLDescribeTerminologyQuery extends XMLDescribeQuery implements Que
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException{
 		//InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "XMLquerydescribeTerminologyFINESSlong.xml" );
+		//InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "XMLquerydescribeSpatialPoint.xml" );
+		
 		XMLFile file = new XMLFile(xmlFile);
 		XMLDescribeTerminologyQuery describe = new XMLDescribeTerminologyQuery(file);
 		System.out.println(describe.getSPARQLQueryString());

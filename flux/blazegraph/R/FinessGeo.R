@@ -37,6 +37,10 @@ meta$long <- coordonnees$X
 meta$lat <- coordonnees$Y
 meta$idEtab <- meta$code
 
+### export 
+# meta$idEtab <- NULL
+# write.table(meta,"FINESS33.csv",sep=",",col.names = T, row.names = F, quote=F)
+
 ### Création de triplets : 
 namespaces <- read.table("namespaces.csv",sep="\t", header=T, comment.char = "",
                          stringsAsFactors = F)

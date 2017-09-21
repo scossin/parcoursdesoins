@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE eventslinks SYSTEM "describeTerminology.dtd" > 
+<eventslinks>
+ <event>
+  <terminologyName>Etablissement</terminologyName>
+  <eventType>Point</eventType>
+  <predicate>
+   <predicateType>long	lat</predicateType>
+  </predicate>
+  <value>Point330781360</value>
+ </event>
+</eventslinks>

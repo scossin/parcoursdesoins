@@ -17,9 +17,34 @@ FilterDate <- R6::R6Class(
                                             where="beforeEnd")
     },
     
+    updateDataFrame = function(){
+      staticLogger$info("updateDataFrame of FilterDate")
+      eventType <- self$contextEnv$instanceSelection$className
+      terminologyName <- self$contextEnv$instanceSelection$terminologyName
+      predicateName <- self$predicateName
+      contextEvents <- self$contextEnv$instanceSelection$getContextEvents()
+      self$dataFrame <- staticFilterCreator$getDataFrame(terminologyName, eventType, contextEvents, predicateName)
+      self$dateGraphics$dateValues$setXTS(self$dataFrame$value)
+      self$dateGraphics$updateDateRange()
+      self$dateGraphics$remakePlot()
+    },
+    
+    getXMLpredicateNode = function(){
+      tempQuery <- XMLSearchQuery$new()
+      minDate <- self$dateGraphics$dateValues$getMinDate()
+      minDate <- gsub("-","_",minDate)
+      maxDate <- self$dateGraphics$dateValues$getMaxDate()
+      maxDate <- gsub("-","_",maxDate)
+      predicateNode <- tempQuery$makePredicateNode(predicateClass = "date",
+                                                   predicateType = self$predicateName,
+                                                   minValue = minDate,
+                                                   maxValue = maxDate)
+      return(predicateNode)
+    },
+    
     getDescription = function(){
       description <- paste0(self$predicateName,"\t minDate: ",self$dateGraphics$dateValues$getMinDate(),
-                            "\n\t maxDate: ", self$dateGraphics$dateValues$getMinDate())
+                            "\n\t maxDate: ", self$dateGraphics$dateValues$getMaxDate())
       return(description)
     },
     

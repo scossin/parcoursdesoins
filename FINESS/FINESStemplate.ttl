@@ -1,0 +1,15 @@
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix eig:     <http://www.eigsante2017.fr#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix datagouv: <https://www.data.gouv.fr/FINESS#> .
+
+datagouv:Etablissement${code} a datagouv:Etablissement ;
+	datagouv:hasCode "${code}"^^xsd:string ;
+	datagouv:RaisonSociale "${label}"^^xsd:string ;
+	eig:hasCoordinate geo:Point${code} . 
+
+geo:Point${code} geo:lat "${lat}"^^xsd:float ;
+					   geo:long "${long}"^^xsd:float ;
+					   geo:label "${label}" .

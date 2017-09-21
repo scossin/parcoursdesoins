@@ -15,6 +15,13 @@ EventTabpanel <- R6::R6Class(
                          contentId = self$getObjectId())
     },
     
+    updateContext = function(context){
+      staticLogger$info("Updating context in EventTabPanel",self$contextEnv$eventNumber)
+      self$contextEnv$context <- context
+      self$contextEnv$instanceSelection$context <- context
+      self$contextEnv$instanceSelection$searchAndUpdate()
+    },
+    
     setHierarchicalObject = function(){
       staticLogger$info("setting a new HierarchicalObject for",self$getObjectId())
       hierarchicalObject <- HierarchicalSunburst$new(contextEnv = self$contextEnv,

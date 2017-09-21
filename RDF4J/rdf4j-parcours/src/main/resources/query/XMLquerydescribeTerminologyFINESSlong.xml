@@ -3,7 +3,7 @@
 <eventslinks>
  <event>
   <terminologyName>Etablissement</terminologyName>
-  <eventType>FINESS</eventType>
+  <eventType>Etablissement</eventType>
   <predicate>
    <predicateType>long</predicateType>
   </predicate>

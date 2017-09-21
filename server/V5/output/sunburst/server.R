@@ -65,11 +65,16 @@ server <- function(input,output,session){
   source("../../classes/filter/STATICfilterCreatorOO.R",local = T)
   staticFilterCreator <- STATICfilterCreator$new()
   
+  ## leaflet : 
+  source("../../classes/leaflet/MapObjectOO.R",local = T)
+  source("../../classes/filter/FilterSpatialPointOO.R",local=T)
+  GLOBALmapObject <- MapObject$new()
+  
   # an object to help others object to make queries
   source("../../classes/queries/STATICmakeQueriesOO.R",local=T)
   staticMakeQueries <- STATICmakeQueries$new()
   
-  listEventTabpanel <- ListEventsTabpanel$new()
+  GLOBALlistEventTabpanel <- ListEventsTabpanel$new()
   
   
   
@@ -98,11 +103,11 @@ server <- function(input,output,session){
     eventTabpanel <- EventTabpanel$new(eventNumber=nClick, 
                                        context = contextEnv$instanceSelection$context)
     eventTabpanel$setHierarchicalObject()
-    listEventTabpanel$addEventTabpanel(eventTabpanel)
+    GLOBALlistEventTabpanel$addEventTabpanel(eventTabpanel)
     
-    #listNames <- c(eventTabpanel$getLiText(), names(listEventTabpanel))
+    #listNames <- c(eventTabpanel$getLiText(), names(GLOBALlistEventTabpanel))
     ### update list of elements to remove :
-    choices <- c("",listEventTabpanel$getAllLiText())
+    choices <- c("",GLOBALlistEventTabpanel$getAllLiText())
     shiny::updateSelectInput(session,
                              inputId = "eventToRemove",
                               choices = choices)
@@ -114,8 +119,8 @@ server <- function(input,output,session){
       liText <- input[["eventToRemove"]]
       staticLogger$user(liText, " to remove")
     })
-    listEventTabpanel$removeEventTabpanel(liText = liText)
-    choices <- c("",listEventTabpanel$getAllLiText())
+    GLOBALlistEventTabpanel$removeEventTabpanel(liText = liText)
+    choices <- c("",GLOBALlistEventTabpanel$getAllLiText())
     shiny::updateSelectInput(session,
                              inputId = "eventToRemove",
                              choices = choices)

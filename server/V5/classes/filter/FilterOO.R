@@ -24,6 +24,11 @@ Filter <- R6::R6Class(
     setContext = function(){
       stop("setContext not implemented !")
     },
+    
+    getXMLpredicateNode = function(){
+      stop("getXMLpredicateNode not implemented !")
+    }, 
+    
     destroy = function(){
       stop("destroy not implemented ! ")
     }

@@ -15,7 +15,7 @@ public enum TerminoEnum {
 	
 	// FINESS code is a french terminology for healthcare institution
 	FINESS(new Terminology("Etablissement","https://www.data.gouv.fr/FINESS#","datagouv","Etablissement","FINESS-ontology.owl",
-			"FINESS.ttl", Endpoints.FINESS)),
+			"FINESS33.ttl", Endpoints.FINESS)),
 	
 	EVENTS(new Terminology(EIG.TerminologyName,EIG.NAMESPACE,EIG.PREFIX,EIG.eventClassName,"events-ontology.owl",
 			null, Endpoints.TIMELINES)),

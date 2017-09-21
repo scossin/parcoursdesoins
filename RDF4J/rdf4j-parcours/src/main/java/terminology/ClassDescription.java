@@ -10,6 +10,8 @@ import java.util.Set;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.vocabulary.OWL;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
@@ -80,8 +82,15 @@ public class ClassDescription {
 	 * @throws UnfoundEventException if the class is not in the ontology
 	 */
 	public OneClass getClass(String className) throws UnfoundEventException{
-		IRI classIRI = Util.vf.createIRI(terminologyNS, className);
-		return(getClass(classIRI));
+		Iterator<OneClass> iter = classes.iterator();
+		while (iter.hasNext()){
+			OneClass classe = iter.next();
+			boolean check = classe.getClassIRI().getLocalName().equals(className);
+			if (check){
+				return(classe);
+			}
+		}
+		throw new UnfoundEventException (logger, className) ;
 	}
 	
 	/**
@@ -115,6 +124,19 @@ public class ClassDescription {
 			}
 		}
 		throw new UnfoundPredicatException(logger, predicateName);
+	}
+	
+	
+	private Set<IRI> getAllClasses(RepositoryConnection con){
+		Set<IRI> classesIRI = new HashSet<IRI>(); 
+		RepositoryResult<Statement> statements = con.getStatements(null, RDF.TYPE, OWL.CLASS);
+		while(statements.hasNext()){
+			Statement stat = statements.next();
+			IRI subIRI = (IRI)stat.getSubject();
+			classesIRI.add(subIRI);
+		}
+		statements.close();
+		return(classesIRI);
 	}
 	
 	/**
@@ -192,9 +214,10 @@ public class ClassDescription {
 		
 		// list all classes rdf:SubClassOf of the main className 
 		Set<IRI> classesIRI = new HashSet<IRI>();
-		IRI classIRI = Util.vf.createIRI(terminologyNS,mainClassName);
-		classesIRI.add(classIRI); // main className
-		classesIRI.addAll(getSubClassOfClass(con, classIRI)); // allSubClassOf
+//		IRI classIRI = Util.vf.createIRI(terminologyNS,mainClassName);
+//		classesIRI.add(classIRI); // main className
+//		classesIRI.addAll(getSubClassOfClass(con, classIRI)); // allSubClassOf
+		classesIRI.addAll(getAllClasses(con));
 		addClasses(con,classesIRI); // describing the class
 		con.close();
 		rep.shutDown();

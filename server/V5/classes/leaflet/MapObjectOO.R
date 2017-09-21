@@ -9,7 +9,6 @@ MapObject <- R6::R6Class(
       self$renderMap()
       self$addSelectizeProvider()
       self$addObserverSelectizeProvider()
-      self$addAddObserver()
       self$addRadioButtonChoice()
       self$hideShowUIControllerObserver()
     },
@@ -40,6 +39,7 @@ MapObject <- R6::R6Class(
     },
     
     updateLayerControl = function(){
+      staticLogger$info("\t Updating Layer Control")
       namesList <- names(self$spatialFilterList)
       if (length(namesList) == 0){
         leafletProxy(GLOBALmapId) %>% 
@@ -51,22 +51,23 @@ MapObject <- R6::R6Class(
       }
     },
     
-    addAddObserver = function(){
-      observeEvent(input$add, {
-        if (length(self$spatialFilterList) ==0){
-          dataFrame2 <- data.frame(lat=c(46,47), long = c(0,-0.1),
-                                   label=c("test3","test4"), N=c(100,10))
-          spatialFilter <- SpatialFilterPoint$new("event2",dataFrame2)
-          self$addSpatialFilter("event2",spatialFilter)
-        } else {
-          dataFrame <- data.frame(lat=c(44.8672714490391,44.9), long = c(-0.617864221255729,-0.62),
-                                  label=c("test1","test2"), N=c(100,10))
-          spatialFilter <- SpatialFilterPoint$new("event1",dataFrame)
-          self$addSpatialFilter("event1",spatialFilter)
-        }
-        self$updateRadioButtonChoice()
-        self$updateLayerControl()
-      })
+    addSpatialFilter = function(spatialFilter){
+      staticLogger$info("\t Adding spatialFilter to MapObject")
+      lengthList <- length(self$spatialFilterList)
+      namesList <- names(self$spatialFilterList)
+      self$spatialFilterList[[lengthList + 1 ]] <- spatialFilter
+      namesList <- append(namesList, spatialFilter$eventName)
+      names(self$spatialFilterList) <- namesList
+      self$updateRadioButtonChoice()
+      self$updateLayerControl()
+      return(NULL)
+    },
+    
+    removeSpatialFilter = function(eventName){
+      staticLogger$info("\t Removing SpatialFilter from MapObject")
+      self$spatialFilterList[[eventName]] <- NULL
+      self$updateRadioButtonChoice()
+      self$updateLayerControl()
     },
     
     hideShowUIControllerObserver = function(){
@@ -78,7 +79,7 @@ MapObject <- R6::R6Class(
         }
         for (spatialFilterName in names(self$spatialFilterList)){
           spatialFilter <- self$spatialFilterList[[spatialFilterName]]
-          UIcontrollerId <- spatialFilter$getUIcontrollerId()
+          UIcontrollerId <- spatialFilter$getUIcontrollerMapId()
           if (spatialFilterName == choice){
             cat("showing ...")
             self$showId(UIcontrollerId)
@@ -129,15 +130,6 @@ MapObject <- R6::R6Class(
     
     getRadioButtonChoiceId = function(){
       return("radioButtonChoiceId")
-    },
-    
-    addSpatialFilter = function(eventName, spatialFilter){
-      lengthList <- length(self$spatialFilterList)
-      namesList <- names(self$spatialFilterList)
-      self$spatialFilterList[[lengthList + 1 ]] <- spatialFilter
-      namesList <- append(namesList, eventName)
-      names(self$spatialFilterList) <- namesList
-      return(NULL)
     },
     
     addSelectizeProvider = function(){

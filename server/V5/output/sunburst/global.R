@@ -6,6 +6,13 @@ library(XML)
 library(shinyWidgets)
 library(plotly)
 library(dygraphs)
+library(leaflet)
+
+## Leaflet : 
+GLOBALmapObjectControls = "mapObjectControls"
+GLOBALcontrols <- "controls"
+GLOBALmapId <- "mapId"
+GLOBALlayerControl <- "layerControl"
 
 # a logger to log message in file
 GLOBALlogFolder <- "./logs/"

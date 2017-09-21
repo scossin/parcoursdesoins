@@ -17,9 +17,13 @@ InstanceSelectionContext <- R6::R6Class(
       self$addUIselection()
       self$addButtonDescriptionObserver()
       self$addButtonSearchContextsObserver()
+      self$addUpdateContextsObserver()
       self$setButtonFilter(self$getDivFiltersId(), where)
-
       staticLogger$info("new instanceSelectionContext")
+    },
+    
+    updateContextTabPanel = function(){
+      GLOBALlistEventTabpanel$updateContext(self$context)
     },
     
     searchAndUpdate = function(){
@@ -39,6 +43,7 @@ InstanceSelectionContext <- R6::R6Class(
       ## updatingContextEvents 
       staticLogger$info("\t updating ContextEvents")
       self$contextEvents <- staticMakeQueries$getContext(query)
+      self$context <- unique(self$contextEvents$context)
       ## updateFilter :
       self$updateFilters()
     },
@@ -49,6 +54,8 @@ InstanceSelectionContext <- R6::R6Class(
                              label = "Description"),
                 actionButton(inputId = self$getButtonSearchContextsId(), 
                              label = "Search"),
+                actionButton(inputId = self$getButtonUpdateContextsId(), 
+                             label = "Update Context"),
                 verbatimTextOutput(outputId = self$getTextDescriptionId()),
                 div(id=self$getDivFiltersId())
       )
@@ -58,6 +65,16 @@ InstanceSelectionContext <- R6::R6Class(
                ui = ui)
     },
     
+    getButtonUpdateContextsId = function(){
+      return(paste0("UpdateContexts",self$getUISelectionId()))
+    },
+    
+    addUpdateContextsObserver = function(){
+      observeEvent(input[[self$getButtonUpdateContextsId()]],{
+        GLOBALlistEventTabpanel$updateContext(self$context)
+      })
+    },
+    
     removeUIselection = function(){
       jQuerySelector = paste0("#", self$getUISelectionId())
       removeUI(selector = jQuerySelector)
@@ -65,7 +82,7 @@ InstanceSelectionContext <- R6::R6Class(
     
     addButtonSearchContextsObserver = function(){
       self$buttonSearchContextsObserver <- observeEvent(input[[self$getButtonSearchContextsId()]], {
-        staticLogger$info("Search Events clicked !")
+        staticLogger$info("Search Contexts clicked !")
         self$searchAndUpdate()
         return(NULL)
       })

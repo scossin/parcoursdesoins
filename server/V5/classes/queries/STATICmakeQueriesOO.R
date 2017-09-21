@@ -46,20 +46,23 @@ STATICmakeQueries <- R6::R6Class(
       staticLogger$info("eventType : ",eventType)
       staticLogger$info("Nevents : ",length(contextEvents$event))
       staticLogger$info("Looking into : ",terminologyName)
-      context <- sort(contextEvents$context)
-      contextList <- private$splitContext(context)
+      # context <- sort(contextEvents$context)
+      # contextList <- private$splitContext(context)
+      events <- unique(contextEvents$event)
+      eventsList <- private$splitEvents(events)
       results <- NULL
       shiny::withProgress(message = "Sending query", value = 0, {
-        totalIter <- length(contextList)
+        totalIter <- length(eventsList)
         nIter <- 1
-        for (context in contextList){
-          bool <- contextEvents$context %in% context
-          events <- contextEvents$event[bool]
+        for (events in eventsList){
+          bool <- contextEvents$event %in% events
+          context <- contextEvents$context[bool]
           query <- private$getQuery(eventType, predicateName, events, context,terminologyName)
           timeMesure <- system.time(
             results <- rbind (results, GLOBALcon$sendQuery(query))
           )
           timeElapsed <- timeMesure["elapsed"]
+          staticLogger$info("\t timeElapsed : ",timeElapsed)
           if (nIter != totalIter){
             remainingTime <- private$estimateRemainingTime(nIter, totalIter, timeElapsed)
             incProgress(nIter/totalIter, detail = paste("Remaining times : ", remainingTime, " seconds"))
@@ -73,11 +76,19 @@ STATICmakeQueries <- R6::R6Class(
   
   
   private = list(
-    splitContext = function(context){
-      chunk <- 100
-      n <- length(context)
+    # splitContext = function(context){
+    #   chunk <- 500
+    #   n <- length(context)
+    #   r <- rep(1:ceiling(n/chunk),each=chunk)[1:n]
+    #   d <- split(context, r)
+    #   return(d)
+    # },
+    
+    splitEvents = function(events){
+      chunk <- 500
+      n <- length(events)
       r <- rep(1:ceiling(n/chunk),each=chunk)[1:n]
-      d <- split(context, r)
+      d <- split(events, r)
       return(d)
     },
     

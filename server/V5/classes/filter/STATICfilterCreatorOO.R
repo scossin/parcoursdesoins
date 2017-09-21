@@ -108,6 +108,29 @@ STATICfilterCreator <- R6::R6Class(
                                                    parentId = parentId, 
                                                    where = where)
         return(filterDate)
+      } else if (filterType == "SPATIALPOINT"){
+        #colnames(dataFrame) <- c("context","event")
+        pointsCoordinate <- table(dataFrame$value)
+        pointsCoordinate <- data.frame(event = names(pointsCoordinate), 
+                                       N = as.numeric(pointsCoordinate))
+        pointsCoordinate$context <- ""
+        #pointsCoordinate <- data.frame(context="",event=unique(dataFrame$event))
+        for (spatialPredicate in c("lat","long","label")){
+          addColumn <- self$getDataFrame(terminologyName = terminologyName, 
+                                        eventType = expectedValue, 
+                                        contextEvents = pointsCoordinate, 
+                                        predicateName = spatialPredicate)
+          colnames(addColumn) <- c("event",spatialPredicate)
+          pointsCoordinate <- merge (pointsCoordinate, addColumn, by="event")
+        }
+        filterSpatial <- FilterSpatialPoint$new(contextEnv = contextEnv, 
+                                                predicateName = predicateName, 
+                                                dataFrame = dataFrame, 
+                                                parentId = parentId, 
+                                                where = where,
+                                                pointsCoordinate = pointsCoordinate)
+        GLOBALmapObject$addSpatialFilter(filterSpatial)
+        return(filterSpatial)
       }
       return(NULL)
     },
@@ -118,7 +141,8 @@ STATICfilterCreator <- R6::R6Class(
   ),
   
   private = list(
-    availableFilters = c("NUMERIC","DATE","HIERARCHICAL","STRING","DURATION", "TERMINOLOGY"),
+    availableFilters = c("NUMERIC","DATE","HIERARCHICAL","STRING","DURATION", "TERMINOLOGY",
+                         "SPATIALPOINT","SPATIALPOLYGON"),
     ## DEPRECATED
     checkEnvironment = function(contextEnv){
       objectsList <- ls(contextEnv)

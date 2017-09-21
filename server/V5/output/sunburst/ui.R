@@ -26,6 +26,7 @@ navbarPage("Parcours de soins", id="CartoParcours",
                     
                     
                     tags$head(
+                      includeCSS("../../www/css/styleLeaflet.css"),
                       includeScript("../../www/js/newTabpanel.js"),
                       includeScript("../../www/js/removeId.js"),
                       includeScript("../../www/js/displayId.js"),
@@ -39,5 +40,19 @@ navbarPage("Parcours de soins", id="CartoParcours",
                                   tabPanel("Context",
                                            div(id="contextId"))
                       )
-                    )
+                    ), ## end tabpanel Event
+           
+           ### leaflet
+           tabPanel("Carte",
+                    div(class="outer",
+                        leaflet::leafletOutput(GLOBALmapId, width="100%", height="100%"),
+                        # panel control pour la sélection
+                        absolutePanel(id = GLOBALmapObjectControls, class = "panel panel-default", fixed = TRUE,
+                                      draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
+                                      width = 330, height = "auto",
+                                      
+                                      h4(GLOBALcontrols),
+                                      div(id=GLOBALlayerControl)
+                        ))
            )
+)

@@ -82,7 +82,7 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
       }
       
       
-      if (!predicateClass %in% c("factor","Date","numeric")){
+      if (!predicateClass %in% c("factor","date","numeric")){
         stop("incorrect predicateClass")
       }
       if (is.null(predicateType) || length(predicateType) != 1){
@@ -98,7 +98,7 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
       
       predicateClassNode <- switch(predicateClass,
                                    "factor"= getFactorNodes_(predicateClassNode, values),
-                                   "Date"= getNumericDateNodes_(predicateClassNode, minValue, maxValue),
+                                   "date"= getNumericDateNodes_(predicateClassNode, minValue, maxValue),
                                    "numeric"= getNumericDateNodes_(predicateClassNode, minValue, maxValue))
       
       

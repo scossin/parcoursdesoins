@@ -22,6 +22,7 @@ import exceptions.UnfoundTerminologyException;
 import parameters.Util;
 import query.XMLFile.XMLelement;
 import servlet.DockerDB.Endpoints;
+import terminology.OneClass;
 import terminology.Terminology;
 
 /**
@@ -68,7 +69,7 @@ public abstract class XMLDescribeQuery implements Query {
 	 * @throws InvalidContextException
 	 * @throws UnfoundTerminologyException 
 	 */
-	public XMLDescribeQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException{
+	public XMLDescribeQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException, UnfoundEventException{
 		this.xml = xml;
 		Node eventNode = xml.getEventNodes().item(0);
 		this.terminology = XMLFile.getTerminology(eventNode);
@@ -124,14 +125,18 @@ public abstract class XMLDescribeQuery implements Query {
 	 * Create a "VALUES" condition of events instances for the SPARQL query
 	 * @param eventNode
 	 * @throws UnfoundPredicatException
+	 * @throws UnfoundEventException 
 	 */
-	private void setEventValuesSPARQL (Node eventNode) throws UnfoundPredicatException{
+	private void setEventValuesSPARQL (Node eventNode) throws UnfoundPredicatException, UnfoundEventException{
 		Element element = (Element) eventNode;
 		NodeList eventInstance = element.getElementsByTagName(XMLelement.value.toString());
 		Node eventInstances = eventInstance.item(0);
 		String eventInstancesNames[] = eventInstances.getTextContent().split("\t");
+		NodeList eventTypeNode = element.getElementsByTagName(XMLelement.eventType.toString());
+		String className = eventTypeNode.item(0).getTextContent();
+		OneClass oneClass = terminology.getClassDescription().getClass(className);
 		for (String eventInstanceName : eventInstancesNames){
-			eventValuesSPARQL.add(Util.vf.createIRI(terminology.getNAMESPACE(), eventInstanceName));
+			eventValuesSPARQL.add(Util.vf.createIRI(oneClass.getClassIRI().getNamespace(), eventInstanceName));
 		}
 	}
 
