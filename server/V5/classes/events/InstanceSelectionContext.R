@@ -6,19 +6,15 @@ InstanceSelectionContext <- R6::R6Class(
     buttonDescriptionObserver = NULL,
     buttonSearchContextsObserver = NULL,
     
-    initialize = function(contextEnv, terminologyName, className, contextEvents, parentId, where){
-      self$contextEnv <- contextEnv
-      self$terminologyName <- as.character(terminologyName)
-      self$className <- className
-      self$contextEvents <- contextEvents
-      self$context <- unique(contextEvents$context)
-      self$terminologyDescription <- GLOBALterminologyDescription[[self$terminologyName]]
+    initialize = function(contextEnv, terminology, className, contextEvents, parentId, where){
       self$parentId <- parentId
       self$addUIselection()
+      
+      super$initialize(contextEnv, terminology, className, contextEvents, parentId, where)
+      
       self$addButtonDescriptionObserver()
       self$addButtonSearchContextsObserver()
       self$addUpdateContextsObserver()
-      self$setButtonFilter(self$getDivFiltersId(), where)
       staticLogger$info("new instanceSelectionContext")
     },
     
@@ -32,7 +28,7 @@ InstanceSelectionContext <- R6::R6Class(
       staticLogger$info("\t getting predicatesNodes")
       query <- XMLSearchQueryTerminology$new()
       query$addEventNode(eventNumber = self$contextEnv$eventNumber,
-                         terminologyName = self$terminologyName,
+                         terminologyName = self$terminology$terminologyName,
                          eventType = self$className)
       if (!length(self$listFilters) == 0){
         for (filter in self$listFilters){
@@ -98,7 +94,7 @@ InstanceSelectionContext <- R6::R6Class(
         description <- paste(description, collapse="\n")
         Nevents <- length(unique(self$contextEvents$event))
         Ncontexts <- length(unique(self$contextEvents$context))
-        text <- paste0(self$terminologyName, " : ", self$className, "\t",Nevents," instances",
+        text <- paste0(self$terminology$terminologyName, " : ", self$className, "\t",Nevents," instances",
                        "\t", Ncontexts, " graphes",
                        "\n",description)
         output[[self$getTextDescriptionId()]] <- shiny::renderText(text)
@@ -106,7 +102,7 @@ InstanceSelectionContext <- R6::R6Class(
     },
     
     getDivFiltersId = function(){
-      return(paste0("UIdescription",self$getUISelectionId()))
+      return(paste0("DivFilters",self$getUISelectionId()))
     },
     
     getUISelectionId = function(){
@@ -142,6 +138,11 @@ InstanceSelectionContext <- R6::R6Class(
       self$removeUIselection()
       
       staticLogger$info("End Destroying InstanceSelectionEvent")
+    }
+  ), 
+  private = list(
+    getButtonFilterParentId = function(){
+      return(self$getDivFiltersId())
     }
   )
 )

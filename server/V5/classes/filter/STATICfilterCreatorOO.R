@@ -10,7 +10,7 @@ STATICfilterCreator <- R6::R6Class(
       }
       
       # separating Event and others 
-      if (terminologyName == GLOBALterminologyDescription$Event$terminologyName){
+      if (terminologyName == staticTerminologyInstances$terminology$Event$terminologyName){
         dataFrame <- staticMakeQueries$getContextEventsPredicate(eventType = eventType,
                                                                  contextEvents = contextEvents,
                                                                  predicateName = predicateName,
@@ -43,8 +43,11 @@ STATICfilterCreator <- R6::R6Class(
     },
     
     createFilterObject = function(contextEnv, eventType, contextEvents, 
-                                  filterType, predicateName, expectedValue, 
-                                  terminologyName, parentId, where){
+                                  predicateName, terminology, parentId, where){
+      
+      filterType <- terminology$getPredicateDescription(predicateName)$category
+      expectedValue <- terminology$getPredicateDescription(predicateName)$value
+      terminologyName <- terminology$terminologyName
       
       staticLogger$info("\t Filter type : ",filterType)
       
@@ -84,9 +87,10 @@ STATICfilterCreator <- R6::R6Class(
         contextEnv2 <- new.env()
         contextEnv2$eventNumber <- as.numeric(paste0(contextEnv$eventNumber),"11")## 111 111111 ...
         contextEnv2$eventType <- expectedValue
+        terminology <- staticTerminologyInstances$getTerminology(as.character(expectedValue))
         contextEnv2$predicateName <- predicateName
         contextEnv2$instanceSelection <- InstanceSelection$new(contextEnv = contextEnv2, 
-                                                               terminologyName = expectedValue, 
+                                                               terminology = terminology, 
                                                                className = expectedValue, 
                                                                contextEvents = dataFrame, 
                                                                parentId = parentId, 
@@ -131,6 +135,10 @@ STATICfilterCreator <- R6::R6Class(
                                                 pointsCoordinate = pointsCoordinate)
         GLOBALmapObject$addSpatialFilter(filterSpatial)
         return(filterSpatial)
+      } else if (filterType == "HIERARCHY"){
+        print(dataFrame)
+        print(eventType)
+        print(expectedValue)
       }
       return(NULL)
     },
@@ -141,7 +149,7 @@ STATICfilterCreator <- R6::R6Class(
   ),
   
   private = list(
-    availableFilters = c("NUMERIC","DATE","HIERARCHICAL","STRING","DURATION", "TERMINOLOGY",
+    availableFilters = c("NUMERIC","DATE","HIERARCHY","STRING","DURATION", "TERMINOLOGY",
                          "SPATIALPOINT","SPATIALPOLYGON"),
     ## DEPRECATED
     checkEnvironment = function(contextEnv){

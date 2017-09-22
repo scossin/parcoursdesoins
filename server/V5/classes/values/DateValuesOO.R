@@ -14,7 +14,6 @@ DateValues <- R6::R6Class(
     setXTS = function(x){
       private$toXTS(x)
       self$xtsObjectSelection <- self$xtsObject
-      print(self$xtsObjectSelection)
       return(NULL)
     },
     

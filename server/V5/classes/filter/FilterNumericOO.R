@@ -20,7 +20,7 @@ FilterNumeric <- R6::R6Class(
     updateDataFrame = function(){
       staticLogger$info("updateDataFrame of FilterNumeric")
       eventType <- self$contextEnv$instanceSelection$className
-      terminologyName <- self$contextEnv$instanceSelection$terminologyName
+      terminologyName <- self$contextEnv$instanceSelection$terminology$terminologyName
       predicateName <- self$predicateName
       contextEvents <- self$contextEnv$instanceSelection$getContextEvents()
       self$dataFrame <- staticFilterCreator$getDataFrame(terminologyName, eventType, contextEvents, predicateName)

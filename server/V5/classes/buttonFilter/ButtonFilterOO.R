@@ -132,18 +132,15 @@ ButtonFilter <- R6::R6Class(
         
         staticLogger$info("\t \t new filterObject for ",self$getObjectId())
         contextEvents <- self$contextEnv$instanceSelection$getContextEvents()
-        filterType <- self$contextEnv$instanceSelection$terminologyDescription$getPredicateDescription(self$predicateName)$category
-        expectedValue <- self$contextEnv$instanceSelection$terminologyDescription$getPredicateDescription(self$predicateName)$value
         eventNumber <- self$contextEnv$eventNumber
         eventType <- self$contextEnv$instanceSelection$className
-        terminologyName <- self$contextEnv$instanceSelection$terminologyName
+        terminology <- self$contextEnv$instanceSelection$terminology
+        
         filterObject <- staticFilterCreator$createFilterObject(contextEnv = self$contextEnv,
                                                                eventType = eventType, 
                                                                contextEvents = contextEvents, 
-                                                               filterType = filterType,
                                                                predicateName= self$predicateName,
-                                                               expectedValue = expectedValue,
-                                                               terminologyName = terminologyName,
+                                                               terminology = terminology,
                                                                parentId = self$getDivIdFilterObject(),
                                                                where = "beforeEnd"
         )

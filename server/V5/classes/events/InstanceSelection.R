@@ -3,28 +3,28 @@ InstanceSelection <- R6::R6Class(
   
   public = list(
     contextEnv = environment(),
-    terminologyName = character(),
+    terminology = NULL,
     className = character(),
     contextEvents = list(),
     context = "",
     parentId = character(),
-    terminologyDescription = list(),
     listButtonFilterObject = list(),
     listFilters = list(),
     
-    initialize = function(contextEnv, terminologyName, className, contextEvents, parentId, where){
+    initialize = function(contextEnv, terminology, className, contextEvents, parentId, where){
       self$contextEnv <- contextEnv
-      self$terminologyName <- as.character(terminologyName)
+      self$terminology <- terminology
       self$className <- className
       self$contextEvents <- contextEvents
       self$context <- unique(contextEvents$context)
-      self$terminologyDescription <- GLOBALterminologyDescription[[self$terminologyName]]
       self$parentId <- parentId
-      self$setButtonFilter(parentId, where)
-      staticLogger$info("new instanceSelection terminology : ", terminologyName,
+      
+      staticLogger$info("new instanceSelection terminology : ", self$terminology$terminologyName,
                         "location : ", parentId)
+      self$setButtonFilter(private$getButtonFilterParentId(), where)
+      
+
     },
-    
     
     updateFilters = function(){
       ## updateFilter :
@@ -109,13 +109,10 @@ InstanceSelection <- R6::R6Class(
     },
     
     setButtonFilter = function(parentId, where){
-      staticLogger$info("\t setting Button filter in ", self$parentId, "...")
+      staticLogger$info("\t setting Button filter in ", parentId, "...")
       ### insert new predicate
-      staticLogger$info("\t \t getting predicates...")
-      predicatesDf <- self$terminologyDescription$predicatesDf
-      
       staticLogger$info("\t \t getting predicatesDescription of ", self$className)
-      predicateDescriptionOfEvent <- self$terminologyDescription$getPredicateDescriptionOfEvent(self$className)
+      predicateDescriptionOfEvent <- self$terminology$getPredicateDescriptionOfEvent(eventType = self$className)
       namesList <- NULL
       staticLogger$info("\t creating a list of ButtonFilter...")
       for (row in 1:nrow(predicateDescriptionOfEvent)){
@@ -152,6 +149,11 @@ InstanceSelection <- R6::R6Class(
       self$listButtonFilterObject <- NULL
       return(NULL)
     }
+  ),
+  private = list(
+    getButtonFilterParentId = function(){
+      return(self$parentId)
+    }
   )
 )
 
@@ -176,7 +178,7 @@ PointerEnv <- R6::R6Class(
     updateDataFrame = function(){
       staticLogger$info("update Instance Selection")
       eventType <- self$contextEnv$instanceSelection$className
-      terminologyName <- self$contextEnvParent$instanceSelection$terminologyName
+      terminologyName <- self$contextEnvParent$instanceSelection$terminology$terminologyName
       predicateName <- self$contextEnv$predicateName
       contextEvents <- self$contextEnvParent$instanceSelection$getContextEvents()
       self$contextEnv$instanceSelection$contextEvents <- staticFilterCreator$getDataFrame(terminologyName, 
@@ -209,7 +211,8 @@ PointerEnv <- R6::R6Class(
       subDescription <- self$contextEnv$instanceSelection$getDescription()
       if (!is.null(subDescription)){
         subDescription <- paste0("\t", subDescription)
-        subDescription <- append(self$contextEnv$instanceSelection$terminologyName, subDescription)
+        subDescription <- append(self$contextEnv$instanceSelection$terminology$terminologyName, 
+                                 subDescription)
         subDescription <- paste(subDescription, collapse="\n")
       }
       return(subDescription)

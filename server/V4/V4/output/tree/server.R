@@ -19,7 +19,7 @@ server <- shinyServer(function(input, output, session) {
   source("../../global_server.R",local=T)
   source("../../www/js/jslink.R",local = T) ### sendCustomessages via js function
   source("output_tree.R",local=T)
-  
+  values<-NULL
   ##### Création de l'event 0 !
   values[["selection0"]]$event <- new("Event",df_events = evenements,event_number=0) ## création de l'objet sur le serveur
   output_tree$addTree(event = values[["selection0"]]$event) ## création de l'ui

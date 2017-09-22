@@ -7,6 +7,7 @@ library(shinyWidgets)
 library(plotly)
 library(dygraphs)
 library(leaflet)
+library(shinyTree)
 
 ## Leaflet : 
 GLOBALmapObjectControls = "mapObjectControls"

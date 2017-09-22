@@ -15,19 +15,12 @@ server <- function(input,output,session){
   
   source("../../classes/queries/GetFileOO.R",local=T)
   
-  source("../../classes/queries/PredicatesOO.R",local=T)
-  GLOBALterminologyDescription <- list(
-    Event = Predicates$new(GLOBALcon$terminology$Event,GLOBALlang),
-    RPPS = Predicates$new(GLOBALcon$terminology$RPPS,GLOBALlang),
-    Etablissement = Predicates$new(GLOBALcon$terminology$FINESS,GLOBALlang),
-    Graph = Predicates$new(GLOBALcon$terminology$Graph,GLOBALlang)
-    )
-
-  # GLOBALterminologyDescription$Etablissement$getPredicateDescription("E")
-  # GLOBALterminologyDescription$RPPS$predicatesDf
-    # GLOBALterminologyDescription$CONTEXT$getPredicateDescriptionOfEvent("Graph")
-    #   getPredicateDescriptionOfEvent("")
-    # GLOBALterminologyDescription$Etablissement$predicatesDf
+  source("../../classes/terminology/STATICterminologyInstancesOO.R",local=T)
+  source("../../classes/terminology/TerminologyOO.R",local=T)
+  staticTerminologyInstances <- STATICterminologyInstances$new()
+  
+ # test <-  staticTerminologyInstances$getTerminology("Etablissement")
+ # test$mainClassName
   source("../../classes/queries/STATICmakeQueriesOO.R",local=T)
 
   source("../../classes/queries/XMLCountQueryOO.R",local=T)
@@ -86,8 +79,9 @@ server <- function(input,output,session){
   where = "beforeEnd"
   contextEnv <- new.env()
   contextEnv$eventNumber <- 0
+  terminology <- staticTerminologyInstances$terminologyInstances$Graph
   contextEnv$instanceSelection <- InstanceSelectionContext$new(contextEnv = contextEnv, 
-                                                        terminologyName = "Graph", 
+                                                        terminology = terminology, 
                                                         className = "Graph", 
                                                         contextEvents = contextEvents, 
                                                         parentId = parentId, 
@@ -171,6 +165,5 @@ server <- function(input,output,session){
 #   print(test1$filePredicatesDescription)
 # }
 
-# test <- GLOBALterminologyDescription[[GLOBALcon$terminology$Event]]
 # test$predicatesDf
 

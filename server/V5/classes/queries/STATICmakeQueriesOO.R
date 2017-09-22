@@ -71,6 +71,19 @@ STATICmakeQueries <- R6::R6Class(
         }
         return(results)
       })
+    },
+    
+    getEventCount = function(contextVector){
+      staticLogger$info("Counting events of ", length(contextVector), "contexts")
+      query <- XMLCountquery$new()
+      query$addContextNode(contextVector = self$contextEnv$context)
+      eventCount <- GLOBALcon$sendQuery(query)
+      bool <- colnames(eventCount) %in% c("className","count")
+      if (!all(bool)){
+        staticLogger$error("Unexpected columns :", colnames(eventCount))
+        stop("Unexpected columns :", colnames(eventCount))
+      }
+      return(eventCount)
     }
   ),
   

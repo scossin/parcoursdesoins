@@ -29,7 +29,7 @@ FilterCategorical <- R6::R6Class(
       staticLogger$info("updateDataFrame of FilterCategorical")
       namesChosen <- names(self$valueEnv$categoricalValues$tableChosenValues)
       eventType <- self$contextEnv$instanceSelection$className
-      terminologyName <- self$contextEnv$instanceSelection$terminologyName
+      terminologyName <- self$contextEnv$instanceSelection$terminology$terminologyName
       predicateName <- self$predicateName
       contextEvents <- self$contextEnv$instanceSelection$getContextEvents()
       self$dataFrame <- staticFilterCreator$getDataFrame(terminologyName, eventType, contextEvents, predicateName)
