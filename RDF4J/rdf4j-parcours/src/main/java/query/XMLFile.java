@@ -348,11 +348,15 @@ public class XMLFile {
 			logger.info("\t no node value in context node");
 			return;
 		}
-		String contextValues[] = contextValuesNode.item(0).getTextContent().split("\t");
-		if (contextValues.length == 1 || contextValues.equals("")){
+		
+		String contextValuesString = contextValuesNode.item(0).getTextContent();
+		if (contextValuesString.equals("")){
 			logger.info("\t value node of context node is empty"); // <value></value>
 			return;
 		}
+		
+		String contextValues[] = contextValuesString.split("\t");
+
 		for (String contextName : contextValues){
 			IRI contextIRI = EIG.getContextIRI(contextName);
 			dataset.addNamedGraph(contextIRI);

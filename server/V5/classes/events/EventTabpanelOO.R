@@ -21,14 +21,21 @@ EventTabpanel <- R6::R6Class(
     updateContext = function(context){
       staticLogger$info("Updating context in EventTabPanel",self$contextEnv$eventNumber)
       self$contextEnv$context <- context
+      if (is.null(self$contextEnv$instanceSelection)){
+        staticLogger$info("EventTabPanel",self$contextEnv$eventNumber, " : no event selected yet")
+        return(NULL)
+      }
       self$contextEnv$instanceSelection$context <- context
       self$contextEnv$instanceSelection$searchAndUpdate()
     },
     
     setHierarchicalObject = function(){
       staticLogger$info("setting a new HierarchicalObject for",self$getObjectId())
-      hierarchicalObject <- HierarchicalSunburst$new(contextEnv = self$contextEnv,
+      dataFrame <- data.frame(event=character(), value=numeric())
+      hierarchicalObject <- FilterHierarchicalEvent$new(contextEnv = self$contextEnv,
                                                      terminology = self$terminology,
+                                                     predicateName = "hasType", ## hard coded ...
+                                                     dataFrame = dataFrame,
                                                      parentId = private$getFirstDivOfEventId(),
                                                      where = "beforeEnd")
       self$hierarchicalObject <- hierarchicalObject
@@ -40,17 +47,20 @@ EventTabpanel <- R6::R6Class(
     },
     
     addHierarchicalObserver = function(){
-      observeEvent(input[[self$hierarchicalObject$getInputObserver()]],{
-        staticLogger$user(self$hierarchicalObject$getObjectId(),"clicked")
+      observeEvent(input[[self$hierarchicalObject$getButtonValidateId()]],{
+        staticLogger$user("Button validate cliked of HierarchicalObjectEvent")
         if (!is.null(self$contextEnv$eventType)){
           staticLogger$info("\t nothing to do : eventType already choosen")
           return(NULL)
         }
         ## choices are validated
-        observerInput <- input[[self$hierarchicalObject$getInputObserver()]]
-        staticLogger$user("\t clicked value : ",observerInput)
-        self$contextEnv$eventType <- self$hierarchicalObject$getEventType(observerInput)
-        staticLogger$info("\t event choosen : ",  self$contextEnv$eventType )
+        eventType <- self$hierarchicalObject$getEventChoice()
+        staticLogger$user("\t clicked value : ",eventType)
+        if (eventType %in% c(GLOBALnoselected, GLOBALmanyselected)){
+          staticLogger$info("\t Bad choice for event selection : ")
+          return(NULL)
+        }
+        self$contextEnv$eventType <- eventType
         
         staticLogger$info("\t getting events ...")
         contextEvents <- staticMakeQueries$getContextEvents(eventNumber = self$contextEnv$eventNumber,

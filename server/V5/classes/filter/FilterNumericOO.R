@@ -238,15 +238,8 @@ FilterNumeric <- R6::R6Class(
     
     getNumericInputMinId = function(){
       return(paste0("numericMin",self$getDivNumericFilterId()))
-    },
-    
-    getChoosenEvents = function(){
-      stop("setContext not implemented !")
-    },
-
-    setContext = function(){
-      stop("setContext not implemented !")
     }
+    
   ),
   
   private=list(

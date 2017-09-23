@@ -73,10 +73,15 @@ STATICmakeQueries <- R6::R6Class(
       })
     },
     
-    getEventCount = function(contextVector){
+    getEventCount = function(terminologyName, eventType, predicateName, contextVector){
       staticLogger$info("Counting events of ", length(contextVector), "contexts")
+      
       query <- XMLCountquery$new()
-      query$addContextNode(contextVector = self$contextEnv$context)
+      query$addEventNode(terminologyName = terminologyName,
+                         eventType = eventType,
+                         predicateName = predicateName)
+      query$addContextNode(contextVector)
+      query$saveQuery()
       eventCount <- GLOBALcon$sendQuery(query)
       bool <- colnames(eventCount) %in% c("className","count")
       if (!all(bool)){

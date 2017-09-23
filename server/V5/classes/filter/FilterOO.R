@@ -17,12 +17,12 @@ Filter <- R6::R6Class(
       # self$domParentId <- domParentId
     },
     
-    getEventsSelected = function(){
-      stop("getEventsSelected not implemented !")
+    updateDataFrame = function(){
+      stop("updateDataFrame not implemented !")
     },
     
-    setContext = function(){
-      stop("setContext not implemented !")
+    getEventsSelected = function(){
+      stop("getEventsSelected not implemented !")
     },
     
     getXMLpredicateNode = function(){

@@ -32,8 +32,8 @@ server <- function(input,output,session){
   
 
   source("../../classes/superClasses/uiObject.R",local=T)
-  source("../../classes/filter/HierarchicalOO.R",local = T)
-  source("../../classes/filter/HierarchicalSunburstOO.R",local = T)
+  source("../../classes/filter/FilterHierarchicalOO.R",local = T)
+  source("../../classes/filter/FilterHierarchicalEventOO.R",local = T)
   source("../../classes/events/EventTabpanelOO.R",local=T)
   source("../../classes/events/ListEventsTabpanelOO.R",local=T)
   source("../../classes/buttonFilter/ButtonFilterOO.R",local=T)

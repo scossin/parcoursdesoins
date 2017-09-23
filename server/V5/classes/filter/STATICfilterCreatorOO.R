@@ -4,10 +4,16 @@ STATICfilterCreator <- R6::R6Class(
   public = list(
     
     getDataFrame = function(terminologyName, eventType, contextEvents, predicateName){
+      staticLogger$info("Getting dataFrame... ")
+      staticLogger$info("\t eventType : ", eventType)
+      staticLogger$info("\t contextEvents : ", nrow(contextEvents), "lines")
+      staticLogger$info("\t predicateName : ", predicateName)
+      staticLogger$info("\t terminologyName : ", terminologyName)
       if (nrow(contextEvents) == 0){
         dataFrame <- data.frame(event = character(), value=character())
         return(dataFrame)
       }
+      
       
       # separating Event and others 
       if (terminologyName == staticTerminologyInstances$terminology$Event$terminologyName){
@@ -136,9 +142,14 @@ STATICfilterCreator <- R6::R6Class(
         GLOBALmapObject$addSpatialFilter(filterSpatial)
         return(filterSpatial)
       } else if (filterType == "HIERARCHY"){
-        print(dataFrame)
-        print(eventType)
-        print(expectedValue)
+        terminology <- staticTerminologyInstances$getTerminology(as.character(expectedValue))
+        filterHierarchical <- FilterHierarchical$new(contextEnv = contextEnv,
+                                                     terminology = terminology,
+                                                     predicateName = predicateName, 
+                                                     dataFrame = dataFrame,
+                                                     parentId = parentId, 
+                                                     where = where)
+        return(filterHierarchical)
       }
       return(NULL)
     },

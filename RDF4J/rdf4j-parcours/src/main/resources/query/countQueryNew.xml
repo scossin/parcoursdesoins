@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE event SYSTEM "count.dtd" > 
+<event>
+ 
+ <terminologyName>Event</terminologyName>
+ <eventType>Event</eventType>
+ <predicate>
+  
+  <predicateType>hasType</predicateType>
+ </predicate>
+ <context>
+  <value>p100</value>
+ </context>
+</event>

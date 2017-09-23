@@ -42,6 +42,9 @@ FilterCategorical <- R6::R6Class(
     getXMLpredicateNode = function(){
       tempQuery <- XMLSearchQuery$new()
       namesChosen <- names(self$valueEnv$categoricalValues$tableChosenValues)
+      if (is.null(namesChosen) || length(namesChosen) == 0 || namesChosen == ""){
+        return(NULL)
+      }
       predicateNode <- tempQuery$makePredicateNode(predicateClass = "factor",
                                                    predicateType = self$predicateName,
                                                    values = namesChosen)

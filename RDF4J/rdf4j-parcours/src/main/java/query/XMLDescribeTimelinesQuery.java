@@ -25,7 +25,8 @@ public class XMLDescribeTimelinesQuery extends XMLDescribeQuery implements Query
 	final static Logger logger = LoggerFactory.getLogger(XMLDescribeTimelinesQuery.class);
 	
 	
-	public XMLDescribeTimelinesQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException, UnfoundEventException{
+	public XMLDescribeTimelinesQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, 
+	                                                      InvalidContextException, UnfoundTerminologyException, UnfoundEventException {
 		super(xml);
 		setBasicQuery("SELECT ?context ?event ?predicate ?value WHERE { graph ?context { \n"+
 				"VALUES ?event {" +             eventReplacementString                           + "} \n"+

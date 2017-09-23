@@ -30,6 +30,9 @@ InstanceSelectionEvent <- R6::R6Class(
       if (!length(self$listFilters) == 0){
         for (filter in self$listFilters){
           predicateNode <- filter$getXMLpredicateNode()
+          if (is.null(predicateNode)){
+            next
+          }
           query$addPredicateNode2(eventNumber = self$contextEnv$eventNumber,predicateNode = predicateNode)
         }
       }

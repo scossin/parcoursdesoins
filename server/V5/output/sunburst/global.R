@@ -8,6 +8,7 @@ library(plotly)
 library(dygraphs)
 library(leaflet)
 library(shinyTree)
+library(jsonlite)
 
 ## Leaflet : 
 GLOBALmapObjectControls = "mapObjectControls"
@@ -54,6 +55,10 @@ if (GLOBALlang == "fr"){
   ## and
   GLOBALand <- "et"
   
+  ## hierarchy selection : 
+  GLOBALnoselected <- "Sélectionnez une catégorie"
+  GLOBALmanyselected <- "Merci de sélectionner une seule catégorie"
+  
 } else if (GLOBALlang == "en"){
   GLOBALaddEventTabpanel <- "Add an event"
   GLOBALremoveEventTabpanel <- "removeEventTabpanel"
@@ -80,6 +85,10 @@ if (GLOBALlang == "fr"){
   
   ## and
   GLOBALand <- "and"
+  
+  ## hierarchy selection : 
+  GLOBALnoselected <- "please, select one class"
+  GLOBALmanyselected <- "please, select only one class"
 }
 
 
