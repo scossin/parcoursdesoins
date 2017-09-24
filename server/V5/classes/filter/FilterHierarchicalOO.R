@@ -321,7 +321,7 @@ FilterHierarchical <- R6::R6Class(
   
   private = list(
     eventChoice = character(),
-    currentChoice = c("SHINYTREE"),
+    currentChoice = c("SUNBURST"),
     plotChoice = c("SUNBURST","SHINYTREE"),
     
     checkHierarchicalData = function(hierarchicalData){

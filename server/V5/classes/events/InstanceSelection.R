@@ -22,8 +22,6 @@ InstanceSelection <- R6::R6Class(
       staticLogger$info("new instanceSelection terminology : ", self$terminology$terminologyName,
                         "location : ", parentId)
       self$setButtonFilter(private$getButtonFilterParentId(), where)
-      
-
     },
     
     updateFilters = function(){
@@ -33,7 +31,6 @@ InstanceSelection <- R6::R6Class(
         filter$updateDataFrame()
       }
     },
-    
     
     getEventsSelected = function(){
       if (length(self$listFilters) == 0){
@@ -177,7 +174,7 @@ PointerEnv <- R6::R6Class(
     
     updateDataFrame = function(){
       staticLogger$info("update Instance Selection")
-      eventType <- self$contextEnv$instanceSelection$className
+      eventType <- self$contextEnvParent$instanceSelection$className
       terminologyName <- self$contextEnvParent$instanceSelection$terminology$terminologyName
       predicateName <- self$contextEnv$predicateName
       contextEvents <- self$contextEnvParent$instanceSelection$getContextEvents()
@@ -219,24 +216,3 @@ PointerEnv <- R6::R6Class(
     }
   )
 )
-
-# library(digest)
-# test <- new.env()
-# test <- NULL
-# test
-# Test <- R6::R6Class(
-#   "Test",
-#   public = list(
-#     value = numeric(),
-#     getHash = function(){digest::sha1(self$value)},
-#     initialize = function(value){
-#       self$value <- value
-#     }
-#   )
-# )
-# test <- Test$new(10)
-
-# test$getHash()
-# digest::sha1(test)
-# hash::hash(test)
-# ls(test)

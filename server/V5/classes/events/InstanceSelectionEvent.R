@@ -8,13 +8,15 @@ InstanceSelectionEvent <- R6::R6Class(
     
     initialize = function(contextEnv, terminology, className, contextEvents, parentId, where){
       self$parentId <- parentId
-      self$addUIselection()
+      self$addUIselection() ### add UI first because buttonFilter depends on it
       
       super$initialize(contextEnv, terminology, className, contextEvents, parentId, where)
       
       self$addButtonDescriptionObserver()
       self$addButtonSearchEventsObserver()
-
+      
+      self$addUIdonut()
+      self$makeDonut()
       staticLogger$info("new instanceSelectionEvent")
     },
     
@@ -45,19 +47,55 @@ InstanceSelectionEvent <- R6::R6Class(
       self$updateFilters()
     },
     
+    getUIdonutId = function(){
+      return(paste0("donut",self$getUISelectionId()))
+    },
+    
+    makeDonut = function(){
+      output[[self$getUIdonutId()]] <- plotly::renderPlotly({
+        events <- self$getEventsSelected()
+        events <- as.character(events)
+        bool <- self$contextEvents$event %in% events
+        df <- data.frame(labels=c("unselected","selected"),
+                         values=c(sum(!bool),sum(bool)))
+        colors <- c('rgb(0,0,0)','rgb(255,215,0)')
+        plotly::plot_ly(data = df, labels = ~labels, values = ~values,
+                marker = list(colors=colors)) %>%
+          add_pie(hole = 0.6) %>%
+          layout(title = self$className,  showlegend = F,
+                 xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                 yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+      })
+    },
+    
+    addUIdonut = function(){
+      ui <- plotly::plotlyOutput(outputId = self$getUIdonutId())
+      jQuerySelector <- paste0("#","test9999")
+      insertUI(selector = jQuerySelector,where = "beforeEnd",ui = ui)
+    },
+    
     addUIselection = function(){
       ui <- div(id=self$getUISelectionId(),
-                actionButton(inputId = self$getButtonDescriptionId(), 
-                             label = "Description"),
-                actionButton(inputId = self$getButtonSearchEventsId(), 
-                             label = "Search"),
-                verbatimTextOutput(outputId = self$getTextDescriptionId()),
+                fluidPage(
+                  sidebarLayout(
+                    sidebarPanel(
+                      actionButton(inputId = self$getButtonDescriptionId(), 
+                                   label = "Description"),
+                      verbatimTextOutput(outputId = self$getTextDescriptionId()),
+                      actionButton(inputId = self$getButtonSearchEventsId(), 
+                                   label = "Search")
+                    ),
+                  mainPanel(
+                    div (id="test9999")
+                  ))),
                 div(id=self$getDivFiltersId())
       )
       jQuerySelector = paste0("#", self$parentId)
       insertUI(selector = jQuerySelector,
                where = "afterBegin",
-               ui = ui)
+               ui = ui,
+               immediate = T
+              )
     },
     
     removeUIselection = function(){
@@ -87,6 +125,7 @@ InstanceSelectionEvent <- R6::R6Class(
                        "\t", Ncontexts, " graphes",
                        "\n",description)
         output[[self$getTextDescriptionId()]] <- shiny::renderText(text)
+        self$makeDonut()
       })
     },
     
@@ -105,8 +144,6 @@ InstanceSelectionEvent <- R6::R6Class(
     getButtonDescriptionId = function(){
       return(paste0("ButtonDescription",self$getUISelectionId()))
     },
-    
-    
     
     destroy = function(){
       staticLogger$info("Destroying InstanceSelectionEvent")
