@@ -79,6 +79,9 @@ STATIClogger <- R6::R6Class(
     writeMsg = function(msg, args){
       msg <- append(msg, " : ")
       for(arg in args){
+        if (is.null(arg)){
+          arg <- "NULL"
+        }
         if (is.factor(arg) || is.numeric(arg)){
           arg <- as.character(arg)
         }

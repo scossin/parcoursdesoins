@@ -31,6 +31,10 @@ Filter <- R6::R6Class(
     
     destroy = function(){
       stop("destroy not implemented ! ")
+    },
+    
+    getDescription = function(){
+      stop("getDescription not implemented ! ")
     }
   ),
   

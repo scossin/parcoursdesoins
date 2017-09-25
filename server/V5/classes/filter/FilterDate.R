@@ -12,7 +12,8 @@ FilterDate <- R6::R6Class(
       super$initialize(contextEnv, predicateName, dataFrame, parentId, where)
       dateValues <- DateValues$new(dataFrame$value)
       self$makeUI()
-      self$dateGraphics <- DateGraphics$new(dateValues, 
+      self$dateGraphics <- DateGraphics$new(contextEnv,
+                                            dateValues, 
                                             self$getDivFilterId(),
                                             where="beforeEnd")
     },
@@ -27,6 +28,16 @@ FilterDate <- R6::R6Class(
       self$dateGraphics$dateValues$setXTS(self$dataFrame$value)
       self$dateGraphics$updateDateRange()
       self$dateGraphics$remakePlot()
+    },
+    
+    getEventsSelected = function(){
+      minDate <- self$dateGraphics$dateValues$getMinDate()
+      maxDate <- self$dateGraphics$dateValues$getMaxDate()
+      values <- self$dateGraphics$dateValues$valueToDate(self$dataFrame$value)
+      values <- as.Date(values, format="%Y-%m-%d")
+      bool <- values >= minDate & values <= maxDate
+      eventsSelected <- as.character(self$dataFrame$event[bool])
+      return(eventsSelected)
     },
     
     getXMLpredicateNode = function(){

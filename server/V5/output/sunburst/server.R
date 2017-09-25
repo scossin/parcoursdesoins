@@ -70,6 +70,11 @@ server <- function(input,output,session){
   GLOBALlistEventTabpanel <- ListEventsTabpanel$new()
   
   
+  source("../../classes/queries/LinkEventsOO.R",local = T)
+  parentId <- "mainPanelLinkEvent"
+  where <- "beforeEnd"
+  GLOBALlinkEvents <- LinkEvents$new(parentId, where)
+  
   
   ### Context : 
   staticLogger$info("creating Context...")
@@ -77,10 +82,10 @@ server <- function(input,output,session){
   contextEvents <- data.frame(context=paste0("p",1:100),event=paste0("p",1:100))
   parentId = "contextId"
   where = "beforeEnd"
-  contextEnv <- new.env()
-  contextEnv$eventNumber <- 0
+  GLOBALcontextEnv <- new.env()
+  GLOBALcontextEnv$eventNumber <- 0
   terminology <- staticTerminologyInstances$terminologyInstances$Graph
-  contextEnv$instanceSelection <- InstanceSelectionContext$new(contextEnv = contextEnv, 
+  GLOBALcontextEnv$instanceSelection <- InstanceSelectionContext$new(contextEnv = GLOBALcontextEnv, 
                                                         terminology = terminology, 
                                                         className = "Graph", 
                                                         contextEvents = contextEvents, 
@@ -95,7 +100,7 @@ server <- function(input,output,session){
     nClick <- input$addEventTabpanel
     ## create new Tabpanel :
     eventTabpanel <- EventTabpanel$new(eventNumber=nClick, 
-                                       context = contextEnv$instanceSelection$context)
+                                       context = GLOBALcontextEnv$instanceSelection$context)
     eventTabpanel$setHierarchicalObject()
     GLOBALlistEventTabpanel$addEventTabpanel(eventTabpanel)
     
@@ -105,6 +110,8 @@ server <- function(input,output,session){
     shiny::updateSelectInput(session,
                              inputId = "eventToRemove",
                               choices = choices)
+    
+    GLOBALlinkEvents$updateSelectionLink() ## add event to linkEvent
   })
   
   observeEvent(input$removeEventTabpanel,{
@@ -118,6 +125,8 @@ server <- function(input,output,session){
     shiny::updateSelectInput(session,
                              inputId = "eventToRemove",
                              choices = choices)
+    
+    GLOBALlinkEvents$updateSelectionLink() ## remove event of linkEvent
   })
   
   

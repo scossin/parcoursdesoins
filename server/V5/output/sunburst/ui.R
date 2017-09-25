@@ -17,7 +17,7 @@ navbarPage("Parcours de soins", id="CartoParcours",
                       ),
                       
                       mainPanel(
-                        verbatimTextOutput(outputId = "DescriptionText")
+                        div(id = "mainPanelLinkEvent")
                       )
                       
                       )

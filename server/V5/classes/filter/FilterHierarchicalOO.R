@@ -27,6 +27,23 @@ FilterHierarchical <- R6::R6Class(
       return(eventCount)
     },
     
+    getDescription = function(){
+      namesChosen <- self$getEventChoice()
+      lengthChosen <- length(namesChosen)
+      if (lengthChosen > 10){
+        namesChosen <- namesChosen[1:10]
+        namesChosen <- append(namesChosen, "...")
+      }
+      if (lengthChosen == 0){
+        namesChosen <- ""
+      } else {
+        namesChosen <- paste(namesChosen, collapse = " ; ")
+      }
+      description <- paste0(self$predicateName,"\t ", lengthChosen, " values chosen (",
+                            namesChosen, ")")
+      return(description)
+    },
+    
     updateDataFrame = function(){
       staticLogger$info("updateDataFrame of FilterHierarchical")
       eventType <- self$contextEnv$instanceSelection$className
@@ -175,6 +192,8 @@ FilterHierarchical <- R6::R6Class(
       output[[self$getChoiceVerbatimId()]] <- shiny::renderPrint(
         self$getEventChoice()
       )
+      self$contextEnv$instanceSelection$filterHasChanged()
+      return(NULL)
     },
    
     getEventChoice = function(){

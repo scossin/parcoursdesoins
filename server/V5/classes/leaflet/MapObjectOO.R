@@ -124,7 +124,8 @@ MapObject <- R6::R6Class(
                                        )
       jQuerySelector = paste0("#",GLOBALlayerControl)
       insertUI(selector = jQuerySelector,
-               where = "beforeEnd",ui = ui
+               where = "beforeEnd",ui = ui,
+              immediate = T
                 )
     },
     

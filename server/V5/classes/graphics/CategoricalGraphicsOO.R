@@ -3,6 +3,7 @@ CategoricalGraphics <- R6::R6Class(
   inherit = uiObject,
   
   public = list(
+    contextEnv = environment(),
     lastChoice = character(),
     valueEnv = environment(),
     Nfirst = 10,
@@ -10,7 +11,8 @@ CategoricalGraphics <- R6::R6Class(
     pieObserver = NULL,
     selectizeObserver = NULL,
     
-    initialize = function(valueEnv, parentId, where){
+    initialize = function(contextEnv, valueEnv, parentId, where){
+      self$contextEnv <- contextEnv
       staticLogger$info("Creating a new CategoricalGraphics ", where, parentId)
       super$initialize(parentId, where)
       self$valueEnv <- valueEnv
@@ -58,6 +60,7 @@ CategoricalGraphics <- R6::R6Class(
                            choices = choices,
                            selected = selected,
                            server = TRUE)
+      self$contextEnv$instanceSelection$filterHasChanged()
       return(NULL)
     },
     
@@ -218,6 +221,7 @@ CategoricalGraphics <- R6::R6Class(
         staticLogger$info("\t updating plot and categoricalValues")
         self$valueEnv$categoricalValues$setTableChosenValuesSelectize(chosenValues)
         self$remakePlot()
+        self$contextEnv$instanceSelection$filterHasChanged()
       },ignoreNULL = F)
     },
     

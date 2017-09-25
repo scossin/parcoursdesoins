@@ -134,7 +134,7 @@ FilterNumeric <- R6::R6Class(
         self$updateNumericInputValues()
         self$numericGraphics$remakePlot()
         self$renderTextInfo()
-        self$contextEnv$instanceSelection$printFunction()
+        self$contextEnv$instanceSelection$filterHasChanged() ## message to send when filter changes
       })
       
       lengthList <- length(self$observersList)
@@ -161,7 +161,7 @@ FilterNumeric <- R6::R6Class(
             self$updateSliderInputValues()
             self$numericGraphics$remakePlot()
             self$renderTextInfo()
-            self$contextEnv$instanceSelection$printFunction()
+            self$contextEnv$instanceSelection$filterHasChanged()
       })
       lengthList <- length(self$observersList)
       self$observersList[[lengthList+1]] <- o

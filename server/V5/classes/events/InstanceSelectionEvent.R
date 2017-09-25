@@ -16,20 +16,17 @@ InstanceSelectionEvent <- R6::R6Class(
       self$addButtonSearchEventsObserver()
       
       self$addUIdonut()
-      self$makeDonut()
+      self$filterHasChanged()
       staticLogger$info("new instanceSelectionEvent")
     },
     
-    searchAndUpdate = function(){
-      staticLogger$info("Searching new events...")
-      
-      staticLogger$info("\t getting predicatesNodes")
-      query <- XMLSearchQuery$new()
+    
+    addContextNodeToQuery = function(query, boolGetXMLpredicateNode = T){
       query$addContextNode(self$context)
       query$addEventNode(eventNumber = self$contextEnv$eventNumber,
                          terminologyName = self$terminology$terminologyName,
                          eventType = self$className)
-      if (!length(self$listFilters) == 0){
+      if (!length(self$listFilters) == 0 && boolGetXMLpredicateNode){
         for (filter in self$listFilters){
           predicateNode <- filter$getXMLpredicateNode()
           if (is.null(predicateNode)){
@@ -38,13 +35,30 @@ InstanceSelectionEvent <- R6::R6Class(
           query$addPredicateNode2(eventNumber = self$contextEnv$eventNumber,predicateNode = predicateNode)
         }
       }
+      return(query)
+    },
+    
+    searchEvents = function(boolGetXMLpredicateNode = T){
+      staticLogger$info("Searching new events...")
+      
+      staticLogger$info("\t getting predicatesNodes")
+      query <- XMLSearchQuery$new()
+      query <- self$addContextNodeToQuery(query, boolGetXMLpredicateNode)
       
       ## updatingContextEvents 
       staticLogger$info("\t updating ContextEvents")
       self$contextEvents <- staticMakeQueries$getContextEventsQuery(query)
-      
-      ## updateFilter :
+    },
+    
+    searchAndUpdate = function(boolGetXMLpredicateNode = T){
+      self$searchEvents(boolGetXMLpredicateNode)
       self$updateFilters()
+    },
+    
+    filterHasChanged = function(){
+      self$getDescription()
+      self$makeDescription()
+      return(NULL)
     },
     
     getUIdonutId = function(){
@@ -62,7 +76,7 @@ InstanceSelectionEvent <- R6::R6Class(
         plotly::plot_ly(data = df, labels = ~labels, values = ~values,
                 marker = list(colors=colors)) %>%
           add_pie(hole = 0.6) %>%
-          layout(title = self$className,  showlegend = F,
+          layout(title = "",  showlegend = F,
                  xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                  yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
       })
@@ -70,8 +84,18 @@ InstanceSelectionEvent <- R6::R6Class(
     
     addUIdonut = function(){
       ui <- plotly::plotlyOutput(outputId = self$getUIdonutId())
-      jQuerySelector <- paste0("#","test9999")
-      insertUI(selector = jQuerySelector,where = "beforeEnd",ui = ui)
+      jQuerySelector <- paste0("#",self$getDivDonutId())
+      insertUI(selector = jQuerySelector,
+               where = "beforeEnd",
+               ui = ui)
+    },
+    
+    getDivDonutId = function(){
+      return(paste0("divDonut", self$getUISelectionId()))
+    },
+    
+    getDonutId = function(){
+      return(paste0("Donut", self$getDivDonutId()))
     },
     
     addUIselection = function(){
@@ -83,10 +107,10 @@ InstanceSelectionEvent <- R6::R6Class(
                                    label = "Description"),
                       verbatimTextOutput(outputId = self$getTextDescriptionId()),
                       actionButton(inputId = self$getButtonSearchEventsId(), 
-                                   label = "Search")
+                                   label = private$labelSearchButton)
                     ),
                   mainPanel(
-                    div (id="test9999")
+                    div (id=self$getDivDonutId())
                   ))),
                 div(id=self$getDivFiltersId())
       )
@@ -112,20 +136,29 @@ InstanceSelectionEvent <- R6::R6Class(
     },
     
     getButtonSearchEventsId = function(){
-      return(paste0("SearchEvents",self$getUISelectionId()))
+      return(paste0("SearchEvents",self$getUISelectionId(), self$parentId))
+    },
+    
+    getTextDescription = function(){
+      description <- self$getDescription()
+      description <- paste(description, collapse="\n")
+      Nevents <- length(unique(self$contextEvents$event))
+      Ncontexts <- length(unique(self$contextEvents$context))
+      text <- paste0(self$className, "\t",Nevents, " ", GLOBALevent, " ", GLOBALselected,
+                     "\t", Ncontexts, " ", GLOBALparcours, " ", GLOBALselected,
+                     "\n",description)
+      return(text)
+    },
+    
+    makeDescription = function(){
+      text <- self$getTextDescription()
+      output[[self$getTextDescriptionId()]] <- shiny::renderText(text)
+      self$makeDonut()
     },
     
     addButtonDescriptionObserver = function(){
       self$buttonDescriptionObserver <- observeEvent(input[[self$getButtonDescriptionId()]],{
-        description <- self$getDescription()
-        description <- paste(description, collapse="\n")
-        Nevents <- length(unique(self$contextEvents$event))
-        Ncontexts <- length(unique(self$contextEvents$context))
-        text <- paste0(self$terminology$terminologyName, " : ", self$className, "\t",Nevents," instances",
-                       "\t", Ncontexts, " graphes",
-                       "\n",description)
-        output[[self$getTextDescriptionId()]] <- shiny::renderText(text)
-        self$makeDonut()
+        self$makeDescription()
       })
     },
     
@@ -170,6 +203,7 @@ InstanceSelectionEvent <- R6::R6Class(
   private = list(
     getButtonFilterParentId = function(){
       return(self$getDivFiltersId())
-    }
+    },
+    labelSearchButton = GLOBALsearchEvents
   )
 )

@@ -3,13 +3,15 @@ DateGraphics <- R6::R6Class(
   inherit = uiObject,
   
   public = list(
+    contextEnv = NULL,
     lastChoice = character(),
     dateValues = NULL,
     changePlotObserver = NULL,
     dygraphObserver = NULL,
     dateRangeObserver = NULL,
     
-    initialize = function(dateValues, parentId, where){
+    initialize = function(contextEnv,dateValues, parentId, where){
+      self$contextEnv <- contextEnv
       staticLogger$info("Creating a new DateGraphics ", where, parentId)
       super$initialize(parentId, where)
       self$dateValues <- dateValues
@@ -43,6 +45,7 @@ DateGraphics <- R6::R6Class(
                            inputId = self$getDateRangeId(),
                            start = self$dateValues$getMinDate(), 
                            end = self$dateValues$getMaxDate())
+      self$contextEnv$instanceSelection$filterHasChanged()
       return(NULL)
     },
     
@@ -120,6 +123,7 @@ DateGraphics <- R6::R6Class(
         staticLogger$info("minDate : ", minDate , "maxDate : ", maxDate)
         self$dateValues$setXTSobjectSelection(minDate, maxDate)
         self$remakePlot()
+        self$contextEnv$instanceSelection$filterHasChanged()
       })
     },
 

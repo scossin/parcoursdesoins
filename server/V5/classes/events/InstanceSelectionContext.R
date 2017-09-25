@@ -1,28 +1,19 @@
 InstanceSelectionContext <- R6::R6Class(
-  inherit = InstanceSelection,
+  inherit = InstanceSelectionEvent,
   "InstanceSelectionContext",
   
   public = list(
-    buttonDescriptionObserver = NULL,
-    buttonSearchContextsObserver = NULL,
-    
     initialize = function(contextEnv, terminology, className, contextEvents, parentId, where){
-      self$parentId <- parentId
-      self$addUIselection()
-      
       super$initialize(contextEnv, terminology, className, contextEvents, parentId, where)
-      
-      self$addButtonDescriptionObserver()
-      self$addButtonSearchContextsObserver()
+      self$addButtonUpdate()
       self$addUpdateContextsObserver()
-      staticLogger$info("new instanceSelectionContext")
     },
     
     updateContextTabPanel = function(){
       GLOBALlistEventTabpanel$updateContext(self$context)
     },
     
-    searchAndUpdate = function(){
+    searchEvents = function(boolGetXMLpredicateNode = T){
       staticLogger$info("Searching new contexts...")
       
       staticLogger$info("\t getting predicatesNodes")
@@ -30,7 +21,7 @@ InstanceSelectionContext <- R6::R6Class(
       query$addEventNode(eventNumber = self$contextEnv$eventNumber,
                          terminologyName = self$terminology$terminologyName,
                          eventType = self$className)
-      if (!length(self$listFilters) == 0){
+      if (!length(self$listFilters) == 0 && boolGetXMLpredicateNode){
         for (filter in self$listFilters){
           predicateNode <- filter$getXMLpredicateNode()
           if (is.null(predicateNode)){
@@ -43,24 +34,14 @@ InstanceSelectionContext <- R6::R6Class(
       staticLogger$info("\t updating ContextEvents")
       self$contextEvents <- staticMakeQueries$getContext(query)
       self$context <- unique(self$contextEvents$context)
-      ## updateFilter :
-      self$updateFilters()
     },
     
-    addUIselection = function(){
-      ui <- div(id=self$getUISelectionId(),
-                actionButton(inputId = self$getButtonDescriptionId(), 
-                             label = "Description"),
-                actionButton(inputId = self$getButtonSearchContextsId(), 
-                             label = "Search"),
-                actionButton(inputId = self$getButtonUpdateContextsId(), 
-                             label = "Update Context"),
-                verbatimTextOutput(outputId = self$getTextDescriptionId()),
-                div(id=self$getDivFiltersId())
-      )
-      jQuerySelector = paste0("#", self$parentId)
+    addButtonUpdate = function(){
+      ui <- actionButton(inputId = self$getButtonUpdateContextsId(), 
+                         label = GLOBALupdateContext)
+      jQuerySelector = paste0("#", self$getButtonSearchEventsId())
       insertUI(selector = jQuerySelector,
-               where = "afterBegin",
+               where = "afterEnd",
                ui = ui)
     },
     
@@ -74,78 +55,18 @@ InstanceSelectionContext <- R6::R6Class(
       })
     },
     
-    removeUIselection = function(){
-      jQuerySelector = paste0("#", self$getUISelectionId())
-      removeUI(selector = jQuerySelector)
-    },
-    
-    addButtonSearchContextsObserver = function(){
-      self$buttonSearchContextsObserver <- observeEvent(input[[self$getButtonSearchContextsId()]], {
-        staticLogger$info("Search Contexts clicked !")
-        self$searchAndUpdate()
-        return(NULL)
-      })
-    },
-    
-    getButtonSearchContextsId = function(){
-      return(paste0("SearchContexts",self$getUISelectionId()))
-    },
-    
-    addButtonDescriptionObserver = function(){
-      self$buttonDescriptionObserver <- observeEvent(input[[self$getButtonDescriptionId()]],{
-        description <- self$getDescription()
-        description <- paste(description, collapse="\n")
-        Nevents <- length(unique(self$contextEvents$event))
-        Ncontexts <- length(unique(self$contextEvents$context))
-        text <- paste0(self$terminology$terminologyName, " : ", self$className, "\t",Nevents," instances",
-                       "\t", Ncontexts, " graphes",
-                       "\n",description)
-        output[[self$getTextDescriptionId()]] <- shiny::renderText(text)
-      })
-    },
-    
-    getDivFiltersId = function(){
-      return(paste0("DivFilters",self$getUISelectionId()))
-    },
-    
-    getUISelectionId = function(){
-      return(paste0("UIdescription",self$parentId))
-    },
-    
-    getTextDescriptionId = function(){
-      return(paste0("Text",self$getUISelectionId()))
-    },
-    
-    getButtonDescriptionId = function(){
-      return(paste0("ButtonDescription",self$getUISelectionId()))
-    },
-    
-    
-    
-    destroy = function(){
-      staticLogger$info("Destroying InstanceSelectionEvent")
-      super$destroy()
-      
-      staticLogger$info("\t Destroying buttonSearchContextsObserver")
-      if (!is.null(self$buttonSearchContextsObserver )){
-        self$buttonSearchContextsObserver$destroy()
-        staticLogger$info("\t  \t done")
-      }
-      staticLogger$info("\t Destroying buttonDescriptionObserver")
-      if (!is.null(self$buttonDescriptionObserver)){
-        self$buttonDescriptionObserver$destroy()
-        staticLogger$info("\t  \t done")
-      }
-      
-      staticLogger$info("\t Removing UI selection")
-      self$removeUIselection()
-      
-      staticLogger$info("End Destroying InstanceSelectionEvent")
+    getTextDescription = function(){
+      description <- self$getDescription()
+      description <- paste(description, collapse="\n")
+      Nevents <- length(unique(self$contextEvents$event))
+      Ncontexts <- length(unique(self$contextEvents$context))
+      text <- paste0(Ncontexts, " ", GLOBALparcours, " ", GLOBALselected,
+                     "\n",description)
+      return(text)
     }
+    
   ), 
   private = list(
-    getButtonFilterParentId = function(){
-      return(self$getDivFiltersId())
-    }
+    labelSearchButton = GLOBALsearchContexts
   )
 )

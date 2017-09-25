@@ -100,9 +100,9 @@ STATICfilterCreator <- R6::R6Class(
                                                                className = expectedValue, 
                                                                contextEvents = dataFrame, 
                                                                parentId = parentId, 
-                                                               where = where)
-        pointerEnv <- PointerEnv$new(contextEnvParent = contextEnv,
-                                     contextEnv = contextEnv2)
+                                                               where = where,
+                                                               contextEnvParent = contextEnv)
+        pointerEnv <- PointerEnv$new(contextEnv = contextEnv2)
         return(pointerEnv)
       } else if (filterType == "STRING"){
         filterCategorical <- FilterCategorical$new(contextEnv = contextEnv, 
@@ -120,25 +120,11 @@ STATICfilterCreator <- R6::R6Class(
         return(filterDate)
       } else if (filterType == "SPATIALPOINT"){
         #colnames(dataFrame) <- c("context","event")
-        pointsCoordinate <- table(dataFrame$value)
-        pointsCoordinate <- data.frame(event = names(pointsCoordinate), 
-                                       N = as.numeric(pointsCoordinate))
-        pointsCoordinate$context <- ""
-        #pointsCoordinate <- data.frame(context="",event=unique(dataFrame$event))
-        for (spatialPredicate in c("lat","long","label")){
-          addColumn <- self$getDataFrame(terminologyName = terminologyName, 
-                                        eventType = expectedValue, 
-                                        contextEvents = pointsCoordinate, 
-                                        predicateName = spatialPredicate)
-          colnames(addColumn) <- c("event",spatialPredicate)
-          pointsCoordinate <- merge (pointsCoordinate, addColumn, by="event")
-        }
         filterSpatial <- FilterSpatialPoint$new(contextEnv = contextEnv, 
                                                 predicateName = predicateName, 
                                                 dataFrame = dataFrame, 
                                                 parentId = parentId, 
-                                                where = where,
-                                                pointsCoordinate = pointsCoordinate)
+                                                where = where)
         GLOBALmapObject$addSpatialFilter(filterSpatial)
         return(filterSpatial)
       } else if (filterType == "HIERARCHY"){

@@ -33,12 +33,9 @@ DateValues <- R6::R6Class(
     getMaxDate = function(){
       maxDate <- max(self$xtsObjectSelection$date)
       return(maxDate)
-    }
+    },
     
-  ),
-  
-  private = list(
-    toXTS = function(x){
+    valueToDate = function(x){
       ## date format : 
       bool <- is.na(x)
       self$naNumber <- sum(bool)
@@ -46,6 +43,13 @@ DateValues <- R6::R6Class(
       x <- x[!bool] ## remove NA
       x <- gsub("T|Z"," ",x )
       x <- gsub("\\.[0-9]+ $","",x)
+      return(x)
+    }
+  ),
+  
+  private = list(
+    toXTS = function(x){
+      x <- self$valueToDate(x)
       tab <- table(x)
       tab <- data.frame(date=as.Date(names(tab)), frequency = as.numeric(tab))
       self$xtsObject <- xts::xts(x = tab, order.by = tab$date, frequency = tab$frequency)

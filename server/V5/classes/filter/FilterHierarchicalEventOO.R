@@ -25,7 +25,7 @@ FilterHierarchicalEvent <- R6::R6Class(
     
     insertValidateButton = function(){
       ui <- shiny::actionButton(inputId = self$getButtonValidateId(), 
-                                    label="Validate")
+                                    label = GLOBALvalidate)
       selector = paste0("#",self$getObjectId())
       insertUI(selector = selector,
                where ="afterBegin",
@@ -38,12 +38,21 @@ FilterHierarchicalEvent <- R6::R6Class(
     
     getEventChoice = function(){
       if (length(private$eventChoice) == 0){
-        return("please, select one class")
+        return(GLOBALnoselected)
       }
       if (length(private$eventChoice) > 1){
-        return("please, select only one class")
+        return(GLOBALmanyselected)
       }
       return(as.character(private$eventChoice))
+    },
+    
+    ### Override : don't send filterHasChanged
+    printChoice = function(){
+      output[[self$getChoiceVerbatimId()]] <- shiny::renderPrint(
+        self$getEventChoice()
+      )
+      #self$contextEnv$instanceSelection$filterHasChanged()
+      return(NULL)
     }
   )
 )

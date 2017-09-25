@@ -12,11 +12,10 @@ FilterSpatialPoint <- R6::R6Class(
     
     boolUpdating = F, ## when updating SelectizeInput : first NULL then Selected => first NULL is boolUpdating
     
-    initialize = function(contextEnv, predicateName, dataFrame, parentId, where,pointsCoordinate){
+    initialize = function(contextEnv, predicateName, dataFrame, parentId, where){
       staticLogger$info("Creating a new FilterSpatialPoint object")
       super$initialize(contextEnv, predicateName, dataFrame, parentId, where)
       eventName <- paste0("event",contextEnv$eventNumber, "-",self$predicateName)
-      self$pointsCoordinate <- pointsCoordinate
       self$setPointsCoordinate()
       self$eventName <- eventName
       self$insertUIseeMap()
@@ -29,11 +28,59 @@ FilterSpatialPoint <- R6::R6Class(
       staticLogger$info("FilterSpatialPoint object created")
     },
     
+    updateDataFrame = function(){
+      staticLogger$info("updateDataFrame of FilterSpatialPoint")
+      eventType <- self$contextEnv$instanceSelection$className
+      terminologyName <- self$contextEnv$instanceSelection$terminology$terminologyName
+      predicateName <- self$predicateName
+      contextEvents <- self$contextEnv$instanceSelection$getContextEvents()
+      self$dataFrame <- staticFilterCreator$getDataFrame(terminologyName, eventType, 
+                                                         contextEvents, 
+                                                         predicateName)
+      ## previous selection : 
+      bool <- self$pointsCoordinate$isSelected
+      values <- as.character(self$pointsCoordinate$value[bool])
+      
+      self$removeMarkerLayer() ## first ! because it depends on pointsCoordinates
+      self$removeCircleMarker()
+      
+      self$setPointsCoordinate()
+      
+      ## add previous selection
+      bool <- self$pointsCoordinate$value %in% values
+      self$pointsCoordinate$isSelected <- bool
+      
+     
+      self$addMarkerLayer()
+      
+      self$updateSelectizeChoices()
+      
+      self$contextEnv$instanceSelection$filterHasChanged()
+    },
+    
     setPointsCoordinate = function(){
-      private$checkPointsCoordinate(self$pointsCoordinate)
-      self$pointsCoordinate$layerId <- paste0(self$pointsCoordinate$lat, self$pointsCoordinate$long)
-      self$pointsCoordinate$layerIdCircle <- paste0(self$pointsCoordinate$layerId,"circle")
-      self$pointsCoordinate$isSelected <- F
+      pointsCoordinate <- table(self$dataFrame$value)
+      pointsCoordinate <- data.frame(event = names(pointsCoordinate), 
+                                     N = as.numeric(pointsCoordinate))
+      pointsCoordinate$context <- ""
+      terminologyName <- self$contextEnv$instanceSelection$terminology$terminologyName
+      expectedValue <- self$contextEnv$instanceSelection$terminology$getPredicateDescription(self$predicateName)$value
+      
+      for (spatialPredicate in c("lat","long","label")){
+        addColumn <- staticFilterCreator$getDataFrame(terminologyName = terminologyName, 
+                                       eventType = expectedValue, 
+                                       contextEvents = pointsCoordinate, 
+                                       predicateName = spatialPredicate)
+        colnames(addColumn) <- c("event",spatialPredicate)
+        pointsCoordinate <- merge (pointsCoordinate, addColumn, by="event")
+      }
+      numCol <- which(colnames(pointsCoordinate) == "event")
+      colnames(pointsCoordinate)[numCol] <- "value"
+      private$checkPointsCoordinate(pointsCoordinate)
+      pointsCoordinate$layerId <- paste0(pointsCoordinate$lat, pointsCoordinate$long)
+      pointsCoordinate$layerIdCircle <- paste0(pointsCoordinate$layerId,"circle")
+      pointsCoordinate$isSelected <- F
+      self$pointsCoordinate <- pointsCoordinate
     },
     
     addSpatialLayer = function(){
@@ -50,6 +97,48 @@ FilterSpatialPoint <- R6::R6Class(
         ui = self$getUIcontrollerMap(),
         immediate = T
       )
+    },
+    
+    ### same as Categorical and Hierarchical
+    getDescription = function(){
+      choices <- as.character(self$pointsCoordinate$label)
+      bool <- self$pointsCoordinate$isSelected
+      selected <- self$pointsCoordinate$label[bool]
+      namesChosen <- selected
+      lengthChosen <- length(namesChosen)
+      if (lengthChosen > 10){
+        namesChosen <- namesChosen[1:10]
+        namesChosen <- append(namesChosen, "...")
+      }
+      if (lengthChosen == 0){
+        namesChosen <- ""
+      } else {
+        namesChosen <- paste(namesChosen, collapse = " ; ")
+      }
+      description <- paste0(self$predicateName,"\t ", lengthChosen, " values chosen (",
+                            namesChosen, ")")
+      return(description)
+    },
+    
+    getXMLpredicateNode = function(){
+      tempQuery <- XMLSearchQuery$new()
+      bool <- self$pointsCoordinate$isSelected
+      namesChosen <- as.character(self$pointsCoordinate$value[bool])
+      if (is.null(namesChosen) || length(namesChosen) == 0 || namesChosen == ""){
+        return(NULL)
+      }
+      predicateNode <- tempQuery$makePredicateNode(predicateClass = "factor",
+                                                   predicateType = self$predicateName,
+                                                   values = namesChosen)
+      return(predicateNode)
+    },
+    
+    getEventsSelected = function(){
+      bool <- self$pointsCoordinate$isSelected
+      values <- as.character(self$pointsCoordinate$value[bool])
+      bool <- self$dataFrame$value %in% values
+      events <- as.character(self$dataFrame$event[bool])
+      return(events)
     },
     
     addMarkerLayer = function(){
@@ -88,6 +177,7 @@ FilterSpatialPoint <- R6::R6Class(
                                   choices = choices,
                                   selected = selected,
                                   server = T)
+      self$contextEnv$instanceSelection$filterHasChanged()
     },
     
     ## UI to add to control this Filter
@@ -136,6 +226,7 @@ FilterSpatialPoint <- R6::R6Class(
           markerId <- self$pointsCoordinate$layerId[bool]
           staticLogger$info("\t \t markerId : ", markerId , " changed")
           self$reMakeMarker(markerId)
+          self$contextEnv$instanceSelection$filterHasChanged()
         } else {
           staticLogger$info("\t \t null diffChoice : ")
         }
@@ -185,6 +276,9 @@ FilterSpatialPoint <- R6::R6Class(
     },
     
     addMarkerObserver = function(){
+      if(!is.null(self$markerObserver)){
+        self$markerObserver$destroy()
+      }
       markerInput <- paste0(GLOBALmapId, "_marker_click")
       self$markerObserver <- observeEvent(input[[markerInput]],{
         markerId <- input[[markerInput]]$id
@@ -203,12 +297,16 @@ FilterSpatialPoint <- R6::R6Class(
       })
     },
     
+    removeCircleMarker = function(){
+      leafletProxy(GLOBALmapId) %>%
+        removeMarker(layerId = self$pointsCoordinate$layerIdCircle)
+    },
+    
     addCircleObserver = function(){
       self$circleObserver <- shiny::observeEvent(input[[self$getRadioButtonMarkerId()]], {
         if (!input[[self$getRadioButtonMarkerId()]]){
           staticLogger$info("\t \t ", "Removing circle marker: ", self$getRadioButtonMarkerId())
-          leafletProxy(GLOBALmapId) %>%
-            removeMarker(layerId = self$pointsCoordinate$layerIdCircle)
+          self$removeCircleMarker()
         } else {
           staticLogger$info("\t \t ", "Adding circle marker: ", self$getRadioButtonMarkerId())
           radius <- 10 * (self$pointsCoordinate$N / max(self$pointsCoordinate$N))
@@ -252,6 +350,9 @@ FilterSpatialPoint <- R6::R6Class(
       
       staticLogger$info("\t Removing UISeeMap")
       self$removeUIseeMap()
+      
+      staticLogger$info("\t Removing Circle Markers")
+      self$removeCircleMarker()
       
       staticLogger$info("\t Removing Markers")
       self$removeMarkerLayer()
@@ -309,7 +410,9 @@ FilterSpatialPoint <- R6::R6Class(
   
   private = list(
     checkPointsCoordinate = function(pointsCoordinate){
-      bool <- c("lat","long","label","N") %in% colnames(pointsCoordinate)
+      print(self$dataFrame)
+      print(pointsCoordinate)
+      bool <- c("value","lat","long","label","N") %in% colnames(pointsCoordinate)
       if (!bool){
         staticLogger$error(colnames(pointsCoordinate))
         stop("Unfound colnames in spatialDataPoint pointsCoordinate")

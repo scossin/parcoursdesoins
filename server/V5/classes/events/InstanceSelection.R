@@ -2,6 +2,7 @@ InstanceSelection <- R6::R6Class(
   "InstanceSelection",
   
   public = list(
+    contextEnvParent = NULL,
     contextEnv = environment(),
     terminology = NULL,
     className = character(),
@@ -11,7 +12,10 @@ InstanceSelection <- R6::R6Class(
     listButtonFilterObject = list(),
     listFilters = list(),
     
-    initialize = function(contextEnv, terminology, className, contextEvents, parentId, where){
+    initialize = function(contextEnv, terminology, className, contextEvents, parentId, where,contextEnvParent=NULL){
+      if (!is.null(contextEnvParent)){
+        self$contextEnvParent <- contextEnvParent
+      }
       self$contextEnv <- contextEnv
       self$terminology <- terminology
       self$className <- className
@@ -30,7 +34,19 @@ InstanceSelection <- R6::R6Class(
       for (filter in self$listFilters){
         filter$updateDataFrame()
       }
+      self$filterHasChanged()
     },
+    
+    getDescription = function(){
+      if (length(self$listFilters) == 0){
+        return(NULL)
+      }
+      description <- NULL
+      for (filter in self$listFilters){
+        description <- append(filter$getDescription(),description)
+      }
+      return(description)
+    }, 
     
     getEventsSelected = function(){
       if (length(self$listFilters) == 0){
@@ -49,26 +65,11 @@ InstanceSelection <- R6::R6Class(
       return(events)
     }, 
     
-    getDescription = function(){
-      if (length(self$listFilters) == 0){
-        return(NULL)
-      }
-      description <- NULL
-      for (filter in self$listFilters){
-        description <- append(filter$getDescription(),description)
-      }
-      return(description)
-    }, 
-    
     getContextsSelected = function(){
       eventsSelected <- self$getEventsSelected()
       bool <- self$contextEvents$event %in% eventsSelected
       contextsSelected <- unique(as.character(self$contextEvents$context[bool]))
       return(contextsSelected)
-    },
-    
-    printFunction = function(){
-      staticLogger$info("FAIT QUELQUE CHOSE YA EU DU CHANGEMENT !! :")
     },
     
     getContextEvents = function(){
@@ -102,6 +103,18 @@ InstanceSelection <- R6::R6Class(
       } else {
         staticLogger$info("\t" , predicateName, "not found in ", namesList)
       }
+      self$filterHasChanged()
+      return(NULL)
+    },
+    
+    filterHasChanged = function(){
+      staticLogger$info("instanceSelection filterHasChanged")
+      if (!is.null(self$contextEnvParent)){
+        staticLogger$info("\t passing information to contextEnvParent")
+        self$contextEnvParent$instanceSelection$filterHasChanged()
+      } else {
+        staticLogger$info("\t no contextEnvParent found")
+      }
       return(NULL)
     },
     
@@ -125,7 +138,8 @@ InstanceSelection <- R6::R6Class(
         ## add buttonFilter to the list
         nObject <- length(self$listButtonFilterObject)
         self$listButtonFilterObject[[nObject+1]] <- buttonFilter
-        namesList <- c(namesList, paste0(buttonFilter$getObjectId()))
+        # namesList <- c(namesList, paste0(buttonFilter$getObjectId()))
+        namesList <- c(namesList, as.character(predicateName))
       }
       names(self$listButtonFilterObject) <- namesList
     },
@@ -159,10 +173,10 @@ PointerEnv <- R6::R6Class(
   "PointerEnv",
   
   public=list(
-    contextEnvParent = environment(),
+    #contextEnvParent = environment(),
     contextEnv = environment(),
-    initialize=function(contextEnvParent, contextEnv){
-      self$contextEnvParent <- contextEnvParent
+    initialize=function(contextEnv){
+      #self$contextEnvParent <- contextEnvParent
       self$contextEnv <- contextEnv
     },
     
@@ -173,18 +187,26 @@ PointerEnv <- R6::R6Class(
     },
     
     updateDataFrame = function(){
-      staticLogger$info("update Instance Selection")
-      eventType <- self$contextEnvParent$instanceSelection$className
-      terminologyName <- self$contextEnvParent$instanceSelection$terminology$terminologyName
+      staticLogger$info("Updating Filter PointEnv")
+      staticLogger$info("\t getting new contextEvents from instanceSelection Parent")
+      
+      staticLogger$info("\t setting new contextEvents for instanceSelection")
+      contextEvents <- self$contextEnv$instanceSelection$contextEnvParent$instanceSelection$getContextEvents()
+      eventType <- self$contextEnv$instanceSelection$contextEnvParent$instanceSelection$className
+      staticLogger$info("\t eventType : ", eventType)
+      terminologyName <- self$contextEnv$instanceSelection$contextEnvParent$instanceSelection$terminology$terminologyName
+      staticLogger$info("\t terminologyName : ", terminologyName)
       predicateName <- self$contextEnv$predicateName
-      contextEvents <- self$contextEnvParent$instanceSelection$getContextEvents()
+      staticLogger$info("\t previous contextEvents : ", nrow(self$contextEnv$instanceSelection$contextEvents), "lines")
       self$contextEnv$instanceSelection$contextEvents <- staticFilterCreator$getDataFrame(terminologyName, 
                                                                                           eventType, 
                                                                                           contextEvents, 
                                                                                           predicateName)
       colnames(self$contextEnv$instanceSelection$contextEvents) <- c("context","event")
-      print(self$contextEnv$instanceSelection$contextEvents)
+      staticLogger$info("\t new contextEvents : ", nrow(self$contextEnv$instanceSelection$contextEvents), "lines")
+      staticLogger$info("\t updating each Filter for FilterPointEnv")
       self$contextEnv$instanceSelection$updateFilters()
+      staticLogger$info("End Updating Filter PointEnv")
     },
     
     getXMLpredicateNode = function(){
@@ -216,3 +238,4 @@ PointerEnv <- R6::R6Class(
     }
   )
 )
+

@@ -41,6 +41,9 @@ if (GLOBALlang == "fr"){
   GLOBALweeks <- "semaines"
   GLOBALmonths <- "mois"
   
+  ## filterHierarchical 
+  GLOBALvalidate <- "Valider le choix"
+  
   ## boxplot
   GLOBALinitialBoxplot <- "valeurs initiales"
   GLOBALselectedBoxplot <- "valeurs sélectionnées"
@@ -52,12 +55,22 @@ if (GLOBALlang == "fr"){
   ## TextInfo
   GLOBALvaluesSelectedOutOf <- "valeurs sélectionnées sur"
   
-  ## and
-  GLOBALand <- "et"
-  
   ## hierarchy selection : 
   GLOBALnoselected <- "Sélectionnez une catégorie"
   GLOBALmanyselected <- "Merci de sélectionner une seule catégorie"
+  
+  ## words
+  GLOBALevent <- "évènements"
+  GLOBALparcours <- "parcours de soins"
+  GLOBALand <- "et"
+  GLOBALselected <- "sélectionné(s)"
+  
+  ## instanceSelectionContext and Events : 
+  GLOBALsearchContexts <- paste0("Rechercher des ",GLOBALparcours)
+  GLOBALsearchEvents <- "Rechercher des évènements"
+  
+  ## context : 
+  GLOBALupdateContext <- paste0("Choisir ces ",GLOBALparcours, " pour les ", GLOBALevent)
   
 } else if (GLOBALlang == "en"){
   GLOBALaddEventTabpanel <- "Add an event"
@@ -83,12 +96,23 @@ if (GLOBALlang == "fr"){
   ## TextInfo
   GLOBALvaluesSelectedOutOf <- "values selected out of"
   
-  ## and
-  GLOBALand <- "and"
-  
   ## hierarchy selection : 
   GLOBALnoselected <- "please, select one class"
   GLOBALmanyselected <- "please, select only one class"
+  
+  ## words
+  GLOBALevent <- "event(s)"
+  GLOBALparcours <- "patients trajectories"
+  GLOBALselected <- "selected"
+  GLOBALand <- "and"
+  
+  ## instanceSelectionContext and Events : 
+  GLOBALsearchContexts <- paste0("Search ",GLOBALparcours)
+  GLOBALsearchEvents <- "Search events"
+  
+  ## context : 
+  GLOBALupdateContext <- paste0("Set these ",GLOBALparcours, " for ", GLOBALevent)
+  
+  ## filterHierarchical 
+  GLOBALvalidate <- "Confirm"
 }
-
-

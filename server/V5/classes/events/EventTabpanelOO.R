@@ -26,7 +26,8 @@ EventTabpanel <- R6::R6Class(
         return(NULL)
       }
       self$contextEnv$instanceSelection$context <- context
-      self$contextEnv$instanceSelection$searchAndUpdate()
+      self$contextEnv$instanceSelection$searchAndUpdate(boolGetXMLpredicateNode = F) ### search events without filter
+      self$contextEnv$instanceSelection$makeDescription()
     },
     
     setHierarchicalObject = function(){

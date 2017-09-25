@@ -13,7 +13,8 @@ FilterCategorical <- R6::R6Class(
       self$valueEnv <- new.env()
       self$valueEnv$categoricalValues <- CategoricalValues$new(dataFrame$value)
       self$makeUI()
-      self$categoricalGraphics <- CategoricalGraphics$new(self$valueEnv, 
+      self$categoricalGraphics <- CategoricalGraphics$new(contextEnv,
+                                                          self$valueEnv, 
                                                           self$getDivFilterId(),
                                                           where="beforeEnd")
     },
