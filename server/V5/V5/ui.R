@@ -9,8 +9,8 @@ navbarPage("Parcours de soins", id="CartoParcours",
                                      ),
                         actionButton(inputId = "removeEventTabpanel", 
                                      label = GLOBALremoveEventTabpanel),
-                        actionButton(inputId = "ButtonTest", 
-                                     label = "Description"),
+                        # actionButton(inputId = "ButtonTest", 
+                        #              label = "Description"),
                         selectInput(inputId = "eventToRemove",
                                     label = c(""), 
                                     choices = c(""))
@@ -26,13 +26,13 @@ navbarPage("Parcours de soins", id="CartoParcours",
                     
                     
                     tags$head(
-                      includeCSS("../../www/css/styleLeaflet.css"),
-                      includeScript("../../www/js/newTabpanel.js"),
-                      includeScript("../../www/js/removeId.js"),
-                      includeScript("../../www/js/displayId.js"),
-                      includeScript("../../www/js/goFirstSibling.js"),
-                      includeCSS("../../www/css/ButtonFilter.css"),
-                      includeCSS("../../www/css/Graphics.css")
+                      includeCSS("www/css/styleLeaflet.css"),
+                      includeScript("www/js/newTabpanel.js"),
+                      includeScript("www/js/removeId.js"),
+                      includeScript("www/js/displayId.js"),
+                      includeScript("www/js/goFirstSibling.js"),
+                      includeCSS("www/css/ButtonFilter.css"),
+                      includeCSS("www/css/Graphics.css")
                     ), # fin tag$head
                     # pour retirer le tabset et le boutton permet de le retirer !
                     

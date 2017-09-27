@@ -115,7 +115,7 @@ FilterSpatialPoint <- R6::R6Class(
       } else {
         namesChosen <- paste(namesChosen, collapse = " ; ")
       }
-      description <- paste0(self$predicateName,"\t ", lengthChosen, " values chosen (",
+      description <- paste0(self$predicateName,"\t ", lengthChosen, " ", GLOBALvaleursselected," (",
                             namesChosen, ")")
       return(description)
     },
@@ -379,7 +379,7 @@ FilterSpatialPoint <- R6::R6Class(
     
     insertUIseeMap = function(){
       ui <- shiny::actionButton(inputId = self$getUIseeMapId(),
-                                label = "See Map" 
+                                label = GLOBALvoirlacarte 
                                 )
       jQuerySelector = paste0("#",self$parentId)
       insertUI(selector = jQuerySelector,

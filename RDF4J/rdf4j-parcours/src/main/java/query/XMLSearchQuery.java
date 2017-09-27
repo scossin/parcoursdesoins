@@ -297,7 +297,7 @@ public class XMLSearchQuery implements Query {
 	
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat {
 		//QueryClass queryClass = new QueryClass(new File(Util.queryFolder+"queryMCOSSR3day.xml"));
-		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "searchContext.xml" );
+		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "UnfoundEvent.xml" );
 		XMLSearchQuery query = new XMLSearchQuery(new XMLFile(xmlFile));
 		System.out.println(query.getSPARQLQueryString());
 		xmlFile.close();

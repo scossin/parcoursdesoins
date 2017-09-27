@@ -64,7 +64,7 @@ FilterCategorical <- R6::R6Class(
       } else {
         namesChosen <- paste(namesChosen, collapse = " ; ")
       }
-      description <- paste0(self$predicateName,"\t ", lengthChosen, " values chosen (",
+      description <- paste0(self$predicateName,"\t ", lengthChosen, " ",GLOBALvaleursselected," (",
                             namesChosen, ")")
       return(description)
     },

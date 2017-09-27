@@ -81,7 +81,7 @@ EventTabpanel <- R6::R6Class(
         staticLogger$info("Destroying hierarchical object")
         self$hierarchicalObject$destroy()
         self$hierarchicalObject <- NULL
-      },once = T)
+      })
     },
     
     getLiText = function(){

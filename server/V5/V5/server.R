@@ -1,6 +1,6 @@
 # source("global.R")
 server <- function(input,output,session){
-  source("../../classes/logger/STATICLoggerOO.R",local = T)
+  source("classes/logger/STATICLoggerOO.R",local = T)
   staticLogger <- STATIClogger$new()
   
   ## closing logger connection when user disconnect
@@ -10,67 +10,67 @@ server <- function(input,output,session){
   
   staticLogger$info("Loading classes ...")
   
-  source("../../classes/queries/ConnectionOO.R",local=T)
+  source("classes/queries/ConnectionOO.R",local=T)
   GLOBALcon <- Connection$new()
   
-  source("../../classes/queries/GetFileOO.R",local=T)
+  source("classes/queries/GetFileOO.R",local=T)
   
-  source("../../classes/terminology/STATICterminologyInstancesOO.R",local=T)
-  source("../../classes/terminology/TerminologyOO.R",local=T)
+  source("classes/terminology/STATICterminologyInstancesOO.R",local=T)
+  source("classes/terminology/TerminologyOO.R",local=T)
   staticTerminologyInstances <- STATICterminologyInstances$new()
   
  # test <-  staticTerminologyInstances$getTerminology("Etablissement")
  # test$mainClassName
-  source("../../classes/queries/STATICmakeQueriesOO.R",local=T)
+  source("classes/queries/STATICmakeQueriesOO.R",local=T)
 
-  source("../../classes/queries/XMLCountQueryOO.R",local=T)
-  source("../../classes/queries/XMLDescribeQueryOO.R",local=T)
-  source("../../classes/queries/XMLDescribeTerminologyQueryOO.R",local = T)
-  source("../../classes/queries/XMLqueryOO.R",local=T)
-  source("../../classes/queries/XMLSearchQueryOO.R",local=T)
-  source("../../classes/queries/XMLSearchQueryTerminologyOO.R",local=T)
+  source("classes/queries/XMLCountQueryOO.R",local=T)
+  source("classes/queries/XMLDescribeQueryOO.R",local=T)
+  source("classes/queries/XMLDescribeTerminologyQueryOO.R",local = T)
+  source("classes/queries/XMLqueryOO.R",local=T)
+  source("classes/queries/XMLSearchQueryOO.R",local=T)
+  source("classes/queries/XMLSearchQueryTerminologyOO.R",local=T)
   
 
-  source("../../classes/superClasses/uiObject.R",local=T)
-  source("../../classes/filter/FilterHierarchicalOO.R",local = T)
-  source("../../classes/filter/FilterHierarchicalEventOO.R",local = T)
-  source("../../classes/events/EventTabpanelOO.R",local=T)
-  source("../../classes/events/ListEventsTabpanelOO.R",local=T)
-  source("../../classes/buttonFilter/ButtonFilterOO.R",local=T)
-  source("../../classes/filter/FilterOO.R",local=T) ## order matters ! 
-  source("../../classes/filter/FilterNumericOO.R",local=T)
-  source("../../classes/filter/FilterNumericDurationOO.R",local=T)
-  source("../../classes/graphics/NumericGraphicsOO.R",local = T)
-  source("../../classes/values/NumericValuesOO.R",local = T)
+  source("classes/superClasses/uiObject.R",local=T)
+  source("classes/filter/FilterHierarchicalOO.R",local = T)
+  source("classes/filter/FilterHierarchicalEventOO.R",local = T)
+  source("classes/events/EventTabpanelOO.R",local=T)
+  source("classes/events/ListEventsTabpanelOO.R",local=T)
+  source("classes/buttonFilter/ButtonFilterOO.R",local=T)
+  source("classes/filter/FilterOO.R",local=T) ## order matters ! 
+  source("classes/filter/FilterNumericOO.R",local=T)
+  source("classes/filter/FilterNumericDurationOO.R",local=T)
+  source("classes/graphics/NumericGraphicsOO.R",local = T)
+  source("classes/values/NumericValuesOO.R",local = T)
 
-  source("../../classes/filter/FilterCategoricalOO.R",local = T)
-  source("../../classes/graphics/CategoricalGraphicsOO.R",local = T)
-  source("../../classes/values/CategoricalValuesOO.R",local=T)
+  source("classes/filter/FilterCategoricalOO.R",local = T)
+  source("classes/graphics/CategoricalGraphicsOO.R",local = T)
+  source("classes/values/CategoricalValuesOO.R",local=T)
   
-  source("../../classes/filter/FilterDate.R",local = T)
-  source("../../classes/graphics/DateGraphics.R",local = T)
-  source("../../classes/values/DateValuesOO.R",local=T)
+  source("classes/filter/FilterDate.R",local = T)
+  source("classes/graphics/DateGraphics.R",local = T)
+  source("classes/values/DateValuesOO.R",local=T)
   
-  source("../../classes/events/InstanceSelection.R",local = T)
-  source("../../classes/events/InstanceSelectionEvent.R",local = T)
-  source("../../classes/events/InstanceSelectionContext.R",local = T)
+  source("classes/events/InstanceSelection.R",local = T)
+  source("classes/events/InstanceSelectionEvent.R",local = T)
+  source("classes/events/InstanceSelectionContext.R",local = T)
   # an object to help others objects to create Filter Object
-  source("../../classes/filter/STATICfilterCreatorOO.R",local = T)
+  source("classes/filter/STATICfilterCreatorOO.R",local = T)
   staticFilterCreator <- STATICfilterCreator$new()
   
   ## leaflet : 
-  source("../../classes/leaflet/MapObjectOO.R",local = T)
-  source("../../classes/filter/FilterSpatialPointOO.R",local=T)
+  source("classes/leaflet/MapObjectOO.R",local = T)
+  source("classes/filter/FilterSpatialPointOO.R",local=T)
   GLOBALmapObject <- MapObject$new()
   
   # an object to help others object to make queries
-  source("../../classes/queries/STATICmakeQueriesOO.R",local=T)
+  source("classes/queries/STATICmakeQueriesOO.R",local=T)
   staticMakeQueries <- STATICmakeQueries$new()
   
   GLOBALlistEventTabpanel <- ListEventsTabpanel$new()
   
   
-  source("../../classes/queries/LinkEventsOO.R",local = T)
+  source("classes/queries/LinkEventsOO.R",local = T)
   parentId <- "mainPanelLinkEvent"
   where <- "beforeEnd"
   GLOBALlinkEvents <- LinkEvents$new(parentId, where)

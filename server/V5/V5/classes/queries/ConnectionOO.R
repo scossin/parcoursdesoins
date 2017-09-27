@@ -16,7 +16,7 @@ Connection <- R6::R6Class(
     # fileEventHierarchy4Sunburst = "EventHierarchy4Sunburst.csv",
     
     getContent = function(terminologyName, information){
-      url <- paste0(private$webserverURL,private$GetFilePattern)
+      url <- paste0(private$getWebServerURL(),private$GetFilePattern)
       response <- httr::GET(url, query=list(terminologyName=terminologyName,
                                             information = information))
       private$checkResponse(response)
@@ -34,7 +34,7 @@ Connection <- R6::R6Class(
         stop("provide a XMLquery instance to sendQuery")
       }
       XMLqueryInstance$saveQuery()
-      url <- paste0(private$webserverURL, private$XMLqueryPattern)
+      url <- paste0(private$getWebServerURL(), private$XMLqueryPattern)
       fileName <- XMLqueryInstance$fileName
       response <- httr::POST(url, body=list(filedata=upload_file(fileName)))
       
@@ -46,7 +46,6 @@ Connection <- R6::R6Class(
     }
   ), 
   private = list(
-    webserverURL = "http://localhost:8080/parcoursdesoins-0.0.1/",
     XMLqueryPattern = "XMLQuery",
     GetFilePattern = "GetTerminologyDescriptionFile",
     
@@ -55,6 +54,9 @@ Connection <- R6::R6Class(
         write(file="ERROR.html",x=rawToChar(response$content))
         stop("Request failed", rawToChar(response$content))
       }
+    },
+    getWebServerURL = function(){
+      return(GLOBALurlserver)
     }
   )
 )

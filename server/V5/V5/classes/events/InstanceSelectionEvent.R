@@ -103,8 +103,8 @@ InstanceSelectionEvent <- R6::R6Class(
                 fluidPage(
                   sidebarLayout(
                     sidebarPanel(
-                      actionButton(inputId = self$getButtonDescriptionId(), 
-                                   label = "Description"),
+                      # actionButton(inputId = self$getButtonDescriptionId(), 
+                      #              label = "Description"),
                       verbatimTextOutput(outputId = self$getTextDescriptionId()),
                       actionButton(inputId = self$getButtonSearchEventsId(), 
                                    label = private$labelSearchButton)

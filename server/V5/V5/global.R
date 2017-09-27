@@ -10,6 +10,9 @@ library(leaflet)
 library(shinyTree)
 library(jsonlite)
 
+### URL connection : 
+load("GLOBALurlserver.rdata")
+
 ## Leaflet : 
 GLOBALmapObjectControls = "mapObjectControls"
 GLOBALcontrols <- "controls"
@@ -72,6 +75,12 @@ if (GLOBALlang == "fr"){
   ## context : 
   GLOBALupdateContext <- paste0("Choisir ces ",GLOBALparcours, " pour les ", GLOBALevent)
   
+  ## leaflet : 
+  GLOBALvoirlacarte <- "Voir la carte"
+  
+  ## valeurs sélectionnées(description filter) : 
+  GLOBALvaleursselected <- "valeur(s) sélectionnée(s)"
+  
 } else if (GLOBALlang == "en"){
   GLOBALaddEventTabpanel <- "Add an event"
   GLOBALremoveEventTabpanel <- "removeEventTabpanel"
@@ -115,4 +124,10 @@ if (GLOBALlang == "fr"){
   
   ## filterHierarchical 
   GLOBALvalidate <- "Confirm"
+  
+  ## leaflet : 
+  GLOBALvoirlacarte <- "See map"
+  
+  ## valeurs sélectionnées(description filter) : 
+  GLOBALvaleursselected <- "values chosen"
 }
