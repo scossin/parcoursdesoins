@@ -1,4 +1,4 @@
-source("../../output/sunburst/global.R")
+source("../../global.R")
 server <- function(input,output,session){
   source("../../classes/logger/STATICLoggerOO.R",local = T)
   staticLogger <- STATIClogger$new()
@@ -25,6 +25,9 @@ server <- function(input,output,session){
   source("../../classes/queries/XMLSearchQueryOO.R",local=T)
   source("../../classes/queries/XMLSearchQueryTerminologyOO.R",local=T)
   
+  source("../../classes/events/InstanceSelection.R",local = T)
+  source("../../classes/events/InstanceSelectionEvent.R",local = T)
+  source("../../classes/events/InstanceSelectionContext.R",local = T)
   
   source("../../classes/terminology/STATICterminologyInstancesOO.R",local=T)
   source("../../classes/terminology/TerminologyOO.R",local=T)
@@ -33,7 +36,15 @@ server <- function(input,output,session){
   
   source("../../classes/superClasses/uiObject.R",local=T)
   
-  #source("TestFilterCategoricalOO.R",local = T)
-  source("TestFilterHierarchical.R",local = T)
+  # source("TestFilterCategoricalOO.R",local = T)
+  # source("TestFilterHierarchical.R",local = T)
   #source("TestFilterDateOO.R",local = T)
+  output$htmlOutput <- renderUI({
+    shiny::tags$ul(id="test",
+                   shiny::tags$li("event1"),
+                   shiny::actionButton(inputId = "idButton",
+                                       label = "Rechercher des attributs communs")
+    )
+  })
+
 }

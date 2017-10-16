@@ -71,9 +71,10 @@ server <- function(input,output,session){
   
   
   source("classes/queries/LinkEventsOO.R",local = T)
+  source("classes/queries/QueryBuilderOO.R",local = T)
   parentId <- "mainPanelLinkEvent"
   where <- "beforeEnd"
-  GLOBALlinkEvents <- LinkEvents$new(parentId, where)
+  GLOBALqueryBuilder <- QueryBuilder$new(parentId, where)
   
   
   ### Context : 
@@ -111,7 +112,7 @@ server <- function(input,output,session){
                              inputId = "eventToRemove",
                               choices = choices)
     
-    GLOBALlinkEvents$updateSelectionLink() ## add event to linkEvent
+    GLOBALqueryBuilder$updateSelectionLink() ## add event to linkEvent
   })
   
   observeEvent(input$removeEventTabpanel,{
@@ -126,7 +127,7 @@ server <- function(input,output,session){
                              inputId = "eventToRemove",
                              choices = choices)
     
-    GLOBALlinkEvents$updateSelectionLink() ## remove event of linkEvent
+    GLOBALqueryBuilder$updateSelectionLink() ## remove event of linkEvent
   })
   
   

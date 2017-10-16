@@ -1,0 +1,51 @@
+Results <- R6::R6Class(
+  "Results",
+  
+  public=list(
+    
+    initialize = function(contextEnv, predicateName, dataFrame, parentId, where){
+      super$initialize(parentId = parentId, where = where)
+      private$checkDataFrame(dataFrame)
+      self$contextEnv <- contextEnv
+      self$dataFrame <- dataFrame
+      self$predicateName <- predicateName
+      # self$domParentId <- domParentId
+    },
+    
+    updateDataFrame = function(){
+      stop("updateDataFrame not implemented !")
+    },
+    
+    getEventsSelected = function(){
+      stop("getEventsSelected not implemented !")
+    },
+    
+    getXMLpredicateNode = function(){
+      stop("getXMLpredicateNode not implemented !")
+    }, 
+    
+    destroy = function(){
+      stop("destroy not implemented ! ")
+    },
+    
+    getDescription = function(){
+      stop("getDescription not implemented ! ")
+    }
+  ),
+  
+
+  
+  private=list(
+    checkDataFrame = function(dataFrame){
+      #columns <- c("context","event","predicate","value")
+      # columns <- c("event","predicate","value")
+      columns <- c("event","value")
+      bool <-  columns %in%  colnames(dataFrame)
+      if (!all(bool)){
+        stop("Filter dataFrame must contain only : ", 
+             paste(columns, collapse=" "), " \n not : ", paste(colnames(dataFrame), collapse=" "))
+      }
+
+    }
+  )
+)

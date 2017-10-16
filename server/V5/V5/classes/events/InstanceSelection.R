@@ -28,6 +28,8 @@ InstanceSelection <- R6::R6Class(
       self$setButtonFilter(private$getButtonFilterParentId(), where)
     },
     
+    
+    
     updateFilters = function(){
       ## updateFilter :
       staticLogger$info("\t updating Filter with new events")

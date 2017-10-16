@@ -20,9 +20,7 @@ InstanceSelectionEvent <- R6::R6Class(
       staticLogger$info("new instanceSelectionEvent")
     },
     
-    
-    addContextNodeToQuery = function(query, boolGetXMLpredicateNode = T){
-      query$addContextNode(self$context)
+    addEventNodeToQuery = function(query, boolGetXMLpredicateNode = T){
       query$addEventNode(eventNumber = self$contextEnv$eventNumber,
                          terminologyName = self$terminology$terminologyName,
                          eventType = self$className)
@@ -43,7 +41,8 @@ InstanceSelectionEvent <- R6::R6Class(
       
       staticLogger$info("\t getting predicatesNodes")
       query <- XMLSearchQuery$new()
-      query <- self$addContextNodeToQuery(query, boolGetXMLpredicateNode)
+      query <- self$addEventNodeToQuery(query, boolGetXMLpredicateNode)
+      query$addContextNode(self$context)
       
       ## updatingContextEvents 
       staticLogger$info("\t updating ContextEvents")
