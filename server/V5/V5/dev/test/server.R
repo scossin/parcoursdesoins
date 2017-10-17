@@ -40,8 +40,22 @@ server <- function(input,output,session){
   # source("TestFilterHierarchical.R",local = T)
   #source("TestFilterDateOO.R",local = T)
   output$htmlOutput <- renderUI({
-    shiny::tags$ul(id="test",
-                   shiny::tags$li("event1"),
+    lislist <- NULL
+    
+    liDescription1 <-  shiny::tags$li("inEtab", class="lipredicate",
+                                                        p("selected values : "))
+    lislist <- append(lislist,shiny::tagList(liDescription1))
+    print(lislist)
+    liDescription2 <- shiny::tags$li("inDoctor", class="lipredicate",
+                                     p("selected values : atres "))
+    lislist <- append(lislist,shiny::tagList(liDescription2))
+    #lislist <- list(liDescription1, liDescription2)
+    print(lislist)
+    lis <- shiny::tagList(lislist)
+    print(lis)
+    shiny::tags$ul(id="test","Ceci est du texte",
+                   div(lis, style = "margin-left:400px"),
+
                    shiny::actionButton(inputId = "idButton",
                                        label = "Rechercher des attributs communs")
     )

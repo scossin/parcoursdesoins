@@ -10,8 +10,16 @@ LinkEvents <- R6::R6Class(
     operator = character(),
     minValue = numeric(),
     maxValue = numeric(),
+    linkNumber = numeric(),
     
-    initialize = function(eventNumber1, eventNumber2, predicate1, predicate2, operator, minValue, maxValue){
+    initialize = function(eventNumber1, 
+                          eventNumber2, 
+                          predicate1, 
+                          predicate2, 
+                          operator, 
+                          minValue, 
+                          maxValue,
+                          linkNumber){
       staticLogger$info("\t new LinkEvents")
       self$eventNumber1 <- eventNumber1
       self$eventNumber2 <- eventNumber2
@@ -35,7 +43,10 @@ LinkEvents <- R6::R6Class(
     
     getDescription = function(){
       text <- paste0(self$event1, " is linked to ", self$event2)
-      return(text)
+      linkNumberText <- paste0("link",self$linkNumber)
+      liLink <- shiny::tags$li(linkNumberText,
+                     text)
+      return(liLink)
     }
   ),
   

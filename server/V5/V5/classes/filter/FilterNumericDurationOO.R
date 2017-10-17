@@ -36,10 +36,12 @@ FilterNumericDuration <- R6::R6Class(
     
     getDescription = function(){
       durationChoice <- input[[self$getDurationUIid()]]
-      description <- paste0(self$predicateName,
-                            "\t minValue: ",self$valueEnv$numericValue$minChosen, " ", durationChoice,
-                            "\n\t maxValue: ", self$valueEnv$numericValue$maxChosen, " ", durationChoice)
-      return(description)
+      predicateLabel <- self$getPredicateLabel() ## FilterFunction
+      description <- paste0("min: ",self$valueEnv$numericValue$minChosen, " ", durationChoice,
+                            "  - max: ", self$valueEnv$numericValue$maxChosen, " ", durationChoice)
+      lipredicate <- shiny::tags$li(predicateLabel, class=GLOBALliPredicateLabelClass,
+                                    shiny::tags$p(description))
+      return(lipredicate)
     },
     
     getObjectId = function(){

@@ -54,9 +54,12 @@ FilterDate <- R6::R6Class(
     },
     
     getDescription = function(){
-      description <- paste0(self$predicateName,"\t minDate: ",self$dateGraphics$dateValues$getMinDate(),
-                            "\n\t maxDate: ", self$dateGraphics$dateValues$getMaxDate())
-      return(description)
+      predicateLabel <- self$getPredicateLabel() ## FilterFunction
+      description <- paste0("min: ",self$dateGraphics$dateValues$getMinDate(),
+                            "  -  max: ", self$dateGraphics$dateValues$getMaxDate())
+      lipredicate <- shiny::tags$li(predicateLabel, class=GLOBALliPredicateLabelClass,
+                                    shiny::tags$p(description))
+      return(lipredicate)
     },
     
     makeUI = function(){

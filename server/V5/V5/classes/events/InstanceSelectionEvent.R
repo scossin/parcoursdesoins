@@ -104,7 +104,7 @@ InstanceSelectionEvent <- R6::R6Class(
                     sidebarPanel(
                       # actionButton(inputId = self$getButtonDescriptionId(), 
                       #              label = "Description"),
-                      verbatimTextOutput(outputId = self$getTextDescriptionId()),
+                      shiny::uiOutput(outputId = self$getHTMLdescriptionId()),
                       actionButton(inputId = self$getButtonSearchEventsId(), 
                                    label = private$labelSearchButton)
                     ),
@@ -138,20 +138,18 @@ InstanceSelectionEvent <- R6::R6Class(
       return(paste0("SearchEvents",self$getUISelectionId(), self$parentId))
     },
     
-    getTextDescription = function(){
+    getHTMLdescription = function(){
       description <- self$getDescription()
-      description <- paste(description, collapse="\n")
       Nevents <- length(unique(self$contextEvents$event))
       Ncontexts <- length(unique(self$contextEvents$context))
       text <- paste0(self$className, "\t",Nevents, " ", GLOBALevent, " ", GLOBALselected,
-                     "\t", Ncontexts, " ", GLOBALparcours, " ", GLOBALselected,
-                     "\n",description)
-      return(text)
+                     "\t", Ncontexts, " ", GLOBALparcours, " ", GLOBALselected)
+      ulDescrition <- shiny::tags$ul(text, description)
+      return(ulDescrition)
     },
     
     makeDescription = function(){
-      text <- self$getTextDescription()
-      output[[self$getTextDescriptionId()]] <- shiny::renderText(text)
+      output[[self$getHTMLdescriptionId()]] <- shiny::renderUI(self$getHTMLdescription())
       self$makeDonut()
     },
     
@@ -169,8 +167,8 @@ InstanceSelectionEvent <- R6::R6Class(
       return(paste0("UIdescription",self$parentId))
     },
     
-    getTextDescriptionId = function(){
-      return(paste0("Text",self$getUISelectionId()))
+    getHTMLdescriptionId = function(){
+      return(paste0("html",self$getUISelectionId()))
     },
     
     getButtonDescriptionId = function(){

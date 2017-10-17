@@ -94,7 +94,7 @@ STATICfilterCreator <- R6::R6Class(
         contextEnv2$eventNumber <- as.numeric(paste0(contextEnv$eventNumber),"11")## 111 111111 ...
         contextEnv2$eventType <- expectedValue
         terminology <- staticTerminologyInstances$getTerminology(as.character(expectedValue))
-        contextEnv2$predicateName <- predicateName
+        #contextEnv2$predicateName <- predicateName
         contextEnv2$instanceSelection <- InstanceSelection$new(contextEnv = contextEnv2, 
                                                                terminology = terminology, 
                                                                className = expectedValue, 
@@ -102,7 +102,8 @@ STATICfilterCreator <- R6::R6Class(
                                                                parentId = parentId, 
                                                                where = where,
                                                                contextEnvParent = contextEnv)
-        pointerEnv <- PointerEnv$new(contextEnv = contextEnv2)
+        pointerEnv <- PointerEnv$new(contextEnv = contextEnv2,
+                                     predicateName = predicateName)
         return(pointerEnv)
       } else if (filterType == "STRING"){
         filterCategorical <- FilterCategorical$new(contextEnv = contextEnv, 

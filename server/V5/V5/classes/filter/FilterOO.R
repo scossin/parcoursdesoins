@@ -17,6 +17,11 @@ Filter <- R6::R6Class(
       # self$domParentId <- domParentId
     },
     
+    getPredicateLabel = function(){
+      label <- as.character(self$contextEnv$instanceSelection$terminology$getLabel(self$predicateName))
+      return(label)
+    },
+    
     updateDataFrame = function(){
       stop("updateDataFrame not implemented !")
     },

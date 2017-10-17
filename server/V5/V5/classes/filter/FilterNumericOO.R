@@ -47,9 +47,12 @@ FilterNumeric <- R6::R6Class(
     },
     
     getDescription = function(){
-      description <- paste0(self$predicateName,"\t minValue: ",self$valueEnv$numericValue$minChosen,
-                            "\n\t maxValue: ", self$valueEnv$numericValue$maxChosen)
-      return(description)
+      description <- paste0("min: ",self$valueEnv$numericValue$minChosen,
+                            "   - max: ", self$valueEnv$numericValue$maxChosen)
+      predicateLabel <- self$getPredicateLabel()
+      lipredicate <- shiny::tags$li(predicateLabel, class=GLOBALliPredicateLabelClass,
+                                    shiny::tags$p(description))
+      return(lipredicate)
     },
     
     getUI = function(){

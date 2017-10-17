@@ -26,8 +26,13 @@ GLOBALlogFolder <- "./logs/"
 
 GLOBALeventTabSetPanel <- "eventTabset" # tabsetPanel id of events
 
-GLOBALlang <- "fr"
+GLOBALdivQueryBuilder <- "QueryBuilderDiv"
 
+#### CSS :
+GLOBALliPredicateLabelClass = "liPredicateLabel" ## class for li of predicate label
+GLOBALspanEventLabelClass = "spanEventClass"
+
+GLOBALlang <- "fr"
 
 
 ### label

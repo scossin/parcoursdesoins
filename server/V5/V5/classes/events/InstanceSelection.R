@@ -28,8 +28,6 @@ InstanceSelection <- R6::R6Class(
       self$setButtonFilter(private$getButtonFilterParentId(), where)
     },
     
-    
-    
     updateFilters = function(){
       ## updateFilter :
       staticLogger$info("\t updating Filter with new events")
@@ -43,11 +41,15 @@ InstanceSelection <- R6::R6Class(
       if (length(self$listFilters) == 0){
         return(NULL)
       }
-      description <- NULL
+      description <- list()
       for (filter in self$listFilters){
-        description <- append(filter$getDescription(),description)
+        description <- append(description,shiny::tagList(filter$getDescription()))
       }
-      return(description)
+      if (length(description) == 0){
+        return(NULL)
+      }
+      liDescription <- shiny::tagList(description)
+      return(liDescription)
     }, 
     
     getEventsSelected = function(){
@@ -175,11 +177,12 @@ PointerEnv <- R6::R6Class(
   "PointerEnv",
   
   public=list(
-    #contextEnvParent = environment(),
     contextEnv = environment(),
-    initialize=function(contextEnv){
-      #self$contextEnvParent <- contextEnvParent
+    predicateName = character(),
+    
+    initialize=function(contextEnv, predicateName){
       self$contextEnv <- contextEnv
+      self$predicateName <- predicateName
     },
     
     destroy = function(){
@@ -198,7 +201,7 @@ PointerEnv <- R6::R6Class(
       staticLogger$info("\t eventType : ", eventType)
       terminologyName <- self$contextEnv$instanceSelection$contextEnvParent$instanceSelection$terminology$terminologyName
       staticLogger$info("\t terminologyName : ", terminologyName)
-      predicateName <- self$contextEnv$predicateName
+      predicateName <- self$predicateName
       staticLogger$info("\t previous contextEvents : ", nrow(self$contextEnv$instanceSelection$contextEvents), "lines")
       self$contextEnv$instanceSelection$contextEvents <- staticFilterCreator$getDataFrame(terminologyName, 
                                                                                           eventType, 
@@ -215,7 +218,7 @@ PointerEnv <- R6::R6Class(
       tempQuery <- XMLSearchQuery$new()
       chosenValues <- self$contextEnv$instanceSelection$getEventsSelected()
       chosenValues <- unique(chosenValues)
-      predicateName <- self$contextEnv$predicateName
+      predicateName <- self$predicateName
       staticLogger$info("PointerEnv chosenValues : ",chosenValues)
       predicateNode <- tempQuery$makePredicateNode(predicateClass = "factor",
                                                    predicateType = predicateName,
@@ -231,12 +234,17 @@ PointerEnv <- R6::R6Class(
     getDescription = function(){
       subDescription <- self$contextEnv$instanceSelection$getDescription()
       if (!is.null(subDescription)){
-        subDescription <- paste0("\t", subDescription)
-        subDescription <- append(self$contextEnv$instanceSelection$terminology$terminologyName, 
-                                 subDescription)
-        subDescription <- paste(subDescription, collapse="\n")
+        label <- self$getPredicateLabel()
+        subDescription <- shiny::tagList(subDescription)
+        subDescription <- shiny::tags$li(label, 
+                       shiny::tags$ul(subDescription, style = "margin-left:20px"))
       }
       return(subDescription)
+    },
+    
+    getPredicateLabel = function(){
+      label <- as.character(self$contextEnv$instanceSelection$contextEnvParent$instanceSelection$terminology$getLabel(self$predicateName))
+      return(label)
     }
   )
 )

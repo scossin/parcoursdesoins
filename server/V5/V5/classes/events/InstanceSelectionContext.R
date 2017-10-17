@@ -55,14 +55,12 @@ InstanceSelectionContext <- R6::R6Class(
       })
     },
     
-    getTextDescription = function(){
+    getHTMLdescription = function(){
       description <- self$getDescription()
-      description <- paste(description, collapse="\n")
-      Nevents <- length(unique(self$contextEvents$event))
       Ncontexts <- length(unique(self$contextEvents$context))
-      text <- paste0(Ncontexts, " ", GLOBALparcours, " ", GLOBALselected,
-                     "\n",description)
-      return(text)
+      text <- paste0(Ncontexts, " ", GLOBALparcours, " ", GLOBALselected)
+      ulDescrition <- shiny::tags$ul(text, description)
+      return(ulDescrition)
     }
     
   ), 

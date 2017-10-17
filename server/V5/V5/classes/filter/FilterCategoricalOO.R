@@ -64,9 +64,12 @@ FilterCategorical <- R6::R6Class(
       } else {
         namesChosen <- paste(namesChosen, collapse = " ; ")
       }
-      description <- paste0(self$predicateName,"\t ", lengthChosen, " ",GLOBALvaleursselected," (",
+      predicateLabel <- self$getPredicateLabel() ## FilterFunction
+      description <- paste0(lengthChosen, " ",GLOBALvaleursselected," (",
                             namesChosen, ")")
-      return(description)
+      lipredicate <- shiny::tags$li(predicateLabel, class= GLOBALliPredicateLabelClass,
+                                    shiny::tags$p(description))
+      return(lipredicate)
     },
     
     makeUI = function(){

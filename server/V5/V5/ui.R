@@ -3,21 +3,21 @@ navbarPage("Parcours de soins", id="CartoParcours",
                     
                     fluidPage(
                       sidebarLayout(
-                      sidebarPanel(
+                      sidebarPanel(width=2,
                         actionButton(inputId = "addEventTabpanel", 
                                      label = GLOBALaddEventTabpanel
-                                     ),
-                        actionButton(inputId = "removeEventTabpanel", 
-                                     label = GLOBALremoveEventTabpanel),
+                                     )
+                        # actionButton(inputId = "removeEventTabpanel", 
+                        #              label = GLOBALremoveEventTabpanel),
                         # actionButton(inputId = "ButtonTest", 
                         #              label = "Description"),
-                        selectInput(inputId = "eventToRemove",
-                                    label = c(""), 
-                                    choices = c(""))
+                        # selectInput(inputId = "eventToRemove",
+                        #             label = c(""), 
+                        #             choices = c(""))
                       ),
                       
                       mainPanel(
-                        div(id = "mainPanelLinkEvent")
+                        div(id = GLOBALdivQueryBuilder)
                       )
                       
                       )
@@ -30,6 +30,7 @@ navbarPage("Parcours de soins", id="CartoParcours",
                       includeScript("www/js/newTabpanel.js"),
                       includeScript("www/js/removeId.js"),
                       includeScript("www/js/displayId.js"),
+                      includeScript("www/js/empty.js"),
                       includeScript("www/js/goFirstSibling.js"),
                       includeCSS("www/css/ButtonFilter.css"),
                       includeCSS("www/css/Graphics.css")

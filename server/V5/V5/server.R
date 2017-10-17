@@ -69,13 +69,14 @@ server <- function(input,output,session){
   
   GLOBALlistEventTabpanel <- ListEventsTabpanel$new()
   
-  
   source("classes/queries/LinkEventsOO.R",local = T)
+  source("classes/queries/LinkDivOO.R",local=T)
+  source("classes/queries/EventDivOO.R",local=T)
   source("classes/queries/QueryBuilderOO.R",local = T)
-  parentId <- "mainPanelLinkEvent"
+  
+  parentId <- GLOBALdivQueryBuilder
   where <- "beforeEnd"
   GLOBALqueryBuilder <- QueryBuilder$new(parentId, where)
-  
   
   ### Context : 
   staticLogger$info("creating Context...")
@@ -104,31 +105,30 @@ server <- function(input,output,session){
                                        context = GLOBALcontextEnv$instanceSelection$context)
     eventTabpanel$setHierarchicalObject()
     GLOBALlistEventTabpanel$addEventTabpanel(eventTabpanel)
-    
     #listNames <- c(eventTabpanel$getLiText(), names(GLOBALlistEventTabpanel))
     ### update list of elements to remove :
-    choices <- c("",GLOBALlistEventTabpanel$getAllLiText())
-    shiny::updateSelectInput(session,
-                             inputId = "eventToRemove",
-                              choices = choices)
-    
-    GLOBALqueryBuilder$updateSelectionLink() ## add event to linkEvent
+    # choices <- c("",GLOBALlistEventTabpanel$getAllLiText())
+    # shiny::updateSelectInput(session,
+    #                          inputId = "eventToRemove",
+    #                           choices = choices)
+    GLOBALqueryBuilder$linkDiv$updateSelectionLink() ## add event to linkEvent
+    GLOBALqueryBuilder$eventDiv$insertNewDivEvent()
   })
-  
-  observeEvent(input$removeEventTabpanel,{
-    staticLogger$user("removeEventTabpanel")
-    isolate({
-      liText <- input[["eventToRemove"]]
-      staticLogger$user(liText, " to remove")
-    })
-    GLOBALlistEventTabpanel$removeEventTabpanel(liText = liText)
-    choices <- c("",GLOBALlistEventTabpanel$getAllLiText())
-    shiny::updateSelectInput(session,
-                             inputId = "eventToRemove",
-                             choices = choices)
-    
-    GLOBALqueryBuilder$updateSelectionLink() ## remove event of linkEvent
-  })
+  # 
+  # observeEvent(input$removeEventTabpanel,{
+  #   staticLogger$user("removeEventTabpanel")
+  #   isolate({
+  #     liText <- input[["eventToRemove"]]
+  #     staticLogger$user(liText, " to remove")
+  #   })
+  #   GLOBALlistEventTabpanel$removeEventTabpanel(liText = liText)
+  #   choices <- c("",GLOBALlistEventTabpanel$getAllLiText())
+  #   shiny::updateSelectInput(session,
+  #                            inputId = "eventToRemove",
+  #                            choices = choices)
+  #   
+  #   GLOBALqueryBuilder$updateSelectionLink() ## remove event of linkEvent
+  # })
   
   
   # AllInputs <- reactive({

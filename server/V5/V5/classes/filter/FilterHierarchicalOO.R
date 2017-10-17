@@ -39,9 +39,12 @@ FilterHierarchical <- R6::R6Class(
       } else {
         namesChosen <- paste(namesChosen, collapse = " ; ")
       }
-      description <- paste0(self$predicateName,"\t ", lengthChosen, " ",  GLOBALvaleursselected, " (",
+      description <- paste0(lengthChosen, " ",  GLOBALvaleursselected, " (",
                             namesChosen, ")")
-      return(description)
+      predicateLabel <- self$getPredicateLabel()
+      lipredicate <- shiny::tags$li(predicateLabel, class= GLOBALliPredicateLabelClass,
+                                    shiny::tags$p(description))
+      return(lipredicate)
     },
     
     updateDataFrame = function(){
