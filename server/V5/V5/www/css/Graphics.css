@@ -2,3 +2,8 @@
 [id^=piechartCategorical] {
 display: inline-block;
 }
+
+/* pour aligner min et max  : */
+.col-sm-2 {
+display:flex;
+}

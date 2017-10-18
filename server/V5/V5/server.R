@@ -69,14 +69,11 @@ server <- function(input,output,session){
   
   GLOBALlistEventTabpanel <- ListEventsTabpanel$new()
   
-  source("classes/queries/LinkEventsOO.R",local = T)
-  source("classes/queries/LinkDivOO.R",local=T)
-  source("classes/queries/EventDivOO.R",local=T)
-  source("classes/queries/QueryBuilderOO.R",local = T)
-  
-  parentId <- GLOBALdivQueryBuilder
-  where <- "beforeEnd"
-  GLOBALqueryBuilder <- QueryBuilder$new(parentId, where)
+  source("classes/queryBuilder/LinkEventsOO.R",local = T)
+  source("classes/queryBuilder/LinkDescriptionOO.R",local=T)
+  source("classes/queryBuilder/EventDescriptionOO.R",local=T)
+  source("classes/queryBuilder/ContextDescriptionOO.R",local = T)
+  source("classes/queryBuilder/QueryBuilderOO.R",local = T)
   
   ### Context : 
   staticLogger$info("creating Context...")
@@ -96,10 +93,14 @@ server <- function(input,output,session){
   rm(contextEvents)
   staticLogger$info("ContextEnv added")
   
+  ### must be created after GlobalContext:
+  parentId <- GLOBALdivQueryBuilder
+  where <- "beforeEnd"
+  GLOBALqueryBuilder <- QueryBuilder$new(parentId, where)
   
-  observeEvent(input$addEventTabpanel,{
+  observeEvent(input[[GLOBALaddEventTabpanel]],{
     staticLogger$user("addEventTabpanel clicked")
-    nClick <- input$addEventTabpanel
+    nClick <- input[[GLOBALaddEventTabpanel]]
     ## create new Tabpanel :
     eventTabpanel <- EventTabpanel$new(eventNumber=nClick, 
                                        context = GLOBALcontextEnv$instanceSelection$context)
@@ -111,8 +112,8 @@ server <- function(input,output,session){
     # shiny::updateSelectInput(session,
     #                          inputId = "eventToRemove",
     #                           choices = choices)
-    GLOBALqueryBuilder$linkDiv$updateSelectionLink() ## add event to linkEvent
-    GLOBALqueryBuilder$eventDiv$insertNewDivEvent()
+    GLOBALqueryBuilder$linkDescription$updateSelectionLink() ## add event to linkEvent
+    GLOBALqueryBuilder$eventDescription$insertNewDivEvent()
   })
   # 
   # observeEvent(input$removeEventTabpanel,{

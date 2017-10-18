@@ -39,7 +39,7 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
       if (length(oldList) == 0){
         self$listLinkNodes <- list(linkNode)
       } else {
-        self$listLinkNodes <- list(oldList, linkNode)
+        self$listLinkNodes <- append(oldList, list(linkNode))
       }
     },
     

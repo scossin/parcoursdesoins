@@ -1,10 +1,11 @@
-LinkDiv <- R6::R6Class(
+LinkDescription <- R6::R6Class(
   inherit = uiObject,
-  "LinkDiv",
+  "LinkDescription",
   public = list(
     listLinkEvents = list(),
     buttonLinkEventsObserver = NULL,
     searchPredicatesObserver = NULL,
+    linkNumbers = 0,
     
     initialize = function(parentId, where){
       super$initialize(parentId, where)
@@ -33,7 +34,7 @@ LinkDiv <- R6::R6Class(
     getUILinkChoice = function(){
       ui <- div(id = self$getUILinkChoiceId(),
                 fluidRow(
-                  h3 ("Links creation"),
+                  h3 (GLOBALlinksCreation),
                   column(width = 2,
                          shiny::selectInput(inputId = self$getEvent1SelectizeId(),
                                             label="event1",
@@ -71,28 +72,69 @@ LinkDiv <- R6::R6Class(
                          shiny::numericInput(inputId = self$getMinInputId(),
                                              label = "min",
                                              value = 0,
-                                             step = 1)),
-                  column(width = 2,
+                                             step = 1),
                          shiny::numericInput(inputId = self$getMaxInputId(),
                                              label = "max",
                                              value = 0,
                                              step = 1))),
                 shiny::actionButton(inputId = self$getButtonSearchPredicatesId(),
-                                    label = "Rechercher des attributs communs"),
+                                    label = GLOBALsearchAttributes),
                 shiny::actionButton(inputId = self$getButtonLinkEventsId(),
-                                    label = "Link Events"))
+                                    label = GLOBALcreateLink))
                 #verbatimTextOutput(outputId = self$getResultsVerbatimId()))
       return(ui)
     },
     
-    
     addButtonLinkEventsObserver = function(){
       self$buttonLinkEventsObserver <- observeEvent(input[[self$getButtonLinkEventsId()]],{
         staticLogger$user("LinkEvents clicked")
-        self$addLinkEvents()
+        event1 <- input[[self$getEvent1SelectizeId()]]
+        event2 <- input[[self$getEvent2SelectizeId()]]
+        if (is.null(event1) || event1 == "" || is.null(event2) || event2 == ""){
+          staticLogger$info("event1 or event2 not set")
+          return(NULL)
+        }
+        
+        predicate1 <- input[[self$getPredicate1SelectizeId()]]
+        predicate2 <- input[[self$getPredicate2SelectizeId()]]
+        if (is.null(predicate1) || predicate1 == "" || is.null(predicate2) || predicate2 == ""){
+          staticLogger$info("predicate1 or predicate2 not set")
+          return(NULL)
+        }
+        
+        minValue <- as.numeric(input[[self$getMinInputId()]])
+        if (is.na(minValue)){
+          staticLogger$info("incorrect minValue")
+          return(NULL)
+        }
+        
+        maxValue <- as.numeric(input[[self$getMaxInputId()]])
+        if (is.na(maxValue)){
+          staticLogger$info("incorrect maxValue")
+          return(NULL)
+        }
+        
+        eventNumber1 <- private$getEventNumber(event1)
+        eventNumber2 <- private$getEventNumber(event2)
+        
+        self$linkNumbers <- self$linkNumbers + 1
+        linkEvent <- LinkEvents$new(eventNumber1 = eventNumber1, 
+                                    eventNumber2 = eventNumber2, 
+                                    predicate1 = predicate1, 
+                                    predicate2 = predicate2,
+                                    operator = "diff", ## CAUTION : change diff with operator value
+                                    minValue = minValue, 
+                                    maxValue = maxValue,
+                                    linkNumber = self$linkNumbers)
+        listLength <- length(self$listLinkEvents)
+        self$listLinkEvents[[listLength+1]] <- linkEvent
+        self$insertHTMLdescription()
+        linkEvent$addButtonRemoveObserver()
+        return(NULL)
       })
     },
     
+    ## for UILinkChoice
     updateEvent = function(eventSelectizeId){
       previousChoice <- input[[eventSelectizeId]]
       bool <- previousChoice %in% private$eventsAvailable
@@ -167,24 +209,84 @@ LinkDiv <- R6::R6Class(
     },
     
     
+    ### Description of selected links
     getUIDescription = function(){
       ui <- shiny::uiOutput(outputId = self$getHTMLdescriptionId())
       return(ui)
     },
     
+    removeLink = function(linkNumber){
+      iter <- 1
+      for (linkEvent in self$listLinkEvents){
+        if (linkEvent$linkNumber == linkNumber){
+          staticLogger$info("removing link", linkNumber, " in the QueryBuilder")
+          self$listLinkEvents[[iter]] <- NULL
+          self$insertHTMLdescription()
+          return(NULL)
+        }
+        iter <- iter + 1
+      }
+      staticLogger$error("removelink not found link: ", linkNumber)
+    },
+    
+    removeLinksContainingEvent = function(eventNumber){
+      iter <- 1
+      for (linkEvent in self$listLinkEvents){
+        if (linkEvent$eventNumber1 == eventNumber || linkEvent$eventNumber2 == eventNumber){
+          staticLogger$info("removing link", linkEvent$linkNumber, " in the QueryBuilder")
+          self$listLinkEvents[[iter]] <- NULL
+        }
+        iter <- iter + 1
+      }
+      self$insertHTMLdescription()
+    },
+    
     insertHTMLdescription = function(){
-      htmlDescription <- self$getHTMLdescription()
+      staticLogger$info("inserting new HTMLdescription for link in QueryBuilder")
+      getHTMLdescription_ = function(){
+        ## loop to get all links description : 
+        description <- list()
+        staticLogger$info(length(self$listLinkEvents), "linkEvents found")
+        for (linkEvent in self$listLinkEvents){
+          description <- append(description, 
+                                shiny::tagList(linkEvent$getDescription()))
+        }
+        if (length(description) == 0){
+          return(NULL)
+        }
+        return(description)
+      }
+      
+      htmlDescription <- getHTMLdescription_()
+      print(htmlDescription)
+      
+      ### remove and insert : 
+      self$removeUIdescription()
+      self$insertUIdescription()
+      
       if (is.null(htmlDescription)){
-        htmlDescription <- shiny::tags$p("No link created between events")
+        htmlDescription <- shiny::tags$p(GLOBALnoLinkCreated)
       }
       output[[self$getHTMLdescriptionId()]] <- renderUI({
         shiny::tagList(
-          h2("Links between events"),
-          h3 ("Links description"),
+          h2(GLOBALlinksBetweenEvents),
+          h3 (GLOBALlinksDescription),
           shiny::tags$ul(htmlDescription)
         )
-
       })
+    },
+    
+    ### Can't renderUI twice : for a new render, we remove and re-add the UIdescription div
+    removeUIdescription = function(){
+      jQuerySelector = paste0("#",self$getHTMLdescriptionId())
+      removeUI(selector = jQuerySelector,immediate = T)
+    },
+    
+    insertUIdescription = function(){
+      jQuerySelector = paste0("#",self$getDivId())
+      ui <- self$getUIDescription()
+      insertUI(selector = jQuerySelector,where = "afterBegin",ui = ui, immediate = T
+               )
     },
     
     getDivId = function(){
@@ -233,61 +335,6 @@ LinkDiv <- R6::R6Class(
     
     getHTMLdescriptionId = function(){
       return(paste0("HTMLdescription",self$getDivId()))
-    },
-    
-    getHTMLdescription = function(){
-      ## loop to get all links description : 
-      description <- list()
-      for (linkEvents in self$listLinkEvents){
-        description <- append(description, shiny::tagList(linkEvents$getDescription()))
-      }
-      if (length(description) == 0){
-        return(NULL)
-      }
-      return(description)
-    }, 
-    
-    
-    addLinkEvents = function(){
-      event1 <- input[[self$getEvent1SelectizeId()]]
-      event2 <- input[[self$getEvent2SelectizeId()]]
-      if (is.null(event1) || event1 == "" || is.null(event2) || event2 == ""){
-        staticLogger$info("event1 or event2 not set")
-        return(NULL)
-      }
-      
-      predicate1 <- input[[self$getPredicate1SelectizeId()]]
-      predicate2 <- input[[self$getPredicate2SelectizeId()]]
-      if (is.null(predicate1) || predicate1 == "" || is.null(predicate2) || predicate2 == ""){
-        staticLogger$info("predicate1 or predicate2 not set")
-        return(NULL)
-      }
-      
-      minValue <- as.numeric(input[[self$getMinInputId()]])
-      if (is.na(minValue)){
-        staticLogger$info("incorrect minValue")
-        return(NULL)
-      }
-      
-      maxValue <- as.numeric(input[[self$getMaxInputId()]])
-      if (is.na(maxValue)){
-        staticLogger$info("incorrect maxValue")
-        return(NULL)
-      }
-      
-      eventNumber1 <- private$getEventNumber(event1)
-      eventNumber2 <- private$getEventNumber(event2)
-      
-      linkEvents <- LinkEvents$new(eventNumber1 = eventNumber1, 
-                                   eventNumber2 = eventNumber2, 
-                                   predicate1 = predicate1, 
-                                   predicate2 = predicate2,
-                                   operator = "diff", ## CAUTION : change diff with operator value
-                                   minValue = minValue, 
-                                   maxValue = maxValue)
-      listLength <- length(self$listLinkEvents)
-      self$listLinkEvents[[listLength+1]] <- linkEvents
-      return(NULL)
     }
   ),
   private=list(

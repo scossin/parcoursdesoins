@@ -7,19 +7,40 @@ QueryBuilder <- R6::R6Class(
     buttonSearchEventsObserver = NULL,
     buttonSetQueryObserver = NULL,
     buttonLinkEvents = NULL,
-    linkDiv = NULL,
-    eventDiv = NULL,
+    linkDescription = NULL,
+    eventDescription = NULL,
+    contextDescription = NULL,
+    hideShowObserver = NULL,
+    currentHideShowLabel = GLOBALshow,
     
-    initialize=function(parentId, where){
+    initialize = function(parentId, where){
       staticLogger$info("New QueryBuilder")
       super$initialize(parentId, where)
       self$insertUIlink()
       self$addButtonSearchEventsObserver()
       self$addButtonSetQueryObserver()
-      self$linkDiv <- LinkDiv$new(parentId = self$getDivLinksDescription(), 
+      self$addHideShowObserver()
+      self$linkDescription <- LinkDescription$new(parentId = self$getDivLinksDescription(), 
                                   where = "beforeEnd")
-      self$eventDiv <- EventDiv$new(parentId = self$getDivEventsDescription(),
+      self$eventDescription <- EventDescription$new(parentId = self$getDivEventsDescription(),
                                     where = "beforeEnd")
+      self$contextDescription <- ContextDescription$new(parentId = self$getDivContextDescription(),
+                             where = "beforeEnd")
+      private$hideHideShowButton()
+    },
+    
+    addHideShowObserver = function(){
+      self$hideShowObserver <- observeEvent(input[[self$getHideShowId2()]],{
+        staticLogger$info("HideShow button clicked QueryBuilder")
+        
+        if (self$currentHideShowLabel == GLOBALshow){
+          private$showHideShowButton()
+        } else {
+          private$hideHideShowButton()
+        }
+        self$updateHideShowButton()
+      },ignoreInit = T)
+      return(NULL)
     },
     
     insertUIlink = function(){
@@ -37,6 +58,10 @@ QueryBuilder <- R6::R6Class(
       stop("why destroy this UI ?")
     },
     
+    getDivContextDescription = function(){
+      return(paste0("ContextDescription",self$getDivId()))
+    },
+    
     getDivEventsDescription = function(){
       return(paste0("eventsDescription",self$getDivId()))
     },
@@ -45,21 +70,40 @@ QueryBuilder <- R6::R6Class(
       return(paste0("linksDescription",self$getDivId()))
     },
     
-    getUI = function(){
-      ui <- div(id = self$getDivId(),
-                div(id = self$getDivEventsDescription()),
-                div(id = self$getDivLinksDescription()),
-        shiny::actionButton(inputId = self$getButtonSetQueryId(),
-                            label = "Set Query"),
-        shiny::actionButton(inputId = self$getButtonSearchEventsId(),
-                            label = "Search events"),
-        shiny::verbatimTextOutput(outputId = self$getResultsVerbatimId())
-      )
-
+    getHideShowId2 = function(){
+      return(paste0("HideShowButtonQueryBuilder-",self$getDivId()))
     },
     
-    setQueryDescription = function(){
-      
+    updateHideShowButton = function(){
+      bool <- self$currentHideShowLabel == GLOBALshow
+      if (bool){
+        self$currentHideShowLabel <- GLOBALhide
+      } else {
+        self$currentHideShowLabel <- GLOBALshow
+      }
+      shiny::updateActionButton(session = session, 
+                                inputId = self$getHideShowId2(),
+                                label = self$currentHideShowLabel)
+    },
+    
+    getUI = function(){
+      ui <- div(
+        div(
+          h1(GLOBALqueryBuilder),
+          shiny::actionButton(inputId = self$getHideShowId2(),
+                              label = self$currentHideShowLabel)
+          # shinyWidgets::radioGroupButtons(inputId = self$getHideShowId2(),
+          #                                 label ="",choices = c(GLOBALshow, GLOBALhide),
+          #                                 selected = GLOBALshow)
+        ),
+        div(id = self$getDivId(),
+                div(id = self$getDivContextDescription()),
+                div(id = self$getDivEventsDescription()),
+                div(id = self$getDivLinksDescription()),
+        shiny::verbatimTextOutput(outputId = self$getResultsVerbatimId())
+      )
+      )
+
     },
     
     searchEvents = function(){
@@ -105,7 +149,7 @@ QueryBuilder <- R6::R6Class(
       
       staticLogger$info("\t adding linkNode")
       ## loop to get all links in query : 
-      for (linkEvents in self$listLinkEvents){
+      for (linkEvents in self$linkDescription$listLinkEvents){
         query <- linkEvents$addLinkNode(query)
       }
       
@@ -125,8 +169,10 @@ QueryBuilder <- R6::R6Class(
     addButtonSetQueryObserver = function(){
       self$buttonSetQueryObserver <- observeEvent(input[[self$getButtonSetQueryId()]],{
         staticLogger$user("setQuery clicked")
-        #self$setQuery()
-        self$eventDiv$insertHTMLdescriptions()
+        self$eventDescription$insertHTMLdescriptions()
+        self$contextDescription$insertHTMLdescription()
+        self$linkDescription$insertHTMLdescription()
+        self$setQuery()
       })
     },
     
@@ -139,11 +185,11 @@ QueryBuilder <- R6::R6Class(
     },
     
     getButtonSetQueryId = function(){
-      return(paste0("ButtonSetQuery",self$getDivId()))
+      return(GLOBALsetQuery)
     },
     
     getButtonSearchEventsId = function(){
-      return(paste0("ButtonSearchEvents",self$getDivId()))
+      return(GLOBALsearchEvents)
     }
   ),
   
@@ -152,5 +198,16 @@ QueryBuilder <- R6::R6Class(
       eventTabpanel <- GLOBALlistEventTabpanel$listEventTabpanel[[event]]
       query <- eventTabpanel$contextEnv$instanceSelection$addEventNodeToQuery(query)
       return(query)
+    },
+    
+    hideHideShowButton = function(){
+      staticLogger$info("Sending Js function to hide QueryBuilder")
+      session$sendCustomMessage(type = "displayHideId",
+                                message = list(objectId = self$getDivId()))
+    },
+    showHideShowButton = function(){
+      staticLogger$info("Sending Js function to show QueryBuilder")
+      session$sendCustomMessage(type = "displayShowId",
+                                message = list(objectId = self$getDivId()))
     }
   ))

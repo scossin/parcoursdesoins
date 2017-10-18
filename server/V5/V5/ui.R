@@ -4,9 +4,13 @@ navbarPage("Parcours de soins", id="CartoParcours",
                     fluidPage(
                       sidebarLayout(
                       sidebarPanel(width=2,
-                        actionButton(inputId = "addEventTabpanel", 
+                        shiny::actionButton(inputId = GLOBALaddEventTabpanel,width = "180px", 
                                      label = GLOBALaddEventTabpanel
-                                     )
+                                     ),
+                        shiny::actionButton(inputId = GLOBALsetQuery,
+                                            label = GLOBALlabelSetQuery,width = "180px"),
+                        shiny::actionButton(inputId = GLOBALsearchEvents,width = "180px",
+                                            label = GLOBALlabelSearchEvents)
                         # actionButton(inputId = "removeEventTabpanel", 
                         #              label = GLOBALremoveEventTabpanel),
                         # actionButton(inputId = "ButtonTest", 

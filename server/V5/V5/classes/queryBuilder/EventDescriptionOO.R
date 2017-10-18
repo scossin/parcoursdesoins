@@ -1,6 +1,6 @@
-EventDiv <- R6::R6Class(
+EventDescription <- R6::R6Class(
   inherit = uiObject,
-  "EventDiv",
+  "EventDescription",
   public = list(
     NdivEvents = numeric(),
     
@@ -13,7 +13,7 @@ EventDiv <- R6::R6Class(
     
     insertDivUI = function(){
       ui <- div(id=self$getDivId(),
-                h2("Events Description"),
+                h2(GLOBALeventsDescription),
                 div(id = self$getDivEventNumberId(0), ## to append eventNumber1
                     shiny::uiOutput(outputId = self$getHTMLdescriptionEventId(
                       eventNumber = 0
@@ -29,7 +29,7 @@ EventDiv <- R6::R6Class(
     },
     
     getDivId = function(){
-      return(paste0("eventDiv",self$parentId))
+      return(paste0("EventDescription",self$parentId))
     },
     
     getHTMLdescriptionEventId = function(eventNumber){
@@ -83,7 +83,8 @@ EventDiv <- R6::R6Class(
         GLOBALlistEventTabpanel$removeEventTabpanel(liText = liText)
         self$emptyDiv(eventNumber)
         self$updateHTMLdescription0()
-        GLOBALqueryBuilder$linkDiv$updateSelectionLink() ## remove event of linkEvent
+        GLOBALqueryBuilder$linkDescription$updateSelectionLink() ## remove event of linkEvent
+        GLOBALqueryBuilder$linkDescription$removeLinksContainingEvent(eventNumber)
       },once = T)
     },
     
@@ -92,7 +93,7 @@ EventDiv <- R6::R6Class(
         instanceSelection <- eventTabpanel$contextEnv$instanceSelection
         htmlDescription <- shiny::tagList(
           shiny::tags$p(paste0("type: ", instanceSelection$className)),
-          instanceSelection$getHTMLdescription()
+          instanceSelection$getDescription()
         )
       } else {
         htmlDescription <- shiny::tags$p("type: undefined")
@@ -102,7 +103,7 @@ EventDiv <- R6::R6Class(
     
     updateHTMLdescription0 = function(){
       if (length(GLOBALlistEventTabpanel$listEventTabpanel) == 0){
-        htmlDescription <- shiny::tags$p("No event selected")
+        htmlDescription <- shiny::tags$p(GLOBALnoEventSelected)
         private$insertHTMLdescription(0,htmlDescription)
       } else {
         private$insertHTMLdescription(0,"")
@@ -117,8 +118,9 @@ EventDiv <- R6::R6Class(
       }
     }
     
-),private=list(
-  
+),
+
+private=list(
   insertHTMLdescription = function(eventNumber, htmlDescription){
     staticLogger$info("Updating",self$getHTMLdescriptionEventId(eventNumber))
     class(htmlDescription) ### can't understand why this is necessary, if not a bug occured !

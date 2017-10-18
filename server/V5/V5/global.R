@@ -25,7 +25,9 @@ GLOBALlogFolder <- "./logs/"
 
 
 GLOBALeventTabSetPanel <- "eventTabset" # tabsetPanel id of events
-
+GLOBALaddEventTabpanel <- "addEventTabpanel"
+GLOBALsetQuery <- "setQuery"
+GLOBALsearchEvents <- "searchEvents"
 GLOBALdivQueryBuilder <- "QueryBuilderDiv"
 
 #### CSS :
@@ -72,6 +74,7 @@ if (GLOBALlang == "fr"){
   GLOBALparcours <- "parcours de soins"
   GLOBALand <- "et"
   GLOBALselected <- "sélectionné(s)"
+  GLOBALbetween <- "entre"
   
   ## instanceSelectionContext and Events : 
   GLOBALsearchContexts <- paste0("Rechercher des ",GLOBALparcours)
@@ -85,6 +88,20 @@ if (GLOBALlang == "fr"){
   
   ## valeurs sélectionnées(description filter) : 
   GLOBALvaleursselected <- "valeur(s) sélectionnée(s)"
+  
+  ### QueryBuilder : 
+  GLOBALqueryBuilder <- "Création de requêtes"
+  GLOBALcontextDescription <- "Description du contexte"
+  GLOBALeventsDescription <- "Description des évènements"
+  GLOBALlinksBetweenEvents <- "Liens entre les évènements"
+  GLOBALlinksDescription <- "Description des liens"
+  GLOBALlabelSetQuery <- "Créer la requête"
+  GLOBALlabelSearchEvents <- "Envoyer la requête"
+  GLOBALcreateLink <- "Créer un nouveau lien"
+  GLOBALsearchAttributes <- "Chercher des attributs"
+  GLOBALlinksCreation <- "Création de liens"
+  GLOBALnoLinkCreated <- "Aucun lien créé"
+  GLOBALnoEventSelected <- "Aucun évènement sélectionné"
   
 } else if (GLOBALlang == "en"){
   GLOBALaddEventTabpanel <- "Add an event"
@@ -119,6 +136,7 @@ if (GLOBALlang == "fr"){
   GLOBALparcours <- "patients trajectories"
   GLOBALselected <- "selected"
   GLOBALand <- "and"
+  GLOBALbetween <- "between"
   
   ## instanceSelectionContext and Events : 
   GLOBALsearchContexts <- paste0("Search ",GLOBALparcours)
@@ -135,4 +153,18 @@ if (GLOBALlang == "fr"){
   
   ## valeurs sélectionnées(description filter) : 
   GLOBALvaleursselected <- "values chosen"
+  
+  ### QueryBuilder
+  GLOBALqueryBuilder <- "Query factory"
+  GLOBALcontextDescription <- "Context description"
+  GLOBALeventsDescription <- "Events description"
+  GLOBALlinksBetweenEvents <- "Links between events"
+  GLOBALlinksDescription <- "Links description"
+  GLOBALlabelSetQuery <- "Create query"
+  GLOBALlabelSearchEvents <- "Send query"
+  GLOBALcreateLink <- "Create a new link"
+  GLOBALsearchAttributes <- "Search attributes"
+  GLOBALlinksCreation <- "Links factory"
+  GLOBALnoLinkCreated <- "No link created between events"
+  GLOBALnoEventSelected <- "No event selected"
 }

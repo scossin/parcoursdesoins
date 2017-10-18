@@ -142,9 +142,14 @@ InstanceSelectionEvent <- R6::R6Class(
       description <- self$getDescription()
       Nevents <- length(unique(self$contextEvents$event))
       Ncontexts <- length(unique(self$contextEvents$context))
-      text <- paste0(self$className, "\t",Nevents, " ", GLOBALevent, " ", GLOBALselected,
-                     "\t", Ncontexts, " ", GLOBALparcours, " ", GLOBALselected)
-      ulDescrition <- shiny::tags$ul(text, description)
+      textType <- paste0("Type:", self$className)
+      textNevents <- paste0(Nevents, " ", GLOBALevent, " ", GLOBALselected)
+      textNcontexts <- paste0(Ncontexts, " ", GLOBALparcours, " ", GLOBALselected)
+      ulDescrition <- shiny::tags$ul(
+        shiny::tags$p(textType), 
+        shiny::tags$p(textNevents),
+        shiny::tags$p(textNcontexts),
+        description)
       return(ulDescrition)
     },
     

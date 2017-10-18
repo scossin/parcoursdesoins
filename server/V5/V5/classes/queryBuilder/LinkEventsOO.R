@@ -28,6 +28,7 @@ LinkEvents <- R6::R6Class(
       self$operator = operator
       self$minValue = minValue
       self$maxValue = maxValue
+      self$linkNumber <- linkNumber
     },
     
     addLinkNode = function(query){
@@ -41,11 +42,31 @@ LinkEvents <- R6::R6Class(
       return(query)
     },
     
+    getButtonRemoveId = function(){
+      return(paste0("buttonRemoveLink",self$linkNumber))
+    },
+    
+    addButtonRemoveObserver = function(){
+      observeEvent(input[[self$getButtonRemoveId()]],{
+        staticLogger$user("removelink", self$linkNumber)
+        GLOBALqueryBuilder$linkDescription$removeLink(self$linkNumber) ## ask to remove itself
+      },once = T)
+    },
+    
     getDescription = function(){
-      text <- paste0(self$event1, " is linked to ", self$event2)
+      event1 <- paste0("event",self$eventNumber1)
+      event2 <- paste0("event",self$eventNumber2)
+      text <- paste0(event1, "<---->", event2, " ", 
+                     self$operator, "(",self$predicate1, "----",self$predicate2, ")"       ,
+                     GLOBALbetween, ": ", self$minValue, " ", GLOBALand, " ", self$maxValue)
       linkNumberText <- paste0("link",self$linkNumber)
-      liLink <- shiny::tags$li(linkNumberText,
-                     text)
+      liLink <- shiny::tags$li(
+        div(linkNumberText,                  
+            shiny::actionButton(inputId = self$getButtonRemoveId(),
+                                                                 label = "",
+                                                                 icon = icon("remove"))
+                     ),
+        shiny::tags$p(text))
       return(liLink)
     }
   ),

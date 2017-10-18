@@ -6,7 +6,7 @@ rm(list=ls())
 require(R6)
 require(httr)
 require(XML)
-source("../../output/sunburst/global.R")
+source("../../global.R")
 source("../../classes/logger/STATICLoggerOO.R",local = T)
 staticLogger <- STATIClogger$new()
 
@@ -23,16 +23,27 @@ tempQuery <- XMLSearchQuery$new()
 predicateNodes <- list()
 predicateNode <- tempQuery$makePredicateNode(predicateClass = "numeric",
                                              predicateType = "hasPrice",
-                                             minValue = 1248,
-                                             maxValue = 1300)
+                                             minValue = 1500,
+                                             maxValue = 5000)
 
-context <- paste0("p",1:100)
+context <- paste0("p",1:1000)
 tempQuery$addContextNode(context)
 tempQuery$addEventNode(eventNumber = 1,
                    eventType = "SejourSSR",
                    terminologyName = "Event")
+
+tempQuery$addEventNode(eventNumber = 2,
+                       eventType = "SejourMCO",
+                       terminologyName = "Event")
 tempQuery$addPredicateNode2(eventNumber = 1, predicateNode = predicateNode)
+
+tempQuery$addLinkNode(eventNumber1 = 1,eventNumber2 = 2,predicate1 = "hasEnd",
+                      predicate2 = "hasBeginning",operator = "diff",minValue = 1,maxValue = 2)
+
+tempQuery$addLinkNode(eventNumber1 = 1,eventNumber2 = 2,predicate1 = "hasEnd",
+                      predicate2 = "hasBeginning",operator = "diff",minValue = 1,maxValue = 10)
 tempQuery$saveQuery()
+tempQuery$listLinkNodes
 results <- con$sendQuery(XMLqueryInstance = tempQuery)
 
 ######## DescribeQuery : 
