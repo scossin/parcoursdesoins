@@ -22,7 +22,11 @@ GLOBALlayerControl <- "layerControl"
 # a logger to log message in file
 GLOBALlogFolder <- "./logs/"
 
+## sankey : 
+GLOBALeventTabSetPanelSankey <- "eventTabsetSankey" # tabsetPanel id of events
+GLOBALmainPanelSankeyId <- "mainPanelSankey"
 
+GLOBALaddResultsTabSetPanelSankey <- "addResultsSankey" # !! same label and id !
 
 GLOBALeventTabSetPanel <- "eventTabset" # tabsetPanel id of events
 GLOBALaddEventTabpanel <- "addEventTabpanel"
@@ -103,6 +107,11 @@ if (GLOBALlang == "fr"){
   GLOBALnoLinkCreated <- "Aucun lien créé"
   GLOBALnoEventSelected <- "Aucun évènement sélectionné"
   
+  ## sankey
+  GLOBALchooseQuery <- "Choisir une requête"
+  GLOBALsearchQueries <- "Rechercher des requêtes"
+  GLOBALquery <- "Requête"
+    
 } else if (GLOBALlang == "en"){
   GLOBALaddEventTabpanel <- "Add an event"
   GLOBALremoveEventTabpanel <- "removeEventTabpanel"
@@ -167,4 +176,9 @@ if (GLOBALlang == "fr"){
   GLOBALlinksCreation <- "Links factory"
   GLOBALnoLinkCreated <- "No link created between events"
   GLOBALnoEventSelected <- "No event selected"
+  
+  ## Sankey
+  GLOBALchooseQuery <- "Choose a query"
+  GLOBALsearchQueries <- "Search queries"
+  GLOBALquery <- "Query"
 }

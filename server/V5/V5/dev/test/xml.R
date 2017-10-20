@@ -35,6 +35,9 @@ tempQuery$addEventNode(eventNumber = 1,
 tempQuery$addEventNode(eventNumber = 2,
                        eventType = "SejourMCO",
                        terminologyName = "Event")
+tempQuery$addEventNode(eventNumber = 3,
+                       eventType = "Consultation",
+                       terminologyName = "Event")
 tempQuery$addPredicateNode2(eventNumber = 1, predicateNode = predicateNode)
 
 tempQuery$addLinkNode(eventNumber1 = 1,eventNumber2 = 2,predicate1 = "hasEnd",
@@ -45,6 +48,19 @@ tempQuery$addLinkNode(eventNumber1 = 1,eventNumber2 = 2,predicate1 = "hasEnd",
 tempQuery$saveQuery()
 tempQuery$listLinkNodes
 results <- con$sendQuery(XMLqueryInstance = tempQuery)
+
+save(results, file="results.rdata")
+
+save(tempQuery, file="tempQuery.rdata")
+load("tempQuery.rdata")
+
+tempQuery$getEventType(2)
+
+length(tempQuery$listEventNodes)
+test <- tempQuery$listEventNodes[[1]]
+class(test)
+
+
 
 ######## DescribeQuery : 
 query <- XMLDescribeQuery$new()

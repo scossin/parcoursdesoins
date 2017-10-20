@@ -98,8 +98,11 @@ QueryBuilder <- R6::R6Class(
         ),
         div(id = self$getDivId(),
                 div(id = self$getDivContextDescription()),
+            shiny::tags$hr(style="border-top: dotted 1px;"),
                 div(id = self$getDivEventsDescription()),
+            shiny::tags$hr(style="border-top: dotted 1px;"),
                 div(id = self$getDivLinksDescription()),
+            shiny::tags$hr(style="border-top: dotted 1px;"),
         shiny::verbatimTextOutput(outputId = self$getResultsVerbatimId())
       )
       )

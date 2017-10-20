@@ -4,10 +4,6 @@ ListEventsTabpanel <- R6::R6Class(
   public = list(
     listEventTabpanel = list(),
     
-    initialize = function(){
-      self$getDescription()
-    },
-    
     updateContext = function(context){
       for (eventTabPanel in self$listEventTabpanel){
         eventTabPanel$updateContext(context)
@@ -24,6 +20,13 @@ ListEventsTabpanel <- R6::R6Class(
       names(self$listEventTabpanel)[listLength+1] <- eventTabpanel$getLiText()
     },
     
+    emptyTabpanel = function(){
+      for (eventTabpanel in self$listEventTabpanel){
+        eventTabpanel$destroy()
+      }
+      self$listEventTabpanel <- list()
+    },
+    
     removeEventTabpanel = function(liText){
       for (eventTabpanel in self$listEventTabpanel){
         if (eventTabpanel$getLiText() == liText){
@@ -32,21 +35,6 @@ ListEventsTabpanel <- R6::R6Class(
           return()
         }
       }
-    },
-    
-    getDescription = function(){
-      observeEvent(input$ButtonTest,{
-        description <- NULL
-        for (eventTabPanel in self$listEventTabpanel){
-          if (is.null(eventTabPanel$contextEnv$instanceSelection)){
-            next
-          }
-          description <- append(description,
-                                eventTabPanel$contextEnv$instanceSelection$getDescription())
-        }
-        description <- paste(description, collapse="\n")
-        output[["DescriptionText"]] <- shiny::renderText(description)
-      })
     },
     
     getAllLiText = function(){

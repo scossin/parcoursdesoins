@@ -54,6 +54,7 @@ public class AddInferenceToFiles {
 		con.add(Inference.setEIGtype(con));
 		con.add(Inference.getSubClassOf(con));
 		con.add(Inference.getNumbering(con));
+		con.add(Inference.hasNext(con));
 		model.addAll(Iterations.asList(con.getStatements(null, null, null)));
 		try{
 			FileOutputStream out = new FileOutputStream(file);

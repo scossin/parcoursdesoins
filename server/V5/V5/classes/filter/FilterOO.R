@@ -17,6 +17,10 @@ Filter <- R6::R6Class(
       # self$domParentId <- domParentId
     },
     
+    getDataFrame = function(){
+      return(self$dataFrame)
+    },
+    
     getPredicateLabel = function(){
       label <- as.character(self$contextEnv$instanceSelection$terminology$getLabel(self$predicateName))
       return(label)

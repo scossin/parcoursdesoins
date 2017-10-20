@@ -105,6 +105,28 @@ XMLSearchQuery <- R6Class("XMLSearchQuery",
       predicateNode <- addChildren(predicateNode,predicateClassNode)
       class(predicateNode) <- c(class(predicateNode),"predicateNode")
       return(predicateNode)
+    },
+    
+    getEventNumber = function(eventNode){
+      eventNumber <- XML::xmlGetAttr(node = eventNode, name = "number")
+      return(eventNumber)
+    },
+    
+    getEventTypeByEventNode = function(eventNode){
+        eventTypeNodes <- XML::xmlElementsByTagName(el=eventNode, name="eventType")
+        eventTypeNode <- eventTypeNodes[[1]]
+        eventType <- XML::xmlValue(eventTypeNode)
+        return(eventType)
+    },
+    
+    getEventType = function(eventNumber){
+      for (eventNode in self$listEventNodes){
+        if (self$getEventNumber(eventNode) == eventNumber){
+          eventType <- self$getEventTypeByEventNode(eventNode)
+          return(eventType)
+        }
+      }
+      stop("event", eventNumber, " not found in XMLsearchQuery")
     }
     
     

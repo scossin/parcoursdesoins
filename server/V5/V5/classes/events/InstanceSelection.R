@@ -52,6 +52,14 @@ InstanceSelection <- R6::R6Class(
       return(liDescription)
     }, 
     
+    getValue4Sankey = function(){
+      if (length(self$listFilters) == 0){
+        return(NULL)
+      }
+      filter <- self$listFilters[[1]]
+      return(filter$getDataFrame())
+    },
+    
     getEventsSelected = function(){
       if (length(self$listFilters) == 0){
         return(self$contextEvents$event)
@@ -189,6 +197,18 @@ PointerEnv <- R6::R6Class(
       self$contextEnv$instanceSelection$destroy()
       self$contextEnv <- NULL
       return(NULL)
+    },
+    
+    getDataFrame = function(){
+      dataFrame <- self$contextEnv$instanceSelection$getValue4Sankey()
+      if (is.null(dataFrame)){
+        return(NULL)
+      }
+      contextEvents <- self$contextEnv$instanceSelection$contextEvents
+      joint <- merge (contextEvents, dataFrame, by="event") ## event => Etablissement31017 for example
+      joint <- subset (joint, select=c("context","value"))
+      colnames(joint) <- c("event","value")
+      return(joint)
     },
     
     updateDataFrame = function(){

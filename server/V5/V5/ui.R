@@ -1,4 +1,10 @@
 navbarPage("Parcours de soins", id="CartoParcours",
+           ### Sankey 
+           tabPanel("Sankey",
+                    div(id = GLOBALmainPanelSankeyId),
+                    tabsetPanel(id = GLOBALeventTabSetPanelSankey)
+           ),
+           
            tabPanel("Events",
                     
                     fluidPage(
@@ -11,13 +17,6 @@ navbarPage("Parcours de soins", id="CartoParcours",
                                             label = GLOBALlabelSetQuery,width = "180px"),
                         shiny::actionButton(inputId = GLOBALsearchEvents,width = "180px",
                                             label = GLOBALlabelSearchEvents)
-                        # actionButton(inputId = "removeEventTabpanel", 
-                        #              label = GLOBALremoveEventTabpanel),
-                        # actionButton(inputId = "ButtonTest", 
-                        #              label = "Description"),
-                        # selectInput(inputId = "eventToRemove",
-                        #             label = c(""), 
-                        #             choices = c(""))
                       ),
                       
                       mainPanel(
@@ -37,7 +36,8 @@ navbarPage("Parcours de soins", id="CartoParcours",
                       includeScript("www/js/empty.js"),
                       includeScript("www/js/goFirstSibling.js"),
                       includeCSS("www/css/ButtonFilter.css"),
-                      includeCSS("www/css/Graphics.css")
+                      includeCSS("www/css/Graphics.css"),
+                      includeCSS("www/css/queryBuilder.css")
                     ), # fin tag$head
                     # pour retirer le tabset et le boutton permet de le retirer !
                     
@@ -46,6 +46,8 @@ navbarPage("Parcours de soins", id="CartoParcours",
                                            div(id="contextId"))
                       )
                     ), ## end tabpanel Event
+           
+
            
            ### leaflet
            tabPanel("Carte",

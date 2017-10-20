@@ -56,6 +56,8 @@ public class EIG {
 	/** http://www.eigsante2017.fr#hasType  : original type of event */
 	public static final IRI HASTYPE ;
 	
+	public static final IRI HASNEXT;
+	
 	public static final String GRAPH;
 	
 	public static final IRI HASBEGINNING;
@@ -72,6 +74,7 @@ public class EIG {
 		HASTYPE = factory.createIRI(EIG.NAMESPACE, "hasType");
 		HASPOLYGON = factory.createIRI(EIG.NAMESPACE, "hasPolygon");
 		HASCOORDINATE = factory.createIRI(EIG.NAMESPACE, "hasCoordinate");
+		HASNEXT = factory.createIRI(EIG.NAMESPACE, "hasNext");
 		GRAPH = "Graph";
 	}
 	

@@ -6,14 +6,14 @@ EventTabpanel <- R6::R6Class(
     terminology = NULL,
     hierarchicalObject = NULL,
     
-    initialize = function(eventNumber, context){
+    initialize = function(eventNumber, context, tabsetPanelId){
       staticLogger$info("Creating EventTabpanel", eventNumber)
       self$contextEnv <- new.env()
       self$contextEnv$context <- context
       self$contextEnv$eventNumber <- eventNumber
       terminologyName <- staticTerminologyInstances$terminology$Event$terminologyName
       self$terminology <- staticTerminologyInstances$getTerminology(terminologyName)
-      private$newTabpanel(tabsetPanel = GLOBALeventTabSetPanel, 
+      private$newTabpanel(tabsetPanel = tabsetPanelId, 
                          liText = self$getLiText(),
                          contentId = self$getObjectId())
     },
@@ -47,6 +47,38 @@ EventTabpanel <- R6::R6Class(
       paste0("eventTabpanel",self$contextEnv$eventNumber)
     },
     
+    setEventType = function(eventType){
+      self$contextEnv$eventType <- eventType 
+    },
+    
+    createInstanceSelectionEvent = function(contextEvents = NULL, eventType = NULL){ ### NULL => search events in context
+      if (!is.null(eventType)){
+        self$contextEnv$eventType <- eventType 
+      }
+      
+      if (is.null(self$contextEnv$eventType)){
+        stop("eventType not set ! can't create InstanceSelection")
+      }
+      
+      if (is.null(contextEvents)){
+        staticLogger$info("\t getting events ...")
+        contextEvents <- staticMakeQueries$getContextEvents(eventNumber = self$contextEnv$eventNumber,
+                                                            terminologyName = self$terminology$terminologyName,
+                                                            eventType = self$contextEnv$eventType, 
+                                                            context = self$contextEnv$context)
+      }
+
+      parentId = private$getFirstDivOfEventId()
+      where = "beforeEnd"
+      self$contextEnv$instanceSelection <- InstanceSelectionEvent$new(contextEnv = self$contextEnv, 
+                                                                      terminology = self$terminology, 
+                                                                      className = self$contextEnv$eventType, 
+                                                                      contextEvents = contextEvents, 
+                                                                      parentId = parentId, 
+                                                                      where = where)
+      return(NULL)
+    },
+    
     addHierarchicalObserver = function(){
       observeEvent(input[[self$hierarchicalObject$getButtonValidateId()]],{
         staticLogger$user("Button validate cliked of HierarchicalObjectEvent")
@@ -63,21 +95,8 @@ EventTabpanel <- R6::R6Class(
         }
         self$contextEnv$eventType <- eventType
         
-        staticLogger$info("\t getting events ...")
-        contextEvents <- staticMakeQueries$getContextEvents(eventNumber = self$contextEnv$eventNumber,
-                                           terminologyName = self$terminology$terminologyName,
-                                           eventType = self$contextEnv$eventType, 
-                                           context = self$contextEnv$context)
-        parentId = private$getFirstDivOfEventId()
-        where = "beforeEnd"
-        self$contextEnv$instanceSelection <- InstanceSelectionEvent$new(contextEnv = self$contextEnv, 
-                                                        terminology = self$terminology, 
-                                                        className = self$contextEnv$eventType, 
-                                                        contextEvents = contextEvents, 
-                                                        parentId = parentId, 
-                                                        where = where
-                                                        )
-
+        self$createInstanceSelectionEvent()
+        
         staticLogger$info("Destroying hierarchical object")
         self$hierarchicalObject$destroy()
         self$hierarchicalObject <- NULL

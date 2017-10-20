@@ -75,6 +75,16 @@ server <- function(input,output,session){
   source("classes/queryBuilder/ContextDescriptionOO.R",local = T)
   source("classes/queryBuilder/QueryBuilderOO.R",local = T)
   
+  source("classes/Result/ResultOO.R",local = T)
+  source("classes/Result/ListResultsOO.R",local = T)
+  source("classes/sankey/SankeyOO.R",local = T)
+  GLOBALlistResults <- ListResults$new()
+  load("dev/test/tempQuery.rdata")
+  result <- Result$new(tempQuery)
+  GLOBALlistResults$addResult(result)
+  GLOBALSankeylistEventTabpanel <- ListEventsTabpanel$new()
+  sankey <- Sankey$new(GLOBALmainPanelSankeyId, "beforeEnd")
+    
   ### Context : 
   staticLogger$info("creating Context...")
   # get a sample ...
@@ -102,45 +112,14 @@ server <- function(input,output,session){
     staticLogger$user("addEventTabpanel clicked")
     nClick <- input[[GLOBALaddEventTabpanel]]
     ## create new Tabpanel :
-    eventTabpanel <- EventTabpanel$new(eventNumber=nClick, 
-                                       context = GLOBALcontextEnv$instanceSelection$context)
+    eventTabpanel <- EventTabpanel$new(eventNumber=nClick,
+                                       context = GLOBALcontextEnv$instanceSelection$context,
+                                       tabsetPanelId = GLOBALeventTabSetPanel)
     eventTabpanel$setHierarchicalObject()
     GLOBALlistEventTabpanel$addEventTabpanel(eventTabpanel)
-    #listNames <- c(eventTabpanel$getLiText(), names(GLOBALlistEventTabpanel))
-    ### update list of elements to remove :
-    # choices <- c("",GLOBALlistEventTabpanel$getAllLiText())
-    # shiny::updateSelectInput(session,
-    #                          inputId = "eventToRemove",
-    #                           choices = choices)
     GLOBALqueryBuilder$linkDescription$updateSelectionLink() ## add event to linkEvent
     GLOBALqueryBuilder$eventDescription$insertNewDivEvent()
   })
-  # 
-  # observeEvent(input$removeEventTabpanel,{
-  #   staticLogger$user("removeEventTabpanel")
-  #   isolate({
-  #     liText <- input[["eventToRemove"]]
-  #     staticLogger$user(liText, " to remove")
-  #   })
-  #   GLOBALlistEventTabpanel$removeEventTabpanel(liText = liText)
-  #   choices <- c("",GLOBALlistEventTabpanel$getAllLiText())
-  #   shiny::updateSelectInput(session,
-  #                            inputId = "eventToRemove",
-  #                            choices = choices)
-  #   
-  #   GLOBALqueryBuilder$updateSelectionLink() ## remove event of linkEvent
-  # })
-  
-  
-  # AllInputs <- reactive({
-  #   x <- reactiveValuesToList(input)
-  #   df <- data.frame(
-  #     names = names(x),
-  #     values = paste(unlist(x, use.names = FALSE), collapse="\t")
-  #   )
-  #   print(df)
-  #   return(df)
-  # })
 }
 
 #o$destroy()
@@ -163,18 +142,3 @@ server <- function(input,output,session){
 #   input$sunburst0_click
 # })
 # 
-# output$selection <- renderText(selection())
-
-
-# test <- list()
-# testLength <- length(test)
-# test[[testLength+1]] <- GLOBALcon
-# names(test)[testLength+1] <- "test2"
-# names(test)
-# length(test)
-# for (test1 in test){
-#   print(test1$filePredicatesDescription)
-# }
-
-# test$predicatesDf
-

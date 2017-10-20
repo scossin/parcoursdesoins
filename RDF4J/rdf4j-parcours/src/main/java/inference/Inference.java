@@ -149,6 +149,26 @@ public class Inference{
 		return statements2;
 	}
 	
+	public static HashSet<Statement> hasNext(RepositoryConnection con){
+		HashSet<Statement> statements2 = new HashSet<Statement>();
+		String queryString = "";
+		queryString += "SELECT ?event1 ?event2 WHERE { \n" ; 
+		queryString += "?event1 " +  Query.formatIRI4query(EIG.HASNUM)   + " ?event1Num." + "\n" ;
+		queryString += "?event2 " +  Query.formatIRI4query(EIG.HASNUM)   + " ?event2Num." + "\n" ;
+		queryString +=  "bind ((?event2Num - ?event1Num) as ?diffNum). \n";
+		queryString += "FILTER (?diffNum = 1). } \n";
+		System.out.println(queryString);
+		TupleQuery query = con.prepareTupleQuery(queryString);
+		TupleQueryResult results = query.evaluate();
+		while(results.hasNext()){
+			BindingSet row = results.next();
+			IRI eventInstanceIRI = (IRI) row.getBinding("event1").getValue();
+			IRI eventInstanceIRI2 = (IRI) row.getBinding("event2").getValue();
+			statements2.add(Util.vf.createStatement(eventInstanceIRI, EIG.HASNEXT, eventInstanceIRI2));
+		}
+		results.close();
+		return(statements2);
+	}
 	
 	public static HashSet<Statement> hasDuration(RepositoryConnection con) throws DatatypeConfigurationException{
 		HashSet<Statement> statements2 = new HashSet<Statement>();
@@ -170,7 +190,6 @@ public class Inference{
 		TupleQueryResult results = query.evaluate();
 		while(results.hasNext()){
 			BindingSet row = results.next();
-			
 			CalendarMemLiteral beginningDateCal = (CalendarMemLiteral) row.getBinding("beginningDate").getValue();
 			CalendarMemLiteral endDateCal = (CalendarMemLiteral) row.getBinding("endDate").getValue();
 			XMLGregorianCalendar beginningDate = beginningDateCal.calendarValue();
@@ -215,6 +234,13 @@ public class Inference{
 			System.out.println(stat.toString());
 		}
 		
+		con.add(statements2);
+		
+		statements2 = hasNext(con);
+		for (Statement stat : statements2){
+			System.out.println(stat.toString());
+		}
+		/*
 		statements2 = hasDuration(con);
 		for (Statement stat : statements2){
 			System.out.println(stat.toString());
@@ -224,6 +250,7 @@ public class Inference{
 		for (Statement stat : statements2){
 			System.out.println(stat.toString());
 		}
+		*/
 		
 	}
 	
