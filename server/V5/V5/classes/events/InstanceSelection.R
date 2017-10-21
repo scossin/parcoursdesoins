@@ -201,10 +201,12 @@ PointerEnv <- R6::R6Class(
     
     getDataFrame = function(){
       dataFrame <- self$contextEnv$instanceSelection$getValue4Sankey()
+      dataFrame <- unique(dataFrame)
       if (is.null(dataFrame)){
         return(NULL)
       }
       contextEvents <- self$contextEnv$instanceSelection$contextEvents
+      contextEvents <- unique(contextEvents)
       joint <- merge (contextEvents, dataFrame, by="event") ## event => Etablissement31017 for example
       joint <- subset (joint, select=c("context","value"))
       colnames(joint) <- c("event","value")

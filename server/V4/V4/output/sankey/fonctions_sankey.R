@@ -5,7 +5,6 @@ library(stringr)
 library(sankeyD3)
 
 # load("df_sankey2.rdata")
-
 ## fonction pour réaliser le sankey
 make_sankey = function(df_sankey, V1 = F, V2 = T){
   ## re-ordonner les colonnes :
@@ -199,5 +198,3 @@ create_sankey_radiobutton <- function(colonnes_tableau, event_number,type_event)
 # liste[["event1"]] <- HTML("html")
 # liste
 # sort(liste)
-
-

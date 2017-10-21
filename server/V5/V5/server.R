@@ -78,6 +78,8 @@ server <- function(input,output,session){
   source("classes/Result/ResultOO.R",local = T)
   source("classes/Result/ListResultsOO.R",local = T)
   source("classes/sankey/SankeyOO.R",local = T)
+  
+  source("classes/HideShowButtons.R",local = T)
   GLOBALlistResults <- ListResults$new()
   load("dev/test/tempQuery.rdata")
   result <- Result$new(tempQuery)

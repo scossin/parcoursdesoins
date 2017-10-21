@@ -46,6 +46,8 @@
   </servlet-mapping>
   
   
+     <!-- terminology information -->
+  
   <servlet>
     <servlet-name>GetTerminologyDescriptionFile</servlet-name>
     <servlet-class>servlet.GetTerminologyDescriptionFile</servlet-class>
@@ -56,6 +58,27 @@
     <url-pattern>/GetTerminologyDescriptionFile</url-pattern>
   </servlet-mapping>
   
+       <!-- context timeline -->
+  <servlet>
+    <servlet-name>GetTimeline</servlet-name>
+    <servlet-class>servlet.GetTimeline</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>GetTimeline</servlet-name>
+    <url-pattern>/GetTimeline</url-pattern>
+  </servlet-mapping>
+  
+         <!-- event description in timeline -->
+  <servlet>
+    <servlet-name>GetEventDescriptionTimeline</servlet-name>
+    <servlet-class>servlet.GetEventDescriptionTimeline</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>GetEventDescriptionTimeline</servlet-name>
+    <url-pattern>/GetEventDescriptionTimeline</url-pattern>
+  </servlet-mapping>
   
   
    <servlet>

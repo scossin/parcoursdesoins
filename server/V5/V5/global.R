@@ -9,6 +9,7 @@ library(dygraphs)
 library(leaflet)
 library(shinyTree)
 library(jsonlite)
+library(sankeyD3)
 
 ### URL connection : 
 load("GLOBALurlserver.rdata")

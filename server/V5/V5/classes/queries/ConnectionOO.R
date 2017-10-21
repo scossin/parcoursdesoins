@@ -15,8 +15,22 @@ Connection <- R6::R6Class(
     # filePredicateFrequency = "predicateFrequency.csv",
     # fileEventHierarchy4Sunburst = "EventHierarchy4Sunburst.csv",
     
+    getEventDescriptionTimeline = function(eventName){
+      url <- paste0(private$getWebServerURL(),private$GetEventDescriptionURL)
+      response <- httr::GET(url, query=list(eventName = eventName))
+      private$checkResponse(response)
+      return(rawToChar(response$content))
+    },
+    
+    getContextTimeline = function(contextName){
+      url <- paste0(private$getWebServerURL(),private$GetTimelineURL)
+      response <- httr::GET(url, query=list(contextName=contextName))
+      private$checkResponse(response)
+      return(rawToChar(response$content))
+    },
+    
     getContent = function(terminologyName, information){
-      url <- paste0(private$getWebServerURL(),private$GetFilePattern)
+      url <- paste0(private$getWebServerURL(),private$GetTerminologyURL)
       response <- httr::GET(url, query=list(terminologyName=terminologyName,
                                             information = information))
       private$checkResponse(response)
@@ -47,7 +61,10 @@ Connection <- R6::R6Class(
   ), 
   private = list(
     XMLqueryPattern = "XMLQuery",
-    GetFilePattern = "GetTerminologyDescriptionFile",
+    GetTerminologyURL = "GetTerminologyDescriptionFile",
+    
+    GetTimelineURL = "GetTimeline", 
+    GetEventDescriptionURL = "GetEventDescriptionTimeline",
     
     checkResponse = function(response){
       if (response$status_code!=200){
