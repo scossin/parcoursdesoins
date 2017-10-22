@@ -19,7 +19,8 @@ server <- function(input,output,session){
   source("classes/terminology/TerminologyOO.R",local=T)
   staticTerminologyInstances <- STATICterminologyInstances$new()
   
- # test <-  staticTerminologyInstances$getTerminology("Etablissement")
+  # test <-  staticTerminologyInstances$getTerminology("Graph")
+  # test$predicateEvent$eventType == "Graph"
  # test$mainClassName
   source("classes/queries/STATICmakeQueriesOO.R",local=T)
 
@@ -77,7 +78,11 @@ server <- function(input,output,session){
   
   source("classes/Result/ResultOO.R",local = T)
   source("classes/Result/ListResultsOO.R",local = T)
+  source("classes/searchQueries.R",local=T)
   source("classes/sankey/SankeyOO.R",local = T)
+  
+  source("classes/timeLines/HandleTimelinesOO.R",local=T)
+  source("classes/timeLines/TimelineOO.R",local=T)
   
   source("classes/HideShowButtons.R",local = T)
   GLOBALlistResults <- ListResults$new()
@@ -86,7 +91,10 @@ server <- function(input,output,session){
   GLOBALlistResults$addResult(result)
   GLOBALSankeylistEventTabpanel <- ListEventsTabpanel$new()
   sankey <- Sankey$new(GLOBALmainPanelSankeyId, "beforeEnd")
-    
+  
+  GLOBALhandleTimelines = HandleTimelines$new(parentId = GLOBALtimelineDiv, 
+                                              where = "beforeEnd")
+  
   ### Context : 
   staticLogger$info("creating Context...")
   # get a sample ...

@@ -5,12 +5,14 @@ EventTabpanel <- R6::R6Class(
     contextEnv = environment(),
     terminology = NULL,
     hierarchicalObject = NULL,
+    tabsetPanelId = character(),
     
     initialize = function(eventNumber, context, tabsetPanelId){
       staticLogger$info("Creating EventTabpanel", eventNumber)
       self$contextEnv <- new.env()
       self$contextEnv$context <- context
       self$contextEnv$eventNumber <- eventNumber
+      self$tabsetPanelId <- tabsetPanelId
       terminologyName <- staticTerminologyInstances$terminology$Event$terminologyName
       self$terminology <- staticTerminologyInstances$getTerminology(terminologyName)
       private$newTabpanel(tabsetPanel = tabsetPanelId, 
@@ -44,7 +46,7 @@ EventTabpanel <- R6::R6Class(
     },
     
     getObjectId = function(){
-      paste0("eventTabpanel",self$contextEnv$eventNumber)
+      paste0("eventTabpanel",self$contextEnv$eventNumber, "-",self$tabsetPanelId)
     },
     
     setEventType = function(eventType){

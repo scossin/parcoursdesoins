@@ -40,8 +40,8 @@ import terminology.TerminoEnum;
 import terminology.Terminology;
 import terminology.TerminologyInstances;
 
-public class TimelineContextQuery implements Query {
-	final static Logger logger = LoggerFactory.getLogger(TimelineContextQuery.class);
+public class TimelineGetEvents implements Query {
+	final static Logger logger = LoggerFactory.getLogger(TimelineGetEvents.class);
 	
 	private String sparqlQuery;
 	
@@ -49,7 +49,7 @@ public class TimelineContextQuery implements Query {
 	
 	private SimpleDataset contextDataset = new SimpleDataset();
 	
-	public TimelineContextQuery(String contextName) throws RDFParseException, RepositoryException, IOException, InvalidContextException{
+	public TimelineGetEvents(String contextName) throws RDFParseException, RepositoryException, IOException, InvalidContextException{
 		this.terminology = TerminoEnum.EVENTS.getTermino();
 		setSparqlQueryTerminology();
 		setContextDataSet(contextName);
@@ -98,7 +98,7 @@ public class TimelineContextQuery implements Query {
 	
 	public static void main (String[] args) throws NumberFormatException, UnfoundEventException, UnfoundPredicatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, ParserConfigurationException, SAXException, IOException, ParseException, UnfoundResultVariable{
 	
-		Query query = new TimelineContextQuery("p21");
+		Query query = new TimelineGetEvents("p21");
 		System.out.println(query.getSPARQLQueryString());
 		System.out.println(query.getEndpoint().getURL());
 		Results result = new Results(DockerDB.getEndpointIPadress(query.getEndpoint()),query);

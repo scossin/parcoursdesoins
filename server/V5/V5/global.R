@@ -10,6 +10,7 @@ library(leaflet)
 library(shinyTree)
 library(jsonlite)
 library(sankeyD3)
+library(timevis)
 
 ### URL connection : 
 load("GLOBALurlserver.rdata")
@@ -41,6 +42,9 @@ GLOBALspanEventLabelClass = "spanEventClass"
 
 GLOBALlang <- "fr"
 
+
+#### timeline
+GLOBALtimelineDiv <- "timelineDiv"
 
 ### label
 if (GLOBALlang == "fr"){
@@ -112,7 +116,13 @@ if (GLOBALlang == "fr"){
   GLOBALchooseQuery <- "Choisir une requête"
   GLOBALsearchQueries <- "Rechercher des requêtes"
   GLOBALquery <- "Requête"
-    
+  
+  ## Timeline
+  GLOBALcontextDescription <- "Description du contexte"
+  GLOBALeventDescription <- "Description de l'évènement"
+  GLOBALvariable <- "variable"
+  GLOBALvalue <- "valeur"
+  
 } else if (GLOBALlang == "en"){
   GLOBALaddEventTabpanel <- "Add an event"
   GLOBALremoveEventTabpanel <- "removeEventTabpanel"
@@ -182,4 +192,10 @@ if (GLOBALlang == "fr"){
   GLOBALchooseQuery <- "Choose a query"
   GLOBALsearchQueries <- "Search queries"
   GLOBALquery <- "Query"
+  
+  ## Timeline
+  GLOBALcontextDescription <- "Context description"
+  GLOBALeventDescription <- "Event description"
+  GLOBALvariable <- "predicate"
+  GLOBALvalue <- "value"
 }

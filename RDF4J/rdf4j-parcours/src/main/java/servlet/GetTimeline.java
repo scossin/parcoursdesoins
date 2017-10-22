@@ -19,7 +19,7 @@ import exceptions.InvalidContextException;
 import exceptions.UnfoundResultVariable;
 import query.Query;
 import query.Results;
-import query.TimelineContextQuery;
+import query.TimelineGetEvents;
 
 public class GetTimeline extends HttpServlet {
 
@@ -64,7 +64,7 @@ public class GetTimeline extends HttpServlet {
 		
 		Query query = null;
 		try {
-			query = new TimelineContextQuery(contextName);
+			query = new TimelineGetEvents(contextName);
 		} catch (RDFParseException | RepositoryException | InvalidContextException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -80,6 +80,17 @@
     <url-pattern>/GetEventDescriptionTimeline</url-pattern>
   </servlet-mapping>
   
+  <!-- context description in timeline -->
+    <servlet>
+    <servlet-name>GetContextDescriptionTimeline</servlet-name>
+    <servlet-class>servlet.GetContextDescriptionTimeline</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>GetContextDescriptionTimeline</servlet-name>
+    <url-pattern>/GetContextDescriptionTimeline</url-pattern>
+  </servlet-mapping>
+  
   
    <servlet>
     <servlet-name>CheckConnection</servlet-name>

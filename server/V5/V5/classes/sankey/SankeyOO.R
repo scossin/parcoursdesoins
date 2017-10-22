@@ -4,7 +4,6 @@ Sankey <- R6::R6Class(
   
   public = list(
     result = NULL,
-    searchQueriesObserver = NULL,
     validateObserver = NULL,
     plotSankeyObserver = NULL,
     V1V2Observer = NULL,
@@ -12,12 +11,15 @@ Sankey <- R6::R6Class(
     boolV1 = logical(),
     hideShowButton = NULL,
     isInsertedGraphicSankey = F,
+    searchQueries = NULL,
     
     initialize = function(parentId, where){
       staticLogger$info("New Sankey")
       super$initialize(parentId, where)
+      self$searchQueries <- SearchQueries$new(parentId = GLOBALmainPanelSankeyId, 
+                                              where = "beforeEnd",
+                                              validateButtonId = self$getValidateButtonId())
       self$insertSankeyUI()
-      self$addSearchQueriesObserver()
       self$addValidateObserver()
       self$addMakeSankeyObserver()
       self$addPlotSankeyObserver()
@@ -31,20 +33,11 @@ Sankey <- R6::R6Class(
         selector = jQuerySelector, 
         where = self$where,
         ui = self$getUI(),
-        immediate = T)
+        immediate = F)
     },
     
     getUI = function(){
       ui <- div(id = self$getDivId(),
-                shiny::selectInput(inputId = self$getSelectizeResultId(),
-                                   label = GLOBALchooseQuery,
-                                   choices = NULL,
-                                   selected = NULL,
-                                   multiple = F),
-                shiny::actionButton(inputId = self$getValidateButtonId(),
-                                    label = GLOBALvalidate),
-                shiny::actionButton(inputId = self$getSearchQueriesButtonId(),
-                                    label = GLOBALsearchQueries),
                 div (id = self$getSankeyParamId(),
                      shiny::actionButton(inputId = self$getButtonMakeSankeyId(),
                                          label = "MakeSankey"),
@@ -116,7 +109,7 @@ Sankey <- R6::R6Class(
       self$validateObserver <- observeEvent(input[[self$getValidateButtonId()]],{
         staticLogger$user("Validate Button Sankey clicked ")
         
-        queryChoice <- input[[self$getSelectizeResultId()]]
+        queryChoice <- input[[self$searchQueries$getSelectizeResultId()]]
 
         if (is.null(queryChoice) || queryChoice == ""){
           staticLogger$info("No query selected")
@@ -170,36 +163,14 @@ Sankey <- R6::R6Class(
                                                    eventType = eventType)
         GLOBALSankeylistEventTabpanel$addEventTabpanel(eventTabpanel)
       }
-
     },
 
-    updateSelectizeResult = function(){
-      choices <- NULL
-      iter <- 1
-      for (result in GLOBALlistResults$listResults){
-        choices <- append (choices, paste0(GLOBALquery, iter))
-        iter <- iter + 1
-      }
-      updateSelectInput(session,
-                        inputId = self$getSelectizeResultId(),
-                        label = GLOBALchooseQuery,
-                        choices = choices)
-    },
-    
     getDivId = function(){
       return(paste0("divSankey-",self$parentId))
     },
     
-    getSelectizeResultId = function(){
-      return(paste0("selectizeResultId-",self$getDivId()))
-    },
-    
     getValidateButtonId = function(){
       return(paste0("buttonValidateResult-",self$getDivId()))
-    },
-    
-    getSearchQueriesButtonId = function(){
-      return(paste0("searchQueriesButtonId-",self$getDivId()))
     },
     
     getSankeyParamId = function(){
@@ -258,12 +229,6 @@ Sankey <- R6::R6Class(
         
         self$dfSankey <- subset(tempResult,select=sankeyColumns)
         staticLogger$info(nrow(self$dfSankey), " lines after merging")
-      })
-    },
-    
-    addSearchQueriesObserver = function(){
-      self$searchQueriesObserver <- observeEvent(input[[self$getSearchQueriesButtonId()]],{
-        self$updateSelectizeResult()
       })
     },
     

@@ -124,6 +124,10 @@ QueryBuilder <- R6::R6Class(
           return(text)
         }
         results <- GLOBALcon$sendQuery(self$xmlSearchQuery)
+        if (nrow(results) != 0){ ## add results to be further analyzed
+          result <- Result$new(self$xmlSearchQuery)
+          GLOBALlistResults$addResult(result)
+        }
         text <- getTextResults_(results)
       }
       output[[self$getResultsVerbatimId()]] <- shiny::renderPrint(text)

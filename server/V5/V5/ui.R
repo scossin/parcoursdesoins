@@ -1,4 +1,9 @@
 navbarPage("Parcours de soins", id="CartoParcours",
+           ### Timelines : 
+           tabPanel("Timelines",
+                    div(id = GLOBALtimelineDiv)
+           ),
+           
            ### Sankey 
            tabPanel("Sankey",
                     div(id = GLOBALmainPanelSankeyId),

@@ -24,14 +24,20 @@ session$onSessionEnded(function() {
   staticLogger$close()
 })
 
+### SejourMCO : 
+GLOBALcon <- Connection$new()
+
+source("../../classes/queries/GetFileOO.R",local=T)
+
+source("../../classes/terminology/STATICterminologyInstancesOO.R",local=T)
+source("../../classes/terminology/TerminologyOO.R",local=T)
+staticTerminologyInstances <- STATICterminologyInstances$new()
+
 load("../../contextEvents.rdata")
 contextEvents <- subset(contextEvents, context == "p20")
 timeline <- Timeline$new(parentId="timelineDiv",
                          where="beforeEnd",
                          contextEvents = contextEvents)
-
-### SejourMCO : 
-GLOBALcon <- Connection$new()
 
 # eventsSelected <- c("p22_Aphasie_2009_09_21T03_00_00_000_02_00")
 # 
