@@ -11,6 +11,9 @@ library(shinyTree)
 library(jsonlite)
 library(sankeyD3)
 library(timevis)
+library(maptools)
+library(rgdal)
+library(sp)
 
 ### URL connection : 
 load("GLOBALurlserver.rdata")
@@ -23,6 +26,10 @@ GLOBALlayerControl <- "layerControl"
 
 # a logger to log message in file
 GLOBALlogFolder <- "./logs/"
+
+# shapeFiles
+GLOBALshapeFileFolder <- "./shapeFiles/"
+
 
 ## sankey : 
 GLOBALeventTabSetPanelSankey <- "eventTabsetSankey" # tabsetPanel id of events

@@ -2,9 +2,9 @@ load("domiciles.rdata")
 
 domiciles$patient <- gsub("patient","p",domiciles$patient)
 domiciles$dep <- substr(domiciles$domicile,1,2)
-domiciles$sex <- c("H","F")
+domiciles$sex <- c("Homme","Femme")
 domiciles$age <- NA
-domiciles$age[1:999] <- c("<18","18-75","+75")
+domiciles$age[1:999] <- c("moins de 18 ans","entre 18 et 75 ans","plus de 75 ans")
 
 length(unique(domiciles$domicile))
 

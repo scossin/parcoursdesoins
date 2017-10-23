@@ -62,6 +62,7 @@ server <- function(input,output,session){
   ## leaflet : 
   source("classes/leaflet/MapObjectOO.R",local = T)
   source("classes/filter/FilterSpatialPointOO.R",local=T)
+  source("classes/filter/FilterSpatialPolygon.R",local=T)
   GLOBALmapObject <- MapObject$new()
   
   # an object to help others object to make queries

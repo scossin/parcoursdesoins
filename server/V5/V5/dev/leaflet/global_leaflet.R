@@ -72,43 +72,58 @@ RGF93prj4 <- CRS(RGF93)
 
 # couches des codes géographiques PMSI 2014
 fichier_couche <- "couchegeoPMSI2014.rdata"
-load("../../../V4/V4/output/leaflet/couchegeoPMSI2014.rdata")
-
+load("../../shapeFiles/couchegeoPMSI2014.rdata")
+dep33 <- couchegeoPMSI2014
 # chargement des UNV et des SSR
-dep33 <- subset (couchegeoPMSI2014, substr(couchegeoPMSI2014$codgeo,1,2) == 33)
+dep33 <- subset (couchegeoPMSI2014, substr(couchegeoPMSI2014$layerId,1,2) == 33)
 ### transformation nécessaire dans un autre référentiel
 dep33 <- spTransform(dep33, CRS("+init=epsg:4326"))
 
+bool <- is.na(dep33@data$N)
+dep33@data$N[bool] <- 0
+pal <- colorNumeric(
+  palette = "Blues",
+  domain = c(10,50,100,NA)
+)
 
-
-# locEtab33SSR <- spTransform(locEtab33SSR, CRS("+init=epsg:4326"))
-# locEtab33UNV <- spTransform(locEtab33UNV, CRS("+init=epsg:4326"))
-
-
-dep33@data$id <- paste0("layerId",1:nrow(dep33@data))
-dep33@data$groupe <-  paste0("groupe",c(1,2))
-colnames(dep33@data)
+pal(11)
+leaflet::addLegend()
+pal <- colorQuantile("RdYlBu", dep33$N, n = 5)
+dep33@data$color <- pal(dep33$N)
+dep33@data$popupLabel <- paste0(dep33@data$label,"(",dep33@data$N,")")
 m <- leaflet(dep33)  %>%
-  addPolygons(popup="test",label=as.character(dep33$libgeo), labelOptions = labelOptions(direction = 'auto'),
-              stroke=T,opacity=1,weight=1,color="#333333",layerId = dep33$id,group = dep33$groupe,
+  addPolygons(popup=dep33$popupLabel,label=as.character(dep33$label), 
+              labelOptions = labelOptions(direction = 'auto'),
+              stroke=T,opacity=1,weight=1,color=dep33$color,
+              layerId = dep33$layerId,group = "groupe2",
               highlightOptions = highlightOptions(
                 color='#00ff00',bringToFront = T, sendToBack=T)
-              ) %>% 
-  addProviderTiles(providers$OpenStreetMap,layerId = "tile")
-
+              )
+m <- m %>% 
+  addLegend(position = "bottomleft", pal = pal, values = ~dep33@data$N,
+            title = "N",
+            labFormat = labelFormat(prefix = ""),
+            opacity = 1, group = "groupe2"
+  ) 
 m
-leaflet::clearGroup(map=m,group="groupe1")
+m <- leaflet::clearGroup(map=m,group="groupe2")
+m
+leaflet::clearControls(m)
 leaflet::removeTiles(m, "layerId50")
+
 ids <- dep33@data$id[1:50]
 for (id in ids){
   m <- leaflet::removeShape(map = m, layerId = id)
 }
 dep33$id
 m
-leaflet::removeTi
-m
+colorQuantile
 addGraticule()
 leaflet::addEasyButton()
+
+leaf <- leaflet() %>%
+  addTiles() %>%
+  addGraticule()
 
 iconList()
 

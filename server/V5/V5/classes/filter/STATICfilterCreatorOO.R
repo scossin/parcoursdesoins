@@ -128,6 +128,15 @@ STATICfilterCreator <- R6::R6Class(
                                                 where = where)
         GLOBALmapObject$addSpatialFilter(filterSpatial)
         return(filterSpatial)
+      } else if (filterType == "SPATIALPOLYGON"){
+        #colnames(dataFrame) <- c("context","event")
+        filterSpatial <- FilterSpatialPolygon$new(contextEnv = contextEnv, 
+                                                predicateName = predicateName, 
+                                                dataFrame = dataFrame, 
+                                                parentId = parentId, 
+                                                where = where)
+        GLOBALmapObject$addSpatialFilter(filterSpatial)
+        return(filterSpatial)
       } else if (filterType == "HIERARCHY"){
         terminology <- staticTerminologyInstances$getTerminology(as.character(expectedValue))
         filterHierarchical <- FilterHierarchical$new(contextEnv = contextEnv,

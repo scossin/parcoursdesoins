@@ -5,7 +5,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-<http://www.eigsante2017.fr#Context-ontology> a owl:Ontology .
+<http://www.eigsante2017.fr#> a owl:Ontology .
 # 
 # 
 # #################################################################
@@ -57,6 +57,19 @@
 	rdfs:range xsd:string ;
 	rdfs:comment "Code du département"@fr , "departement code"@en ;
 	rdfs:label "Departement"@en , "Département"@fr .
+# 
+# https://www.atlasante.fr/GEOPMSI2014#layerId
+
+<https://www.atlasante.fr/GEOPMSI2014#layerId> a owl:DatatypeProperty ;
+	rdfs:subPropertyOf owl:topDataProperty ;
+	rdfs:domain <https://www.atlasante.fr/GEOPMSI2014#Polygon> ;
+	rdfs:range xsd:string .
+# 
+# https://www.atlasante.fr/GEOPMSI2014#shapeFile
+
+<https://www.atlasante.fr/GEOPMSI2014#shapeFile> a owl:DatatypeProperty ;
+	rdfs:domain <https://www.atlasante.fr/GEOPMSI2014#Polygon> ;
+	rdfs:range xsd:string .
 # 
 # 
 # 

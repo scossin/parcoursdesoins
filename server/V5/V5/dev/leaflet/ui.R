@@ -1,5 +1,4 @@
 navbarPage("Parcours de soins", id="CartoParcours",
-           
            ### leaflet
            tabPanel("Carte",
                     div(class="outer",
@@ -26,6 +25,7 @@ navbarPage("Parcours de soins", id="CartoParcours",
                                       div(id=GLOBALlayerControl)
                                       )
                     )
-           ) # fermeture tabpanel leaflet
-           
+           ), # fermeture tabpanel leaflet
+           tabPanel("Events",
+                    div (id = "firstDivOfSomething"))
 )

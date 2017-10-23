@@ -7,3 +7,5 @@ eig:${patient} a eig:Graph ;
 	eig:hasPolygon atlasante:Polygon${domicile}	;
 	eig:dep "${dep}"	;
 	eig:Sex "${sex}"	.
+atlasante:Polygon${domicile} atlasante:layerId "${domicile}"^^xsd:string ; 	
+                             atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .	
