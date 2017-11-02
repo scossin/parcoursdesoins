@@ -71,6 +71,8 @@ server <- function(input,output,session){
   
   GLOBALlistEventTabpanel <- ListEventsTabpanel$new()
   
+  source ("classes/queries/QueryVizOO.R",local = T)
+  
   source("classes/queryBuilder/LinkEventsOO.R",local = T)
   source("classes/queryBuilder/LinkDescriptionOO.R",local=T)
   source("classes/queryBuilder/EventDescriptionOO.R",local=T)
@@ -85,13 +87,18 @@ server <- function(input,output,session){
   source("classes/timeLines/HandleTimelinesOO.R",local=T)
   source("classes/timeLines/TimelineOO.R",local=T)
   
+  source("classes/survie/Survie.R",local = T)
+  
   source("classes/HideShowButtons.R",local = T)
+  
   GLOBALlistResults <- ListResults$new()
   load("dev/test/tempQuery.rdata")
   result <- Result$new(tempQuery)
   GLOBALlistResults$addResult(result)
   GLOBALSankeylistEventTabpanel <- ListEventsTabpanel$new()
   sankey <- Sankey$new(GLOBALmainPanelSankeyId, "beforeEnd")
+  survie <- Survie$new(GLOBALsurvieDiv,"beforeEnd")
+  
   
   GLOBALhandleTimelines = HandleTimelines$new(parentId = GLOBALtimelineDiv, 
                                               where = "beforeEnd")

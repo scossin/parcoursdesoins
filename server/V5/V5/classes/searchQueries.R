@@ -5,13 +5,14 @@ SearchQueries <- R6::R6Class(
   public = list(
     searchQueriesObserver = NULL,
     validateButtonId = character(),
+    queryViz = NULL,
     
     initialize = function(parentId, where, validateButtonId){
       super$initialize(parentId, where)
       self$validateButtonId <- validateButtonId
       self$insertUIsearchQueries()
       self$addSearchQueriesObserver()
-      
+      self$addSelectizeResultObserver()
     },
     
     insertUIsearchQueries = function(){
@@ -29,6 +30,32 @@ SearchQueries <- R6::R6Class(
       })
     },
     
+    addSelectizeResultObserver = function(){
+      observeEvent(input[[self$getSelectizeResultId()]],{
+        queryChoice <- input[[self$getSelectizeResultId()]]
+        self$makeQueryViz(queryChoice)
+      })
+    },
+    
+    makeQueryViz = function(queryChoice){
+      if (is.null(queryChoice) || queryChoice == ""){
+        staticLogger$info("No query selected")
+        return(NULL)
+      }
+      
+      staticLogger$info("Timeline : ", queryChoice, "selected")
+      queryChoice <- gsub(GLOBALquery,"",queryChoice)
+      queryChoice <- as.numeric(queryChoice)
+      lengthListResults <- length(GLOBALlistResults$listResults)
+      bool <- queryChoice > lengthListResults
+      if (bool){
+        stop("queryChoice number not found in GLOBALlistResults ")
+      }
+      result <- GLOBALlistResults$listResults[[queryChoice]]
+      self$queryViz <- QueryViz$new(result$XMLsearchQuery)
+      output[[self$getQueryVizId()]] <- self$queryViz$getOutput()
+    },
+    
     getUI = function(){
       ui <- div (id = self$getDivQueriesId(),
            shiny::selectInput(inputId = self$getSelectizeResultId(),
@@ -39,8 +66,15 @@ SearchQueries <- R6::R6Class(
            shiny::actionButton(inputId = self$getValidateButtonId(),
                                label = GLOBALvalidate),
            shiny::actionButton(inputId = self$getSearchQueriesButtonId(),
-                               label = GLOBALsearchQueries))
+                               label = GLOBALsearchQueries),
+      div(id = "visuXML",
+          visNetwork::visNetworkOutput(outputId = self$getQueryVizId()))
+        )
       return(ui)
+    },
+    
+    getQueryVizId = function(){
+      return(paste0("queryViz-",self$getDivQueriesId()))
     },
     
     updateSelectizeResult = function(){

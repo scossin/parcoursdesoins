@@ -14,7 +14,9 @@ library(timevis)
 library(maptools)
 library(rgdal)
 library(sp)
-
+library(survival)
+library(survminer)
+library(visNetwork)
 ### URL connection : 
 load("GLOBALurlserver.rdata")
 
@@ -52,6 +54,9 @@ GLOBALlang <- "fr"
 
 #### timeline
 GLOBALtimelineDiv <- "timelineDiv"
+
+#### survie 
+GLOBALsurvieDiv <- "survieDiv"
 
 ### label
 if (GLOBALlang == "fr"){
@@ -130,6 +135,9 @@ if (GLOBALlang == "fr"){
   GLOBALvariable <- "variable"
   GLOBALvalue <- "valeur"
   
+  ## Survie
+  GLOBALmakeSurvivalCurve <- "Make survival curve"
+  
 } else if (GLOBALlang == "en"){
   GLOBALaddEventTabpanel <- "Add an event"
   GLOBALremoveEventTabpanel <- "removeEventTabpanel"
@@ -205,4 +213,7 @@ if (GLOBALlang == "fr"){
   GLOBALeventDescription <- "Event description"
   GLOBALvariable <- "predicate"
   GLOBALvalue <- "value"
+  
+  ## Survie
+  GLOBALmakeSurvivalCurve <- "Calculer la courbe de survie"
 }

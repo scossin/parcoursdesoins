@@ -38,7 +38,7 @@
 # http://www.eigsante2017.fr#inDoctor
 
 <http://www.eigsante2017.fr#inDoctor> a owl:ObjectProperty ;
-	rdfs:domain <http://www.eigsante2017.fr#Event> ;
+	rdfs:domain <http://www.eigsante2017.fr#Consultation> ;
 	rdfs:range <http://esante.gouv.fr#RPPS> ;
 	rdfs:comment "variables concernant le médecin"@fr , "variables describing the physician"@en ;
 	rdfs:label "description du médecin"@fr , "physician characteristics"@en .
@@ -59,6 +59,13 @@
 # #
 # #################################################################
 # 
+# 
+# http://www.eigsante2017.fr#autre
+
+<http://www.eigsante2017.fr#autre> a owl:DatatypeProperty ;
+	rdfs:subPropertyOf owl:topDataProperty ;
+	rdfs:domain <http://www.eigsante2017.fr#toto> ;
+	rdfs:range xsd:integer .
 # 
 # http://www.eigsante2017.fr#hasBeginning
 
@@ -220,6 +227,11 @@
 
 <http://www.eigsante2017.fr#TraitementThrombolytique> a owl:Class ;
 	rdfs:subClassOf <http://www.eigsante2017.fr#TraitementMedicamenteux> .
+# 
+# http://www.eigsante2017.fr#toto
+
+<http://www.eigsante2017.fr#toto> a owl:Class ;
+	rdfs:subClassOf <http://www.eigsante2017.fr#Event> .
 # 
 # https://www.data.gouv.fr/FINESS#Etablissement
 

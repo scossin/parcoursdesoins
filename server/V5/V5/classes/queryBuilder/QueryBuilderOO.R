@@ -11,6 +11,7 @@ QueryBuilder <- R6::R6Class(
     eventDescription = NULL,
     contextDescription = NULL,
     hideShowObserver = NULL,
+    queryViz = NULL,
     currentHideShowLabel = GLOBALshow,
     
     initialize = function(parentId, where){
@@ -105,8 +106,10 @@ QueryBuilder <- R6::R6Class(
             shiny::tags$hr(style="border-top: dotted 1px;"),
         shiny::verbatimTextOutput(outputId = self$getResultsVerbatimId())
       )
+      # div(id = "visuXML",
+      #     visNetwork::visNetworkOutput(outputId = self$getQueryVizId())
+      #   )
       )
-
     },
     
     searchEvents = function(){
@@ -123,6 +126,8 @@ QueryBuilder <- R6::R6Class(
           text <- paste0(Nevents, " couples d'", GLOBALevent, " - ", Ncontexts, " ", GLOBALparcours)
           return(text)
         }
+        xmlSearchQuery <- self$xmlSearchQuery
+        save(xmlSearchQuery, file="tempQuery2.rdata")
         results <- GLOBALcon$sendQuery(self$xmlSearchQuery)
         if (nrow(results) != 0){ ## add results to be further analyzed
           result <- Result$new(self$xmlSearchQuery)
@@ -165,6 +170,12 @@ QueryBuilder <- R6::R6Class(
       query$addContextNode(contextVector = contextVector)
       staticLogger$info("\t", length(contextVector), " contexts added")
       self$xmlSearchQuery <- query
+      self$makeQueryViz()
+    },
+    
+    makeQueryViz = function(){
+      self$queryViz <- QueryViz$new(self$xmlSearchQuery)
+      output[[self$getQueryVizId()]] <- self$queryViz$getOutput()
     },
     
     addButtonSearchEventsObserver = function(){
@@ -185,6 +196,10 @@ QueryBuilder <- R6::R6Class(
     
     getDivId = function(){
       return(paste0("QueryBuilder",self$parentId))
+    },
+    
+    getQueryVizId = function(){
+      return(paste0("queryViz-",self$getDivId()))
     },
     
     getResultsVerbatimId = function(){

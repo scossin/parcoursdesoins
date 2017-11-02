@@ -1,5 +1,9 @@
 navbarPage("Parcours de soins", id="CartoParcours",
            ### Timelines : 
+           tabPanel("Survie",
+                    div(id = GLOBALsurvieDiv)
+           ),
+           ### Timelines : 
            tabPanel("Timelines",
                     div(id = GLOBALtimelineDiv)
            ),
