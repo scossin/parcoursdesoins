@@ -64,6 +64,8 @@ public class EIG {
 	public static final IRI HASEND;
 	
 	public static final IRI HASCOORDINATE;
+
+	public static Object HASDP;
 	
 	static {
 		ValueFactory factory = SimpleValueFactory.getInstance();
@@ -75,6 +77,7 @@ public class EIG {
 		HASPOLYGON = factory.createIRI(EIG.NAMESPACE, "hasPolygon");
 		HASCOORDINATE = factory.createIRI(EIG.NAMESPACE, "hasCoordinate");
 		HASNEXT = factory.createIRI(EIG.NAMESPACE, "hasNext");
+		HASDP = factory.createIRI(EIG.NAMESPACE, "hasDP");
 		GRAPH = "Graph";
 	}
 	

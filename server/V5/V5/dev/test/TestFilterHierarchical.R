@@ -14,7 +14,23 @@ contextEnv$context <- "p1"
 
 dataFrame <- data.frame(event="test", value="SejourMCO")
 predicateName <- "hasType"
-filterCategorical <- FilterHierarchical$new(contextEnv, terminology, predicateName, 
+
+contextEvents = data.frame(context="",event="")
+
+terminology <- staticTerminologyInstances$getTerminology(
+  staticTerminologyInstances$terminologyInstances$Event$terminologyName)
+terminology$predicateDescription
+contextEnv$eventNumber <- 1 
+ls(contextEnv)
+contextEnv$instanceSelection = InstanceSelection$new(contextEnv = contextEnv, 
+                                          terminology = terminology, 
+                                          className = terminology$mainClassName, 
+                                          contextEvents = contextEvents, 
+                                          parentId = "autre", 
+                                          where = "beforeEnd")
+
+filterCategorical <- FilterHierarchical$new(contextEnv = contextEnv, 
+                                            terminology, predicateName, 
                                               dataFrame, parentId, where)
 
 

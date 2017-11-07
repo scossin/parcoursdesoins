@@ -159,7 +159,7 @@ public class Terminology {
 	
 	
 	public IRI makeInstanceIRI (String instanceName){
-		return(Util.vf.createIRI(NAMESPACE,mainClassName + instanceName));
+		return(Util.vf.createIRI(NAMESPACE,instanceName));
 	}
 	
 	public static final String terminologiesFolder = MainResources.terminologiesFolder;

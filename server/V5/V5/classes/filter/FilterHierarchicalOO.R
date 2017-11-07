@@ -72,14 +72,14 @@ FilterHierarchical <- R6::R6Class(
         hierarchicalData <- hierarchy
         hierarchicalData$count <- 0
       } else {
-        hierarchicalData <- merge (hierarchy, eventCount, by.x="event", by.y="className",all.x=T)
+        hierarchicalData <- merge (hierarchy, eventCount, by.x="code", by.y="className",all.x=T)
       }
       bool <- is.na(hierarchicalData$count) | hierarchicalData$count == 0
       staticLogger$info(sum(bool),"have 0 count in the hierarchy")
       hierarchicalData$count[bool] <- 0
-      colnames(hierarchicalData) <- c("event","hierarchy","size")
+      colnames(hierarchicalData) <- c("code","label","hierarchy","size")
       #hierarchicalData <- rbind(hierarchicalData, data.frame(event="Event",hierarchy="Event",size=0))
-      private$checkHierarchicalData(hierarchicalData)
+      # private$checkHierarchicalData(hierarchicalData)
       self$hierarchicalData <- hierarchicalData
     }, 
     
@@ -87,9 +87,11 @@ FilterHierarchical <- R6::R6Class(
       staticLogger$info("Trying to getHierarchy from server")
       content <- GLOBALcon$getContent(terminologyName = self$terminology$terminologyName,
                                       information = GLOBALcon$information$hierarchy)
+      print(self$terminology$terminologyName)
+      print(content)
       staticLogger$info("Content received, reading content ...")
       hierarchy <- GLOBALcon$readContentStandard(content)
-      bool <- colnames(hierarchy) %in% c("event","tree")
+      bool <- colnames(hierarchy) %in% c("code","label","tree")
       if (!all(bool)){
         staticLogger$error("Unexpected columns :", colnames(hierarchy))
         stop("Unexpected columns :", colnames(hierarchy))
@@ -124,13 +126,28 @@ FilterHierarchical <- R6::R6Class(
       staticLogger$info("End destroying hierarchical Filter")
     },
     
+    getCodeFromLabel = function(label){
+      print(self$hierarchicalData)
+      bool <- self$hierarchicalData$label == label
+      if (sum(bool)== 0){
+        staticLogger$error(label, "not found in hierarchicalData")
+        stop("")
+      }
+      if (sum(bool) > 1){
+        staticLogger$error(label, "more than 1 label found")
+        stop("")
+      }
+      return(as.character(self$hierarchicalData$code[bool]))
+    },
+    
     getEventTypeSunburst = function(sunburstChoice){
       # hierarchicalChoice is a vector with length the depth of the node in the hierarchy
       staticLogger$info("Getting event from choice : ", sunburstChoice)
       hierarchicalChoice <- sunburstChoice
-      if (length(hierarchicalChoice) == 1){ ## it's the top class : no parent
-        return(hierarchicalChoice)
-      }
+      # if (length(hierarchicalChoice) == 1){ ## it's the top class : no parent
+      #   code <- self$getCodeFromLabel(hierarchicalChoice)
+      #   return(code)
+      # }
       hierarchicalChoice <- paste(hierarchicalChoice, collapse="-")
       bool <- self$hierarchicalData$hierarchy %in% hierarchicalChoice 
       print(self$hierarchicalData)
@@ -140,7 +157,7 @@ FilterHierarchical <- R6::R6Class(
       if (sum(bool) != 1){
         stop(hierarchicalChoice, " : many possibilities in hierarchicalData")
       }
-      eventType <- as.character(self$hierarchicalData$event[bool])
+      eventType <- as.character(self$hierarchicalData$label[bool])
       staticLogger$info("eventType found : ", eventType)
       return(eventType)
     }, 
@@ -199,13 +216,19 @@ FilterHierarchical <- R6::R6Class(
       return(NULL)
     },
    
+    getCodeChoice = function(){
+      labelChoices <- self$getEventChoice()
+      bool <- as.character(self$hierarchicalData$label) %in% as.character(labelChoices)
+      return(as.character(self$hierarchicalData$code[bool]))
+    },
+    
     getEventChoice = function(){
       return(as.character(private$eventChoice))
     },
     
     getXMLpredicateNode = function(){
       tempQuery <- XMLSearchQuery$new()
-      namesChosen <- self$getEventChoice()
+      namesChosen <- self$getCodeChoice()
       if (length(namesChosen) == 0 || namesChosen == ""){
         return(NULL)
       }
@@ -262,7 +285,7 @@ FilterHierarchical <- R6::R6Class(
           self$printChoice()
           return(NULL)
         }
-        eventChoice <- sapply(selection, function(x) gsub("[(][0-9]+[)]", "",x))
+        eventChoice <- sapply(selection, function(x) gsub("[(][0-9]+[)]$", "",x))
         self$addEventChoiceTree(eventChoice)
         self$printChoice()
       },ignoreNULL = F)
@@ -299,17 +322,30 @@ FilterHierarchical <- R6::R6Class(
                                 message = list(objectId = self$getObjectId()))
     },
     
+    getShinyList = function(){
+      terminologyName <- self$terminology$terminologyName
+      dfShinyTreeQuery <- subset(self$hierarchicalData, size != 0, select=c("code","size"))
+      dfShinyTreeQuery$terminologyName <- ""
+      dfShinyTreeQuery <- dfShinyTreeQuery[,c(3,1,2)]
+      colnames(dfShinyTreeQuery)[1] <- terminologyName
+      print(dfShinyTreeQuery)
+      content <- GLOBALcon$getShinyTreeList(dfShinyTreeQuery)
+      return(content)
+    },
+    
     makePlot = function(){
       staticLogger$info("Plotting hierarchical", self$getObjectId())
       if (private$currentChoice == "SUNBURST"){
         output[[self$getSunburstId()]] <- renderSunburst({
           sunburstData <- private$getSunburstData()
+          sunburstData <- subset (sunburstData, size !=0)
+          staticLogger$info("Trying to plot sunburst")
           add_shiny(sunburst(sunburstData, count=T,legend = list(w=200)))
         })
       } else if (private$currentChoice == "SHINYTREE"){
         staticLogger$info("Outputing shinytree")
         output[[self$getShinyTreeId()]] <- shinyTree::renderTree({
-          private$getShinyTreeList2(self$hierarchicalData)
+          jsonlite::fromJSON(self$getShinyList())
         })
         staticLogger$info("Done")
       }
@@ -346,17 +382,18 @@ FilterHierarchical <- R6::R6Class(
     currentChoice = c("SUNBURST"),
     plotChoice = c("SUNBURST","SHINYTREE"),
     
-    checkHierarchicalData = function(hierarchicalData){
-      columnsNames <- c("event","hierarchy","size")
-      bool <- colnames(hierarchicalData) %in% columnsNames
-      if (!all(bool)){
-        stop("hierarchicalData must be a data.frame containing 3 columns", columnsNames)
-      }
-    },
+    # checkHierarchicalData = function(hierarchicalData){
+    #   columnsNames <- c("event","hierarchy","size")
+    #   bool <- colnames(hierarchicalData) %in% columnsNames
+    #   if (!all(bool)){
+    #     stop("hierarchicalData must be a data.frame containing 3 columns", columnsNames)
+    #   }
+    # },
     
     getSunburstData = function(){
       staticLogger$info("getSunburstData for HierarchicalSunburst")
-      return(subset(self$hierarchicalData, select=c("hierarchy","size")))
+      sunburstData <- subset(self$hierarchicalData, select=c("hierarchy","size"))
+      return(sunburstData)
     },
     
     getShinyTreeList = function(hierarchicalData){
@@ -478,3 +515,18 @@ FilterHierarchical <- R6::R6Class(
   )
 )
 
+
+# read in sample visit-sequences.csv data provided in source
+# only use first 200 rows to speed package build and check
+#   https://gist.github.com/kerryrodden/7090426#file-visit-sequences-csv
+# sequences <- read.csv(
+#   system.file("examples/visit-sequences.csv",package="sunburstR")
+#   ,header = FALSE
+#   ,stringsAsFactors = FALSE
+# )[1:100,]
+# 
+# sequences$V1 <- gsub("-","\t",sequences$V1)
+# sunburst(sequences)
+# 
+# jsonlite::fromJSON(data)
+# csv_to_hierd

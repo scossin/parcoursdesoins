@@ -23,7 +23,7 @@
 
 <http://www.eigsante2017.fr#hasDP> a owl:ObjectProperty ;
 	rdfs:domain <http://www.eigsante2017.fr#SejourMCO> ;
-	rdfs:range <http://www.eigsante2017.fr#Code> ;
+	rdfs:range <http://www.atih.sante.fr/codeCIM10#ICD-10-FR> ;
 	rdfs:comment "problème de santé qui a motivé l'admission du patient"@fr , "the condition, after study, which occasioned the admission to the hospital"@en ;
 	rdfs:label "diagnostic principal"@fr , "principal diagnosis"@en .
 # 
@@ -59,13 +59,6 @@
 # #
 # #################################################################
 # 
-# 
-# http://www.eigsante2017.fr#autre
-
-<http://www.eigsante2017.fr#autre> a owl:DatatypeProperty ;
-	rdfs:subPropertyOf owl:topDataProperty ;
-	rdfs:domain <http://www.eigsante2017.fr#toto> ;
-	rdfs:range xsd:integer .
 # 
 # http://www.eigsante2017.fr#hasBeginning
 
@@ -120,118 +113,134 @@
 
 <http://esante.gouv.fr#RPPS> a owl:Class .
 # 
+# http://www.atih.sante.fr/codeCIM10#ICD-10-FR
+
+<http://www.atih.sante.fr/codeCIM10#ICD-10-FR> a owl:Class .
+# 
 # http://www.eigsante2017.fr#Aphasie
 
 <http://www.eigsante2017.fr#Aphasie> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#SymptomeNeuro> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#SymptomeNeuro> ;
+	rdfs:label "Aphasie"@fr .
 # 
 # http://www.eigsante2017.fr#Appel
 
 <http://www.eigsante2017.fr#Appel> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Event> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Event> ;
+	rdfs:label "Appel téléphonique"@fr .
 # 
 # http://www.eigsante2017.fr#AppelCentre15
 
 <http://www.eigsante2017.fr#AppelCentre15> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Appel> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Appel> ;
+	rdfs:label "Appel au centre 15"@fr .
 # 
 # http://www.eigsante2017.fr#AppelPompier
 
 <http://www.eigsante2017.fr#AppelPompier> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Appel> .
-# 
-# http://www.eigsante2017.fr#Code
-
-<http://www.eigsante2017.fr#Code> a owl:Class .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Appel> ;
+	rdfs:label "Appel aux pompiers"@fr .
 # 
 # http://www.eigsante2017.fr#Coma
 
 <http://www.eigsante2017.fr#Coma> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#SymptomeNeuro> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#SymptomeNeuro> ;
+	rdfs:label "Coma"@fr .
 # 
 # http://www.eigsante2017.fr#Consultation
 
 <http://www.eigsante2017.fr#Consultation> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Event> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Event> ;
+	rdfs:label "Consultation"@fr .
 # 
 # http://www.eigsante2017.fr#Deces
 
 <http://www.eigsante2017.fr#Deces> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Event> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Event> ;
+	rdfs:label "Décès"@fr .
 # 
 # http://www.eigsante2017.fr#Delivrance
 
 <http://www.eigsante2017.fr#Delivrance> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Event> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Event> ;
+	rdfs:label "Délivrance d'un médicament"@fr .
 # 
 # http://www.eigsante2017.fr#Event
 
-<http://www.eigsante2017.fr#Event> a owl:Class .
+<http://www.eigsante2017.fr#Event> a owl:Class ;
+	rdfs:label "Evènements"@fr .
 # 
 # http://www.eigsante2017.fr#Hemiplegie
 
 <http://www.eigsante2017.fr#Hemiplegie> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#SymptomeNeuro> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#SymptomeNeuro> ;
+	rdfs:label "Hémiplégie"@fr .
 # 
 # http://www.eigsante2017.fr#IRM
 
 <http://www.eigsante2017.fr#IRM> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Imagerie> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Imagerie> ;
+	rdfs:label "IRM"@fr .
 # 
 # http://www.eigsante2017.fr#Imagerie
 
 <http://www.eigsante2017.fr#Imagerie> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Event> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Event> ;
+	rdfs:label "Imagerie médicale"@fr .
 # 
 # http://www.eigsante2017.fr#Scanner
 
 <http://www.eigsante2017.fr#Scanner> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Imagerie> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Imagerie> ;
+	rdfs:label "Scanner"@fr .
 # 
 # http://www.eigsante2017.fr#SejourHospitalier
 
 <http://www.eigsante2017.fr#SejourHospitalier> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Event> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Event> ;
+	rdfs:label "Séjour hospitalier"@fr .
 # 
 # http://www.eigsante2017.fr#SejourMCO
 
 <http://www.eigsante2017.fr#SejourMCO> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#SejourHospitalier> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#SejourHospitalier> ;
+	rdfs:label "Séjour MCO"@fr .
 # 
 # http://www.eigsante2017.fr#SejourSSR
 
 <http://www.eigsante2017.fr#SejourSSR> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#SejourHospitalier> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#SejourHospitalier> ;
+	rdfs:label "Séjour SSR"@fr .
 # 
 # http://www.eigsante2017.fr#Symptome
 
 <http://www.eigsante2017.fr#Symptome> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Event> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Event> ;
+	rdfs:label "Symptôme"@fr .
 # 
 # http://www.eigsante2017.fr#SymptomeNeuro
 
 <http://www.eigsante2017.fr#SymptomeNeuro> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Symptome> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Symptome> ;
+	rdfs:label "Symptôme neurologique"@fr .
 # 
 # http://www.eigsante2017.fr#Traitement
 
 <http://www.eigsante2017.fr#Traitement> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Event> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Event> ;
+	rdfs:label "Prise d'un traitement"@fr .
 # 
 # http://www.eigsante2017.fr#TraitementMedicamenteux
 
 <http://www.eigsante2017.fr#TraitementMedicamenteux> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Traitement> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#Traitement> ;
+	rdfs:label "Traitement médicamenteux"@fr .
 # 
 # http://www.eigsante2017.fr#TraitementThrombolytique
 
 <http://www.eigsante2017.fr#TraitementThrombolytique> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#TraitementMedicamenteux> .
-# 
-# http://www.eigsante2017.fr#toto
-
-<http://www.eigsante2017.fr#toto> a owl:Class ;
-	rdfs:subClassOf <http://www.eigsante2017.fr#Event> .
+	rdfs:subClassOf <http://www.eigsante2017.fr#TraitementMedicamenteux> ;
+	rdfs:label "Traitement thrombolytique"@fr .
 # 
 # https://www.data.gouv.fr/FINESS#Etablissement
 

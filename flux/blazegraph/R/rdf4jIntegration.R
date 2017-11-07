@@ -70,7 +70,11 @@ inDoctor <- addPredicateValue(consultation, contexte,"nature","inDoctor")
 inDoctor$value <- paste0("RPPS",inDoctor$value)
 #write.table(inDoctor,"inDoctor.csv",sep="\t",col.names = F, row.names = F,quote=F)
 
-allRelations <- rbind (hasEnd, hasBeginning, inEtab,inDoctor,hasPrice)
+hasDP <- subset (inEtab, type=="SejourMCO")
+hasDP$predicate <- "hasDP"
+codesCIM10 <- c("I61","I62","I63","A09","I10")
+hasDP$value <- sample(codesCIM10,size=nrow(hasDP),replace = T)
+allRelations <- rbind (hasEnd, hasBeginning, inEtab,inDoctor,hasPrice,hasDP)
 write.table(allRelations,"allRelations.csv",sep="\t",col.names = F, row.names = F,quote=F)
 
 ####

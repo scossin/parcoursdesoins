@@ -15,6 +15,7 @@ import query.Query;
 import query.Results;
 import servlet.DockerDB;
 import terminology.TerminoEnum;
+import terminology.Terminology;
 
 public class GetEventPredicateFrequency implements FileQuery{
 	final static Logger logger = LoggerFactory.getLogger(GetEventPredicateFrequency.class);
@@ -58,17 +59,17 @@ public class GetEventPredicateFrequency implements FileQuery{
 		return MIMEType;
 	}
 	
-	public GetEventPredicateFrequency(TerminoEnum terminoEnum) throws IOException, UnfoundResultVariable{
-		setSparqlQueryString(terminoEnum.getTermino().getNAMESPACE() + terminoEnum.getTerminologyName());
+	public GetEventPredicateFrequency(Terminology terminology) throws IOException, UnfoundResultVariable{
+		setSparqlQueryString(terminology.getNAMESPACE() + terminology.getTerminologyName());
 		Query query = new PreparedQuery(sparqlQueryString, variableNames);
-		String sparqlEndpoint = DockerDB.getEndpointIPadress(terminoEnum.getTermino().getEndpoint());
+		String sparqlEndpoint = DockerDB.getEndpointIPadress(terminology.getEndpoint());
 		Results results = new Results(sparqlEndpoint, query);
 		results.serializeResult();
 		this.fileToSend = results.getFile();
 	}
 	
 	public static void main(String[] args) throws IOException, UnfoundResultVariable{
-		GetEventPredicateFrequency eventPredicateFrequency = new GetEventPredicateFrequency(TerminoEnum.CONTEXT);
+		GetEventPredicateFrequency eventPredicateFrequency = new GetEventPredicateFrequency(TerminoEnum.CONTEXT.getTermino());
 		File file = new File("commentaires.csv");
 		OutputStream os = new FileOutputStream(file);
 		eventPredicateFrequency.sendBytes(os);

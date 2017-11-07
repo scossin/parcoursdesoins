@@ -138,7 +138,7 @@ STATICfilterCreator <- R6::R6Class(
         GLOBALmapObject$addSpatialFilter(filterSpatial)
         return(filterSpatial)
       } else if (filterType == "HIERARCHY"){
-        terminology <- staticTerminologyInstances$getTerminology(as.character(expectedValue))
+        terminology <- staticTerminologyInstances$getTerminologyByClassName(mainClassName = as.character(expectedValue))
         filterHierarchical <- FilterHierarchical$new(contextEnv = contextEnv,
                                                      terminology = terminology,
                                                      predicateName = predicateName, 

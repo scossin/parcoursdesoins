@@ -134,11 +134,12 @@ public class TerminologyServer {
 		Set<TerminoEnum> terminoToLoad = new HashSet<TerminoEnum>();
 		//terminoToLoad.add(TerminoEnum.FINESS);
 		//terminoToLoad.add(TerminoEnum.RPPS);
-		terminoToLoad.add(TerminoEnum.CONTEXT);
-		
+		// terminoToLoad.add(TerminoEnum.CONTEXT);
+		 terminoToLoad.add(TerminoEnum.CIM10);
+		 
 		for (TerminoEnum termino : terminoToLoad){
 			TerminologyServer terminoServer = new TerminologyServer(termino.getTermino());
-			terminoServer.loadTerminology();
+			//terminoServer.loadTerminology();
 			terminoServer.countInstances();
 			terminoServer.getCon().close();
 		}

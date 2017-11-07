@@ -5,12 +5,19 @@ import java.io.OutputStream;
 
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.rio.RDFParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import exceptions.UnfoundResultVariable;
+import exceptions.UnfoundTerminologyException;
+import inference.Inference;
 import parameters.MainResources;
 import terminology.TerminoEnum;
+import terminology.Terminology;
 
 public interface FileQuery {
+	
+	final static Logger logger = LoggerFactory.getLogger(FileQuery.class);
 	
 	public void sendBytes(OutputStream os) throws IOException;
 	
@@ -28,27 +35,33 @@ public interface FileQuery {
 		return(false);
 	}
 	
-	public static FileQuery getHierarchy() throws RDFParseException, RepositoryException, IOException{
-		return(new GetSunburstHierarchy(MainResources.ontologyFileName,TerminoEnum.EVENTS.getTermino().getMainClassIRI()));
+	public static FileQuery getHierarchy(String terminologyName) throws RDFParseException, RepositoryException, UnfoundTerminologyException, IOException{
+		Terminology terminology = getTerminology(terminologyName);
+		return(new GetSunburstHierarchyLabel(terminology));
 	}
 	
-	public static FileQuery getPredicateDescription(String className) throws IOException {
+	public static FileQuery getPredicateDescription(String terminologyName) throws IOException, UnfoundTerminologyException {
 		for (TerminoEnum termino : TerminoEnum.values()){
 			String localName = termino.getTerminologyName();
-			if (localName.equals(className)){
+			if (localName.equals(terminologyName)){
 				return(new GetPredicateDescription(termino.getTermino()));
 			}
 		}
-		throw new IOException();
+		throw new UnfoundTerminologyException(logger, terminologyName);
 	}
 	
-	public static FileQuery getPredicateFrequency(String className) throws IOException, UnfoundResultVariable {
+	public static FileQuery getPredicateFrequency(String terminologyName) throws IOException, UnfoundResultVariable, RDFParseException, RepositoryException, UnfoundTerminologyException {
+		Terminology terminology = getTerminology(terminologyName);
+		return(new GetEventPredicateFrequency(terminology));
+	}
+	
+	public static Terminology getTerminology(String terminologyName) throws RDFParseException, RepositoryException, IOException, UnfoundTerminologyException{
 		for (TerminoEnum termino : TerminoEnum.values()){
 			String localName = termino.getTerminologyName();
-			if (localName.equals(className)){
-				return(new GetEventPredicateFrequency(termino));
+			if (localName.equals(terminologyName)){
+				return(termino.getTermino());
 			}
 		}
-		throw new IOException();
+		throw new UnfoundTerminologyException(logger, terminologyName);
 	}
 }

@@ -6,7 +6,9 @@ STATICterminologyInstances <- R6::R6Class(
       "Event" = list(terminologyName = "Event", mainClassName="Event"),
       "RPPS" = list(terminologyName = "RPPS", mainClassName="RPPS"),
       "Etablissement" = list(terminologyName = "Etablissement", mainClassName="Etablissement"),
-      "Graph" = list(terminologyName = "Graph", mainClassName="Graph")),
+      "Graph" = list(terminologyName = "Graph", mainClassName="Graph"),
+      "CIM10" = list(terminologyName = "CIM10", mainClassName="ICD-10-FR")),
+      
     
     
     terminologyInstances = list(),
@@ -31,6 +33,11 @@ STATICterminologyInstances <- R6::R6Class(
     names(self$terminologyInstances) <- namesList
   },
   
+  getTerminologyByClassName = function(mainClassName){
+    terminologyName <- private$getTerminologyName(mainClassName = mainClassName)
+    return(self$getTerminology(terminologyName))
+  },
+  
   getTerminology = function(terminologyName){
     private$isKnownTerminology(terminologyName)
     return(self$terminologyInstances[[terminologyName]])
@@ -44,6 +51,15 @@ STATICterminologyInstances <- R6::R6Class(
         stop("unfound terminology : ", terminologyName)
       }
       return(NULL)
+    },
+    
+    getTerminologyName = function(mainClassName){
+      for (termino in self$terminology){
+        if (termino$mainClassName == mainClassName){
+          return(termino$terminologyName)
+        }
+      }
+      stop("Unfound mainClassName : ", mainClassName)
     }
   )
 )

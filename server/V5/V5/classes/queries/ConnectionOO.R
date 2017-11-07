@@ -29,6 +29,14 @@ Connection <- R6::R6Class(
       return(rawToChar(response$content))
     },
     
+    getShinyTreeHierarchy = function(eventName){
+      url <- paste0(private$getWebServerURL(),private$GetEventDescriptionURL)
+      response <- httr::GET(url, query=list(eventName = eventName))
+      private$checkResponse(response)
+      return(rawToChar(response$content))
+    },
+    
+    
     getContextTimeline = function(contextName){
       url <- paste0(private$getWebServerURL(),private$GetTimelineURL)
       response <- httr::GET(url, query=list(contextName=contextName))
@@ -47,6 +55,16 @@ Connection <- R6::R6Class(
     readContentStandard = function(content){
       results <- read.table(file=textConnection(content), sep="\t",header = T,
                             comment.char ="",quote="")
+    },
+    
+    getShinyTreeList = function(dfShinyTreeQuery){
+      fileName <- "/tmp/shinyTreeQuery.csv"
+      write.table(dfShinyTreeQuery, fileName,sep = "\t",col.names = T, row.names = F,quote=F)
+      url <- paste0(private$getWebServerURL(), private$GetShinyTreeHierarchy)
+      response <- httr::POST(url, body=list(filedata=httr::upload_file(fileName)))
+      private$checkResponse(response)
+      content <- rawToChar(response$content)
+      return(content)
     },
     
     sendQuery = function(XMLqueryInstance){
@@ -73,6 +91,8 @@ Connection <- R6::R6Class(
     GetTimelineURL = "GetTimeline", 
     GetEventDescriptionURL = "GetEventDescriptionTimeline",
     GetContextDescriptionURL = "GetContextDescriptionTimeline",
+    GetShinyTreeHierarchy = "GetShinyTreeHierarchy",
+    
     
     checkResponse = function(response){
       if (response$status_code!=200){

@@ -199,7 +199,7 @@ ButtonFilter <- R6::R6Class(
       envObjects <- ls(contextEnv)
       #print(envObjects)
       expectedObjects <- c("eventNumber")
-      bool <-  expectedObjects %in% envObjects
+      bool <-  expectedObjects %in% envObjects  
       if (!all(bool)){
         stop("Missing ", expectedObjects[bool], " in context environment for ButtonFilter to work")
       }

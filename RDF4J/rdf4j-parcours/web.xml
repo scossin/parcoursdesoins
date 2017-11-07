@@ -102,4 +102,19 @@
     <url-pattern>/connection</url-pattern>
   </servlet-mapping>
   
+  
+  
+  
+  
+  <!-- context description in timeline -->
+  <servlet>
+    <servlet-name>GetShinyTreeHierarchy</servlet-name>
+    <servlet-class>servlet.GetShinyTreeHierarchy</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>GetShinyTreeHierarchy</servlet-name>
+    <url-pattern>/GetShinyTreeHierarchy</url-pattern>
+  </servlet-mapping>
+  
 </web-app>

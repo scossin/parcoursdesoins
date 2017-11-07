@@ -28,7 +28,8 @@ public class DockerDB {
 		ONTOLOGY("/bigdata/namespace/ontology/sparql"), 
 		RPPS("/bigdata/namespace/RPPS/sparql"),
 		FINESS("/bigdata/namespace/FINESS/sparql"), 
-		CONTEXT("/bigdata/namespace/CONTEXT/sparql");
+		CONTEXT("/bigdata/namespace/CONTEXT/sparql"),
+		CIM10("/bigdata/namespace/CIM10/sparql");
 		
 		private final String url;
 		

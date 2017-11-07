@@ -151,7 +151,7 @@ public class PredicateDescription {
 			return(ValueCategory.SPATIALPOLYGON);
 		}
 		
-		if (predicateIRI.equals(EIG.HASTYPE)){
+		if (predicateIRI.equals(EIG.HASTYPE) || predicateIRI.equals(EIG.HASDP)){
 			return(ValueCategory.HIERARCHY);
 		}
 		

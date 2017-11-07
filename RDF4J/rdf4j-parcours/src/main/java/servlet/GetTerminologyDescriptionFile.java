@@ -10,7 +10,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
+
 import exceptions.UnfoundResultVariable;
+import exceptions.UnfoundTerminologyException;
 import queryFiles.FileQuery;
 import queryFiles.FilesAvailable;
 import terminology.TerminoEnum;
@@ -74,15 +78,25 @@ public class GetTerminologyDescriptionFile extends HttpServlet {
 		}
 		FileQuery fileQuery = null;
 		if (information.equals("predicateDescription")){
-			fileQuery = FileQuery.getPredicateDescription(terminologyName);
+			try {
+				fileQuery = FileQuery.getPredicateDescription(terminologyName);
+			} catch (UnfoundTerminologyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (information.equals("predicateFrequency")){
 			try {
 				fileQuery = FileQuery.getPredicateFrequency(terminologyName);
-			} catch (UnfoundResultVariable e) {
+			} catch (UnfoundResultVariable | RDFParseException | RepositoryException | UnfoundTerminologyException e) {
 				e.printStackTrace();
 			}
 		} else if (information.equals("hierarchy")){
-			fileQuery = FileQuery.getHierarchy();
+			try {
+				fileQuery = FileQuery.getHierarchy(terminologyName);
+			} catch (RDFParseException | RepositoryException | UnfoundTerminologyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		resp.setContentType(fileQuery.getMIMEtype());

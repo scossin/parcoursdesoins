@@ -3,9 +3,6 @@ library(shinydashboard)
 library(plotly)
 
 navbarPage("Parcours de soins", id="CartoParcours",
-           tabPanel("html",
-                    uiOutput("htmlOutput")
-                    ),
            tabPanel("FilterDate",
                     div (id = "divTestFilterDateOO")),
            
