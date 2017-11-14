@@ -1,20 +1,27 @@
 package terminology;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.RDFParseException;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
 import parameters.MainResources;
 import parameters.Util;
-import servlet.DockerDB.Endpoints;
+import servlet.Endpoint;
 
 public class Terminology {
 	final static Logger logger = LoggerFactory.getLogger(Terminology.class);
@@ -42,7 +49,7 @@ public class Terminology {
 	 
 	 private String ontologyFileName ; 
 	 
-	 private Endpoints endpoint ; 
+	 private Endpoint endpoint ; 
 	 
 	 private PredicateDescription predicateDescription ; 
 	 
@@ -50,24 +57,55 @@ public class Terminology {
 	 
 	 private TerminologyServer terminologyServer ;
 	 
+	 private File terminologyFolder ; 
+	 
+	 private File ontologyFile ;
+	 
+	 private Repository rep ; 
+	 private RepositoryConnection ontologyCon;
+	 
+	 public RepositoryConnection getOntologyCon(){
+		 return(ontologyCon);
+	 }
+	 
+	 private File instancesFile = null ;
+
+	 public File getInstancesFile(){
+		 return(instancesFile);
+	 }
+	 
+	 private boolean isInitialized = false;
+	 
 	 public String getTerminologyName(){
 		 return(terminologyName);
 	 }
 	 
-	 public PredicateDescription getPredicateDescription(){
+	 public PredicateDescription getPredicateDescription() throws RDFParseException, RepositoryException, IOException, UnfoundFilterException{
+		 checkInitialization();
 		 return(predicateDescription);
 	 }
 	 
-	 public ClassDescription getClassDescription(){
+	 public ClassDescription getClassDescription() throws RDFParseException, RepositoryException, IOException, UnfoundFilterException{
+		 checkInitialization();
 		 return(classDescription);
 	 }
 	 
-	 public TerminologyServer getTerminologyServer(){
+	 public TerminologyServer getTerminologyServer() throws RDFParseException, RepositoryException, IOException, UnfoundFilterException{
+		 checkInitialization();
 		 return(terminologyServer);
 	 }
 	 
+	 public void closeConnection() throws RDFParseException, RepositoryException, IOException, UnfoundFilterException{
+		 if (!isInitialized){
+			 return;
+		 }
+		 getOntologyCon().close();
+		 rep.shutDown();
+		 getTerminologyServer().getCon().close();
+	 }
+	 
 	 public Terminology(String terminologyName, String NAMESPACE, String PREFIX, String className, String ontologyFileName, 
-			 String dataFileName, Endpoints endpoint){
+			 String dataFileName, Endpoint endpoint) throws IOException{
 		 this.terminologyName = terminologyName ;
 		 this.NAMESPACE = NAMESPACE;
 		 this.PREFIX = PREFIX;
@@ -75,13 +113,29 @@ public class Terminology {
 		 this.ontologyFileName = ontologyFileName;
 		 this.dataFileName = dataFileName;
 		 this.endpoint = endpoint;
+		 checkTerminologyDirectory();
+		 checkOntologyFile();
+		 checkInstancesFile();
 	 }
 	 
-	 public Terminology initialize() throws RDFParseException, RepositoryException, IOException{
+	 public void checkInitialization() throws RDFParseException, RepositoryException, IOException, UnfoundFilterException{
+		 if (!isInitialized){
+			 logger.info("Initializing " + terminologyName);
+			 initialize();
+			 this.isInitialized = true;
+		 }
+	 }
+	 
+	 private void initialize() throws RDFParseException, RepositoryException, IOException, UnfoundFilterException{
+		 rep = new SailRepository(new MemoryStore());
+		 rep.initialize();
+		 this.ontologyCon = rep.getConnection();
+		 logger.info("Connection to ontology... ");
+		 ontologyCon.add(ontologyFile, this.NAMESPACE, Util.DefaultRDFformat);
+		 logger.info("done");
 		 this.classDescription = new ClassDescription(this);
 		 this.predicateDescription = new PredicateDescription(this);
 		 this.terminologyServer = new TerminologyServer(this);
-		 return(this);
 	 }
 	 
 	 /**
@@ -105,6 +159,17 @@ public class Terminology {
 		 return(predicates);
 	 }
 	
+	 
+	 public boolean isPredicateOfClass (IRI predicateIRI, OneClass oneClass) throws UnfoundEventException, UnfoundPredicatException{
+		 HashSet<Predicates> predicates = getPredicatesOfClass(oneClass);
+		 for (Predicates predicate : predicates){
+			 if (predicate.getPredicateIRI().equals(predicateIRI)){
+				 return(true);
+			 }
+		 }
+		 return(false);
+	 }
+	 
 	 public boolean isPredicateOfClass (String predicateName, OneClass oneClass) throws UnfoundEventException, UnfoundPredicatException{
 		 HashSet<Predicates> predicates = getPredicatesOfClass(oneClass);
 		 for (Predicates predicate : predicates){
@@ -125,7 +190,7 @@ public class Terminology {
 		 throw new UnfoundPredicatException(logger, predicateName);
 	 }
 	 
-	 public Endpoints getEndpoint() {
+	 public Endpoint getEndpoint() {
 		 return endpoint;
 	 }
 	 
@@ -141,8 +206,41 @@ public class Terminology {
 		 return(dataFileName);
 	 }
 	 
-	 public String getOntologyFileName(){
-		 return(MainResources.terminologiesFolder + ontologyFileName);
+	 private void checkTerminologyDirectory() throws IOException{
+		 URL urlTerminologies = Util.classLoader.getResource(MainResources.terminologiesFolder);
+		 if (urlTerminologies == null){
+			 throw new IOException("Unfound terminologies folder in "  + MainResources.terminologiesFolder);
+		 }
+		 URL urlTerminology = Util.classLoader.getResource(MainResources.terminologiesFolder + terminologyName);
+		 if (urlTerminology == null){
+			 throw new IOException("Unfound terminology folder : " + terminologyName + " in " + urlTerminologies.toString());
+		 }
+		 terminologyFolder = new File(urlTerminology.getFile());
+	 }
+	 
+	 private void checkOntologyFile () throws IOException{
+		 String pathName = terminologyFolder.getAbsolutePath() + "/" + ontologyFileName ; 
+		 File file = new File(pathName);
+		 if (!file.isFile()){
+			 throw new IOException("Unfound file : " + ontologyFileName + " in " + pathName + " of terminology : " + terminologyName);
+		 }
+		 this.ontologyFile = file;
+	 }
+	 
+	 private void checkInstancesFile () throws IOException{
+		 if (dataFileName.equals("")){
+			 return;
+		 }
+		 String pathName = terminologyFolder.getAbsolutePath() + "/" + dataFileName ; 
+		 File file = new File(pathName);
+		 if (!file.isFile()){
+			 throw new IOException("Unfound file : " + dataFileName + " in " + pathName + " of terminology : " + terminologyName);
+		 }
+		 instancesFile = file ;
+	 }
+	 
+	 public File getOntologyFile(){
+		 return(ontologyFile);
 	 }
 	 
 	/**
@@ -157,10 +255,12 @@ public class Terminology {
 		return(this.mainClassName);
 	}
 	
-	
 	public IRI makeInstanceIRI (String instanceName){
 		return(Util.vf.createIRI(NAMESPACE,instanceName));
 	}
 	
-	public static final String terminologiesFolder = MainResources.terminologiesFolder;
+	public static void main (String[] args) throws IOException{
+		new Terminology("Etablissement","https://www.data.gouv.fr/FINESS#","datagouv","Etablissement","FINESS-ontology.owl",
+				"FINESS.ttl", new Endpoint("/bigdata/namespace/FINESS/sparql"));
+	}
 }

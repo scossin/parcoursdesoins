@@ -1,6 +1,7 @@
 package hierarchy;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -208,13 +209,13 @@ public class HandleHierarchy implements FileQuery{
 	public HandleHierarchy(Terminology terminology) throws RDFParseException, RepositoryException, IOException{
 		this.terminology = terminology;
 		// TODO Auto-generated method stub
-		InputStream ontologyInput = Util.classLoader.getResourceAsStream(terminology.getOntologyFileName());
+		File ontologyFile = terminology.getOntologyFile();
+		logger.info("loading " + ontologyFile.getName());
 		// p RDF triple in memory : 
 		Repository rep = new SailRepository(new MemoryStore());
 		rep.initialize();
 		RepositoryConnection con = rep.getConnection();
-		con.add(ontologyInput, terminology.getNAMESPACE(), RDFFormat.TURTLE);
-		ontologyInput.close();
+		con.add(ontologyFile, terminology.getNAMESPACE(), RDFFormat.TURTLE);
 		IRI classNameIRI = terminology.getMainClassIRI();
 		setChildParent(con, classNameIRI,null);
 		con.close();

@@ -1,5 +1,6 @@
 package query;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -10,6 +11,8 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.datatypes.XMLDatatypeUtil;
 import org.eclipse.rdf4j.model.util.LiteralUtilException;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -18,6 +21,7 @@ import org.w3c.dom.NodeList;
 
 import exceptions.InvalidXMLFormat;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import parameters.Util;
@@ -91,8 +95,12 @@ public class ClassInXMLfile {
 	 * @throws UnfoundPredicatException If a predicate of this oneClass is not in the OneClassOntology 
 	 * @throws ParseException 
 	 * @throws UnfoundTerminologyException The terminology is not found in the OneClassOntology
+	 * @throws IOException 
+	 * @throws RepositoryException 
+	 * @throws RDFParseException 
+	 * @throws UnfoundFilterException 
 	 */
-	public ClassInXMLfile(Node eventNode) throws UnfoundEventException, InvalidXMLFormat, UnfoundPredicatException, ParseException, UnfoundTerminologyException{
+	public ClassInXMLfile(Node eventNode) throws UnfoundEventException, InvalidXMLFormat, UnfoundPredicatException, ParseException, UnfoundTerminologyException, RDFParseException, RepositoryException, IOException, UnfoundFilterException{
 		this.oneClassVariable = "?event" + XMLFile.getEventNumber(eventNode);
 		String className = XMLFile.getEventType(eventNode);
 		terminology = XMLFile.getTerminology(eventNode);

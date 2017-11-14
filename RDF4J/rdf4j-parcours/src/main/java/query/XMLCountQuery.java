@@ -7,9 +7,9 @@ import java.text.ParseException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.vocabulary.RDF;
-import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -23,6 +23,7 @@ import exceptions.InvalidXMLFormat;
 import exceptions.MyExceptions;
 import exceptions.OperatorException;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundResultVariable;
 import exceptions.UnfoundTerminologyException;
@@ -30,13 +31,10 @@ import ontologie.EIG;
 import parameters.MainResources;
 import parameters.Util;
 import query.XMLFile.XMLelement;
-import servlet.DockerDB;
-import servlet.DockerDB.Endpoints;
+import servlet.Endpoint;
 import terminology.OneClass;
 import terminology.Predicates;
-import terminology.TerminoEnum;
 import terminology.Terminology;
-import terminology.TerminologyInstances;
 
 public class XMLCountQuery implements Query {
 	final static Logger logger = LoggerFactory.getLogger(XMLCountQuery.class);
@@ -51,14 +49,14 @@ public class XMLCountQuery implements Query {
 	
 	private IRI predicateIRI;
 	
-	public XMLCountQuery(XMLFile xml) throws UnfoundTerminologyException, UnfoundEventException, UnfoundPredicatException, ParserConfigurationException{
+	public XMLCountQuery(XMLFile xml) throws UnfoundTerminologyException, UnfoundEventException, UnfoundPredicatException, ParserConfigurationException, RDFParseException, RepositoryException, IOException, UnfoundFilterException{
 		this.xml = xml;
 		Node eventNode = xml.getEventNodes().item(0);
 		this.terminology = XMLFile.getTerminology(eventNode);
 		String eventType = XMLFile.getEventType(eventNode);
 		oneClass = terminology.getClassDescription().getClass(eventType);
 		setPredicateIRI(eventNode);
-		if (getEndpoint() == Endpoints.TIMELINES){
+		if (terminology.getTerminologyName().equals(EIG.TerminologyName)){
 			setSparqlQueryContext();
 		} else {
 			setSparqlQueryTerminology();
@@ -109,7 +107,7 @@ public class XMLCountQuery implements Query {
 		return variablesNames;
 	}
 
-	public Endpoints getEndpoint() {
+	public Endpoint getEndpoint() {
 		return terminology.getEndpoint();
 	}
 
@@ -121,15 +119,15 @@ public class XMLCountQuery implements Query {
 		return(xml.getContextDataSet());
 	}
 	
-	public static void main (String[] args) throws NumberFormatException, UnfoundEventException, UnfoundPredicatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, ParserConfigurationException, SAXException, IOException, ParseException, UnfoundResultVariable{
+	public static void main (String[] args) throws NumberFormatException, UnfoundEventException, UnfoundPredicatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, ParserConfigurationException, SAXException, IOException, ParseException, UnfoundResultVariable, RDFParseException, RepositoryException, UnfoundFilterException{
 		//QueryClass queryClass = new QueryClass(new File(Util.queryFolder+"queryMCOSSR3day.xml"));
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "countQueryNew.xml" );
 		XMLFile xml = new XMLFile(xmlFile);
 		Query query = new XMLCountQuery(xml);
 		System.out.println(query.getSPARQLQueryString());
 		System.out.println(xml.getContextDataSet().hashCode());
-		System.out.println(query.getEndpoint().getURL());
-		Results result = new Results(DockerDB.getEndpointIPadress(query.getEndpoint()),query);
+		System.out.println(query.getEndpoint().getDBnamespace());
+		Results result = new Results(query.getEndpoint().getEndpointIPadress(),query);
 		result.serializeResult();
 	}
 }

@@ -8,15 +8,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.TupleQuery;
-import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import integration.DBconnection;
-import parameters.Util;
-import servlet.DockerDB.Endpoints;
+import ontologie.EIG;
+import terminology.Terminology;
+import terminology.TerminologyInstances;
 
 public class CheckConnection extends HttpServlet {
 	final static Logger logger = LoggerFactory.getLogger(CheckConnection.class);
@@ -27,14 +26,20 @@ public class CheckConnection extends HttpServlet {
 		String resultat="";
 		DBconnection con = null;
 		try {
-			con = new DBconnection(DockerDB.getEndpointIPadress(Endpoints.TIMELINES));
+			Terminology terminology = TerminologyInstances.getTerminology(EIG.TerminologyName);
+			con = new DBconnection(terminology.getEndpoint().getEndpointIPadress());
 			TupleQuery keywordQuery = con.getDBcon().prepareTupleQuery("SELECT * WHERE {?s ?p ?o} LIMIT 1");
 			keywordQuery.evaluate();
 			resultat = "Connection test successful";
 			logger.info(resultat);
 		} catch (Exception e){
 			logger.error("Impossible to connect to DB");
-			throw e;
+			try {
+				throw e;
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}  finally{
 			con.close();
 		}

@@ -92,9 +92,9 @@ server <- function(input,output,session){
   source("classes/HideShowButtons.R",local = T)
   
   GLOBALlistResults <- ListResults$new()
-  load("dev/test/tempQuery.rdata")
-  result <- Result$new(tempQuery)
-  GLOBALlistResults$addResult(result)
+  # load("dev/test/tempQuery.rdata")
+  # result <- Result$new(tempQuery)
+  # GLOBALlistResults$addResult(result)
   GLOBALSankeylistEventTabpanel <- ListEventsTabpanel$new()
   sankey <- Sankey$new(GLOBALmainPanelSankeyId, "beforeEnd")
   survie <- Survie$new(GLOBALsurvieDiv,"beforeEnd")

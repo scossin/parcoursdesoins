@@ -12,22 +12,29 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.rio.RDFParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundResultVariable;
 import exceptions.UnfoundTerminologyException;
 import queryFiles.FileQuery;
 import queryFiles.FilesAvailable;
-import terminology.TerminoEnum;
+import queryFiles.GetTerminologies;
+import terminology.Terminology;
+import terminology.TerminologyInstances;
 
 public class GetTerminologyDescriptionFile extends HttpServlet {
 
+	final static Logger logger = LoggerFactory.getLogger(GetTerminologyDescriptionFile.class);
+	
 	public static boolean isKnownTerminologyName (String terminologyName){
 		if (terminologyName == null){
 			return(false);
 		}
 		ArrayList<String> availableTerminologyName = new ArrayList<String>();
-		for (TerminoEnum termino : TerminoEnum.values()){
-			availableTerminologyName.add(termino.getTerminologyName());
+		for (Terminology terminology : TerminologyInstances.terminologies){
+			availableTerminologyName.add(terminology.getTerminologyName());
 		}
 		
 		for (String knownTerminologyName : availableTerminologyName){
@@ -42,7 +49,7 @@ public class GetTerminologyDescriptionFile extends HttpServlet {
 		if (information == null){
 			return(false);
 		}
-		String[] availableInformation = {"predicateDescription", "predicateFrequency","hierarchy"};
+		String[] availableInformation = {"predicateDescription", "predicateFrequency","hierarchy","terminologies"};
 		for (String knownInformation : availableInformation){
 			if (information.equals(knownInformation)){
 				return(true);
@@ -80,7 +87,7 @@ public class GetTerminologyDescriptionFile extends HttpServlet {
 		if (information.equals("predicateDescription")){
 			try {
 				fileQuery = FileQuery.getPredicateDescription(terminologyName);
-			} catch (UnfoundTerminologyException e) {
+			} catch (UnfoundTerminologyException | UnfoundFilterException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -97,6 +104,9 @@ public class GetTerminologyDescriptionFile extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		} else if (information.equals("terminologies")){
+			logger.info("Asking terminologies description");
+			fileQuery = new GetTerminologies();
 		}
 		
 		resp.setContentType(fileQuery.getMIMEtype());

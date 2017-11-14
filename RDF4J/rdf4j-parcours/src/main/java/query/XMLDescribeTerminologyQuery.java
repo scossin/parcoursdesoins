@@ -5,12 +5,15 @@ import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import exceptions.InvalidContextException;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
@@ -24,7 +27,7 @@ import parameters.Util;
 public class XMLDescribeTerminologyQuery extends XMLDescribeQuery implements Query {
 	final static Logger logger = LoggerFactory.getLogger(XMLDescribeTerminologyQuery.class);
 	
-	public XMLDescribeTerminologyQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException, UnfoundEventException{
+	public XMLDescribeTerminologyQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException, UnfoundEventException, RDFParseException, RepositoryException, UnfoundFilterException{
 		super(xml);
 		setBasicQuery("SELECT ?event ?predicate ?value WHERE { \n"+
 		"VALUES ?event {" +             eventReplacementString                           + "} \n"+
@@ -48,7 +51,7 @@ public class XMLDescribeTerminologyQuery extends XMLDescribeQuery implements Que
 		return(variablesNames);
 	}
 
-	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException{
+	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException, RDFParseException, RepositoryException, UnfoundFilterException{
 		//InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "XMLquerydescribeTerminologyFINESSlong.xml" );
 		//InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "XMLquerydescribeSpatialPoint.xml" );

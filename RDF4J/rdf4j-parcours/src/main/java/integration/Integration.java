@@ -1,6 +1,11 @@
 package integration;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,13 +19,22 @@ import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
+import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import exceptions.InvalidContextException;
+import exceptions.MyExceptions;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
+import exceptions.UnfoundInstanceOfTerminologyException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
+import ontologie.EIG;
 import parameters.MainResources;
 import parameters.Util;
 import terminology.TerminologyInstances;
@@ -46,6 +60,8 @@ import terminology.TerminologyInstances;
  *
  */
 public class Integration {
+	
+	final static Logger logger = LoggerFactory.getLogger(Integration.class);
 	
 	/**
 	 * all contexts in the Repository of statements 
@@ -92,50 +108,93 @@ public class Integration {
 		return(contexts);
 	}
 	
-	public void close(){
+	public void close() throws IOException{
 		this.con.close();
 		this.rep.shutDown();
+		output.close();
 	}
 	
+	private HashSet<File> files = new HashSet<File>();
+	
+	public void setFiles(File folderFile) throws IOException{
+		if (!folderFile.isDirectory()){
+			String msg = "unfound folder : " + folderFile.toString();
+			MyExceptions.logMessage(logger, msg);
+			throw new IOException(msg);
+		}
+		
+		logger.info("Searching CSV files in : " + folderFile.toString());
+		
+		File[] filesCSV = folderFile.listFiles();
+		for (File fileCSV : filesCSV){
+			if (fileCSV.getName().endsWith(".csv")){
+				files.add(fileCSV);
+			}
+		}
+		System.out.println(files.size() + " files to read");
+		
+		rejectedFile = new File(folderFile.getAbsolutePath() + "/rejectedFile.txt");
+		if (rejectedFile.exists()){
+			rejectedFile.createNewFile();
+		}
+		output = new BufferedWriter(new FileWriter(rejectedFile,true));  //clears file every time
+	}
+	
+	private File rejectedFile ; 
+	private BufferedWriter output;
+	
+	private void addRejectedLine (String rejectedLine) throws IOException{
+		output.append(rejectedLine);
+	}
+	
+	public void readFiles() throws IOException, UnfoundTerminologyException {
+		for (File file : files){
+			System.out.println(file.getName());
+			Path filePath = Paths.get(file.getAbsolutePath());
+			BufferedReader br = Files.newBufferedReader(filePath,Util.charset);
+	        // first line from the text file
+			String line = br.readLine();
+			// loop until all lines are read
+			int numLine = 1 ; 
+			LineStatement lineStatement = new LineStatement("\t",TerminologyInstances.getTerminology(EIG.TerminologyName));
+			while (line != null) {
+				try {
+					lineStatement.addLineStatement(line);
+					getCon().add(lineStatement.getStatements());
+					addContext(lineStatement.getContext());
+				} catch (ParseException | UnfoundEventException | UnfoundTerminologyException 
+						| UnfoundPredicatException | RDFParseException | RepositoryException | InvalidContextException | UnfoundInstanceOfTerminologyException | UnfoundFilterException e) {
+					// TODO Auto-generated catch block
+					System.out.println("An error occured line : " + numLine);
+					e.getMessage();
+					addRejectedLine("\n" + line + "\t" + e.getMessage());
+					e.printStackTrace();
+				}
+				
+				line = br.readLine(); // next line
+				numLine++;	
+			}
+			br.close();
+			addTriplesInFiles();
+		}
+	}
+	
+	private void addTriplesInFiles() throws RDFParseException, RepositoryException, IOException{
+		for (IRI contextIRI : getContexts()){
+			RepositoryResult<Statement> statementsContext = getCon().getStatements(null, null, null,contextIRI);
+			Model model = QueryResults.asModel(statementsContext);
+			TimelineFile.addTriplesInFile(contextIRI, model);
+			getCon().remove(statementsContext,contextIRI);
+		}
+	}
 	
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		Integration integration = new Integration();
-		
-		Path filePath = Paths.get(MainResources.chargementFolder + "allRelations.csv");
-		BufferedReader br = Files.newBufferedReader(filePath,Util.charset);
-
-        // first line from the text file
-		String line = br.readLine();
-		// loop until all lines are read
-		int numLine = 1 ; 
-		LineStatement lineStatement = new LineStatement("\t",TerminologyInstances.getTerminology("Event"));
-		while (line != null) {
-			try {
-				lineStatement.addLineStatement(line);
-				integration.getCon().add(lineStatement.getStatements());
-				integration.addContext(lineStatement.getContext());
-			} catch (ParseException | UnfoundEventException | UnfoundTerminologyException 
-					| UnfoundPredicatException e) {
-				// TODO Auto-generated catch block
-				System.out.println("An error occured line : " + numLine);
-				e.getMessage();
-				e.printStackTrace();
-			}
-			
-			line = br.readLine(); // next line
-			numLine++;			
-		}
-		
-		
-		for (IRI contextIRI : integration.getContexts()){
-			RepositoryResult<Statement> statementsContext = integration.getCon().getStatements(null, null, null,contextIRI);
-			Model model = QueryResults.asModel(statementsContext);
-			TimelineFile.addTriplesInFile(contextIRI, model);
-			integration.getCon().remove(statementsContext,contextIRI);
-		}
-
-		br.close();
+		URL folder = Util.classLoader.getResource(MainResources.terminologiesFolder + "chargement");
+		File folderFile = new File(folder.toURI());
+		integration.setFiles(folderFile);
+		integration.readFiles();
 		TimelineFile.close();
 		integration.close();
 		TerminologyInstances.closeConnections();

@@ -10,12 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exceptions.UnfoundResultVariable;
+import exceptions.UnfoundTerminologyException;
 import query.PreparedQuery;
 import query.Query;
 import query.Results;
-import servlet.DockerDB;
-import terminology.TerminoEnum;
 import terminology.Terminology;
+import terminology.TerminologyInstances;
 
 public class GetEventPredicateFrequency implements FileQuery{
 	final static Logger logger = LoggerFactory.getLogger(GetEventPredicateFrequency.class);
@@ -62,14 +62,15 @@ public class GetEventPredicateFrequency implements FileQuery{
 	public GetEventPredicateFrequency(Terminology terminology) throws IOException, UnfoundResultVariable{
 		setSparqlQueryString(terminology.getNAMESPACE() + terminology.getTerminologyName());
 		Query query = new PreparedQuery(sparqlQueryString, variableNames);
-		String sparqlEndpoint = DockerDB.getEndpointIPadress(terminology.getEndpoint());
+		String sparqlEndpoint = terminology.getEndpoint().getEndpointIPadress();
 		Results results = new Results(sparqlEndpoint, query);
 		results.serializeResult();
 		this.fileToSend = results.getFile();
 	}
 	
-	public static void main(String[] args) throws IOException, UnfoundResultVariable{
-		GetEventPredicateFrequency eventPredicateFrequency = new GetEventPredicateFrequency(TerminoEnum.CONTEXT.getTermino());
+	public static void main(String[] args) throws IOException, UnfoundResultVariable, UnfoundTerminologyException{
+		Terminology terminology = TerminologyInstances.getTerminology("CONTEXT");
+		GetEventPredicateFrequency eventPredicateFrequency = new GetEventPredicateFrequency(terminology);
 		File file = new File("commentaires.csv");
 		OutputStream os = new FileOutputStream(file);
 		eventPredicateFrequency.sendBytes(os);

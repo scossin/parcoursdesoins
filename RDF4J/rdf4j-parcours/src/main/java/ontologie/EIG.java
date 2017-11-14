@@ -26,7 +26,6 @@ public class EIG {
 	
 	public static final String NAMESPACE = "http://www.eigsante2017.fr#";
 
-	
 	public static final String TerminologyName = "Event";
 	
 	/**
@@ -64,6 +63,8 @@ public class EIG {
 	public static final IRI HASEND;
 	
 	public static final IRI HASCOORDINATE;
+	
+	public static final IRI HASFILTER;
 
 	public static Object HASDP;
 	
@@ -78,6 +79,7 @@ public class EIG {
 		HASCOORDINATE = factory.createIRI(EIG.NAMESPACE, "hasCoordinate");
 		HASNEXT = factory.createIRI(EIG.NAMESPACE, "hasNext");
 		HASDP = factory.createIRI(EIG.NAMESPACE, "hasDP");
+		HASFILTER  = factory.createIRI(EIG.NAMESPACE, "hasFilter");
 		GRAPH = "Graph";
 	}
 	

@@ -6,6 +6,8 @@ import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -16,6 +18,7 @@ import exceptions.InvalidContextException;
 import exceptions.InvalidXMLFormat;
 import exceptions.OperatorException;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import parameters.MainResources;
@@ -29,7 +32,7 @@ public class XMLQueryTest {
 	public ExpectedException thrown = ExpectedException.none();
 	
 	@Test
-	public void testDTD() throws ParserConfigurationException, SAXException, IOException, NumberFormatException, UnfoundEventException, UnfoundPredicatException, ParseException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat{
+	public void testDTD() throws ParserConfigurationException, SAXException, IOException, NumberFormatException, UnfoundEventException, UnfoundPredicatException, ParseException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, RDFParseException, RepositoryException, UnfoundFilterException{
 		thrown.expect(UnfoundEventException.class);
 		
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "UnfoundEvent.xml" );

@@ -3,7 +3,6 @@ package query;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,24 +12,27 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 import exceptions.IncomparableValueException;
 import exceptions.InvalidContextException;
 import exceptions.InvalidXMLFormat;
 import exceptions.OperatorException;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
-import ontologie.EIG;
 import parameters.MainResources;
 import parameters.Util;
 import query.XMLFile.XMLelement;
-import servlet.DockerDB.Endpoints;
+import servlet.Endpoint;
 import terminology.Predicates;
 import terminology.Terminology;
 
@@ -112,8 +114,11 @@ public class XMLSearchQuery implements Query {
 	 * @throws OperatorException 
 	 * @throws InvalidContextException 
 	 * @throws InvalidXMLFormat 
+	 * @throws UnfoundFilterException 
+	 * @throws RepositoryException 
+	 * @throws RDFParseException 
 	 */
-	public XMLSearchQuery(XMLFile xmlFile) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat{
+	public XMLSearchQuery(XMLFile xmlFile) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, RDFParseException, RepositoryException, UnfoundFilterException{
 		this.xml = xmlFile;
 		// events element description in the XML :
 		NodeList eventNodes = xml.getEventNodes();
@@ -177,8 +182,12 @@ public class XMLSearchQuery implements Query {
 	 * @throws IncomparableValueException If the user try to compare incomparable datatypes
 	 * @throws OperatorException 
 	 * @throws UnfoundEventException 
+	 * @throws IOException 
+	 * @throws RepositoryException 
+	 * @throws RDFParseException 
+	 * @throws UnfoundFilterException 
 	 */
-	public void addLinkStatements(Node linkNode) throws NumberFormatException, UnfoundPredicatException, IncomparableValueException, OperatorException, UnfoundEventException{
+	public void addLinkStatements(Node linkNode) throws NumberFormatException, UnfoundPredicatException, IncomparableValueException, OperatorException, UnfoundEventException, RDFParseException, RepositoryException, IOException, UnfoundFilterException{
 		Element element = (Element) linkNode;
 		int eventNumber1 = 0;
 		int eventNumber2 = 0;
@@ -295,7 +304,7 @@ public class XMLSearchQuery implements Query {
 		return(queryString);
 	}
 	
-	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat {
+	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, RDFParseException, RepositoryException, UnfoundFilterException {
 		//QueryClass queryClass = new QueryClass(new File(Util.queryFolder+"queryMCOSSR3day.xml"));
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "UnfoundEvent.xml" );
 		XMLSearchQuery query = new XMLSearchQuery(new XMLFile(xmlFile));
@@ -309,7 +318,7 @@ public class XMLSearchQuery implements Query {
 	}
 
 	@Override
-	public Endpoints getEndpoint() {
+	public Endpoint getEndpoint() {
 		return(terminology.getEndpoint());
 	}
 

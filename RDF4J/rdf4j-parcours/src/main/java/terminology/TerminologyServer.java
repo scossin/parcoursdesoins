@@ -1,5 +1,6 @@
 package terminology;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -18,7 +19,6 @@ import exceptions.MyExceptions;
 import integration.DBconnection;
 import parameters.Util;
 import query.Query;
-import servlet.DockerDB;
 
 public class TerminologyServer {
 	
@@ -36,7 +36,7 @@ public class TerminologyServer {
 	
 	public TerminologyServer(Terminology terminology){
 		this.terminology = terminology;
-		String sparqlEndpoint = DockerDB.getEndpointIPadress(terminology.getEndpoint());
+		String sparqlEndpoint = terminology.getEndpoint().getEndpointIPadress();
 		con = new DBconnection(sparqlEndpoint);
 		
 		// test connection 
@@ -71,20 +71,16 @@ public class TerminologyServer {
 	}
 	
 	public void loadTerminology() throws Exception{
-		String terminoFile = Terminology.terminologiesFolder + terminology.getDataFileName();
+		File instancesFile = terminology.getInstancesFile();
 		String terminoNameSpace = terminology.getNAMESPACE();
-		
-		logger.info("Trying to load "+ terminoFile + "...");
-		InputStream in = Util.classLoader.getResourceAsStream(terminoFile);
+		logger.info("Trying to load "+ instancesFile.getAbsolutePath() + "...");
 		try {
-			con.getDBcon().add(in, terminoNameSpace, Util.DefaultRDFformat);
+			con.getDBcon().add(instancesFile, terminoNameSpace, Util.DefaultRDFformat);
 			logger.info("\t Successful");
 		} catch (RDFParseException | RepositoryException | IOException e) {
 			// TODO Auto-generated catch block
 			MyExceptions.logException(logger, e);
 			throw e;
-		} finally{
-			in.close();
 		}
 	}
 	
@@ -131,30 +127,17 @@ public class TerminologyServer {
 	
 	public static void main (String[] args) throws Exception{
 		
-		Set<TerminoEnum> terminoToLoad = new HashSet<TerminoEnum>();
-		//terminoToLoad.add(TerminoEnum.FINESS);
-		//terminoToLoad.add(TerminoEnum.RPPS);
-		// terminoToLoad.add(TerminoEnum.CONTEXT);
-		 terminoToLoad.add(TerminoEnum.CIM10);
+//		Set<TerminoEnum> terminoToLoad = new HashSet<TerminoEnum>();
+//		//terminoToLoad.add(TerminoEnum.FINESS);
+//		//terminoToLoad.add(TerminoEnum.RPPS);
+//		// terminoToLoad.add(TerminoEnum.CONTEXT);
+//		 terminoToLoad.add(TerminoEnum.CIM10);
 		 
-		for (TerminoEnum termino : terminoToLoad){
-			TerminologyServer terminoServer = new TerminologyServer(termino.getTermino());
+		for (Terminology terminology : TerminologyInstances.terminologies){
+			TerminologyServer terminoServer = terminology.getTerminologyServer();
 			//terminoServer.loadTerminology();
 			terminoServer.countInstances();
 			terminoServer.getCon().close();
 		}
 	}
-
-	// old method : ask Server :
-//	private String makeBooleanQuery (IRI instanceIRI, IRI classNameIRI){
-//		String query = Query.formatIRI4query(instanceIRI) + " a " + Query.formatIRI4query(classNameIRI);
-//		return(query);
-//	}
-//	
-//	public boolean isInstanceOfTerminology(String instanceName, IRI classNameIRI) throws UnfoundTerminologyException{
-//		IRI instanceIRI = TerminologyInstances.getTerminology(classNameIRI).makeInstanceIRI(instanceName);
-//		String query = makeBooleanQuery(instanceIRI, classNameIRI);
-//		boolean answer = con.getDBcon().prepareBooleanQuery(query).evaluate();
-//		return(answer);
-//	}
 }

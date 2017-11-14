@@ -8,12 +8,11 @@ import org.eclipse.rdf4j.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundResultVariable;
 import exceptions.UnfoundTerminologyException;
-import inference.Inference;
-import parameters.MainResources;
-import terminology.TerminoEnum;
 import terminology.Terminology;
+import terminology.TerminologyInstances;
 
 public interface FileQuery {
 	
@@ -36,32 +35,17 @@ public interface FileQuery {
 	}
 	
 	public static FileQuery getHierarchy(String terminologyName) throws RDFParseException, RepositoryException, UnfoundTerminologyException, IOException{
-		Terminology terminology = getTerminology(terminologyName);
+		Terminology terminology = TerminologyInstances.getTerminology(terminologyName);
 		return(new GetSunburstHierarchyLabel(terminology));
 	}
 	
-	public static FileQuery getPredicateDescription(String terminologyName) throws IOException, UnfoundTerminologyException {
-		for (TerminoEnum termino : TerminoEnum.values()){
-			String localName = termino.getTerminologyName();
-			if (localName.equals(terminologyName)){
-				return(new GetPredicateDescription(termino.getTermino()));
-			}
-		}
-		throw new UnfoundTerminologyException(logger, terminologyName);
+	public static FileQuery getPredicateDescription(String terminologyName) throws IOException, UnfoundTerminologyException, UnfoundFilterException {
+		Terminology terminology = TerminologyInstances.getTerminology(terminologyName);
+		return(new GetPredicateDescription(terminology));
 	}
 	
 	public static FileQuery getPredicateFrequency(String terminologyName) throws IOException, UnfoundResultVariable, RDFParseException, RepositoryException, UnfoundTerminologyException {
-		Terminology terminology = getTerminology(terminologyName);
+		Terminology terminology = TerminologyInstances.getTerminology(terminologyName);
 		return(new GetEventPredicateFrequency(terminology));
-	}
-	
-	public static Terminology getTerminology(String terminologyName) throws RDFParseException, RepositoryException, IOException, UnfoundTerminologyException{
-		for (TerminoEnum termino : TerminoEnum.values()){
-			String localName = termino.getTerminologyName();
-			if (localName.equals(terminologyName)){
-				return(termino.getTermino());
-			}
-		}
-		throw new UnfoundTerminologyException(logger, terminologyName);
 	}
 }

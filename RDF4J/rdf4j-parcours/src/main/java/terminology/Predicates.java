@@ -13,8 +13,13 @@ public class Predicates{
 
 	private Set<Literal> labels = new HashSet<Literal>();
 	private Set<Literal> comments = new HashSet<Literal>();
+	private Literal filter = null ;
 	private Value expectedValue ;
 	private boolean isObjectProperty ;
+	
+	public Literal getFilter(){
+		return(filter);
+	}
 	
 	public void setIsObjectProperty(boolean isObjectProperty){
 		this.isObjectProperty = isObjectProperty;
@@ -66,5 +71,9 @@ public class Predicates{
 	
 	public Predicates(IRI predicateIRI){
 		this.predicateIRI = predicateIRI;
+	}
+
+	public void addFilter(Literal filter) {
+		this.filter = filter;
 	}
 }

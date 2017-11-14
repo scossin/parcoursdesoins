@@ -15,6 +15,8 @@ import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -24,13 +26,13 @@ import exceptions.InvalidContextException;
 import exceptions.InvalidXMLFormat;
 import exceptions.OperatorException;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundResultVariable;
 import exceptions.UnfoundTerminologyException;
 import integration.DBconnection;
 import parameters.MainResources;
 import parameters.Util;
-import servlet.DockerDB;
 
 /**
  * This class manages the results of a SPARQL query. <br>
@@ -198,7 +200,7 @@ public class Results {
 		}
 	}
 	
-	public static void main(String[] args) throws NumberFormatException, ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, UnfoundResultVariable {
+	public static void main(String[] args) throws NumberFormatException, ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, UnfoundResultVariable, RDFParseException, RepositoryException, UnfoundFilterException {
 		SimpleDataset dataset = new SimpleDataset();
 //		int n = 10;
 //		IRI patients[] = new IRI[n];
@@ -218,7 +220,7 @@ public class Results {
 		//InputStream dtdFile = Util.classLoader.getResourceAsStream(MainResources.dtdSearchFile);
 		XMLFile xml = new XMLFile(xmlFile);
 		Query query = new XMLDescribeTerminologyQuery(xml);
-		Results results = new Results(DockerDB.getEndpointIPadress(query.getEndpoint()),query);
+		Results results = new Results(query.getEndpoint().getEndpointIPadress(),query);
 		results.serializeResult();
 		results.getCon().close();
 		xmlFile.close();

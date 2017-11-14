@@ -3,12 +3,10 @@ package queryFiles;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.vocabulary.RDFS;
@@ -26,12 +24,10 @@ import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import exceptions.UnfoundResultVariable;
-import ontologie.EIG;
-import parameters.Util;
+import exceptions.UnfoundTerminologyException;
 import query.Query;
-import terminology.TerminoEnum;
 import terminology.Terminology;
+import terminology.TerminologyInstances;
 
 public class GetSunburstHierarchyLabel implements FileQuery{
 
@@ -119,14 +115,14 @@ public class GetSunburstHierarchyLabel implements FileQuery{
 	public GetSunburstHierarchyLabel(Terminology terminology) throws RDFParseException, RepositoryException, IOException{
 		// TODO Auto-generated method stub
 		this.terminology = terminology;
-		InputStream ontologyInput = Util.classLoader.getResourceAsStream(terminology.getOntologyFileName());
+		File ontologyFile = terminology.getOntologyFile();
+		logger.info("loading " + ontologyFile.getName());
 		// p RDF triple in memory :
 		
 		Repository rep = new SailRepository(new MemoryStore());
 		rep.initialize();
 		RepositoryConnection con = rep.getConnection();
-		con.add(ontologyInput, terminology.getNAMESPACE(), RDFFormat.TURTLE);
-		ontologyInput.close();
+		con.add(ontologyFile, terminology.getNAMESPACE(), RDFFormat.TURTLE);
 		setLabel(con, terminology.getMainClassIRI());
 		labelMainClass = getLabel(con,  terminology.getMainClassIRI());
 		IRI classNameIRI = terminology.getMainClassIRI();
@@ -173,8 +169,9 @@ public class GetSunburstHierarchyLabel implements FileQuery{
 		return MIMEtype;
 	}
 	
-	public static void main (String[] args) throws RDFParseException, RepositoryException, IOException{
-		GetSunburstHierarchyLabel getSunburstHierarchy = new GetSunburstHierarchyLabel(TerminoEnum.EVENTS.getTermino());
+	public static void main (String[] args) throws RDFParseException, RepositoryException, IOException, UnfoundTerminologyException{
+		Terminology terminology = TerminologyInstances.getTerminology("EVENTS");
+		GetSunburstHierarchyLabel getSunburstHierarchy = new GetSunburstHierarchyLabel(terminology);
 		File file = new File("CIM10Hierarchy.csv");
 		OutputStream os = new FileOutputStream(file);
 		getSunburstHierarchy.sendBytes(os);

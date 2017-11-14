@@ -1,7 +1,7 @@
 package terminology;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,13 +13,10 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.vocabulary.OWL;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.RDFS;
-import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.RepositoryResult;
-import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.RDFParseException;
-import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,13 +171,13 @@ public class ClassDescription {
 	private void addClasses(RepositoryConnection con, Set<IRI> classesIRI){
 		// Step 3 : create a new Instance of class OneClass for each classIRI
 		for (IRI oneIRI : classesIRI){
-			System.out.println(oneIRI);
+			//System.out.println(oneIRI);
 			OneClass classe = new OneClass(oneIRI); 			
 
 			RepositoryResult<Statement> statements = con.getStatements(null, RDFS.DOMAIN, oneIRI);
 			while(statements.hasNext()){
 				Statement stat = statements.next();
-				System.out.println("\t predicate : " + stat.getSubject().stringValue());
+				//System.out.println("\t predicate : " + stat.getSubject().stringValue());
 				IRI predicateIRI = (IRI)stat.getSubject();
 				classe.addPredicateIRI(predicateIRI);
 			}
@@ -190,36 +187,33 @@ public class ClassDescription {
 			HashSet<IRI> parentsIRI = getSusClassOfClass(con,oneIRI);
 			for (IRI parent : parentsIRI){
 				classe.addParent(parent);
-				System.out.println("\t parents : " + parent.getLocalName());
+				//System.out.println("\t parents : " + parent.getLocalName());
 			}
 			classes.add(classe);
 		} // close loop
 	}
 	
 	public ClassDescription(Terminology terminology) throws RDFParseException, RepositoryException, IOException{
+		
+		logger.info("New ClassDescription of terminology : " + terminology.getTerminologyName());
+		
 		terminologyNS = terminology.getNAMESPACE();
 		mainClassName = terminology.getClassName();
 		
 		// File containing the model : 
-		String pathOntolgoy = terminology.getOntologyFileName();
-		logger.info("loading " + pathOntolgoy);
-		InputStream ontologyInput = Util.classLoader.getResourceAsStream(pathOntolgoy);
+		File ontologyFile = terminology.getOntologyFile();
 		
 		// p RDF triple in memory : 
-		Repository rep = new SailRepository(new MemoryStore());
-		rep.initialize();
-		RepositoryConnection con = rep.getConnection();
-		con.add(ontologyInput, terminologyNS, Util.DefaultRDFformat);
-		ontologyInput.close();
+		RepositoryConnection ontologyCon = terminology.getOntologyCon();
 		
 		// list all classes rdf:SubClassOf of the main className 
 		Set<IRI> classesIRI = new HashSet<IRI>();
 //		IRI classIRI = Util.vf.createIRI(terminologyNS,mainClassName);
 //		classesIRI.add(classIRI); // main className
 //		classesIRI.addAll(getSubClassOfClass(con, classIRI)); // allSubClassOf
-		classesIRI.addAll(getAllClasses(con));
-		addClasses(con,classesIRI); // describing the class
-		con.close();
-		rep.shutDown();
+		classesIRI.addAll(getAllClasses(ontologyCon));
+		addClasses(ontologyCon,classesIRI); // describing the class
+		
+		//ontologyCon.close();
 	}
 }

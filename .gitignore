@@ -12,3 +12,4 @@ logs/
 catalog-v001.xml
 !server/V5/dev/leaflet
 target/
+terminologies/

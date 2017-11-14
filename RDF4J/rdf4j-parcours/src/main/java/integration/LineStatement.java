@@ -1,5 +1,6 @@
 package integration;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,11 +10,14 @@ import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exceptions.InvalidContextException;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundInstanceOfTerminologyException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
@@ -95,7 +99,7 @@ public class LineStatement {
 		this.terminology = terminology;
 	}
 	
-	public void addLineStatement (String line) throws UnfoundEventException, UnfoundPredicatException, InvalidContextException, ParseException, UnfoundTerminologyException, UnfoundInstanceOfTerminologyException{
+	public void addLineStatement (String line) throws UnfoundEventException, UnfoundPredicatException, InvalidContextException, ParseException, UnfoundTerminologyException, UnfoundInstanceOfTerminologyException, RDFParseException, RepositoryException, IOException, UnfoundFilterException{
 		
 		String[] columns = line.split(columnSeparator);
 		checknColumns(columns.length);
@@ -134,33 +138,6 @@ public class LineStatement {
 	    statements.add(Util.vf.createStatement(this.idEventIRI, predicateIRI, value, contextIRI));
 		return(statements);
 	}
-		// check if predicateIRI is a time Ontology predicate
-//		if (this.predicateIRI.equals(TIME.HASBEGINNING) || this.predicateIRI.equals(TIME.HASEND)){
-//			// Every event is a timeInterval
-//			statements.add(Util.vf.createStatement(this.idEventIRI, RDF.TYPE, TIME.INTERVAL,contextIRI));
-//			if (this.predicateIRI.equals(TIME.HASBEGINNING)){
-//				// create node timeInstantStart
-//				IRI timeInstantStart = Util.vf.createIRI(TIME.NAMESPACE, idEventIRI.getLocalName()+"Start");
-//				// this event hasBeginning this node 
-//				statements.add(Util.vf.createStatement(this.idEventIRI, TIME.HASBEGINNING, timeInstantStart,contextIRI));
-//				// the start of the event is a timeInstant
-//				statements.add(Util.vf.createStatement(timeInstantStart, RDF.TYPE, TIME.INSTANT,contextIRI));
-//				// the date value is
-//				statements.add(Util.vf.createStatement(timeInstantStart, TIME.INXSDDATETIME, this.value,contextIRI));
-//			} else {
-//				// create node timeInstantEnd
-//				IRI timeInstantEnd = Util.vf.createIRI(TIME.NAMESPACE, idEventIRI.getLocalName()+"End");
-//				// this event hasEnd this node 
-//				statements.add(Util.vf.createStatement(this.idEventIRI, TIME.HASEND, timeInstantEnd,contextIRI));;
-//				// the end of the event is a timeInstant
-//				statements.add(Util.vf.createStatement(timeInstantEnd, RDF.TYPE, TIME.INSTANT,contextIRI));
-//				// the date value is
-//				statements.add(Util.vf.createStatement(timeInstantEnd, TIME.INXSDDATETIME, this.value,contextIRI));
-//			}
-//		
-//		// if predicateIRI is not a time Ontology predicate
-//		} 
-
 
 
 	/**
@@ -202,9 +179,13 @@ public class LineStatement {
 	 * @throws UnfoundTerminologyException If the instance is not described in the terminology
 	 * @throws UnfoundInstanceOfTerminologyException 
 	 * @throws UnfoundEventException 
+	 * @throws IOException 
+	 * @throws RepositoryException 
+	 * @throws RDFParseException 
+	 * @throws UnfoundFilterException 
 	 */
 
-	private void setPredicateValue(String predicateName, String objValue) throws UnfoundPredicatException, ParseException, UnfoundTerminologyException, UnfoundInstanceOfTerminologyException, UnfoundEventException {	
+	private void setPredicateValue(String predicateName, String objValue) throws UnfoundPredicatException, ParseException, UnfoundTerminologyException, UnfoundInstanceOfTerminologyException, UnfoundEventException, RDFParseException, RepositoryException, IOException, UnfoundFilterException {	
 		
 		// check if it's a timePredicate
 //		if (TIME.isRecognizedTimePredicate(predicate)){

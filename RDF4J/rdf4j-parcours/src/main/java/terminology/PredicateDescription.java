@@ -1,5 +1,6 @@
 package terminology;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
 import ontologie.EIG;
 import parameters.Util;
@@ -34,6 +36,8 @@ public class PredicateDescription {
 	public enum ValueCategory {
 		NUMERIC, DURATION, DATE, STRING, HIERARCHY, TERMINOLOGY, SPATIALPOLYGON, SPATIALPOINT;
 	}
+	
+	private Terminology terminology ;
 	
 	private HashMap<IRI, Predicates> predicatesMap = new HashMap<IRI, Predicates>();
 	
@@ -58,24 +62,18 @@ public class PredicateDescription {
 		throw new UnfoundPredicatException(logger, predicateName);
 	}
 	
-	public PredicateDescription(Terminology terminology) throws IOException{
-		String path = terminology.getOntologyFileName();
-		InputStream ontologyInput = Util.classLoader.getResourceAsStream(path);
-		Repository rep = new SailRepository(new MemoryStore());
-		rep.initialize();
-		RepositoryConnection ontologyCon = rep.getConnection();		
-		ontologyCon.add(ontologyInput, terminology.getNAMESPACE(), Util.DefaultRDFformat);
-		
+	public PredicateDescription(Terminology terminology) throws IOException, UnfoundFilterException{
+		logger.info("New PredicateDescription of terminology : " + terminology.getTerminologyName());
+		this.terminology = terminology; 
+
+		RepositoryConnection ontologyCon = terminology.getOntologyCon();
 		setPredicates(ontologyCon);
 		setPredicateComment(ontologyCon);
 		setPredicateLabel(ontologyCon);
 		setPredicateIsObjectProperty(ontologyCon);
+		setHasFilter(ontologyCon);
 		setValueCategory();
-
-		
-		ontologyInput.close();
 		ontologyCon.close();
-		rep.shutDown();
 	}
 	
 	private void setPredicates(RepositoryConnection ontologyCon){
@@ -132,44 +130,59 @@ public class PredicateDescription {
 		values.close();
 	}
 	
-	private void setValueCategory(){
+	private void setHasFilter(RepositoryConnection ontologyCon){
+		RepositoryResult<Statement> values = ontologyCon.getStatements(null, EIG.HASFILTER, null);
+		while(values.hasNext()){
+			Statement statement = values.next();
+			IRI predicateIRI = (IRI) statement.getSubject();
+			if (predicatesMap.containsKey(predicateIRI)){
+				Literal filter = (Literal) statement.getObject();
+				//System.out.println(filter.stringValue());
+				predicatesMap.get(predicateIRI).addFilter(filter);
+			}
+		}
+		values.close();
+	}
+	
+	private void setValueCategory() throws UnfoundFilterException{
 		Iterator<Predicates> iter = getPredicatesMap().values().iterator();
 		while(iter.hasNext()){
 			Predicates predicate = iter.next();
-			predicate.setValueCategory(getValueCategory(predicate.getPredicateIRI(), predicate.getExpectedValue()));
+			predicate.setValueCategory(getValueCategory(predicate));
 		}
 	}
 	
-	private ValueCategory getValueCategory (IRI predicateIRI, Value value){
-		IRI valueIRI = (IRI) value;
+	private ValueCategory getValueCategory (Predicates predicate) throws UnfoundFilterException{
+		IRI predicateIRI = predicate.getPredicateIRI();
+		Literal filter = predicate.getFilter();
 		
-		if (predicateIRI.equals(EIG.HASCOORDINATE)){
-			return(ValueCategory.SPATIALPOINT);
+		// special cases : filter is described in the ontology with EIG.hasFilter
+		if (filter != null){ // 
+			String filterName = filter.stringValue();
+			filterName = filterName.toUpperCase();
+			//System.out.println("FilterName: " + filterName + " for predicate : " + predicateIRI.getLocalName());
+			for (ValueCategory category : ValueCategory.values()){
+				if (filterName.equals(category.toString())){
+					return(category);
+				}
+			}
+			throw new UnfoundFilterException(logger,filterName, predicateIRI);
 		}
 		
-		if (predicateIRI.equals(EIG.HASPOLYGON)){
-			return(ValueCategory.SPATIALPOLYGON);
+		if (predicate.getIsObjectProperty()){
+			return(ValueCategory.TERMINOLOGY);
 		}
 		
-		if (predicateIRI.equals(EIG.HASTYPE) || predicateIRI.equals(EIG.HASDP)){
-			return(ValueCategory.HIERARCHY);
-		}
+		IRI valueIRI = (IRI) predicate.getExpectedValue();
 		
 		if (XMLDatatypeUtil.isNumericDatatype(valueIRI)){
-			// Special case : 
-			if (predicateIRI.equals(EIG.HASDURATION)){
-				return(ValueCategory.DURATION);
-			}
 			return(ValueCategory.NUMERIC);
 		}
 		
 		if (XMLDatatypeUtil.isCalendarDatatype(valueIRI)){
 			return(ValueCategory.DATE);
 		}
-
-		if (TerminologyInstances.isRecognizedClassName(valueIRI)){
-			return(ValueCategory.TERMINOLOGY);
-		}
+		
 		return(ValueCategory.STRING); // default
 	}
 }

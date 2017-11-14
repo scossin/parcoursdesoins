@@ -18,7 +18,10 @@ public class MainResources {
 	/**
 	 * The path to terminologies (relative to this project folder)
 	 */
-	public final static String terminologiesFolder = "terminologies/";
+	public final static String terminologiesFolder = Project.terminologiesFolder;
+	
+	public final static String terminologyFileXMLname = "terminologies.xml";
+	public final static String terminologyFileDTDname = "terminologies.dtd";
 	
 	public final static String cacheFolder="cache/";
 

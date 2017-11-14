@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exceptions.InvalidContextException;
+import exceptions.UnfoundTerminologyException;
 import query.Query;
 import query.Results;
 import query.TimelineDescribeEvent;
@@ -29,12 +30,12 @@ public class GetEventDescriptionTimeline extends HttpServlet {
 		Query query = null;
 		try {
 			query = new TimelineDescribeEvent(eventName);
-		} catch (RDFParseException | RepositoryException | InvalidContextException e) {
+		} catch (RDFParseException | RepositoryException | InvalidContextException | UnfoundTerminologyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		String sparqlEndpoint = DockerDB.getEndpointIPadress(query.getEndpoint());
+		String sparqlEndpoint = query.getEndpoint().getEndpointIPadress();
 		Results results = new Results(sparqlEndpoint,query);
 		GetTimeline.sendResults(resp, results);
 }

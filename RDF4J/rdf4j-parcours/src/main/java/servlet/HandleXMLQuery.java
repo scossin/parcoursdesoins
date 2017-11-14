@@ -18,6 +18,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -29,6 +31,7 @@ import exceptions.MyExceptions;
 import exceptions.OperatorException;
 import exceptions.UnfoundDTDFile;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundResultVariable;
 import exceptions.UnfoundTerminologyException;
@@ -36,8 +39,8 @@ import query.DTDFiles;
 import query.Query;
 import query.Results;
 import query.XMLCountQuery;
-import query.XMLDescribeTimelinesQuery;
 import query.XMLDescribeTerminologyQuery;
+import query.XMLDescribeTimelinesQuery;
 import query.XMLFile;
 import query.XMLSearchQuery;
 import query.XMLSearchQueryTimeLines;
@@ -92,7 +95,7 @@ public class HandleXMLQuery extends HttpServlet {
 		} catch (NumberFormatException | UnfoundEventException | UnfoundPredicatException
 				| IncomparableValueException | UnfoundTerminologyException | OperatorException
 				| InvalidContextException | InvalidXMLFormat | ParserConfigurationException | SAXException
-				| ParseException | UnfoundDTDFile e1) {
+				| ParseException | UnfoundDTDFile | RDFParseException | RepositoryException | UnfoundFilterException e1) {
 			// TODO Auto-generated catch block
 			MyExceptions.logException(logger, e1);
 			e1.printStackTrace();
@@ -100,7 +103,7 @@ public class HandleXMLQuery extends HttpServlet {
 			xmlFileIn.close();
 		}
 
-		String sparqlEndpoint = DockerDB.getEndpointIPadress(query.getEndpoint());
+		String sparqlEndpoint = query.getEndpoint().getEndpointIPadress();
 		Results results = new Results(sparqlEndpoint,query);
 		try {
 			results.serializeResult();

@@ -8,6 +8,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -17,11 +19,12 @@ import org.xml.sax.SAXException;
 
 import exceptions.InvalidContextException;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import parameters.Util;
 import query.XMLFile.XMLelement;
-import servlet.DockerDB.Endpoints;
+import servlet.Endpoint;
 import terminology.OneClass;
 import terminology.Terminology;
 
@@ -68,8 +71,11 @@ public abstract class XMLDescribeQuery implements Query {
 	 * @throws UnfoundPredicatException
 	 * @throws InvalidContextException
 	 * @throws UnfoundTerminologyException 
+	 * @throws UnfoundFilterException 
+	 * @throws RepositoryException 
+	 * @throws RDFParseException 
 	 */
-	public XMLDescribeQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException, UnfoundEventException{
+	public XMLDescribeQuery (XMLFile xml) throws ParserConfigurationException, SAXException, IOException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException, UnfoundEventException, RDFParseException, RepositoryException, UnfoundFilterException{
 		this.xml = xml;
 		Node eventNode = xml.getEventNodes().item(0);
 		this.terminology = XMLFile.getTerminology(eventNode);
@@ -89,8 +95,12 @@ public abstract class XMLDescribeQuery implements Query {
 	 * List of predicates asked in the query and their expected value (datatype / object type) 
 	 * @param eventNode
 	 * @throws UnfoundPredicatException
+	 * @throws IOException 
+	 * @throws RepositoryException 
+	 * @throws RDFParseException 
+	 * @throws UnfoundFilterException 
 	 */
-	private void setPredicatesValues (Node eventNode) throws UnfoundPredicatException{
+	private void setPredicatesValues (Node eventNode) throws UnfoundPredicatException, RDFParseException, RepositoryException, IOException, UnfoundFilterException{
 		Element element = (Element) eventNode;
 		NodeList predicates = element.getElementsByTagName(XMLelement.predicateType.toString());
 		Node predicate = predicates.item(0);
@@ -126,8 +136,12 @@ public abstract class XMLDescribeQuery implements Query {
 	 * @param eventNode
 	 * @throws UnfoundPredicatException
 	 * @throws UnfoundEventException 
+	 * @throws IOException 
+	 * @throws RepositoryException 
+	 * @throws RDFParseException 
+	 * @throws UnfoundFilterException 
 	 */
-	private void setEventValuesSPARQL (Node eventNode) throws UnfoundPredicatException, UnfoundEventException{
+	private void setEventValuesSPARQL (Node eventNode) throws UnfoundPredicatException, UnfoundEventException, RDFParseException, RepositoryException, IOException, UnfoundFilterException{
 		Element element = (Element) eventNode;
 		NodeList eventInstance = element.getElementsByTagName(XMLelement.value.toString());
 		Node eventInstances = eventInstance.item(0);
@@ -163,7 +177,7 @@ public abstract class XMLDescribeQuery implements Query {
 	}
 	
 	@Override
-	public Endpoints getEndpoint() {
+	public Endpoint getEndpoint() {
 		return terminology.getEndpoint();
 	}
 

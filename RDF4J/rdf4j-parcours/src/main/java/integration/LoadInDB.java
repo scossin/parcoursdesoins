@@ -10,9 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exceptions.InvalidContextFormatException;
+import exceptions.UnfoundTerminologyException;
 import ontologie.EIG;
 import parameters.MainResources;
 import parameters.Util;
+import terminology.Terminology;
+import terminology.TerminologyInstances;
 
 /**
  * This class aims to load timeLines files in triplestore
@@ -39,8 +42,8 @@ public class LoadInDB {
 		if (!Util.isValidContextFileFormat(file)){
 			throw new InvalidContextFormatException(logger,file.getName());
 		}
+		con.getDBcon().clear(); // remove previous statements
 		IRI contextIRI = EIG.getContextIRI(file);
-		con.getDBcon().clear(contextIRI); // remove previous statements
 		con.getDBcon().add(file, EIG.NAMESPACE, Util.DefaultRDFformat,contextIRI);
 	}
 	
@@ -59,11 +62,13 @@ public class LoadInDB {
 		}
 	}
 	
-	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException, InvalidContextFormatException {
+	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException, InvalidContextFormatException, UnfoundTerminologyException {
 		// TODO Auto-generated method stub
 		String timelinesFolderPath = Util.classLoader.getResource(MainResources.timelinesFolder).getPath();
 		File timelinesFolder = new File(timelinesFolderPath);
-		LoadInDB load = new LoadInDB(Util.sparqlEndpoint);
+		Terminology terminology = TerminologyInstances.getTerminology(EIG.TerminologyName);
+		String sparqlEndpoint = terminology.getEndpoint().getEndpointIPadress();
+		LoadInDB load = new LoadInDB(sparqlEndpoint);
 		
 		//String fichier = MainResources.directoryMainResources + MainResources.terminologiesFolder + "p9999.ttl";
 		//load.loadTimelineFile(new File(fichier));

@@ -3,7 +3,6 @@ package queryFiles;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 
@@ -21,10 +20,9 @@ import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ontologie.EIG;
-import parameters.Util;
-import terminology.TerminoEnum;
+import exceptions.UnfoundTerminologyException;
 import terminology.Terminology;
+import terminology.TerminologyInstances;
 
 public class GetSunburstHierarchy implements FileQuery{
 
@@ -76,13 +74,13 @@ public class GetSunburstHierarchy implements FileQuery{
 	
 	public GetSunburstHierarchy(Terminology terminology) throws RDFParseException, RepositoryException, IOException{
 		// TODO Auto-generated method stub
-		InputStream ontologyInput = Util.classLoader.getResourceAsStream(terminology.getOntologyFileName());
+		File ontologyFile = terminology.getOntologyFile();
+		logger.info("loading " + ontologyFile.getName());
 		// p RDF triple in memory : 
 		Repository rep = new SailRepository(new MemoryStore());
 		rep.initialize();
 		RepositoryConnection con = rep.getConnection();
-		con.add(ontologyInput, terminology.getNAMESPACE(), RDFFormat.TURTLE);
-		ontologyInput.close();
+		con.add(ontologyFile, terminology.getNAMESPACE(), RDFFormat.TURTLE);
 		IRI classNameIRI = terminology.getMainClassIRI();
 		setChildParent(con, classNameIRI);
 		this.hierarchy = getHierarchy();
@@ -121,8 +119,9 @@ public class GetSunburstHierarchy implements FileQuery{
 		return MIMEtype;
 	}
 	
-	public static void main (String[] args) throws RDFParseException, RepositoryException, IOException{
-		GetSunburstHierarchy getSunburstHierarchy = new GetSunburstHierarchy(TerminoEnum.EVENTS.getTermino());
+	public static void main (String[] args) throws RDFParseException, RepositoryException, IOException, UnfoundTerminologyException{
+		Terminology terminology = TerminologyInstances.getTerminology("EVENT");
+		GetSunburstHierarchy getSunburstHierarchy = new GetSunburstHierarchy(terminology);
 		File file = new File("CIM10Hierarchy.csv");
 		OutputStream os = new FileOutputStream(file);
 		getSunburstHierarchy.sendBytes(os);

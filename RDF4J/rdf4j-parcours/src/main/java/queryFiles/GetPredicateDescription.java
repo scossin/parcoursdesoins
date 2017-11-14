@@ -12,12 +12,14 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.rio.RDFParseException;
 
+import exceptions.UnfoundFilterException;
+import exceptions.UnfoundTerminologyException;
 import terminology.PredicateDescription;
 import terminology.Predicates;
-import terminology.TerminoEnum;
 import terminology.Terminology;
+import terminology.TerminologyInstances;
 
-public class GetPredicateDescription extends PredicateDescription implements FileQuery{
+public class GetPredicateDescription implements FileQuery{
 
 	public final static String fileName = "predicatesDescription.csv";
 	private final static String MIMEtype = "text/csv";
@@ -30,8 +32,11 @@ public class GetPredicateDescription extends PredicateDescription implements Fil
 		return(MIMEtype);
 	}
 	
-	public GetPredicateDescription(Terminology terminology) throws IOException{
-		super(terminology);
+	PredicateDescription predicateDescription ;
+	
+	public GetPredicateDescription(Terminology terminology) throws IOException, UnfoundFilterException{
+		this.predicateDescription = terminology.getPredicateDescription();
+		//super(terminology);
 	}
 	
 	public String getComments(){
@@ -44,7 +49,7 @@ public class GetPredicateDescription extends PredicateDescription implements Fil
 		line.append("lang");
 		line.append("\n");
 		
-		Iterator<Predicates> iter = getPredicatesMap().values().iterator();
+		Iterator<Predicates> iter = predicateDescription.getPredicatesMap().values().iterator();
 		while (iter.hasNext()){
 			Predicates predicate = iter.next();
 			for (Literal comment : predicate.getComments()){
@@ -69,7 +74,7 @@ public class GetPredicateDescription extends PredicateDescription implements Fil
 		line.append("lang");
 		line.append("\n");
 		
-		Iterator<Predicates> iter = getPredicatesMap().values().iterator();
+		Iterator<Predicates> iter = predicateDescription.getPredicatesMap().values().iterator();
 		while (iter.hasNext()){
 			Predicates predicate = iter.next();
 			for (Literal label : predicate.getLabels()){
@@ -94,7 +99,7 @@ public class GetPredicateDescription extends PredicateDescription implements Fil
 		line.append("value");
 		line.append("\n");
 		
-		Iterator<Predicates> iter = getPredicatesMap().values().iterator();
+		Iterator<Predicates> iter = predicateDescription.getPredicatesMap().values().iterator();
 		while (iter.hasNext()){
 			Predicates predicate = iter.next();
 			String category = predicate.getCategory().toString();
@@ -118,8 +123,9 @@ public class GetPredicateDescription extends PredicateDescription implements Fil
 		os.write(getCategory().getBytes());
 	}
 	
-	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException{
-		GetPredicateDescription comments = new GetPredicateDescription(TerminoEnum.EVENTS.getTermino().initialize());
+	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException, UnfoundTerminologyException, UnfoundFilterException{
+		Terminology terminology = TerminologyInstances.getTerminology("EVENTS");
+		GetPredicateDescription comments = new GetPredicateDescription(terminology);
 		File file = new File("commentaires.csv");
 		OutputStream os = new FileOutputStream(file);
 		comments.sendBytes(os);

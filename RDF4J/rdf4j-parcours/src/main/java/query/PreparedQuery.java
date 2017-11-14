@@ -2,7 +2,7 @@ package query;
 
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
 
-import servlet.DockerDB.Endpoints;
+import servlet.Endpoint;
 import terminology.Terminology;
 
 public class PreparedQuery implements Query {
@@ -31,7 +31,7 @@ public class PreparedQuery implements Query {
 	}
 
 	@Override
-	public Endpoints getEndpoint() {
+	public Endpoint getEndpoint() {
 		return(terminology.getEndpoint());
 	}
 

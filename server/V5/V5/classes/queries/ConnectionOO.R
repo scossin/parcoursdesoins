@@ -15,6 +15,21 @@ Connection <- R6::R6Class(
     # filePredicateFrequency = "predicateFrequency.csv",
     # fileEventHierarchy4Sunburst = "EventHierarchy4Sunburst.csv",
     
+    getTerminologies = function(){
+      terminologies <- self$getContent(terminologyName = "Event",information = "terminologies")
+      terminologies <- read.table(file=textConnection(terminologies), sep="\t",header =F,
+                                  stringsAsFactors = F)
+      
+      
+      # url <- paste0(private$getWebServerURL(),private$GetContextDescriptionURL)
+      # response <- httr::GET(url, query=list(contextName = contextName))
+      # private$checkResponse(response)
+      # terminologies <- rawToChar(response$content)
+      # terminologies <- read.table(file=textConnection(terminologies), sep="\t",header =F,
+      #                             stringsAsFactors = F)
+      return(terminologies)
+    },
+    
     getContextDescriptionTimeline = function(contextName){
       url <- paste0(private$getWebServerURL(),private$GetContextDescriptionURL)
       response <- httr::GET(url, query=list(contextName = contextName))
@@ -92,7 +107,7 @@ Connection <- R6::R6Class(
     GetEventDescriptionURL = "GetEventDescriptionTimeline",
     GetContextDescriptionURL = "GetContextDescriptionTimeline",
     GetShinyTreeHierarchy = "GetShinyTreeHierarchy",
-    
+    GetTerminologies = "GetTerminologies",
     
     checkResponse = function(response){
       if (response$status_code!=200){

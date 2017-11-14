@@ -4,35 +4,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.query.impl.SimpleDataset;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 import exceptions.IncomparableValueException;
 import exceptions.InvalidContextException;
 import exceptions.InvalidXMLFormat;
 import exceptions.OperatorException;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
 import ontologie.EIG;
 import parameters.MainResources;
 import parameters.Util;
-import query.XMLFile.XMLelement;
-import servlet.DockerDB.Endpoints;
-import terminology.Predicates;
-import terminology.Terminology;
 
 
 /**
@@ -61,8 +52,11 @@ public class XMLSearchQueryTimeLines extends XMLSearchQuery implements Query {
 	 * @throws OperatorException 
 	 * @throws InvalidContextException 
 	 * @throws InvalidXMLFormat 
+	 * @throws UnfoundFilterException 
+	 * @throws RepositoryException 
+	 * @throws RDFParseException 
 	 */
-	public XMLSearchQueryTimeLines(XMLFile xmlFile) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat{
+	public XMLSearchQueryTimeLines(XMLFile xmlFile) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, RDFParseException, RepositoryException, UnfoundFilterException{
 		super(xmlFile);
 	}
 	
@@ -140,7 +134,7 @@ public class XMLSearchQueryTimeLines extends XMLSearchQuery implements Query {
 		return(queryString);
 	}
 	
-	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat {
+	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, RDFParseException, RepositoryException, UnfoundFilterException {
 		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "XMLquerysearchTimelines.dtd82554413239.xml" );
 		XMLSearchQueryTimeLines queryClass = new XMLSearchQueryTimeLines(new XMLFile(xmlFile));
 		System.out.println(queryClass.getSPARQLQueryString());

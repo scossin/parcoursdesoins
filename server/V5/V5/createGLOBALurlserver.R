@@ -7,6 +7,11 @@
 ## the other solution is to put the webserver container on a server and pass the URL directly here
 ## the shiny apps is local
 
+## parameters : 
+webserverENV = "WEBSERVERPMSI_PORT"
+webapp <- "/parcoursdesoins-0.0.1/"
+
+
 args <- (commandArgs(TRUE))
 if (length(args) == 0){
   folder <- NULL
@@ -16,7 +21,7 @@ if (length(args) == 0){
 
 
 envVariables <- Sys.getenv()                                                                    
-bool <- names(envVariables) == "WEBSERVER_PORT"
+bool <- names(envVariables) == webserverENV
 if (!any(bool)){
   msg <- "No WEBSERVER_PORT env variable found, 
                            is the shiny apps running inside a docker container 
@@ -25,7 +30,7 @@ if (!any(bool)){
 }
 httpAdress <- as.character(envVariables[bool])                                                  
 httpAdress <- gsub("^tcp","http",httpAdress)
-webserverURL <- paste0(httpAdress, "/parcoursdesoins-0.0.1/")
+webserverURL <- paste0(httpAdress, webapp)
 
 GLOBALurlserver <- webserverURL
 path <- paste0(folder,"GLOBALurlserver.rdata")

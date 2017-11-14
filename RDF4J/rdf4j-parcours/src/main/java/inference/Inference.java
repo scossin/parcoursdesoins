@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import exceptions.InvalidOntology;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundTerminologyException;
 import ontologie.EIG;
 import parameters.MainResources;
@@ -47,7 +48,7 @@ import terminology.TerminologyInstances;
 public class Inference{
 	final static Logger logger = LoggerFactory.getLogger(Inference.class);
 	
-	public static HashSet<Statement> setEIGtype (RepositoryConnection con) throws InvalidOntology, UnfoundTerminologyException{
+	public static HashSet<Statement> setEIGtype (RepositoryConnection con) throws InvalidOntology, UnfoundTerminologyException, RDFParseException, RepositoryException, IOException, UnfoundFilterException{
 		Terminology eventTerminology = TerminologyInstances.getTerminology(EIG.TerminologyName);
 		RepositoryResult<Statement> statements = con.getStatements(null, RDF.TYPE, null);
 		HashSet<Statement> statements2 = new HashSet<Statement>() ;
@@ -72,7 +73,7 @@ public class Inference{
 		return(statements2);
 	}
 	
-	public static HashSet<Statement> getSubClassOf(RepositoryConnection con) throws UnfoundTerminologyException{
+	public static HashSet<Statement> getSubClassOf(RepositoryConnection con) throws UnfoundTerminologyException, RDFParseException, RepositoryException, IOException, UnfoundFilterException{
 		Terminology eventTerminology = TerminologyInstances.getTerminology(EIG.TerminologyName);
 		RepositoryResult<Statement> statements = con.getStatements(null, RDF.TYPE, null);
 		HashSet<Statement> statements2 = new HashSet<Statement>() ;
@@ -217,7 +218,7 @@ public class Inference{
 		return(diffSeconds);
 	}
 	
-	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException, UnfoundEventException, DatatypeConfigurationException, InvalidOntology, UnfoundTerminologyException{
+	public static void main(String[] args) throws RDFParseException, RepositoryException, IOException, UnfoundEventException, DatatypeConfigurationException, InvalidOntology, UnfoundTerminologyException, UnfoundFilterException{
 		Repository rep = new SailRepository(new MemoryStore());
 		rep.initialize();
 		RepositoryConnection con = rep.getConnection();

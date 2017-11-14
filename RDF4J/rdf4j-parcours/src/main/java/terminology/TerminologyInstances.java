@@ -1,19 +1,32 @@
 package terminology;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.rio.RDFParseException;
-import org.eclipse.rdf4j.rio.datatypes.XMLSchemaDatatypeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
+import exceptions.IncomparableValueException;
+import exceptions.InvalidContextException;
+import exceptions.UnfoundClassException;
 import exceptions.UnfoundEventException;
+import exceptions.UnfoundFilterException;
+import exceptions.UnfoundInstanceOfTerminologyException;
+import exceptions.UnfoundPredicatException;
 import exceptions.UnfoundTerminologyException;
+import integration.CheckInstances;
+import parameters.MainResources;
+import parameters.Util;
 
 public class TerminologyInstances {
 	
@@ -22,35 +35,30 @@ public class TerminologyInstances {
 	public static Set<Terminology> terminologies = new HashSet<Terminology>();
 	
 	static {
-		for (TerminoEnum termino : TerminoEnum.values()){
-			try {
-				terminologies.add(termino.getTermino());
-			} catch (RDFParseException | RepositoryException | IOException e) {
-				e.printStackTrace();
-			}
+		URL urlXMLfile = Util.classLoader.getResource(MainResources.terminologiesFolder + MainResources.terminologyFileXMLname);
+		File xmlFile = new File(urlXMLfile.getFile());
+		
+		URL urlDTDfile = Util.classLoader.getResource(MainResources.terminologiesFolder + MainResources.terminologyFileDTDname);
+		File dtdFile = new File(urlDTDfile.getFile());
+		
+		TerminologyXML terminologyXML = null;
+		try {
+			terminologyXML = new TerminologyXML(xmlFile,dtdFile);
+			terminologies = terminologyXML.getTerminologies();
+		} catch (InvalidContextException | UnfoundEventException | ParserConfigurationException | SAXException
+				| IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
-	public static boolean isRecognizedType(IRI typeIRI){ 
-		return(TerminologyInstances.isRecognizedClassName(typeIRI) || new XMLSchemaDatatypeHandler().isRecognizedDatatype(typeIRI));
-	}
-	
-	public static boolean isRecognizedClassName(IRI className){
-		for (Terminology terminology : terminologies) {
-			if (terminology.getMainClassIRI().equals(className)){
-				return(true);
-			}
-		}
-		return(false);
-	}
-
 	public static Terminology getTerminologyByMainClassIRI(IRI mainClassIRI) throws UnfoundTerminologyException{
 		for (Terminology terminology : terminologies) {
 			if (terminology.getMainClassIRI().equals(mainClassIRI)){
 				return(terminology);
 			}
 		}
-		throw new UnfoundTerminologyException(logger, mainClassIRI.stringValue() + "does not belong to a terminology");
+		throw new UnfoundTerminologyException(logger, mainClassIRI.stringValue() + " does not belong to a terminology");
 	}
 	
 	public static Terminology getTerminology(String terminologyName) throws UnfoundTerminologyException{
@@ -64,31 +72,44 @@ public class TerminologyInstances {
 	
 	public static Set<IRI> getClassNames() throws RDFParseException, RepositoryException, IOException{
 		Set<IRI> classNamesIRI = new HashSet<IRI>();
-		for (TerminoEnum terminology : TerminoEnum.values()){
-			classNamesIRI.add(terminology.getTermino().getMainClassIRI());
+		for (Terminology terminology : terminologies){
+			classNamesIRI.add(terminology.getMainClassIRI());
 		}
 		return(classNamesIRI);
 	}
 	
-	public static void closeConnections(){
+	public static void closeConnections() throws RDFParseException, RepositoryException, IOException, UnfoundFilterException{
 		Iterator<Terminology> iter = TerminologyInstances.terminologies.iterator();
 		while(iter.hasNext()){
 			Terminology terminology = iter.next();
-			terminology.getTerminologyServer().getCon().close();
+			terminology.closeConnection();
 		}
 	}
 	
-	public static void main(String[] args) throws UnfoundTerminologyException, UnfoundEventException{
+	public static void main(String[] args) throws Exception{
+
 		for (Terminology terminology : TerminologyInstances.terminologies){
-			System.out.println(terminology.getClassName());
+			if (!terminology.getTerminologyName().equals("GHM")){
+				continue;
+			}
+			terminology.getTerminologyServer().countInstances();
+			terminology.getTerminologyServer().loadTerminology();
+			terminology.getTerminologyServer().countInstances();
+			terminology.closeConnection();
 		}
 		
-		Terminology event = TerminologyInstances.getTerminology("Event");
-		OneClass aphasie = event.getClassDescription().getClass("SejourMCO");
-		Set<IRI> predicatesIRI = event.getClassDescription().getPredicatesOfClass(aphasie);
-		for (IRI predicateIRI : predicatesIRI){
-			System.out.println(predicateIRI.getLocalName());
-		}
+//		Terminology terminology = TerminologyInstances.getTerminology("Graph");
+//		terminology.getTerminologyServer().countInstances();
+//		terminology.getTerminologyServer().loadTerminology();
+//		terminology.closeConnection();
+		//System.out.println(terminology.getClassName());
+		
+//		Terminology event = TerminologyInstances.getTerminology("Event");
+//		OneClass aphasie = event.getClassDescription().getClass("SejourMCO");
+//		Set<IRI> predicatesIRI = event.getClassDescription().getPredicatesOfClass(aphasie);
+//		for (IRI predicateIRI : predicatesIRI){
+//			System.out.println(predicateIRI.getLocalName());
+//		}
 		
 	}
 }
