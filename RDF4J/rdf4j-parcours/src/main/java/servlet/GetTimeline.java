@@ -26,6 +26,28 @@ public class GetTimeline extends HttpServlet {
 
 	final static Logger logger = LoggerFactory.getLogger(GetTimeline.class);
 	
+	public static void sendFile(OutputStream os, File file) throws IOException{
+		FileInputStream fis = null;
+		try {
+			logger.info("preparing to send file " + file.getAbsolutePath());
+			fis = new FileInputStream(file);
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+		try {
+			int BUFF_SIZE = 8*1024;
+			byte[] buffer = new byte[BUFF_SIZE];
+			int byteRead = 0;
+			while ((byteRead = fis.read(buffer)) != -1) {
+				os.write(buffer, 0, byteRead);
+			}
+			logger.info("\t file sent ");
+		} finally{
+			fis.close();
+			os.close();
+		}
+	}
+	
 	public static void sendResults(HttpServletResponse resp, Results results) throws IOException{
 		try {
 			results.serializeResult();
@@ -34,30 +56,10 @@ public class GetTimeline extends HttpServlet {
 			e1.printStackTrace();
 		}
 		File file = results.getFile();
-		FileInputStream fis = null;
-
-		try {
-			logger.info("preparing to send file " + file.getAbsolutePath());
-			fis = new FileInputStream(file);
-		} catch (IOException e){
-			e.printStackTrace();
-		}
-		OutputStream os = null;
-		try {
-			int BUFF_SIZE = 8*1024;
-			byte[] buffer = new byte[BUFF_SIZE];
-			os = resp.getOutputStream();
-			int byteRead = 0;
-			while ((byteRead = fis.read(buffer)) != -1) {
-				os.write(buffer, 0, byteRead);
-			}
-			logger.info("\t file sent ");
-		} finally{
-			results.getCon().close();
-			fis.close();
-			os.close();
-		}
+		sendFile(resp.getOutputStream(), file);
+		results.getCon().close();
 	}
+	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("text/csv");
 		resp.setHeader("Content-Disposition","attachment;filename="+"results.csv");

@@ -28,6 +28,9 @@ public class EIG {
 
 	public static final String TerminologyName = "Event";
 	
+	// check ces terminologies sont bien présentes dans le xml
+	public static final String contextTerminologyName = "Graph";
+	
 	/**
 	 * Recommended prefix for my ontology namespace: "eig"
 	 */

@@ -12,20 +12,15 @@ FilterHierarchical <- R6::R6Class(
     
     initialize = function(contextEnv, terminology, predicateName, dataFrame, parentId, where){
       super$initialize(contextEnv, predicateName, dataFrame, parentId, where)
+      private$setRandomNumber()
       staticLogger$info("initiliazing a new HierarchicalSunburst")
       self$terminology <- terminology
       self$setHierarchicalData()
       self$insertUIandPlot()
-      self$addChangePlotObserver()
       self$addTreeObserver()
       self$addSunburstObserver()
+      self$addChangePlotObserver()
     }, 
-    
-    getEventCount = function(){
-      tab <- table(self$dataFrame$value)
-      eventCount <- data.frame(className = names(tab), count = as.numeric(tab))
-      return(eventCount)
-    },
     
     getDescription = function(){
       namesChosen <- self$getEventChoice()
@@ -52,26 +47,40 @@ FilterHierarchical <- R6::R6Class(
       eventType <- self$contextEnv$instanceSelection$className
       terminologyName <- self$contextEnv$instanceSelection$terminology$terminologyName
       contextEvents <- self$contextEnv$instanceSelection$getContextEvents()
-      print(self$dataFrame)
+      # print(self$dataFrame)
       self$dataFrame <- staticFilterCreator$getDataFrame(terminologyName = terminologyName, 
                                                          eventType = eventType, 
                                                          contextEvents = contextEvents, 
                                                          predicateName = self$predicateName)
-      print(self$dataFrame)
+      # print(self$dataFrame)
       self$setHierarchicalData()
       self$makePlot()
     },
     
+    ### DONT touch this function getEventCount because FilterHierarchicalEvent overrides it !
+    getEventCount = function(){
+      tab <- table(self$dataFrame$value)
+      eventCount <- data.frame(className = names(tab), count = as.numeric(tab))
+      return(eventCount)
+    },
+    
     setHierarchicalData = function(){
+      staticLogger$info("Setting hierarchical Data")
       eventCount <- self$getEventCount()
+      # print(eventCount)
       ## hierarchy
       hierarchy <- self$getHierarchy()
-      staticLogger$info("merging hierarchy and eventCount ...")
+      # print(hierarchy)
+      staticLogger$info("\t Merging hierarchy and eventCount ...")
       bool <- nrow(eventCount) == 0
       if (bool){
         hierarchicalData <- hierarchy
         hierarchicalData$count <- 0
+        private$eventChoice <- GLOBALnoChoiceAvailable
+        self$printChoice()
       } else {
+        bool <- hierarchy$code %in% eventCount$className
+        hierarchy <- subset (hierarchy, bool)
         hierarchicalData <- merge (hierarchy, eventCount, by.x="code", by.y="className",all.x=T)
       }
       bool <- is.na(hierarchicalData$count) | hierarchicalData$count == 0
@@ -87,9 +96,9 @@ FilterHierarchical <- R6::R6Class(
       staticLogger$info("Trying to getHierarchy from server")
       content <- GLOBALcon$getContent(terminologyName = self$terminology$terminologyName,
                                       information = GLOBALcon$information$hierarchy)
-      print(self$terminology$terminologyName)
-      print(content)
-      staticLogger$info("Content received, reading content ...")
+      # print(self$terminology$terminologyName)
+      # print(content)
+      # staticLogger$info("Content received, reading content ...")
       hierarchy <- GLOBALcon$readContentStandard(content)
       bool <- colnames(hierarchy) %in% c("code","label","tree")
       if (!all(bool)){
@@ -100,7 +109,7 @@ FilterHierarchical <- R6::R6Class(
     },
     
     destroy = function(){
-      staticLogger$info("Destroying hierarchicalSunburst",self$getObjectId())
+      staticLogger$info("Destroying hierarchicalSunburst",self$getHierarchicalPlotId())
       
       staticLogger$info("\t Destroying observer sunburstObserver")
       if (!is.null(self$sunburstObserver)){
@@ -127,7 +136,7 @@ FilterHierarchical <- R6::R6Class(
     },
     
     getCodeFromLabel = function(label){
-      print(self$hierarchicalData)
+      # print(self$hierarchicalData)
       bool <- self$hierarchicalData$label == label
       if (sum(bool)== 0){
         staticLogger$error(label, "not found in hierarchicalData")
@@ -141,29 +150,33 @@ FilterHierarchical <- R6::R6Class(
     },
     
     getEventTypeSunburst = function(sunburstChoice){
-      # hierarchicalChoice is a vector with length the depth of the node in the hierarchy
+      # sunburstChoice is a vector with length the depth of the node in the hierarchy
       staticLogger$info("Getting event from choice : ", sunburstChoice)
-      hierarchicalChoice <- sunburstChoice
-      # if (length(hierarchicalChoice) == 1){ ## it's the top class : no parent
-      #   code <- self$getCodeFromLabel(hierarchicalChoice)
-      #   return(code)
-      # }
-      hierarchicalChoice <- paste(hierarchicalChoice, collapse="-")
-      bool <- self$hierarchicalData$hierarchy %in% hierarchicalChoice 
-      print(self$hierarchicalData)
+      sunburstChoice <- paste(sunburstChoice, collapse="-")
+      bool <- grepl(pattern = sunburstChoice,self$hierarchicalData$hierarch, fixed = T)
+      # bool <- self$hierarchicalData$hierarchy %in% sunburstChoice 
+      # print(self$hierarchicalData)
       if (!any(bool)){
-        stop(hierarchicalChoice, " : not found in hierarchicalData")
+        stop(sunburstChoice, " : not found in hierarchicalData")
       }
-      if (sum(bool) != 1){
-        stop(hierarchicalChoice, " : many possibilities in hierarchicalData")
-      }
+      # if (sum(bool) != 1){
+      #   stop(sunburstChoice, " : many possibilities in hierarchicalData")
+      # }
       eventType <- as.character(self$hierarchicalData$label[bool])
       staticLogger$info("eventType found : ", eventType)
       return(eventType)
     }, 
     
-    getObjectId = function(){
-      return(paste0("hierarchical",self$parentId))
+    getDivId = function(){
+      return(paste0("hierarchical-", private$randomNumber,self$parentId))
+    },
+    
+    getHierarchicalPlotId = function(){
+      return(paste0("HierarchicalPlot",self$getDivId()))
+    },
+    
+    getDivSunburstId = function(){
+      return(paste0("DivSunburstId", self$getHierarchicalPlotId()))
     },
     
     getSunburstId = function(){
@@ -171,11 +184,7 @@ FilterHierarchical <- R6::R6Class(
     },
     
     getShinyTreeId = function(){
-      return(paste0("shinyTree",self$getObjectId()))
-    },
-    
-    getDivSunburstId = function(){
-      return(paste0("DivSunburstId", self$getObjectId()))
+      return(paste0("shinyTree",self$getHierarchicalPlotId()))
     },
     
     getUIshinytree = function(){
@@ -190,22 +199,8 @@ FilterHierarchical <- R6::R6Class(
       return(ui)
     },
     
-    insertUIgraphic = function(){
-      if (private$currentChoice == "SHINYTREE"){
-        ui <- self$getUIshinytree()
-      } else if (private$currentChoice == "SUNBURST") {
-        ui <- self$getUIsunburst()
-      }
-      insertUI(
-        selector = private$getJquerySelector(self$getObjectId()),
-        where = "beforeEnd",
-        ui = ui,
-        immediate = T
-      )
-    },
-    
     getChoiceVerbatimId = function(){
-      return(paste0("ChoiceVerbatim",self$getObjectId()))
+      return(paste0("ChoiceVerbatim",self$getDivId()))
     },
     
     printChoice = function(){
@@ -219,6 +214,8 @@ FilterHierarchical <- R6::R6Class(
     getCodeChoice = function(){
       labelChoices <- self$getEventChoice()
       bool <- as.character(self$hierarchicalData$label) %in% as.character(labelChoices)
+      print(labelChoices)
+      print(sum(bool))
       return(as.character(self$hierarchicalData$code[bool]))
     },
     
@@ -255,9 +252,7 @@ FilterHierarchical <- R6::R6Class(
     addEventChoiceSunburst = function(selection){
       previousChoices <- private$eventChoice
       bool <- selection %in% previousChoices
-      if  (!bool){
-        private$eventChoice <- c(selection,previousChoices)
-      }
+      private$eventChoice <- c(selection[!bool],previousChoices)
       return(NULL)
     },
     
@@ -279,13 +274,13 @@ FilterHierarchical <- R6::R6Class(
       self$treeObserver <- observeEvent(input[[self$getShinyTreeId()]],{
         #### add an observer for tree : 
         selection <- unlist(get_selected(input[[self$getShinyTreeId()]]))
-        print(selection)
         if (is.null(selection)){
           private$eventChoice <- character()
           self$printChoice()
           return(NULL)
         }
-        eventChoice <- sapply(selection, function(x) gsub("[(][0-9]+[)]$", "",x))
+        eventChoice <- sapply(selection, function(x) gsub(" [(][0-9]+[)]$", "",x))
+        staticLogger$user("New user choice ShinyTree: ", eventChoice)
         self$addEventChoiceTree(eventChoice)
         self$printChoice()
       },ignoreNULL = F)
@@ -301,11 +296,12 @@ FilterHierarchical <- R6::R6Class(
     },
     
     insertUIhierarchical = function(){
-      staticLogger$info("inserting HierarchicalSunburst", self$getObjectId(),self$where,self$parentId)
-      ui <- div (id = self$getObjectId(),
+      staticLogger$info("inserting HierarchicalSunburst")
+      ui <- div (id = self$getDivId(),
                  shiny::actionButton(inputId = self$getButtonChangePlotId(), label="",
                                      icon = icon("refresh")),
-                 shiny::verbatimTextOutput(outputId = self$getChoiceVerbatimId()))
+                 shiny::verbatimTextOutput(outputId = self$getChoiceVerbatimId()),
+                 div(id = self$getHierarchicalPlotId()))
 
       insertUI(
         selector = private$getJquerySelector(self$parentId),
@@ -315,26 +311,44 @@ FilterHierarchical <- R6::R6Class(
       )
     },
     
+    insertUIgraphic = function(){
+      if (private$currentChoice == "SHINYTREE"){
+        ui <- self$getUIshinytree()
+      } else if (private$currentChoice == "SUNBURST") {
+        ui <- self$getUIsunburst()
+      }
+      insertUI(
+        selector = private$getJquerySelector(self$getHierarchicalPlotId()),
+        where = "beforeEnd",
+        ui = ui,
+        immediate = T
+      )
+    },
+    
     removeUIhierarchical = function(){
-      # selector = private$getJquerySelector(self$getObjectId())
+      # selector = private$getJquerySelector(self$getHierarchicalPlotId())
       # removeUI(selector = selector)
+      # self$removeUIgraphic()
+      # session$sendCustomMessage(type = "removeId",
+      #                           message = list(objectId = self$getChoiceVerbatimId()))
       session$sendCustomMessage(type = "removeId",
-                                message = list(objectId = self$getObjectId()))
+                                message = list(objectId = self$getDivId()))
     },
     
     getShinyList = function(){
       terminologyName <- self$terminology$terminologyName
       dfShinyTreeQuery <- subset(self$hierarchicalData, size != 0, select=c("code","size"))
+      print(dfShinyTreeQuery)
       dfShinyTreeQuery$terminologyName <- ""
       dfShinyTreeQuery <- dfShinyTreeQuery[,c(3,1,2)]
       colnames(dfShinyTreeQuery)[1] <- terminologyName
-      print(dfShinyTreeQuery)
       content <- GLOBALcon$getShinyTreeList(dfShinyTreeQuery)
+      print(content)
       return(content)
     },
     
     makePlot = function(){
-      staticLogger$info("Plotting hierarchical", self$getObjectId())
+      staticLogger$info("Plotting hierarchical", self$getHierarchicalPlotId())
       if (private$currentChoice == "SUNBURST"){
         output[[self$getSunburstId()]] <- renderSunburst({
           sunburstData <- private$getSunburstData()
@@ -347,12 +361,11 @@ FilterHierarchical <- R6::R6Class(
         output[[self$getShinyTreeId()]] <- shinyTree::renderTree({
           jsonlite::fromJSON(self$getShinyList())
         })
-        staticLogger$info("Done")
       }
     },
     
     insertUIandPlot = function(){
-      staticLogger$info("Inserting UI hierarchical", self$getObjectId())
+      staticLogger$info("Inserting UI hierarchical", self$getHierarchicalPlotId())
       self$insertUIhierarchical()
       self$insertUIgraphic()
       self$makePlot()
@@ -360,7 +373,7 @@ FilterHierarchical <- R6::R6Class(
     
     addChangePlotObserver = function(){
       self$changePlotObserver <- observeEvent(input[[self$getButtonChangePlotId()]],{
-        staticLogger$info("Change plot UI hierarchical", self$getObjectId(), "clicked ! ")
+        staticLogger$info("Change plot UI hierarchical", self$getHierarchicalPlotId(), "clicked ! ")
         position <- which(private$plotChoice == private$currentChoice)
         doubleplotList <- rep(private$plotChoice,2)
         self$removeUIgraphic()
@@ -372,12 +385,21 @@ FilterHierarchical <- R6::R6Class(
     },
     
     getButtonChangePlotId = function(){
-      return(paste0("changeButton",self$getObjectId()))
+      return(paste0("changeButton",self$getHierarchicalPlotId()))
     }
     
   ),
   
   private = list(
+    
+    randomNumber = numeric(),
+    
+    setRandomNumber = function(){
+      private$randomNumber =  abs(round(runif(1)*10000000,0))
+    },
+    
+    
+    
     eventChoice = character(),
     currentChoice = c("SUNBURST"),
     plotChoice = c("SUNBURST","SHINYTREE"),

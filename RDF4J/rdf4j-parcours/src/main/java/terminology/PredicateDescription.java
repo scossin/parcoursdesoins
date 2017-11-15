@@ -73,7 +73,7 @@ public class PredicateDescription {
 		setPredicateIsObjectProperty(ontologyCon);
 		setHasFilter(ontologyCon);
 		setValueCategory();
-		ontologyCon.close();
+		//ontologyCon.close();
 	}
 	
 	private void setPredicates(RepositoryConnection ontologyCon){

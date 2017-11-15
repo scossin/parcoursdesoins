@@ -3,17 +3,16 @@ source("../../classes/filter/FilterHierarchicalEventOO.R",local = T)
 source("../../classes/filter/FilterOO.R",local = T)
 
 contextEnv <- new.env()
-terminology <- staticTerminologyInstances$getTerminology("Event")
 
 predicateName <- "predicateName"
 parentId <- "divTestFilterHierarchicalOO"
 where <- "beforeEnd"
 
-contextEnv$context <- "p1"
+contextEnv$context <- "p92776"
 #eventCount <- staticMakeQueries$getEventCount(context)
 
-dataFrame <- data.frame(event="test", value="SejourMCO")
-predicateName <- "hasType"
+dataFrame <- data.frame(event="test", value="I50")
+predicateName <- "hasDP"
 
 contextEvents = data.frame(context="",event="")
 
@@ -29,6 +28,7 @@ contextEnv$instanceSelection = InstanceSelection$new(contextEnv = contextEnv,
                                           parentId = "autre", 
                                           where = "beforeEnd")
 
+terminology <- staticTerminologyInstances$getTerminology("CIM10")
 filterCategorical <- FilterHierarchical$new(contextEnv = contextEnv, 
                                             terminology, predicateName, 
                                               dataFrame, parentId, where)

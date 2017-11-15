@@ -56,8 +56,7 @@ public class GetShinyTreeHierarchy extends HttpServlet {
 			String separator = "\t";
 			String[] columns = line.split(separator);
 			String terminologyName = columns[0];
-			HandleHierarchy handleHierarchy = new HandleHierarchy(TerminologyInstances.getTerminology(terminologyName));
-			
+			HandleHierarchy handleHierarchy = TerminologyInstances.getTerminology(terminologyName).getHandleHierarchy();
 			while ((line = br.readLine()) != null) {
 				//System.out.println(line);
 				columns = line.split(separator);
@@ -70,11 +69,11 @@ public class GetShinyTreeHierarchy extends HttpServlet {
 			handleHierarchy.setAllCodesNumber();
 			xmlFileIn.close();
 			
-			
 			resp.setContentType(handleHierarchy.getMIMEtype());
 			resp.setHeader("Content-Disposition","attachment;filename="+handleHierarchy.getFileName());
 			OutputStream os = resp.getOutputStream();
 			handleHierarchy.sendBytes(os);
+			handleHierarchy.resetNumbers();
 			os.close();
 			
 		} catch (RDFParseException | RepositoryException | UnfoundTerminologyException | UnfoundInstanceOfTerminologyException e1) {

@@ -35,7 +35,7 @@ public class TimelineDescribeContext implements Query {
 	private Terminology terminology;
 	
 	public TimelineDescribeContext(String contextName) throws RDFParseException, RepositoryException, IOException, InvalidContextException, UnfoundTerminologyException{
-		this.terminology = TerminologyInstances.getTerminology(EIG.TerminologyName);
+		this.terminology = TerminologyInstances.getTerminology(EIG.contextTerminologyName);
 		setSparqlQueryTerminology(contextName);
 	}
 	

@@ -158,7 +158,7 @@ public class Inference{
 		queryString += "?event2 " +  Query.formatIRI4query(EIG.HASNUM)   + " ?event2Num." + "\n" ;
 		queryString +=  "bind ((?event2Num - ?event1Num) as ?diffNum). \n";
 		queryString += "FILTER (?diffNum = 1). } \n";
-		System.out.println(queryString);
+		//System.out.println(queryString);
 		TupleQuery query = con.prepareTupleQuery(queryString);
 		TupleQueryResult results = query.evaluate();
 		while(results.hasNext()){
@@ -222,7 +222,7 @@ public class Inference{
 		Repository rep = new SailRepository(new MemoryStore());
 		rep.initialize();
 		RepositoryConnection con = rep.getConnection();
-		InputStream in = Util.classLoader.getResourceAsStream(MainResources.timelinesFolder + "p1000.ttl");
+		InputStream in = Util.classLoader.getResourceAsStream(MainResources.timelinesFolder + "p154009.ttl");
 		con.add(in, EIG.NAMESPACE, Util.DefaultRDFformat);
 		in.close();
 		HashSet<Statement> statements2 = Inference.getSubClassOf(con);

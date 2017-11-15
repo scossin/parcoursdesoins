@@ -20,7 +20,7 @@ HideShowButton <- R6::R6Class(
     }, 
     
     insertButton = function(){
-      ui <- shiny::actionButton(inputId = self$getHideShowId2(),
+      ui <- shiny::actionButton(inputId = self$getHideShowId(),
                           label = self$currentHideShowLabel)
       jQuerySelector = paste0("#",self$parentId)
       insertUI(selector = jQuerySelector,
@@ -36,16 +36,16 @@ HideShowButton <- R6::R6Class(
         self$currentHideShowLabel <- GLOBALshow
       }
       shiny::updateActionButton(session = session, 
-                                inputId = self$getHideShowId2(),
+                                inputId = self$getHideShowId(),
                                 label = self$currentHideShowLabel)
     },
     
-    getHideShowId2 = function(){
+    getHideShowId = function(){
       return(paste0("HideShowButton-",self$parent))
     },
     
     addHideShowObserver = function(){
-      self$hideShowObserver <- observeEvent(input[[self$getHideShowId2()]],{
+      self$hideShowObserver <- observeEvent(input[[self$getHideShowId()]],{
         staticLogger$info("HideShow button clicked")
         if (self$currentHideShowLabel == GLOBALshow){
           private$showHideShowButton()

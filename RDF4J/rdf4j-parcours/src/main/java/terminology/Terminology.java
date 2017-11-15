@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
+import hierarchy.HandleHierarchy;
 import parameters.MainResources;
 import parameters.Util;
 import servlet.Endpoint;
@@ -56,6 +57,12 @@ public class Terminology {
 	 private ClassDescription classDescription ;
 	 
 	 private TerminologyServer terminologyServer ;
+	 
+	 private HandleHierarchy handleHierarchy;
+	 
+	 public HandleHierarchy getHandleHierarchy(){
+		 return(handleHierarchy);
+	 }
 	 
 	 private File terminologyFolder ; 
 	 
@@ -136,6 +143,7 @@ public class Terminology {
 		 this.classDescription = new ClassDescription(this);
 		 this.predicateDescription = new PredicateDescription(this);
 		 this.terminologyServer = new TerminologyServer(this);
+		 this.handleHierarchy = new HandleHierarchy(this);
 	 }
 	 
 	 /**

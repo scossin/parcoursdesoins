@@ -1,19 +1,4 @@
 navbarPage("Parcours de soins", id="CartoParcours",
-           ### Timelines : 
-           tabPanel("Survie",
-                    div(id = GLOBALsurvieDiv)
-           ),
-           ### Timelines : 
-           tabPanel("Timelines",
-                    div(id = GLOBALtimelineDiv)
-           ),
-           
-           ### Sankey 
-           tabPanel("Sankey",
-                    div(id = GLOBALmainPanelSankeyId),
-                    tabsetPanel(id = GLOBALeventTabSetPanelSankey)
-           ),
-           
            tabPanel("Events",
                     
                     fluidPage(
@@ -56,7 +41,20 @@ navbarPage("Parcours de soins", id="CartoParcours",
                       )
                     ), ## end tabpanel Event
            
-
+           ### Timelines : 
+           tabPanel("Survie",
+                    div(id = GLOBALsurvieDiv)
+           ),
+           ### Timelines : 
+           tabPanel("Timelines",
+                    div(id = GLOBALtimelineDiv)
+           ),
+           
+           ### Sankey 
+           tabPanel("Sankey",
+                    div(id = GLOBALmainPanelSankeyId),
+                    tabsetPanel(id = GLOBALeventTabSetPanelSankey)
+           ),
            
            ### leaflet
            tabPanel("Carte",

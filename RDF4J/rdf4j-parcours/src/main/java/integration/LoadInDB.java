@@ -42,8 +42,8 @@ public class LoadInDB {
 		if (!Util.isValidContextFileFormat(file)){
 			throw new InvalidContextFormatException(logger,file.getName());
 		}
-		con.getDBcon().clear(); // remove previous statements
 		IRI contextIRI = EIG.getContextIRI(file);
+		// RDF4j tutorial : By default, each operation on a RepositoryConnection is immediately sent to the store and committed
 		con.getDBcon().add(file, EIG.NAMESPACE, Util.DefaultRDFformat,contextIRI);
 	}
 	
@@ -52,13 +52,19 @@ public class LoadInDB {
 			throw new IOException(folder.getAbsolutePath() + " is not a directory");
 		}
 		File files[] = folder.listFiles();
+//		int iter = 0 ; 
 		for (File file : files){
 			try {
 				loadTimelineFile(file);
 				System.out.println(file + " loaded in DB");
 			} catch (RDFParseException | RepositoryException | IOException e) {
 				System.out.println("Fail to load file: " + file.getName() + " in DB");
+				//e.printStackTrace();
 			}
+//			iter ++ ;
+//			if (iter == 2){
+//				break;
+//			}
 		}
 	}
 	

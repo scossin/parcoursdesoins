@@ -29,6 +29,7 @@ public class GetSunburstHierarchy implements FileQuery{
 	final static Logger logger = LoggerFactory.getLogger(GetSunburstHierarchy.class);
 	
 	public static final String fileName = "EventHierarchy4Sunburst.csv";
+	
 	private final String MIMEtype = "text/csv";
 	
 	private HashMap<IRI,IRI> childParent= new HashMap<IRI,IRI>();
@@ -47,6 +48,7 @@ public class GetSunburstHierarchy implements FileQuery{
 			childParent.put(subIRI, eventIRI);
 			setChildParent(con, subIRI); // get children recursively
 		}
+		System.out.println(childParent.size() + " couples parent-child");
 		statements.close();
 	}
 	
@@ -82,6 +84,7 @@ public class GetSunburstHierarchy implements FileQuery{
 		RepositoryConnection con = rep.getConnection();
 		con.add(ontologyFile, terminology.getNAMESPACE(), RDFFormat.TURTLE);
 		IRI classNameIRI = terminology.getMainClassIRI();
+		System.out.println(classNameIRI.stringValue());
 		setChildParent(con, classNameIRI);
 		this.hierarchy = getHierarchy();
 		con.close();
@@ -120,7 +123,7 @@ public class GetSunburstHierarchy implements FileQuery{
 	}
 	
 	public static void main (String[] args) throws RDFParseException, RepositoryException, IOException, UnfoundTerminologyException{
-		Terminology terminology = TerminologyInstances.getTerminology("EVENT");
+		Terminology terminology = TerminologyInstances.getTerminology("CIM10");
 		GetSunburstHierarchy getSunburstHierarchy = new GetSunburstHierarchy(terminology);
 		File file = new File("CIM10Hierarchy.csv");
 		OutputStream os = new FileOutputStream(file);

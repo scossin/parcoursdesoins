@@ -34,7 +34,6 @@ server <- function(input,output,session){
   source("../../classes/buttonFilter/ButtonFilterOO.R",local = T)
   staticTerminologyInstances <- STATICterminologyInstances$new()
   
-  
   source("../../classes/superClasses/uiObject.R",local=T)
   
   # source("TestFilterCategoricalOO.R",local = T)

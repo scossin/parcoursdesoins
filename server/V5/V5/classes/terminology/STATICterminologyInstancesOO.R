@@ -52,7 +52,7 @@ STATICterminologyInstances <- R6::R6Class(
     },
     
     getTerminologyName = function(mainClassName){
-      for (termino in self$terminology){
+      for (termino in self$terminologyInstances){
         if (termino$mainClassName == mainClassName){
           return(termino$terminologyName)
         }

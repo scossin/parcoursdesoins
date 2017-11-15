@@ -27,6 +27,7 @@ import exceptions.UnfoundTerminologyException;
 import integration.CheckInstances;
 import parameters.MainResources;
 import parameters.Util;
+import servlet.Initialize;
 
 public class TerminologyInstances {
 	
@@ -67,7 +68,7 @@ public class TerminologyInstances {
 				return(terminology);
 			}
 		}
-		throw new UnfoundTerminologyException(logger, terminologyName + "does not belong to a terminology");
+		throw new UnfoundTerminologyException(logger, terminologyName + " does not belong to a terminology");
 	}
 	
 	public static Set<IRI> getClassNames() throws RDFParseException, RepositoryException, IOException{
@@ -87,9 +88,12 @@ public class TerminologyInstances {
 	}
 	
 	public static void main(String[] args) throws Exception{
-
+		System.out.println("Initializing");
+		new Initialize().init();
+		
+		/*
 		for (Terminology terminology : TerminologyInstances.terminologies){
-			if (!terminology.getTerminologyName().equals("GHM")){
+			if (!terminology.getTerminologyName().equals("Graph")){
 				continue;
 			}
 			terminology.getTerminologyServer().countInstances();
@@ -98,6 +102,8 @@ public class TerminologyInstances {
 			terminology.closeConnection();
 		}
 		
+		
+		*/
 //		Terminology terminology = TerminologyInstances.getTerminology("Graph");
 //		terminology.getTerminologyServer().countInstances();
 //		terminology.getTerminologyServer().loadTerminology();

@@ -103,7 +103,7 @@ STATICmakeQueries <- R6::R6Class(
     # },
     
     splitEvents = function(events){
-      chunk <- 500
+      chunk <- 2000
       n <- length(events)
       r <- rep(1:ceiling(n/chunk),each=chunk)[1:n]
       d <- split(events, r)

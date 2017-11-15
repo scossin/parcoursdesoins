@@ -16,7 +16,7 @@ FilterSpatialPolygon <- R6::R6Class(
       super$initialize(contextEnv, predicateName, dataFrame, parentId, where)
       eventName <- paste0("event",contextEnv$eventNumber, "-",self$predicateName)
       self$eventName <- eventName
-      self$pal <- colorQuantile("RdYlBu", self$spatialPolygon$N, n = 1)
+      # self$pal <- colorQuantile("RdYlBu", self$spatialPolygon$N, n = 1)
       self$setPolygonCoordinate()
       ## shapeFile check and load : 
       self$loadShapeFile()
@@ -110,7 +110,12 @@ FilterSpatialPolygon <- R6::R6Class(
       self$spatialPolygon <- spTransform(self$spatialPolygon, CRS("+init=epsg:4326")) ## WGS84
       
       if (shapeFile == "couchegeoPMSI2014.rdata"){ ## hard coded : too many pmsi geo codes, a bit slow
-        self$spatialPolygon <- subset (self$spatialPolygon, substr(self$spatialPolygon$layerId,1,2) == 33)
+        # self$spatialPolygon <- subset (self$spatialPolygon, substr(self$spatialPolygon$layerId,1,2) == 33)
+        # print(self$polygonCoordinate$layerId)
+        # print(self$spatialPolygon$layerId)
+        bool <- self$spatialPolygon$layerId %in% self$polygonCoordinate$layerId
+        # print(sum(bool))
+        self$spatialPolygon <- subset (self$spatialPolygon, bool)
       }
       
       bool <- c("layerId", "label") %in% colnames(self$spatialPolygon@data)
@@ -126,27 +131,43 @@ FilterSpatialPolygon <- R6::R6Class(
       self$spatialPolygon$isSelected <- NULL
       self$spatialPolygon$value <- NULL 
       self$spatialPolygon$shapeFile <- NULL
+      
       ### put N in spatialPolygon :
       layerIds <- self$spatialPolygon@data$layerId
       self$spatialPolygon@data <- merge (self$spatialPolygon@data,
                                          self$polygonCoordinate,by="layerId",all.x=T
       )
       
+      print (self$spatialPolygon@data)
       ## keep the same order of layerId or the map will be wrong : 
       numRows <- match(layerIds, self$spatialPolygon@data$layerId)
       self$spatialPolygon@data <- self$spatialPolygon@data[numRows,]
+      
+      # bool <- self$spatialPolygon@data$layerId == "NA"
+      # self$spatialPolygon@data$layerId <- NA
       
       bool <- is.na(self$spatialPolygon@data$N)
       self$spatialPolygon@data$N[bool] <- 0
       ### is selected : 
       self$spatialPolygon$isSelected <- F
       
-      self$pal <- colorNumeric(
-        palette = "Blues",
-        domain = c(0,max(self$polygonCoordinate$N)),na.color = "white"
-      )
+      minValue <- min(self$polygonCoordinate$N,na.rm = T)
+      maxValue <- max(self$polygonCoordinate$N,na.rm = T)
+      # print("valeurs min et max")
+      # print(minValue)
+      # print(maxValue)
+      self$pal =  colorNumeric("Greens", domain = minValue:maxValue,na.color = "white")
+      self$pal = colorNumeric(c("white", "blue", "red"), domain = minValue:maxValue)
+      # self$pal = colorBin("Blues", domain = minValue:maxValue,na.color = "white")
+      # self$pal <- colorNumeric(
+      #   palette = "Blues",
+      #   domain = c(minValue,maxValue),na.color = "white"
+      # )
       #self$pal <- colorQuantile("RdYlBu", self$spatialPolygon$N, n = 1)
       self$spatialPolygon@data$color <- self$pal(self$spatialPolygon$N)
+      # df <- self$spatialPolygon@data
+      # save(df, file="spatialPolygon.rdata")
+      # print(self$spatialPolygon@data$color)
       self$spatialPolygon@data$popupLabel <- paste0(self$spatialPolygon@data$label,"(",
                                                     self$spatialPolygon@data$N,")")
       
@@ -228,7 +249,8 @@ FilterSpatialPolygon <- R6::R6Class(
                       label= ~label, 
                       labelOptions = labelOptions(direction = 'auto'),
                       stroke=T,opacity=1,weight=weight,
-                      fillColor= ~color,
+                      fillColor= spatialPolygon$color,
+                      fillOpacity = 1,
                       layerId = ~layerId,
                       group = self$eventName,
                       highlightOptions = highlightOptions(
@@ -316,9 +338,11 @@ FilterSpatialPolygon <- R6::R6Class(
     reMakeMarker = function(markerId){
       staticLogger$info("\t \t remaking : ", markerId,"...")
       line <- subset (self$spatialPolygon, layerId == markerId)
+      print(line)
       if (line@data$isSelected){
         staticLogger$info("\t \t ", markerId, " new selected Shape")
         weight = 4
+        line$color <- "red"
       } else {
         staticLogger$info("\t \t ", markerId, " new unselected Shape")
         weight = 1
@@ -330,7 +354,8 @@ FilterSpatialPolygon <- R6::R6Class(
                     label= ~label, 
                     labelOptions = labelOptions(direction = 'auto'),
                     stroke=T,opacity=1,weight = weight,
-                    color= ~color,
+                    fillColor= ~color,
+                    fillOpacity = 1,
                     layerId = ~layerId,
                     group = self$eventName,
                     highlightOptions = highlightOptions(
@@ -446,4 +471,3 @@ FilterSpatialPolygon <- R6::R6Class(
     #unSelectedColor = "red"
   )
 )
-

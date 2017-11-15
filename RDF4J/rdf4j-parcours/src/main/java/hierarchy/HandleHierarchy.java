@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.rdf4j.model.IRI;
@@ -52,16 +53,23 @@ public class HandleHierarchy implements FileQuery{
 	
 	private HashMap<IRI, Code> classes = new HashMap<IRI, Code>();
 	
-	public HashMap getClasses(){
-		return(classes);
+	public void resetNumbers(){
+		Iterator<Code> iter = classes.values().iterator();
+		while(iter.hasNext()){
+			Code code = iter.next();
+			code.setNumber(0);
+		}
 	}
 	
 	private Terminology terminology ;
 	
 	private String getLabel(RepositoryConnection con, IRI classIRI){
 		RepositoryResult<Statement> statements = con.getStatements(classIRI, RDFS.LABEL, null);
-		Statement stat = statements.next();
-		String label = stat.getObject().stringValue();
+		String label = null;
+		if (statements.hasNext()){
+			Statement stat = statements.next();
+			label = stat.getObject().stringValue();
+		}
 		statements.close();
 		return(label);
 	}
@@ -208,18 +216,18 @@ public class HandleHierarchy implements FileQuery{
 	
 	public HandleHierarchy(Terminology terminology) throws RDFParseException, RepositoryException, IOException{
 		this.terminology = terminology;
-		// TODO Auto-generated method stub
-		File ontologyFile = terminology.getOntologyFile();
-		logger.info("loading " + ontologyFile.getName());
-		// p RDF triple in memory : 
-		Repository rep = new SailRepository(new MemoryStore());
-		rep.initialize();
-		RepositoryConnection con = rep.getConnection();
-		con.add(ontologyFile, terminology.getNAMESPACE(), RDFFormat.TURTLE);
-		IRI classNameIRI = terminology.getMainClassIRI();
-		setChildParent(con, classNameIRI,null);
-		con.close();
-		rep.shutDown();
+//		// TODO Auto-generated method stub
+//		File ontologyFile = terminology.getOntologyFile();
+//		logger.info("loading " + ontologyFile.getName());
+//		// p RDF triple in memory : 
+//		Repository rep = new SailRepository(new MemoryStore());
+//		rep.initialize();
+//		RepositoryConnection con = rep.getConnection();
+//		con.add(ontologyFile, terminology.getNAMESPACE(), RDFFormat.TURTLE);
+		//IRI classNameIRI = ;
+		setChildParent(terminology.getOntologyCon(), terminology.getMainClassIRI(),null);
+//		con.close();
+//		rep.shutDown();
 	}
 	
 	public void showKeyset(){

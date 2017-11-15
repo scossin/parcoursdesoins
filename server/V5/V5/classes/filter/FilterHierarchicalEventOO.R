@@ -20,13 +20,13 @@ FilterHierarchicalEvent <- R6::R6Class(
     },
     
     getButtonValidateId = function(){
-      return(paste0("Validate",self$getObjectId()))
+      return(paste0("Validate",self$getDivId()))
     },
     
     insertValidateButton = function(){
       ui <- shiny::actionButton(inputId = self$getButtonValidateId(), 
                                     label = GLOBALvalidate)
-      selector = paste0("#",self$getObjectId())
+      selector = paste0("#",self$getDivId())
       insertUI(selector = selector,
                where ="afterBegin",
                ui = ui)
@@ -45,6 +45,24 @@ FilterHierarchicalEvent <- R6::R6Class(
       }
       return(as.character(private$eventChoice))
     },
+    
+    getEventTypeSunburst = function(sunburstChoice){
+      # sunburstChoice is a vector with length the depth of the node in the hierarchy
+      staticLogger$info("Getting event from choice : ", sunburstChoice)
+      sunburstChoice <- paste(sunburstChoice, collapse="-")
+      # bool <- grepl(pattern = sunburstChoice,self$hierarchicalData$hierarch, fixed = T)
+      bool <- self$hierarchicalData$hierarchy %in% sunburstChoice 
+      # print(self$hierarchicalData)
+      if (!any(bool)){
+        stop(sunburstChoice, " : not found in hierarchicalData")
+      }
+      if (sum(bool) != 1){
+        stop(sunburstChoice, " : many possibilities in hierarchicalData")
+      }
+      eventType <- as.character(self$hierarchicalData$label[bool])
+      staticLogger$info("eventType found : ", eventType)
+      return(eventType)
+    }, 
     
     ### Override : don't send filterHasChanged
     printChoice = function(){

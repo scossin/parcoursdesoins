@@ -18,10 +18,11 @@ server <- function(input,output,session){
   source("classes/terminology/STATICterminologyInstancesOO.R",local=T)
   source("classes/terminology/TerminologyOO.R",local=T)
   staticTerminologyInstances <- STATICterminologyInstances$new()
-  
-  # test <-  staticTerminologyInstances$getTerminology("Graph")
+  # staticTerminologyInstances$getTerminologyByClassName("ICD10FR")
+  # test <-  staticTerminologyInstances$getTerminology("Event")
   # test$predicateEvent$eventType == "Graph"
- # test$mainClassName
+  # test$mainClassName
+  # test$predicateDescription
   source("classes/queries/STATICmakeQueriesOO.R",local=T)
 
   source("classes/queries/XMLCountQueryOO.R",local=T)
@@ -106,7 +107,9 @@ server <- function(input,output,session){
   ### Context : 
   staticLogger$info("creating Context...")
   # get a sample ...
-  contextEvents <- data.frame(context=paste0("p",1:100),event=paste0("p",1:100))
+  pSamples <- c("p92776","p54767","p110814","p59452","p139838")
+  contextEvents <- data.frame(context=pSamples,event=pSamples)
+  # contextEvents <- data.frame(context=paste0("p",1:1000),event=paste0("p",1:1000))
   parentId = "contextId"
   where = "beforeEnd"
   GLOBALcontextEnv <- new.env()
@@ -160,3 +163,5 @@ server <- function(input,output,session){
 #   input$sunburst0_click
 # })
 # 
+
+

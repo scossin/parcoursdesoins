@@ -134,6 +134,7 @@ public class Integration {
 		System.out.println(files.size() + " files to read");
 		
 		rejectedFile = new File(folderFile.getAbsolutePath() + "/rejectedFile.txt");
+		System.out.println("rejectedFile:" + rejectedFile.getAbsolutePath());
 		if (rejectedFile.exists()){
 			rejectedFile.createNewFile();
 		}
@@ -155,7 +156,8 @@ public class Integration {
 	        // first line from the text file
 			String line = br.readLine();
 			// loop until all lines are read
-			int numLine = 1 ; 
+			int numLine = 1 ;
+			int rejectedLine = 0 ; 
 			LineStatement lineStatement = new LineStatement("\t",TerminologyInstances.getTerminology(EIG.TerminologyName));
 			while (line != null) {
 				try {
@@ -165,15 +167,17 @@ public class Integration {
 				} catch (ParseException | UnfoundEventException | UnfoundTerminologyException 
 						| UnfoundPredicatException | RDFParseException | RepositoryException | InvalidContextException | UnfoundInstanceOfTerminologyException | UnfoundFilterException e) {
 					// TODO Auto-generated catch block
-					System.out.println("An error occured line : " + numLine);
-					e.getMessage();
+					//System.out.println("An error occured line : " + numLine);
 					addRejectedLine("\n" + line + "\t" + e.getMessage());
-					e.printStackTrace();
+					rejectedLine ++;
+					//e.printStackTrace();
 				}
 				
 				line = br.readLine(); // next line
 				numLine++;	
 			}
+			System.out.println("number of lines read : " + numLine);
+			System.out.println("number of lines rejected : " + rejectedLine);
 			br.close();
 			addTriplesInFiles();
 		}

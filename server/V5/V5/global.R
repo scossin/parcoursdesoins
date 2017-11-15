@@ -89,6 +89,7 @@ if (GLOBALlang == "fr"){
   ## hierarchy selection : 
   GLOBALnoselected <- "Sélectionnez une catégorie"
   GLOBALmanyselected <- "Merci de sélectionner une seule catégorie"
+  GLOBALnoChoiceAvailable <- "Aucun choix possible"
   
   ## words
   GLOBALevent <- "évènements"
@@ -165,6 +166,7 @@ if (GLOBALlang == "fr"){
   ## hierarchy selection : 
   GLOBALnoselected <- "please, select one class"
   GLOBALmanyselected <- "please, select only one class"
+  GLOBALnoChoiceAvailable <- "No choice available"
   
   ## words
   GLOBALevent <- "event(s)"

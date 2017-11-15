@@ -25,7 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exceptions.UnfoundTerminologyException;
+import parameters.MainResources;
+import parameters.Util;
 import query.Query;
+import servlet.GetTimeline;
 import terminology.Terminology;
 import terminology.TerminologyInstances;
 
@@ -33,7 +36,7 @@ public class GetSunburstHierarchyLabel implements FileQuery{
 
 	final static Logger logger = LoggerFactory.getLogger(GetSunburstHierarchyLabel.class);
 	
-	public static final String fileName = "EventHierarchy4Sunburst.csv";
+	public final String fileName = "Hierarchy4Sunburst.csv";
 	private final String MIMEtype = "text/csv";
 	
 	private HashMap<String,String> childParentLabel = new HashMap<String,String>();
@@ -45,6 +48,15 @@ public class GetSunburstHierarchyLabel implements FileQuery{
 	private Terminology terminology;
 	
 	private String labelMainClass = null;
+	
+	File resultFile = null; 
+	
+	private void setFile(){
+		String cacheFolder = MainResources.cacheFolder ;
+		String cacheFolderPath = Util.classLoader.getResource(cacheFolder).getPath();
+		String fileResultName = cacheFolderPath + "Cache-" + terminology.getTerminologyName() + "-" + fileName;
+		resultFile = new File(fileResultName);
+	}
 	
 	private String getQueryString(IRI classIRI){
 		String queryString = "SELECT ?code ?labelSub ?label where { \n " +
@@ -112,9 +124,19 @@ public class GetSunburstHierarchyLabel implements FileQuery{
 		return(classLocation);
 	}
 
+	public boolean isFileAlreadyExists(){
+		return(resultFile.exists());
+	}
+	
 	public GetSunburstHierarchyLabel(Terminology terminology) throws RDFParseException, RepositoryException, IOException{
 		// TODO Auto-generated method stub
 		this.terminology = terminology;
+		setFile();
+		if (isFileAlreadyExists()){
+			logger.info("File : " + resultFile.getName() + " already exist");
+			return;
+		}
+		
 		File ontologyFile = terminology.getOntologyFile();
 		logger.info("loading " + ontologyFile.getName());
 		// p RDF triple in memory :
@@ -130,10 +152,11 @@ public class GetSunburstHierarchyLabel implements FileQuery{
 		this.hierarchy = getHierarchyLabel();
 		con.close();
 		rep.shutDown();
+		writeFile();
 	}
 
-	@Override
-	public void sendBytes(OutputStream os) throws IOException {
+	private void writeFile() throws IOException{
+		OutputStream os = new FileOutputStream(resultFile);
 		StringBuilder line = new StringBuilder();
 		//header
 		line.append("code");
@@ -157,6 +180,12 @@ public class GetSunburstHierarchyLabel implements FileQuery{
 			os.write(line.toString().getBytes());
 			line.setLength(0);
 		}
+		os.close();
+	}
+
+	
+	public void sendBytes(OutputStream os) throws IOException {
+		GetTimeline.sendFile(os, resultFile);
 	}
 
 	@Override
@@ -170,7 +199,7 @@ public class GetSunburstHierarchyLabel implements FileQuery{
 	}
 	
 	public static void main (String[] args) throws RDFParseException, RepositoryException, IOException, UnfoundTerminologyException{
-		Terminology terminology = TerminologyInstances.getTerminology("EVENTS");
+		Terminology terminology = TerminologyInstances.getTerminology("CIM10");
 		GetSunburstHierarchyLabel getSunburstHierarchy = new GetSunburstHierarchyLabel(terminology);
 		File file = new File("CIM10Hierarchy.csv");
 		OutputStream os = new FileOutputStream(file);

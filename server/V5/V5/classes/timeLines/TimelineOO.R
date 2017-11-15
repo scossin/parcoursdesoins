@@ -86,11 +86,13 @@ Timeline <- R6::R6Class(
     },
     
     setContextDescription = function(contextName){
+      print(contextName)
       content <- GLOBALcon$getContextDescriptionTimeline(contextName = contextName)
+      print(content)
       contextDescription <- GLOBALcon$readContentStandard(content = content)
       terminology <- staticTerminologyInstances$getTerminology(staticTerminologyInstances$terminology$Graph$terminologyName)
       descriptionTable <- self$getDescriptionTable(description = contextDescription, 
-                                                   eventType = "Graph", 
+                                                   eventType = terminology$mainClassName, 
                                                    terminology = terminology)
       output[[self$getContextDescriptionId()]] <- shiny::renderTable(descriptionTable)
 

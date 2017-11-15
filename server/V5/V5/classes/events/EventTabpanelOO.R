@@ -8,6 +8,7 @@ EventTabpanel <- R6::R6Class(
     tabsetPanelId = character(),
     
     initialize = function(eventNumber, context, tabsetPanelId){
+      private$setRandomNumber()
       staticLogger$info("Creating EventTabpanel", eventNumber)
       self$contextEnv <- new.env()
       self$contextEnv$context <- context
@@ -46,7 +47,8 @@ EventTabpanel <- R6::R6Class(
     },
     
     getObjectId = function(){
-      paste0("eventTabpanel",self$contextEnv$eventNumber, "-",self$tabsetPanelId)
+      paste0("eventTabpanel",self$contextEnv$eventNumber, private$randomNumber,
+             "-",self$tabsetPanelId)
     },
     
     setEventType = function(eventType){
@@ -91,7 +93,7 @@ EventTabpanel <- R6::R6Class(
         ## choices are validated
         eventType <- self$hierarchicalObject$getCodeChoice()
         staticLogger$user("\t clicked value : ",eventType)
-        if (eventType %in% c(GLOBALnoselected, GLOBALmanyselected)){
+        if (is.null(eventType) || length(eventType) == 0 || eventType %in% c(GLOBALnoselected, GLOBALmanyselected,GLOBALnoChoiceAvailable)){
           staticLogger$info("\t Bad choice for event selection : ")
           return(NULL)
         }
@@ -134,6 +136,13 @@ EventTabpanel <- R6::R6Class(
   ),
       
   private = list(
+    
+    randomNumber = numeric(),
+    
+    setRandomNumber = function(){
+      private$randomNumber =  abs(round(runif(1)*10000000,0))
+    },
+    
     getFirstDivOfEventId = function(){
       return(paste0("firstDivOf",self$getObjectId()))
     },

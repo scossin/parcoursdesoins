@@ -1,5 +1,6 @@
 package queryFiles;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -48,4 +49,5 @@ public interface FileQuery {
 		Terminology terminology = TerminologyInstances.getTerminology(terminologyName);
 		return(new GetEventPredicateFrequency(terminology));
 	}
+	
 }

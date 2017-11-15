@@ -6,6 +6,7 @@ SearchQueries <- R6::R6Class(
     searchQueriesObserver = NULL,
     validateButtonId = character(),
     queryViz = NULL,
+    hideShowButton = NULL,
     
     initialize = function(parentId, where, validateButtonId){
       super$initialize(parentId, where)
@@ -13,6 +14,15 @@ SearchQueries <- R6::R6Class(
       self$insertUIsearchQueries()
       self$addSearchQueriesObserver()
       self$addSelectizeResultObserver()
+    },
+    
+    insertHideShowButton = function(){
+      if (is.null(self$hideShowButton)){
+        self$hideShowButton <- HideShowButton$new(parentId = self$getSearchQueriesButtonId(), 
+                                                  where = "afterEnd", 
+                                                  divIdToHide = self$getDivVizuId(),
+                                                  boolHideFirst = F)
+      }
     },
     
     insertUIsearchQueries = function(){
@@ -26,6 +36,7 @@ SearchQueries <- R6::R6Class(
     
     addSearchQueriesObserver = function(){
       self$searchQueriesObserver <- observeEvent(input[[self$getSearchQueriesButtonId()]],{
+        self$insertHideShowButton() ## only if is  null
         self$updateSelectizeResult()
       })
     },
@@ -67,14 +78,17 @@ SearchQueries <- R6::R6Class(
                                label = GLOBALvalidate),
            shiny::actionButton(inputId = self$getSearchQueriesButtonId(),
                                label = GLOBALsearchQueries),
-      div(id = "visuXML",
-          visNetwork::visNetworkOutput(outputId = self$getQueryVizId()))
-        )
+           div(id = self$getDivVizuId(),
+               visNetwork::visNetworkOutput(outputId = self$getQueryVizId())))
       return(ui)
     },
     
+    getDivVizuId = function(){
+      return(paste0("divVizu-",self$getDivQueriesId()))
+    },
+    
     getQueryVizId = function(){
-      return(paste0("queryViz-",self$getDivQueriesId()))
+      return(paste0("queryViz-",self$getDivVizuId()))
     },
     
     updateSelectizeResult = function(){
