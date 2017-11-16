@@ -6,8 +6,10 @@ LinkDescription <- R6::R6Class(
     buttonLinkEventsObserver = NULL,
     searchPredicatesObserver = NULL,
     linkNumbers = 0,
+    terminology = NULL,
     
     initialize = function(parentId, where){
+      self$terminology <- staticTerminologyInstances$getTerminology("Event")
       super$initialize(parentId, where)
       self$insertDivUI()
       self$insertHTMLdescription()
@@ -95,12 +97,14 @@ LinkDescription <- R6::R6Class(
           return(NULL)
         }
         
-        predicate1 <- input[[self$getPredicate1SelectizeId()]]
-        predicate2 <- input[[self$getPredicate2SelectizeId()]]
+        predicate1 <- input[[self$getPredicate1SelectizeId()]] ## label
+        predicate2 <- input[[self$getPredicate2SelectizeId()]] ## label
         if (is.null(predicate1) || predicate1 == "" || is.null(predicate2) || predicate2 == ""){
           staticLogger$info("predicate1 or predicate2 not set")
           return(NULL)
         }
+        predicate1 <- self$terminology$getPredicate(predicate1) ## predicate
+        predicate2 <- self$terminology$getPredicate(predicate2)
         
         minValue <- as.numeric(input[[self$getMinInputId()]])
         if (is.na(minValue)){
@@ -164,7 +168,8 @@ LinkDescription <- R6::R6Class(
         return(NULL)
       }
       predicatesEvent <- names(eventTabpanel$contextEnv$instanceSelection$listButtonFilterObject)
-      return(predicatesEvent)
+      predicatesNames <- self$terminology$getLabels(predicatesEvent)
+      return(predicatesNames)
     },
     
     addSearchPredicatesObserver = function(){

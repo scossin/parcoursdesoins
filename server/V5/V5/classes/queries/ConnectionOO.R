@@ -30,9 +30,11 @@ Connection <- R6::R6Class(
       return(terminologies)
     },
     
-    getContextDescriptionTimeline = function(contextName){
+    getContextDescriptionTimeline = function(terminologyName, instanceName){
       url <- paste0(private$getWebServerURL(),private$GetContextDescriptionURL)
-      response <- httr::GET(url, query=list(contextName = contextName))
+      response <- httr::GET(url, query=list(
+        terminologyName = terminologyName,
+        instanceName = instanceName))
       private$checkResponse(response)
       return(rawToChar(response$content))
     },

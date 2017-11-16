@@ -35,13 +35,32 @@ Terminology <- R6::R6Class(
       return(description)
     },
     
-    getLabel = function(predicateName){
-      bool <- predicateName %in% self$predicateDescription$predicate
+    getPredicate = function (predicateLabel){
+      bool <-  predicateLabel %in%  self$predicateDescription$label
       if (!bool){
-        stop(predicateName, "unfound in ", self$terminologyName)
+        stop(predicateLabel, " unfound in ", self$terminologyName)
       }
-      description <- subset (self$predicateDescription, predicate %in% predicateName)
-      return(description$label)
+      bool <- self$predicateDescription$label == predicateLabel
+      description <- subset (self$predicateDescription, bool)
+      return(as.character(description$predicate))
+    },
+    
+    getLabels = function(predicates){
+      labels <- NULL
+      for (predicate in predicates){
+        labels <- append(labels, self$getLabel(predicate))
+      }
+      return(labels)
+    }, 
+    
+    getLabel = function(predicate){
+      bool <- predicate %in% self$predicateDescription$predicate
+      if (!bool){
+        stop(predicate, "unfound in ", self$terminologyName)
+      }
+      bool <- self$predicateDescription$predicate %in% predicate
+      description <- subset (self$predicateDescription, bool)
+      return(as.character(description$label))
     },
     
     getPredicateDescriptionOfEvent = function(eventType){

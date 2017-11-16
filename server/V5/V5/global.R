@@ -17,6 +17,7 @@ library(sp)
 library(survival)
 library(survminer)
 library(visNetwork)
+library(DT)
 ### URL connection : 
 load("GLOBALurlserver.rdata")
 
@@ -28,6 +29,8 @@ GLOBALlayerControl <- "layerControl"
 
 # a logger to log message in file
 GLOBALlogFolder <- "./logs/"
+GLOBALqueriesFolder <- "./queries/"
+GLOBALqueriesListFile <- "queriesListFile.csv"
 
 # shapeFiles
 GLOBALshapeFileFolder <- "./shapeFiles/"
@@ -124,6 +127,8 @@ if (GLOBALlang == "fr"){
   GLOBALlinksCreation <- "Création de liens"
   GLOBALnoLinkCreated <- "Aucun lien créé"
   GLOBALnoEventSelected <- "Aucun évènement sélectionné"
+  GLOBALqueryLib <- "Libellé de la requête"
+  GLOBALdeleteQuery <- "Supprimer la requête"
   
   ## sankey
   GLOBALchooseQuery <- "Choisir une requête"
@@ -204,6 +209,9 @@ if (GLOBALlang == "fr"){
   GLOBALlinksCreation <- "Links factory"
   GLOBALnoLinkCreated <- "No link created between events"
   GLOBALnoEventSelected <- "No event selected"
+  GLOBALqueryLib <- "Query label"
+  GLOBALdeleteQuery <- "Delete query"
+  
   
   ## Sankey
   GLOBALchooseQuery <- "Choose a query"

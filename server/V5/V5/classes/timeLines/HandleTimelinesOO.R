@@ -6,7 +6,7 @@ HandleTimelines <- R6::R6Class(
     validateObserver = NULL,
     changeContextObserver = NULL,
     timeline = NULL,
-    result = NULL,
+    # result = NULL,
     
     initialize = function(parentId, where){
       super$initialize(parentId, where)
@@ -45,30 +45,31 @@ HandleTimelines <- R6::R6Class(
       self$validateObserver <- observeEvent(input[[self$getValidateButtonId()]],{
         staticLogger$user("Validate Button Timeline clicked ")
         
-        queryChoice <- input[[self$searchQueries$getSelectizeResultId()]]
-        
-        if (is.null(queryChoice) || queryChoice == ""){
-          staticLogger$info("No query selected")
-          return(NULL)
+        if (is.null(self$searchQueries$result)){
+            staticLogger$info("HandleTimeline : no query selected")
+            return(NULL)
         }
-        
-        staticLogger$info("Timeline : ", queryChoice, "selected")
-        
-        queryChoice <- gsub(GLOBALquery,"",queryChoice)
-        queryChoice <- as.numeric(queryChoice)
-        lengthListResults <- length(GLOBALlistResults$listResults)
-        bool <- queryChoice > lengthListResults
-        if (bool){
-          stop("queryChoice number not found in GLOBALlistResults ")
-        }
-        self$result <- GLOBALlistResults$listResults[[queryChoice]]
-        
         self$setTimeline()
+        # queryChoice <- input[[self$searchQueries$getSelectizeResultId()]]
+        # 
+        # if (is.null(queryChoice) || queryChoice == ""){
+        #   staticLogger$info("No query selected")
+        #   return(NULL)
+        # }
+        # 
+        # queryChoice <- gsub(GLOBALquery,"",queryChoice)
+        # queryChoice <- as.numeric(queryChoice)
+        # lengthListResults <- length(GLOBALlistResults$listResults)
+        # bool <- queryChoice > lengthListResults
+        # if (bool){
+        #   stop("queryChoice number not found in GLOBALlistResults ")
+        # }
+        # self$result <- GLOBALlistResults$listResults[[queryChoice]]
       })
     },
     
     setTimeline = function(){
-      resultDf <- self$result$resultDf
+      resultDf <- self$searchQueries$result$resultDf
       if (nrow(resultDf) == 0){
         staticLogger$info("HandleTimeline : resultDf nrow is 0, timeline can't be made")
         return(NULL)
@@ -92,7 +93,6 @@ HandleTimelines <- R6::R6Class(
         self$timeline$setContextEvents(contextEvents)
       }
     },
-    
     
     getDivId = function(){
       return(paste0("HandleTimelineDiv-",self$parentId))

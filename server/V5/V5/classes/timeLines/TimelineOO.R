@@ -7,6 +7,10 @@ Timeline <- R6::R6Class(
     timevisDf = character(),
     clickedEventObserver = NULL,
     terminology = NULL,
+    descriptionTableEvent = data.frame(),
+    observerContextTable = NULL,
+    descriptionTableContext = data.frame(),
+    observerEventTable = NULL,
     
     initialize = function(parentId, where, contextEvents){
       super$initialize(parentId, where)
@@ -14,6 +18,38 @@ Timeline <- R6::R6Class(
       self$terminology <- staticTerminologyInstances$getTerminology(staticTerminologyInstances$terminology$Event$terminologyName)
       self$setContextEvents(contextEvents)
       self$addClickedEventObserver()
+      
+      self$addObserverContextTable()
+      self$addObserverEventTable()
+    },
+    
+    addObserverContextTable = function(){
+      clickedInput <- paste0(self$getContextDescriptionId(),"_rows_selected")
+      self$observerContextTable <- observeEvent(input[[clickedInput]],{
+        print("clicked !!")
+        rowClicked <- input[[clickedInput]]
+        line <- self$descriptionTableContext[rowClicked,]
+        instanceName <- line$valeur
+        predicateLabel <- line$variable
+        terminology <- staticTerminologyInstances$getTerminology("Graph")
+        self$setVariableDescription(predicateLabel = predicateLabel,
+                                    instanceName = instanceName,
+                                    terminology = terminology)
+      })
+    },
+    
+    addObserverEventTable = function(){
+      clickedInput <- paste0(self$getEventDescriptionId(),"_rows_selected")
+      self$observerEventTable <- observeEvent(input[[clickedInput]],{
+        print("clicked Event !!")
+        rowClicked <- input[[clickedInput]]
+        line <- self$descriptionTableEvent[rowClicked,]
+        instanceName <- line$valeur
+        predicateLabel <- line$variable
+        self$setVariableDescription(predicateLabel = predicateLabel,
+                                    instanceName = instanceName,
+                                    terminology = self$terminology)
+      })
     },
     
     setContextEvents = function(contextEvents){
@@ -33,26 +69,34 @@ Timeline <- R6::R6Class(
     },
     
     getDescriptionTable = function(description, eventType, terminology){
-      predicates <- terminology$getPredicatesOfEvent(eventType)
+      tryCatch(
+        predicates <- terminology$getPredicatesOfEvent(eventType)
+        , error = function(e){
+          print("Error finding terminology")
+          return(NULL)
+        }
+      )
       bool <- description$predicate %in% predicates
       description <- subset (description, bool)
       
       ## replace predicateName by predicate Label
       predicatesName <- description$predicate
       predicatesLabel <- sapply(predicatesName, function(x){
-        terminology$getLabel(predicateName = x)
+        terminology$getLabel(predicate = x)
       })
       predicatesLabel <- as.character(predicatesLabel)
       description$predicate <- predicatesLabel
       colnames(description) <- c(GLOBALvariable, GLOBALvalue)
       return(description)
-      return(eventDescription)
+      # return(eventDescription)
     },
     
     setEventDescription = function(eventName){
       if (is.null(eventName)){
-        output[[self$getEventDescriptionId()]] <- shiny::renderTable(
-          data.frame())
+        outputId <- self$getEventDescriptionId()
+        descriptionTable <- data.frame(variable=character(), libelle = character())
+        self$renderDT(outputId = outputId, 
+                      data = descriptionTable)
         return(NULL)
       }
       content <- GLOBALcon$getEventDescriptionTimeline(eventName = eventName)
@@ -79,23 +123,68 @@ Timeline <- R6::R6Class(
       bool <- eventDescription$predicate == "hasType"
       eventType <- as.character(eventDescription$object[bool])
       
-      descriptionTable <- self$getDescriptionTable(description = eventDescription, 
+      self$descriptionTableEvent <- self$getDescriptionTable(description = eventDescription, 
                                                    eventType = eventType, 
                                                    terminology = self$terminology)
-      output[[self$getEventDescriptionId()]] <- shiny::renderTable(descriptionTable)
+      outputId <- self$getEventDescriptionId()
+      self$renderDT(outputId = outputId, 
+                    data = self$descriptionTableEvent)
     },
     
+    setVariableDescription = function(predicateLabel,instanceName, terminology){
+      # instanceName <- "06K04J"
+      # predicateLabel <- "GHM"
+      doNothing <- c("integer","dateTime","string")
+      predicate <- terminology$getPredicate(predicateLabel)
+      predicateDescription <- terminology$getPredicateDescription(predicate)
+      expectedValue <- predicateDescription$value
+      if (expectedValue %in% doNothing){
+        return(NULL)
+      }
+      
+      tryCatch(
+        terminologyTarget <- staticTerminologyInstances$getTerminologyByClassName(expectedValue)
+        , error = function(e){
+          print("Error finding terminology")
+          return(NULL)
+        }
+      )
+      content <- GLOBALcon$getContextDescriptionTimeline(
+        terminologyName = terminologyTarget$terminologyName,
+        instanceName = instanceName)
+      contextDescription <- GLOBALcon$readContentStandard(content = content)
+      descriptionTable <- self$getDescriptionTable(contextDescription,
+                          eventType = expectedValue,
+                          terminology = terminologyTarget)
+      if (is.null(descriptionTable)){
+        return(NULL)
+      }
+      outputId <- self$getVariableDescriptionId()
+      self$renderDT(outputId = outputId, 
+                    data = descriptionTable)
+    },
+
     setContextDescription = function(contextName){
       print(contextName)
-      content <- GLOBALcon$getContextDescriptionTimeline(contextName = contextName)
+      content <- GLOBALcon$getContextDescriptionTimeline(
+        terminologyName = "Graph",
+        instanceName = contextName)
       print(content)
       contextDescription <- GLOBALcon$readContentStandard(content = content)
       terminology <- staticTerminologyInstances$getTerminology(staticTerminologyInstances$terminology$Graph$terminologyName)
-      descriptionTable <- self$getDescriptionTable(description = contextDescription, 
+      self$descriptionTableContext <- self$getDescriptionTable(description = contextDescription, 
                                                    eventType = terminology$mainClassName, 
                                                    terminology = terminology)
-      output[[self$getContextDescriptionId()]] <- shiny::renderTable(descriptionTable)
+      outputId <- self$getContextDescriptionId()
+      self$renderDT(outputId = outputId, 
+                    data = self$descriptionTableContext)
 
+    },
+    
+    renderDT = function(outputId, data){
+      output[[outputId]] <- DT::renderDataTable(
+        DT::datatable(data, options = list(pageLength = 10),
+                      selection = "single"),filter="none")
     },
     
     addClickedEventObserver = function(){
@@ -170,14 +259,22 @@ Timeline <- R6::R6Class(
       ui <- div(id = self$getDivId(),
                 timevis::timevisOutput(self$getTimelinePlotId()),
                 fluidRow(
-                  column(6,
+                  column(4,
                          h3(GLOBALcontextDescription),
-                         shiny::tableOutput(outputId = self$getContextDescriptionId())
+                         DT::dataTableOutput(outputId = self$getContextDescriptionId(),
+                                             width = "100%")
                          ),
-                  column(6,
+                  column(4,
                          h3(GLOBALeventDescription),
-                         shiny::tableOutput(outputId = self$getEventDescriptionId())
-                         )  
+                         DT::dataTableOutput(outputId = self$getEventDescriptionId(),
+                                             width = "100%")
+                         ),
+                  column(4,
+                         h3("Variable description"),
+                         DT::dataTableOutput(outputId = self$getVariableDescriptionId(),
+                                             width = "100%")
+                  )
+                  
                 )
       )
       return(ui)
@@ -204,6 +301,10 @@ Timeline <- R6::R6Class(
     
     getContextDescriptionId = function(){
       return(paste0("getContextDescription",self$getDivId()))
+    },
+    
+    getVariableDescriptionId = function(){
+      return(paste0("getVariableDescription",self$getDivId()))
     }
   ),
   
@@ -222,7 +323,9 @@ Timeline <- R6::R6Class(
       nMinutes <- round(nMinutes,0)
       # nSeconds <- nSeconds - (nMinutes * 60)
       
-      hourMinuteString <- paste0(nDays, "days - ", nHours, "hours - ", nMinutes, "minutes")
+      hourMinuteString <- paste0(nDays, " ", GLOBALdays, " - ",
+                                 nHours, " ", GLOBALhours, " - ", 
+                                 nMinutes, GLOBALminutes)
       return(hourMinuteString)
     },
     

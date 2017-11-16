@@ -4,9 +4,11 @@ SearchQueries <- R6::R6Class(
   
   public = list(
     searchQueriesObserver = NULL,
+    deleteQueriesObserver = NULL,
     validateButtonId = character(),
     queryViz = NULL,
     hideShowButton = NULL,
+    result = NULL,
     
     initialize = function(parentId, where, validateButtonId){
       super$initialize(parentId, where)
@@ -14,6 +16,7 @@ SearchQueries <- R6::R6Class(
       self$insertUIsearchQueries()
       self$addSearchQueriesObserver()
       self$addSelectizeResultObserver()
+      self$addDeleteQueriesObserver()
     },
     
     insertHideShowButton = function(){
@@ -41,29 +44,45 @@ SearchQueries <- R6::R6Class(
       })
     },
     
+    addDeleteQueriesObserver = function(){
+      self$deleteQueriesObserver <- observeEvent(input[[self$getDeleteQueriesButtonId()]],{
+        libQuery <- input[[self$getSelectizeResultId()]]
+        staticQueriesList$deleteQuery(libQuery)
+        self$insertHideShowButton() ## only if is  null
+        self$updateSelectizeResult()
+      })
+    },
+    
     addSelectizeResultObserver = function(){
       observeEvent(input[[self$getSelectizeResultId()]],{
         queryChoice <- input[[self$getSelectizeResultId()]]
+        if (is.null(queryChoice) || queryChoice == ""){
+          staticLogger$info("No query selected")
+          return(NULL)
+        }
+        staticLogger$info("Timeline : ", queryChoice, "selected")
+        libQuery <- queryChoice
+        xmlSearchQuery <- staticQueriesList$getXMLsearchQuery(libQuery)
+        self$result <-  Result$new(xmlSearchQuery)
         self$makeQueryViz(queryChoice)
       })
     },
     
     makeQueryViz = function(queryChoice){
-      if (is.null(queryChoice) || queryChoice == ""){
-        staticLogger$info("No query selected")
-        return(NULL)
-      }
-      
-      staticLogger$info("Timeline : ", queryChoice, "selected")
-      queryChoice <- gsub(GLOBALquery,"",queryChoice)
-      queryChoice <- as.numeric(queryChoice)
-      lengthListResults <- length(GLOBALlistResults$listResults)
-      bool <- queryChoice > lengthListResults
-      if (bool){
-        stop("queryChoice number not found in GLOBALlistResults ")
-      }
-      result <- GLOBALlistResults$listResults[[queryChoice]]
-      self$queryViz <- QueryViz$new(result$XMLsearchQuery)
+      # if (is.null(queryChoice) || queryChoice == ""){
+      #   staticLogger$info("No query selected")
+      #   return(NULL)
+      # }
+      # staticLogger$info("Timeline : ", queryChoice, "selected")
+      # queryChoice <- gsub(GLOBALquery,"",queryChoice)
+      # queryChoice <- as.numeric(queryChoice)
+      # lengthListResults <- length(GLOBALlistResults$listResults)
+      # bool <- queryChoice > lengthListResults
+      # if (bool){
+      #   stop("queryChoice number not found in GLOBALlistResults ")
+      # }
+      # result <- GLOBALlistResults$listResults[[queryChoice]]
+      self$queryViz <- QueryViz$new(self$result$XMLsearchQuery)
       output[[self$getQueryVizId()]] <- self$queryViz$getOutput()
     },
     
@@ -73,14 +92,21 @@ SearchQueries <- R6::R6Class(
                               label = GLOBALchooseQuery,
                               choices = NULL,
                               selected = NULL,
-                              multiple = F),
+                              multiple = F,
+                              width = "80%"),
            shiny::actionButton(inputId = self$getValidateButtonId(),
                                label = GLOBALvalidate),
            shiny::actionButton(inputId = self$getSearchQueriesButtonId(),
                                label = GLOBALsearchQueries),
+           shiny::actionButton(inputId = self$getDeleteQueriesButtonId(),
+                               label = GLOBALdeleteQuery),
            div(id = self$getDivVizuId(),
                visNetwork::visNetworkOutput(outputId = self$getQueryVizId())))
       return(ui)
+    },
+    
+    getDeleteQueriesButtonId = function(){
+      return(paste0("DeleteQuery-",self$getDivQueriesId()))
     },
     
     getDivVizuId = function(){
@@ -94,10 +120,12 @@ SearchQueries <- R6::R6Class(
     updateSelectizeResult = function(){
       choices <- NULL
       iter <- 1
-      for (result in GLOBALlistResults$listResults){
-        choices <- append (choices, paste0(GLOBALquery, iter))
-        iter <- iter + 1
-      }
+      libQueries <- staticQueriesList$getLibQueries()
+      choices <- libQueries
+      # for (result in GLOBALlistResults$listResults){
+      #   choices <- append (choices, paste0(GLOBALquery, iter))
+      #   iter <- iter + 1
+      # }
       updateSelectInput(session,
                         inputId = self$getSelectizeResultId(),
                         label = GLOBALchooseQuery,

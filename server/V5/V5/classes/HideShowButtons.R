@@ -41,7 +41,7 @@ HideShowButton <- R6::R6Class(
     },
     
     getHideShowId = function(){
-      return(paste0("HideShowButton-",self$parent))
+      return(paste0("HideShowButton-",self$parentId))
     },
     
     addHideShowObserver = function(){
@@ -71,3 +71,7 @@ HideShowButton <- R6::R6Class(
     }
   )
 )
+
+# rm(list=ls())
+# load("tempQuery2.rdata")
+# xmlSearchQuery$listEventNodes

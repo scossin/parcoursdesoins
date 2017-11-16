@@ -34,13 +34,13 @@ public class TimelineDescribeContext implements Query {
 	
 	private Terminology terminology;
 	
-	public TimelineDescribeContext(String contextName) throws RDFParseException, RepositoryException, IOException, InvalidContextException, UnfoundTerminologyException{
-		this.terminology = TerminologyInstances.getTerminology(EIG.contextTerminologyName);
-		setSparqlQueryTerminology(contextName);
+	public TimelineDescribeContext(String terminologyName, String instanceName) throws RDFParseException, RepositoryException, IOException, InvalidContextException, UnfoundTerminologyException{
+		this.terminology = TerminologyInstances.getTerminology(terminologyName);
+		setSparqlQueryTerminology(instanceName);
 	}
 	
 	private void setSparqlQueryTerminology(String contextName){
-		IRI contextIRI = Util.vf.createIRI(EIG.NAMESPACE, contextName);
+		IRI contextIRI = Util.vf.createIRI(terminology.getNAMESPACE(), contextName);
 		String queryString = 
 				"SELECT ?predicate ?object WHERE { \n" +
 			     Query.formatIRI4query(contextIRI) + " ?predicate ?object " + ". \n " +
@@ -70,11 +70,11 @@ public class TimelineDescribeContext implements Query {
 	}
 	
 	public static void main (String[] args) throws NumberFormatException, UnfoundEventException, UnfoundPredicatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, ParserConfigurationException, SAXException, IOException, ParseException, UnfoundResultVariable{
-		Query query = new TimelineDescribeContext("p21");
+		Query query = new TimelineDescribeContext("CIM10","A63");
 		System.out.println(query.getSPARQLQueryString());
 		System.out.println(query.getEndpoint().getDBnamespace());
-		Results result = new Results(query.getEndpoint().getEndpointIPadress(),query);
-		result.serializeResult();
+		//Results result = new Results(query.getEndpoint().getEndpointIPadress(),query);
+		//result.serializeResult();
 	}
 }
 

@@ -25,11 +25,12 @@ public class GetContextDescriptionTimeline extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("text/csv");
 		resp.setHeader("Content-Disposition","attachment;filename="+"results.csv");
-		String contextName = req.getParameter("contextName");
+		String instanceName = req.getParameter("instanceName");
+		String terminologyName = req.getParameter("terminologyName");
 		
 		Query query = null;
 		try {
-			query = new TimelineDescribeContext(contextName);
+			query = new TimelineDescribeContext(terminologyName, instanceName);
 		} catch (RDFParseException | RepositoryException | InvalidContextException | UnfoundTerminologyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

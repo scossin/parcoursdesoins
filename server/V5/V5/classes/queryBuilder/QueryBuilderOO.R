@@ -104,6 +104,8 @@ QueryBuilder <- R6::R6Class(
             shiny::tags$hr(style="border-top: dotted 1px;"),
                 div(id = self$getDivLinksDescription()),
             shiny::tags$hr(style="border-top: dotted 1px;"),
+            shiny::textInput(inputId=self$getQueryLibId(),
+                             label=GLOBALqueryLib,width = "80%"),
         shiny::verbatimTextOutput(outputId = self$getResultsVerbatimId())
       )
       # div(id = "visuXML",
@@ -127,15 +129,26 @@ QueryBuilder <- R6::R6Class(
           return(text)
         }
         xmlSearchQuery <- self$xmlSearchQuery
-        save(xmlSearchQuery, file="tempQuery2.rdata")
+        
+        staticQueriesList$saveQuery(xmlSearchQuery, self$getLibQuery())
+        # save(xmlSearchQuery, file="tempQuery2.rdata")
+        
         results <- GLOBALcon$sendQuery(self$xmlSearchQuery)
-        if (nrow(results) != 0){ ## add results to be further analyzed
-          result <- Result$new(self$xmlSearchQuery)
-          GLOBALlistResults$addResult(result)
-        }
+        # if (nrow(results) != 0){ ## add results to be further analyzed
+        #   result <- Result$new(self$xmlSearchQuery)
+        #   GLOBALlistResults$addResult(result)
+        # }
         text <- getTextResults_(results)
       }
       output[[self$getResultsVerbatimId()]] <- shiny::renderPrint(text)
+    },
+    
+    getLibQuery = function(){
+      libQuery <- input[[self$getQueryLibId()]]
+      if (is.null(libQuery) || libQuery == ""){
+        libQuery <- "Requete sans nom"
+      }
+      return(libQuery)
     },
     
     setQuery = function(){
@@ -204,6 +217,10 @@ QueryBuilder <- R6::R6Class(
     
     getResultsVerbatimId = function(){
       return(paste0("VerbatimResults",self$getDivId()))
+    },
+    
+    getQueryLibId = function(){
+      return(paste0("QueryLibId-",self$getDivId()))
     },
     
     getButtonSetQueryId = function(){

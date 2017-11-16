@@ -19,7 +19,7 @@ server <- function(input,output,session){
   source("classes/terminology/TerminologyOO.R",local=T)
   staticTerminologyInstances <- STATICterminologyInstances$new()
   # staticTerminologyInstances$getTerminologyByClassName("ICD10FR")
-  # test <-  staticTerminologyInstances$getTerminology("Event")
+  
   # test$predicateEvent$eventType == "Graph"
   # test$mainClassName
   # test$predicateDescription
@@ -92,10 +92,16 @@ server <- function(input,output,session){
   
   source("classes/HideShowButtons.R",local = T)
   
-  GLOBALlistResults <- ListResults$new()
-  # load("dev/test/tempQuery.rdata")
-  # result <- Result$new(tempQuery)
+  source("classes/queries/STATICqueriesListOO.R",local=T)
+  
+  staticQueriesList <- STATICqueriesList$new()
+  
+  # GLOBALlistResults <- ListResults$new()
+  # 
+  # load("tempQuery2.rdata")
+  # result <- Result$new(xmlSearchQuery)
   # GLOBALlistResults$addResult(result)
+  
   GLOBALSankeylistEventTabpanel <- ListEventsTabpanel$new()
   sankey <- Sankey$new(GLOBALmainPanelSankeyId, "beforeEnd")
   survie <- Survie$new(GLOBALsurvieDiv,"beforeEnd")
