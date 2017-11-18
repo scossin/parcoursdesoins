@@ -270,7 +270,7 @@ Timeline <- R6::R6Class(
                                              width = "100%")
                          ),
                   column(4,
-                         h3("Variable description"),
+                         h3(GLOBALvariableDescription),
                          DT::dataTableOutput(outputId = self$getVariableDescriptionId(),
                                              width = "100%")
                   )

@@ -26,6 +26,7 @@ HandleTimelines <- R6::R6Class(
     
     getUI = function(){
       ui <- div (id = self$getDivId(),
+                 shiny::tags$h3(GLOBALtimelineViz,style='text-align:center;margin-top:150px;'),
                  actionButton(inputId = self$getChangeContextButtonId(), label="",
                               icon = icon(name="refresh"))
                  )
@@ -45,10 +46,11 @@ HandleTimelines <- R6::R6Class(
       self$validateObserver <- observeEvent(input[[self$getValidateButtonId()]],{
         staticLogger$user("Validate Button Timeline clicked ")
         
-        if (is.null(self$searchQueries$result)){
+        if (is.null(self$searchQueries$xmlSearchQuery)){
             staticLogger$info("HandleTimeline : no query selected")
             return(NULL)
         }
+        self$searchQueries$result <-  Result$new(self$searchQueries$xmlSearchQuery)
         self$setTimeline()
         # queryChoice <- input[[self$searchQueries$getSelectizeResultId()]]
         # 
@@ -87,7 +89,7 @@ HandleTimelines <- R6::R6Class(
       if (is.null(self$timeline)){
         self$insertUIdiv()
         self$timeline <- Timeline$new(parentId=self$getDivId(),
-                                 where="afterBegin",
+                                 where="beforeEnd",
                                  contextEvents = contextEvents)
       } else {
         self$timeline$setContextEvents(contextEvents)

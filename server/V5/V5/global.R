@@ -138,8 +138,10 @@ if (GLOBALlang == "fr"){
   ## Timeline
   GLOBALcontextDescription <- "Description du contexte"
   GLOBALeventDescription <- "Description de l'évènement"
+  GLOBALvariableDescription <- "Description de la variable"
   GLOBALvariable <- "variable"
   GLOBALvalue <- "valeur"
+  GLOBALtimelineViz <- "Visualisation d'une timeline"
   
   ## Survie
   GLOBALmakeSurvivalCurve <- "Make survival curve"
@@ -223,6 +225,8 @@ if (GLOBALlang == "fr"){
   GLOBALeventDescription <- "Event description"
   GLOBALvariable <- "predicate"
   GLOBALvalue <- "value"
+  GLOBALtimelineViz <- "Timeline vizualisation"
+  GLOBALvariableDescription <- "Variable description"
   
   ## Survie
   GLOBALmakeSurvivalCurve <- "Calculer la courbe de survie"

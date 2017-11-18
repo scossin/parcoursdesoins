@@ -88,10 +88,10 @@ public class TerminologyInstances {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		System.out.println("Initializing");
-		new Initialize().init();
+//		System.out.println("Initializing");
+//		new Initialize().init();
 		
-		/*
+		
 		for (Terminology terminology : TerminologyInstances.terminologies){
 			if (!terminology.getTerminologyName().equals("Graph")){
 				continue;
@@ -103,7 +103,7 @@ public class TerminologyInstances {
 		}
 		
 		
-		*/
+		
 //		Terminology terminology = TerminologyInstances.getTerminology("Graph");
 //		terminology.getTerminologyServer().countInstances();
 //		terminology.getTerminologyServer().loadTerminology();

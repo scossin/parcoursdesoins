@@ -43,3 +43,9 @@ font-size:1.5em ;
 margin-bottom:50px;
 text-align:center;
 }
+
+[id^=switchesdivButtonFilter] > div{
+width:100% !important;
+}
+
+

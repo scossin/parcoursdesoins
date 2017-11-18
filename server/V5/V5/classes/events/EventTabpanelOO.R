@@ -83,6 +83,28 @@ EventTabpanel <- R6::R6Class(
       return(NULL)
     },
     
+    createInstanceSelectionContext = function(contextEvents = NULL, eventType = NULL){ ### NULL => search events in context
+      staticLogger$user("Trying to create Context")
+      if (!is.null(eventType)){
+        self$contextEnv$eventType <- eventType 
+      }
+      
+      if (is.null(self$contextEnv$eventType)){
+        stop("eventType not set ! can't create InstanceSelection")
+      }
+      
+      parentId = private$getFirstDivOfEventId()
+      where = "beforeEnd"
+      terminology <- staticTerminologyInstances$terminologyInstances$Graph
+      self$contextEnv$instanceSelection <- InstanceSelectionContext$new(contextEnv = self$contextEnv, 
+                                                                      terminology = terminology, 
+                                                                      className = self$contextEnv$eventType, 
+                                                                      contextEvents = contextEvents, 
+                                                                      parentId = parentId, 
+                                                                      where = where)
+      return(NULL)
+    },
+    
     addHierarchicalObserver = function(){
       observeEvent(input[[self$hierarchicalObject$getButtonValidateId()]],{
         staticLogger$user("Button validate cliked of HierarchicalObjectEvent")
@@ -108,7 +130,11 @@ EventTabpanel <- R6::R6Class(
     },
     
     getLiText = function(){
-      return(paste0("event",self$contextEnv$eventNumber))
+      if (self$contextEnv$eventNumber == 0){
+        return("Context")
+      } else {
+        return(paste0("event",self$contextEnv$eventNumber))
+      }
     },
     
     removeUI = function(){

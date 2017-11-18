@@ -6,6 +6,7 @@ SearchQueries <- R6::R6Class(
     searchQueriesObserver = NULL,
     deleteQueriesObserver = NULL,
     validateButtonId = character(),
+    xmlSearchQuery = NULL,
     queryViz = NULL,
     hideShowButton = NULL,
     result = NULL,
@@ -62,13 +63,12 @@ SearchQueries <- R6::R6Class(
         }
         staticLogger$info("Timeline : ", queryChoice, "selected")
         libQuery <- queryChoice
-        xmlSearchQuery <- staticQueriesList$getXMLsearchQuery(libQuery)
-        self$result <-  Result$new(xmlSearchQuery)
-        self$makeQueryViz(queryChoice)
+        self$xmlSearchQuery <- staticQueriesList$getXMLsearchQuery(libQuery)
+        self$makeQueryViz()
       })
     },
     
-    makeQueryViz = function(queryChoice){
+    makeQueryViz = function(){
       # if (is.null(queryChoice) || queryChoice == ""){
       #   staticLogger$info("No query selected")
       #   return(NULL)
@@ -82,7 +82,8 @@ SearchQueries <- R6::R6Class(
       #   stop("queryChoice number not found in GLOBALlistResults ")
       # }
       # result <- GLOBALlistResults$listResults[[queryChoice]]
-      self$queryViz <- QueryViz$new(self$result$XMLsearchQuery)
+      staticLogger$info("QueryViz must changed")
+      self$queryViz <- QueryViz$new(self$xmlSearchQuery)
       output[[self$getQueryVizId()]] <- self$queryViz$getOutput()
     },
     

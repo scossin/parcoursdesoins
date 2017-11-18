@@ -109,30 +109,39 @@ Sankey <- R6::R6Class(
       self$validateObserver <- observeEvent(input[[self$getValidateButtonId()]],{
         staticLogger$user("Validate Button Sankey clicked ")
         
-        queryChoice <- input[[self$searchQueries$getSelectizeResultId()]]
-
-        if (is.null(queryChoice) || queryChoice == ""){
-          staticLogger$info("No query selected")
+        # queryChoice <- input[[self$searchQueries$getSelectizeResultId()]]
+        
+        
+        if (is.null(self$searchQueries$xmlSearchQuery)){
+          staticLogger$info("\t Sankey : no query selected")
           return(NULL)
         }
         
-        staticLogger$info("Sankey : ", queryChoice, "selected")
+        self$searchQueries$result <-  Result$new(self$searchQueries$xmlSearchQuery)
         
-        queryChoice <- gsub(GLOBALquery,"",queryChoice)
-        queryChoice <- as.numeric(queryChoice)
-        lengthListResults <- length(GLOBALlistResults$listResults)
-        bool <- queryChoice > lengthListResults
-        if (bool){
-          stop("queryChoice number not found in GLOBALlistResults ")
-        }
-        self$result <- GLOBALlistResults$listResults[[queryChoice]]
+        # if (is.null(queryChoice) || queryChoice == ""){
+        #   staticLogger$info("No query selected")
+        #   return(NULL)
+        # }
+        
+        # staticLogger$info("Sankey : ", queryChoice, "selected")
+        # 
+        # queryChoice <- gsub(GLOBALquery,"",queryChoice)
+        # queryChoice <- as.numeric(queryChoice)
+        # lengthListResults <- length(GLOBALlistResults$listResults)
+        # bool <- queryChoice > lengthListResults
+        # if (bool){
+        #   stop("queryChoice number not found in GLOBALlistResults ")
+        # }
+        # self$result <- GLOBALlistResults$listResults[[queryChoice]]
+        self$result <- self$searchQueries$result
         self$setEventTabpanel()
       })
     },
     
     setEventTabpanel = function(){
       getContextEvents_ = function(resultDf,eventNumber){
-        print(nrow(resultDf))
+        # print(nrow(resultDf))
         event <- paste0("event",eventNumber)
         bool <- event %in% colnames(resultDf)
         if (!bool){
@@ -151,6 +160,19 @@ Sankey <- R6::R6Class(
       Nevents <- length(xmlSearchQuery$listEventNodes)
       context <- self$result$resultDf$context
       GLOBALSankeylistEventTabpanel$emptyTabpanel() ## empty before adding new
+      
+      
+      
+      ### Add context first  : 
+      eventTabpanel <- EventTabpanel$new(eventNumber = 0,
+                                         context = context,
+                                         tabsetPanelId = GLOBALeventTabSetPanelSankey)
+      contextEvents <- data.frame(context=context,event=context)
+      eventTabpanel$createInstanceSelectionContext(contextEvents = contextEvents, 
+                                                   eventType = "Graph")
+      GLOBALSankeylistEventTabpanel$addEventTabpanel(eventTabpanel)
+      
+      ## add events : 
       for (eventNode in xmlSearchQuery$listEventNodes){
         eventNumber <- xmlSearchQuery$getEventNumber(eventNode)
         eventType <- xmlSearchQuery$getEventTypeByEventNode(eventNode)
@@ -163,6 +185,8 @@ Sankey <- R6::R6Class(
                                                    eventType = eventType)
         GLOBALSankeylistEventTabpanel$addEventTabpanel(eventTabpanel)
       }
+      
+      # contextEvents <- data.frame(context=paste0("p",1:1000),event=paste0("p",1:1000))
     },
 
     getDivId = function(){

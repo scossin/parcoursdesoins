@@ -135,7 +135,7 @@ public class Integration {
 		
 		rejectedFile = new File(folderFile.getAbsolutePath() + "/rejectedFile.txt");
 		System.out.println("rejectedFile:" + rejectedFile.getAbsolutePath());
-		if (rejectedFile.exists()){
+		if (!rejectedFile.exists()){
 			rejectedFile.createNewFile();
 		}
 		output = new BufferedWriter(new FileWriter(rejectedFile,true));  //clears file every time
