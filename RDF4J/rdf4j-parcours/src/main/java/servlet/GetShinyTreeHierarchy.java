@@ -22,10 +22,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exceptions.MyExceptions;
+import exceptions.UnfoundFilterException;
 import exceptions.UnfoundInstanceOfTerminologyException;
 import exceptions.UnfoundTerminologyException;
-import hierarchy.HandleHierarchy;
+import hierarchy.GetTreeJsHierarchy;
 import parameters.Util;
+import terminology.Terminology;
 import terminology.TerminologyInstances;
 
 public class GetShinyTreeHierarchy extends HttpServlet {
@@ -56,7 +58,8 @@ public class GetShinyTreeHierarchy extends HttpServlet {
 			String separator = "\t";
 			String[] columns = line.split(separator);
 			String terminologyName = columns[0];
-			HandleHierarchy handleHierarchy = TerminologyInstances.getTerminology(terminologyName).getHandleHierarchy();
+			Terminology terminology = TerminologyInstances.getTerminology(terminologyName);
+			GetTreeJsHierarchy handleHierarchy = new GetTreeJsHierarchy(terminology);
 			while ((line = br.readLine()) != null) {
 				//System.out.println(line);
 				columns = line.split(separator);
@@ -76,7 +79,7 @@ public class GetShinyTreeHierarchy extends HttpServlet {
 			handleHierarchy.resetNumbers();
 			os.close();
 			
-		} catch (RDFParseException | RepositoryException | UnfoundTerminologyException | UnfoundInstanceOfTerminologyException e1) {
+		} catch (RDFParseException | RepositoryException | UnfoundTerminologyException | UnfoundInstanceOfTerminologyException | UnfoundFilterException e1) {
 			MyExceptions.logException(logger, e1);
 			e1.printStackTrace();
 		}

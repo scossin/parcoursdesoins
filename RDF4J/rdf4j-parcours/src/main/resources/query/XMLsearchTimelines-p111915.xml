@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE eventslinks SYSTEM "searchTimelines.dtd" > 
+<eventslinks>
+ <event number="1">
+  
+  <terminologyName>Event</terminologyName>
+  <eventType>SejourMCO</eventType>
+  <predicate>
+   <factor>
+    <predicateType>hasDP</predicateType>
+    <value>S720	S7200	S7201	S721	S7210	S722	S7220	S723	S7230	S724	S7240	S7241	S7270	S7271	S7280	S729	S7290</value>
+   </factor>
+  </predicate>
+ </event>
+ <event number="2">
+  
+  <terminologyName>Event</terminologyName>
+  <eventType>SejourMCO</eventType>
+ </event>
+ <link>
+  <event1>1</event1>
+  <event2>2</event2>
+  <predicate1>hasEnd</predicate1>
+  <predicate2>hasBeginning</predicate2>
+  <operator>diff</operator>
+  <minValue>1</minValue>
+  <maxValue>30</maxValue>
+ </link>
+ <context>
+	 <value>p111915</value>
+ </context>
+</eventslinks>

@@ -160,7 +160,7 @@ public class PredicateDescription {
 		if (filter != null){ // 
 			String filterName = filter.stringValue();
 			filterName = filterName.toUpperCase();
-			//System.out.println("FilterName: " + filterName + " for predicate : " + predicateIRI.getLocalName());
+			System.out.println("FilterName: " + filterName + " for predicate : " + predicateIRI.getLocalName());
 			for (ValueCategory category : ValueCategory.values()){
 				if (filterName.equals(category.toString())){
 					return(category);

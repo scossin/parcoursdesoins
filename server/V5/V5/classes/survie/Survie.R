@@ -36,7 +36,8 @@ Survie <- R6::R6Class(
                                     selected = private$eventsAvailable,
                                     multiple = F,
                                     selectize = F))),
-         shiny::actionButton(inputId = self$getValidateEventChoiceId(),label = GLOBALmakeSurvivalCurve),
+         shiny::actionButton(inputId = self$getMakeCurveButtonId(),
+                             label = GLOBALmakeSurvivalCurve),
          shiny::verbatimTextOutput(outputId = self$getVerbatimInfoId()),
          shiny::plotOutput(outputId = self$getPlotId())
         )
@@ -70,7 +71,7 @@ Survie <- R6::R6Class(
       return(paste0("event2Choice",self$getControlDivId()))
     },
     
-    getValidateEventChoiceId = function(){
+    getMakeCurveButtonId = function(){
       return(paste0("validateEvent",self$getControlDivId()))
     },
     
@@ -90,7 +91,7 @@ Survie <- R6::R6Class(
     # chooseEventObserver
     # validateObserver
     addChooseEventsObserver = function(){
-      self$chooseEventObserver <- observeEvent(input[[self$getValidateEventChoiceId()]],{
+      self$chooseEventObserver <- observeEvent(input[[self$getMakeCurveButtonId()]],{
         event1 <- input[[self$getEvent1SelectizeId()]]
         event2 <- input[[self$getEvent2SelectizeId()]]
         if (event1 == "" || event2 == ""){
@@ -109,33 +110,40 @@ Survie <- R6::R6Class(
           self$sendInfo(message)
           return(NULL)
         }
-        bool <- colnames(self$result$resultDf) %in% c("context",event1)
-        contextEvents1 <- self$result$resultDf[,bool]
-        ### get HasBeginning
-        terminologyName <- "Event"
-        eventType <- "Event"
-        predicateName <- "hasBeginning"
-        event1Value <- staticFilterCreator$getDataFrame(terminologyName, eventType, contextEvents1, predicateName)
-        event1Value$value <-  private$valueToDate(event1Value$value)
-        colnames(event1Value) <- c(event1,paste0(event1,"value"))
         
-        bool <- colnames(self$result$resultDf) %in% c("context",event2)
-        contextEvents2 <- self$result$resultDf[,bool]
-        event2Value <- staticFilterCreator$getDataFrame(terminologyName, eventType, contextEvents2, predicateName)
-        event2Value$value <-  valueToDate(event2Value$value)
-        colnames(event2Value) <- c(event2,paste0(event2,"value"))
+        ## choisir date de fin ou de début !
         
-        df <- cbind(event1Value, event2Value)
+        selectedColumns <- c(event1,event2,"context")
+        result <- self$result$resultDf
+        resultats <- save (result, file="results.rdata")
+        load("results.rdata")
+        contextEvents <- subset(self$result$resultDf, select=selectedColumns)
+        
+        addValue_ <- function(contextEvents, colNum){
+          contextEvents1 <- contextEvents[,c(3,colNum)]
+          ### get HasBeginning
+          terminologyName <- "Event"
+          eventType <- "Event"
+          predicateName <- "hasBeginning"
+          print(contextEvents1)
+          event1Value <- staticFilterCreator$getDataFrame(terminologyName, eventType, 
+                                                          contextEvents1, predicateName)
+          orderNum <- match(contextEvents[,colNum],event1Value$event)
+          event1Value <- event1Value[orderNum,]
+          event1Value$value <-  private$valueToDate(event1Value$value)
+          contextEvents$value <- event1Value$value
+          colnames(contextEvents)[length(contextEvents)] <- paste0("event", colNum,"value")
+          return(contextEvents)
+        }
+        contextEvents <- addValue_(contextEvents,1)
+        contextEvents <- addValue_(contextEvents,2)
+        
+        df <- contextEvents
         df$event <- 1
-        diffEvent2Event1 <- as.numeric(difftime(df$event2value,df$event1value,units = "days"))
-        surv_objet <- Surv(as.numeric(diffEvent2Event1), event=df$event)
-        my.fit <- survfit(surv_objet~1)
-        plot <- ggsurvplot(my.fit, data = df,
-                           risk.table = T,
-                           conf.int = T,
-                           tables.height = 0.2,
-                           risk.table.y.text = FALSE,
-                           xlab="Time (days)")
+        save(df,file="df.rdata")
+        rm(list=ls())
+        load("df.rdata")
+        plot <- self$getPlot(df)
         output[[self$getPlotId()]] <- renderPlot({
           ggpar(plot,font.legend = c("12","plain","black"))
         })
@@ -144,27 +152,31 @@ Survie <- R6::R6Class(
       })
     },
     
+
+    getPlot = function(df){
+      df$diffEvent2Event1 <- as.numeric(difftime(df$event2value,df$event1value,units = "days"))
+      my.fit <- do.call(survfit, 
+                        list(formula =  Surv(diffEvent2Event1, df$event) ~ 1, data=df))
+      plot <- ggsurvplot(my.fit, data = df,
+                         risk.table = T,
+                         conf.int = T,
+                         tables.height = 0.2,
+                         risk.table.y.text = FALSE,
+                         xlab="Time (days)")
+      return(plot)
+    },
+    
     addValidateObserver = function(){
       self$validateObserver <- observeEvent(input[[self$getValidateButtonId()]],{
         staticLogger$user("Validate Button Survie clicked ")
         
-        queryChoice <- input[[self$searchQueries$getSelectizeResultId()]]
-        
-        if (is.null(queryChoice) || queryChoice == ""){
-          staticLogger$info("No query selected")
+        if (is.null(self$searchQueries$xmlSearchQuery)){
+          staticLogger$info("HandleTimeline : no query selected")
           return(NULL)
         }
+        self$searchQueries$result <-  Result$new(self$searchQueries$xmlSearchQuery)
         
-        staticLogger$info("Survie : ", queryChoice, "selected")
-        
-        queryChoice <- gsub(GLOBALquery,"",queryChoice)
-        queryChoice <- as.numeric(queryChoice)
-        lengthListResults <- length(GLOBALlistResults$listResults)
-        bool <- queryChoice > lengthListResults
-        if (bool){
-          stop("queryChoice number not found in GLOBALlistResults ")
-        }
-        self$result <- GLOBALlistResults$listResults[[queryChoice]]
+        self$result <- self$searchQueries$result
         self$setEventChoices()
       })
     },

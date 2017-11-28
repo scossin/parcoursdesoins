@@ -93,16 +93,16 @@ public class TerminologyInstances {
 		
 		
 		for (Terminology terminology : TerminologyInstances.terminologies){
-			if (!terminology.getTerminologyName().equals("Graph")){
-				continue;
-			}
+//			if (!terminology.getTerminologyName().equals("Etablissement")){
+//				continue;
+//			}
 			terminology.getTerminologyServer().countInstances();
-			terminology.getTerminologyServer().loadTerminology();
-			terminology.getTerminologyServer().countInstances();
+//			terminology.getTerminologyServer().loadTerminology();
+//			terminology.getTerminologyServer().countInstances();
 			terminology.closeConnection();
 		}
 		
-		
+		TerminologyInstances.closeConnections();
 		
 //		Terminology terminology = TerminologyInstances.getTerminology("Graph");
 //		terminology.getTerminologyServer().countInstances();

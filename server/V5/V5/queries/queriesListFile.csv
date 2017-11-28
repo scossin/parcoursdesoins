@@ -1,4 +1,4 @@
 file	lib
-./queries/queries1.rdata	SejourMCO
-./queries/queries2.rdata	Fracture du col du femur
-./queries/queries3.rdata	Fracture du col du femur réhospitalisée dans les 30 jours
+./queries/queries8.rdata	AVC dans les 6 mois suivant une sortie d'hospitalisation pour ACFA 
+./queries/queries9.rdata	Séjours MCO fracture du fémur réhospitalisé en moins de 30 jours
+./queries/queries10.rdata	Rehospitalisation pour infarctus du myocarde 30 jours

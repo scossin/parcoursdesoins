@@ -147,7 +147,8 @@ set.seed(67)
 ### création des évènements :
 load("../../../RPPS/consultation33selection.rdata")
 i <- 2
-for (i in 1:100){
+for (i in 1:1000){
+  print(i)
   patientid <- paste("patient",i,sep="")
   finess <- 999
   ## symptome
@@ -276,6 +277,10 @@ for (i in 1:100){
   listeevents <- rbind (listeevents,unevent)
 }
 
+length(unique(listeevents$patientid))
+listeevents6000 <- listeevents
+listeevents4000 <- listeevents
+listeevents <- rbind(listeevents6000,listeevents4000)
 listeevents$end <- as.POSIXct(listeevents$end, origin = "1970-01-01") ## car NA présents
 
 # save(listeevents,file="../../../flux/blazegraph/R/listeevents_consultation.rdata")

@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE terminologies SYSTEM "terminologies.dtd" > 
+<terminologies>
+	  <!-- FINESS -->
+	<terminology>
+		<terminologyName>Etablissement</terminologyName>
+		<namespace>https://www.data.gouv.fr/FINESS#</namespace>
+		<prefix>datagouv</prefix>
+		<className>Etablissement</className>
+		<ontologyFileName>FINESS-ontology.owl</ontologyFileName>
+		<dataFileName>FINESS33.ttl</dataFileName>
+		<endpoint>/bigdata/namespace/FINESS/sparql</endpoint>
+	</terminology>
+		  
+	<terminology>
+		<terminologyName>RPPS</terminologyName>
+		<namespace>http://esante.gouv.fr#</namespace>
+		<prefix>asip</prefix>
+		<className>RPPS</className>
+		<ontologyFileName>RPPS-ontology.owl</ontologyFileName>
+		<dataFileName>RPPS.ttl</dataFileName>
+		<endpoint>/bigdata/namespace/RPPS/sparql</endpoint>
+	</terminology>
+	
+	
+	<!-- Context -->
+	<terminology>
+		<terminologyName>Graph</terminologyName>
+		<namespace>http://www.eigsante2017.fr#</namespace>
+		<prefix>eig</prefix>
+		<className>Graph</className>
+		<ontologyFileName>Context-ontology.owl</ontologyFileName>
+		<dataFileName>CONTEXT.ttl</dataFileName>
+		<endpoint>/bigdata/namespace/CONTEXT/sparql</endpoint>
+	</terminology>
+	
+	<!-- CIM10 -->
+	
+	<terminology>
+		<terminologyName>CIM10</terminologyName>
+		<namespace>http://www.atih.sante.fr#</namespace>
+		<prefix>atih</prefix>
+		<className>ICD10FR</className>
+		<ontologyFileName>CIM10-ontology.owl</ontologyFileName>
+		<dataFileName>InstancesCIM10.ttl</dataFileName>
+		<endpoint>/bigdata/namespace/CIM10/sparql</endpoint>
+	</terminology>
+	
+	<terminology>
+		<terminologyName>Event</terminologyName>
+		<namespace>http://www.eigsante2017.fr#</namespace>
+		<prefix>eig</prefix>
+		<className>Event</className>
+		<ontologyFileName>events-ontology.owl</ontologyFileName>
+		<dataFileName></dataFileName>
+		<endpoint>/bigdata/namespace/timelines/sparql</endpoint>
+	</terminology>
+	
+	<terminology>
+		<terminologyName>CodeGeoPMSI</terminologyName>
+		<namespace>https://www.atlasante.fr/GEOPMSI2014#</namespace>
+		<prefix>atlasante</prefix>
+		<className>PolygonCodeGeoPMSI</className>
+		<ontologyFileName>codeGeoPMSI-ontology.owl</ontologyFileName>
+		<dataFileName>terminoGeo.ttl</dataFileName>
+		<endpoint>/bigdata/namespace/CodeGeoPMSI/sparql</endpoint>
+	</terminology>
+	
+</terminologies>

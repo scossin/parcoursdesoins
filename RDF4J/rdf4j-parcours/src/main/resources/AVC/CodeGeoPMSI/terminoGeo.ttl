@@ -1,0 +1,569 @@
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix eig: <http://www.eigsante2017.fr#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix atlasante: <https://www.atlasante.fr/GEOPMSI2014#> .
+
+atlasante:PolygonCodeGeoPMSI33000 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33000 ;
+	atlasante:libCodeGeo "BORDEAUX"^^xsd:integer ;
+	atlasante:layerId "33000"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33110 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33110 ;
+	atlasante:libCodeGeo "LE BOUSCAT"^^xsd:integer ;
+	atlasante:layerId "33110"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33112 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33112 ;
+	atlasante:libCodeGeo "ST LAURENT MEDOC"^^xsd:integer ;
+	atlasante:layerId "33112"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33113 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33113 ;
+	atlasante:libCodeGeo "ST SYMPHORIEN"^^xsd:integer ;
+	atlasante:layerId "33113"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33114 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33114 ;
+	atlasante:libCodeGeo "LE BARP"^^xsd:integer ;
+	atlasante:layerId "33114"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33120 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33120 ;
+	atlasante:libCodeGeo "ARCACHON"^^xsd:integer ;
+	atlasante:layerId "33120"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33121 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33121 ;
+	atlasante:libCodeGeo "CARCANS"^^xsd:integer ;
+	atlasante:layerId "33121"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33123 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33123 ;
+	atlasante:libCodeGeo "LE VERDON SUR MER"^^xsd:integer ;
+	atlasante:layerId "33123"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33124 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33124 ;
+	atlasante:libCodeGeo "AUROS"^^xsd:integer ;
+	atlasante:layerId "33124"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33125 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33125 ;
+	atlasante:libCodeGeo "HOSTENS"^^xsd:integer ;
+	atlasante:layerId "33125"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33126 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33126 ;
+	atlasante:libCodeGeo "FRONSAC"^^xsd:integer ;
+	atlasante:layerId "33126"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33127 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33127 ;
+	atlasante:libCodeGeo "MARTIGNAS SUR JALLE"^^xsd:integer ;
+	atlasante:layerId "33127"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33130 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33130 ;
+	atlasante:libCodeGeo "BEGLES"^^xsd:integer ;
+	atlasante:layerId "33130"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33133 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33133 ;
+	atlasante:libCodeGeo "GALGON"^^xsd:integer ;
+	atlasante:layerId "33133"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33138 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33138 ;
+	atlasante:libCodeGeo "LANTON"^^xsd:integer ;
+	atlasante:layerId "33138"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33140 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33140 ;
+	atlasante:libCodeGeo "VILLENAVE D ORNON"^^xsd:integer ;
+	atlasante:layerId "33140"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33141 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33141 ;
+	atlasante:libCodeGeo "VILLEGOUGE"^^xsd:integer ;
+	atlasante:layerId "33141"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33150 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33150 ;
+	atlasante:libCodeGeo "CENON"^^xsd:integer ;
+	atlasante:layerId "33150"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33160 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33160 ;
+	atlasante:libCodeGeo "ST MEDARD EN JALLES"^^xsd:integer ;
+	atlasante:layerId "33160"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33170 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33170 ;
+	atlasante:libCodeGeo "GRADIGNAN"^^xsd:integer ;
+	atlasante:layerId "33170"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33180 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33180 ;
+	atlasante:libCodeGeo "ST ESTEPHE"^^xsd:integer ;
+	atlasante:layerId "33180"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33185 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33185 ;
+	atlasante:libCodeGeo "LE HAILLAN"^^xsd:integer ;
+	atlasante:layerId "33185"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33190 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33190 ;
+	atlasante:libCodeGeo "LA REOLE"^^xsd:integer ;
+	atlasante:layerId "33190"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33210 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33210 ;
+	atlasante:libCodeGeo "LANGON"^^xsd:integer ;
+	atlasante:layerId "33210"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33220 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33220 ;
+	atlasante:libCodeGeo "PINEUILH"^^xsd:integer ;
+	atlasante:layerId "33220"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33230 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33230 ;
+	atlasante:libCodeGeo "COUTRAS"^^xsd:integer ;
+	atlasante:layerId "33230"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33240 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33240 ;
+	atlasante:libCodeGeo "ST ANDRE DE CUBZAC"^^xsd:integer ;
+	atlasante:layerId "33240"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33250 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33250 ;
+	atlasante:libCodeGeo "PAUILLAC"^^xsd:integer ;
+	atlasante:layerId "33250"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33260 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33260 ;
+	atlasante:libCodeGeo "LA TESTE DE BUCH"^^xsd:integer ;
+	atlasante:layerId "33260"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33270 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33270 ;
+	atlasante:libCodeGeo "FLOIRAC"^^xsd:integer ;
+	atlasante:layerId "33270"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33290 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33290 ;
+	atlasante:libCodeGeo "BLANQUEFORT"^^xsd:integer ;
+	atlasante:layerId "33290"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33310 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33310 ;
+	atlasante:libCodeGeo "LORMONT"^^xsd:integer ;
+	atlasante:layerId "33310"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33320 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33320 ;
+	atlasante:libCodeGeo "EYSINES"^^xsd:integer ;
+	atlasante:layerId "33320"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33330 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33330 ;
+	atlasante:libCodeGeo "ST EMILION"^^xsd:integer ;
+	atlasante:layerId "33330"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33340 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33340 ;
+	atlasante:libCodeGeo "LESPARRE MEDOC"^^xsd:integer ;
+	atlasante:layerId "33340"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33350 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33350 ;
+	atlasante:libCodeGeo "CASTILLON LA BATAILLE"^^xsd:integer ;
+	atlasante:layerId "33350"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33360 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33360 ;
+	atlasante:libCodeGeo "CARIGNAN DE BORDEAUX"^^xsd:integer ;
+	atlasante:layerId "33360"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33370 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33370 ;
+	atlasante:libCodeGeo "ARTIGUES PRES BORDEAUX"^^xsd:integer ;
+	atlasante:layerId "33370"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33380 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33380 ;
+	atlasante:libCodeGeo "BIGANOS"^^xsd:integer ;
+	atlasante:layerId "33380"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33390 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33390 ;
+	atlasante:libCodeGeo "BLAYE"^^xsd:integer ;
+	atlasante:layerId "33390"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33400 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33400 ;
+	atlasante:libCodeGeo "TALENCE"^^xsd:integer ;
+	atlasante:layerId "33400"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33410 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33410 ;
+	atlasante:libCodeGeo "CADILLAC"^^xsd:integer ;
+	atlasante:layerId "33410"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33420 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33420 ;
+	atlasante:libCodeGeo "GENISSAC"^^xsd:integer ;
+	atlasante:layerId "33420"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33430 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33430 ;
+	atlasante:libCodeGeo "BAZAS"^^xsd:integer ;
+	atlasante:layerId "33430"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33440 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33440 ;
+	atlasante:libCodeGeo "AMBARES ET LAGRAVE"^^xsd:integer ;
+	atlasante:layerId "33440"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33450 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33450 ;
+	atlasante:libCodeGeo "ST LOUBES"^^xsd:integer ;
+	atlasante:layerId "33450"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33460 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33460 ;
+	atlasante:libCodeGeo "MACAU"^^xsd:integer ;
+	atlasante:layerId "33460"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33470 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33470 ;
+	atlasante:libCodeGeo "GUJAN MESTRAS"^^xsd:integer ;
+	atlasante:layerId "33470"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33480 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33480 ;
+	atlasante:libCodeGeo "CASTELNAU DE MEDOC"^^xsd:integer ;
+	atlasante:layerId "33480"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33490 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33490 ;
+	atlasante:libCodeGeo "ST MACAIRE"^^xsd:integer ;
+	atlasante:layerId "33490"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33500 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33500 ;
+	atlasante:libCodeGeo "LIBOURNE"^^xsd:integer ;
+	atlasante:layerId "33500"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33510 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33510 ;
+	atlasante:libCodeGeo "ANDERNOS LES BAINS"^^xsd:integer ;
+	atlasante:layerId "33510"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33520 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33520 ;
+	atlasante:libCodeGeo "BRUGES"^^xsd:integer ;
+	atlasante:layerId "33520"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33530 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33530 ;
+	atlasante:libCodeGeo "BASSENS"^^xsd:integer ;
+	atlasante:layerId "33530"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33540 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33540 ;
+	atlasante:libCodeGeo "SAUVETERRE DE GUYENNE"^^xsd:integer ;
+	atlasante:layerId "33540"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33550 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33550 ;
+	atlasante:libCodeGeo "LANGOIRAN"^^xsd:integer ;
+	atlasante:layerId "33550"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33560 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33560 ;
+	atlasante:libCodeGeo "CARBON BLANC"^^xsd:integer ;
+	atlasante:layerId "33560"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33570 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33570 ;
+	atlasante:libCodeGeo "MONTAGNE"^^xsd:integer ;
+	atlasante:layerId "33570"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33580 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33580 ;
+	atlasante:libCodeGeo "MONSEGUR"^^xsd:integer ;
+	atlasante:layerId "33580"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33590 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33590 ;
+	atlasante:libCodeGeo "ST VIVIEN DE MEDOC"^^xsd:integer ;
+	atlasante:layerId "33590"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33600 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33600 ;
+	atlasante:libCodeGeo "PESSAC"^^xsd:integer ;
+	atlasante:layerId "33600"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33610 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33610 ;
+	atlasante:libCodeGeo "CESTAS"^^xsd:integer ;
+	atlasante:layerId "33610"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33620 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33620 ;
+	atlasante:libCodeGeo "LARUSCADE"^^xsd:integer ;
+	atlasante:layerId "33620"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33640 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33640 ;
+	atlasante:libCodeGeo "PORTETS"^^xsd:integer ;
+	atlasante:layerId "33640"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33650 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33650 ;
+	atlasante:libCodeGeo "LA BREDE"^^xsd:integer ;
+	atlasante:layerId "33650"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33660 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33660 ;
+	atlasante:libCodeGeo "ST SEURIN SUR L ISLE"^^xsd:integer ;
+	atlasante:layerId "33660"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33670 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33670 ;
+	atlasante:libCodeGeo "CREON"^^xsd:integer ;
+	atlasante:layerId "33670"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33680 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33680 ;
+	atlasante:libCodeGeo "LACANAU"^^xsd:integer ;
+	atlasante:layerId "33680"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33690 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33690 ;
+	atlasante:libCodeGeo "GRIGNOLS"^^xsd:integer ;
+	atlasante:layerId "33690"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33700 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33700 ;
+	atlasante:libCodeGeo "MERIGNAC"^^xsd:integer ;
+	atlasante:layerId "33700"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33710 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33710 ;
+	atlasante:libCodeGeo "BOURG"^^xsd:integer ;
+	atlasante:layerId "33710"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33720 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33720 ;
+	atlasante:libCodeGeo "PODENSAC"^^xsd:integer ;
+	atlasante:layerId "33720"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33730 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33730 ;
+	atlasante:libCodeGeo "NOAILLAN"^^xsd:integer ;
+	atlasante:layerId "33730"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33740 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33740 ;
+	atlasante:libCodeGeo "ARES"^^xsd:integer ;
+	atlasante:layerId "33740"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33750 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33750 ;
+	atlasante:libCodeGeo "ST GERMAIN DU PUCH"^^xsd:integer ;
+	atlasante:layerId "33750"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33760 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33760 ;
+	atlasante:libCodeGeo "TARGON"^^xsd:integer ;
+	atlasante:layerId "33760"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33770 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33770 ;
+	atlasante:libCodeGeo "SALLES"^^xsd:integer ;
+	atlasante:layerId "33770"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33780 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33780 ;
+	atlasante:libCodeGeo "SOULAC SUR MER"^^xsd:integer ;
+	atlasante:layerId "33780"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33790 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33790 ;
+	atlasante:libCodeGeo "PELLEGRUE"^^xsd:integer ;
+	atlasante:layerId "33790"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33810 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33810 ;
+	atlasante:libCodeGeo "AMBES"^^xsd:integer ;
+	atlasante:layerId "33810"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33820 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33820 ;
+	atlasante:libCodeGeo "ST CIERS SUR GIRONDE"^^xsd:integer ;
+	atlasante:layerId "33820"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33830 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33830 ;
+	atlasante:libCodeGeo "BELIN BELIET"^^xsd:integer ;
+	atlasante:layerId "33830"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33840 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33840 ;
+	atlasante:libCodeGeo "CAPTIEUX"^^xsd:integer ;
+	atlasante:layerId "33840"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33850 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33850 ;
+	atlasante:libCodeGeo "LEOGNAN"^^xsd:integer ;
+	atlasante:layerId "33850"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33860 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33860 ;
+	atlasante:libCodeGeo "REIGNAC"^^xsd:integer ;
+	atlasante:layerId "33860"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33870 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33870 ;
+	atlasante:libCodeGeo "VAYRES"^^xsd:integer ;
+	atlasante:layerId "33870"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33880 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33880 ;
+	atlasante:libCodeGeo "ST CAPRAIS DE BORDEAUX"^^xsd:integer ;
+	atlasante:layerId "33880"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33890 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33890 ;
+	atlasante:libCodeGeo "GENSAC"^^xsd:integer ;
+	atlasante:layerId "33890"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33910 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33910 ;
+	atlasante:libCodeGeo "ST DENIS DE PILE"^^xsd:integer ;
+	atlasante:layerId "33910"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33920 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33920 ;
+	atlasante:libCodeGeo "ST SAVIN"^^xsd:integer ;
+	atlasante:layerId "33920"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33930 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33930 ;
+	atlasante:libCodeGeo "VENDAYS MONTALIVET"^^xsd:integer ;
+	atlasante:layerId "33930"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33950 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33950 ;
+	atlasante:libCodeGeo "LEGE CAP FERRET"^^xsd:integer ;
+	atlasante:layerId "33950"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33980 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33980 ;
+	atlasante:libCodeGeo "AUDENGE"^^xsd:integer ;
+	atlasante:layerId "33980"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .
+
+atlasante:PolygonCodeGeoPMSI33990 a atlasante:PolygonCodeGeoPMSI ;
+	atlasante:hasPolygon atlasante:PolygonCodeGeoPMSI33990 ;
+	atlasante:libCodeGeo "HOURTIN"^^xsd:integer ;
+	atlasante:layerId "33990"^^xsd:string ;
+	atlasante:shapeFile "couchegeoPMSI2014.rdata"^^xsd:string .

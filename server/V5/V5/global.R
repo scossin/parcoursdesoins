@@ -18,6 +18,14 @@ library(survival)
 library(survminer)
 library(visNetwork)
 library(DT)
+
+
+GLOBALinvalidRequest <- "Error : invalid request"
+GLOBALinvalidRequest <- "Erreur : requête impossible à réaliser"
+
+
+
+
 ### URL connection : 
 load("GLOBALurlserver.rdata")
 
@@ -39,8 +47,13 @@ GLOBALshapeFileFolder <- "./shapeFiles/"
 ## sankey : 
 GLOBALeventTabSetPanelSankey <- "eventTabsetSankey" # tabsetPanel id of events
 GLOBALmainPanelSankeyId <- "mainPanelSankey"
-
 GLOBALaddResultsTabSetPanelSankey <- "addResultsSankey" # !! same label and id !
+GLOBALplotSankey <- "Plot Sankey"
+GLOBALsankeyPloted <-  "Sankey Plotted"
+GLOBALsankeyTutorial <- "To plot a Sankey diagram, choose two variables per event. 
+You can't choose context variables for now"
+GLOBALnoPredicateChosen <- "No variable selected"
+GLOBALonlyOneEvent <- "Only one event detected. Sankey impossible to plot"
 
 GLOBALeventTabSetPanel <- "eventTabset" # tabsetPanel id of events
 GLOBALaddEventTabpanel <- "addEventTabpanel"
@@ -110,6 +123,7 @@ if (GLOBALlang == "fr"){
   
   ## leaflet : 
   GLOBALvoirlacarte <- "Voir la carte"
+  GLOBALaddCircles <- "Ajout cercles"
   
   ## valeurs sélectionnées(description filter) : 
   GLOBALvaleursselected <- "valeur(s) sélectionnée(s)"
@@ -134,6 +148,11 @@ if (GLOBALlang == "fr"){
   GLOBALchooseQuery <- "Choisir une requête"
   GLOBALsearchQueries <- "Rechercher des requêtes"
   GLOBALquery <- "Requête"
+  GLOBALplotSankey <- "Créer un diagramme de Sankey"
+  GLOBALsankeyPloted <-  "Diagramme de Sankey réalisé"
+  GLOBALsankeyTutorial <- "Pour réaliser un diagramme de Sankey, choisir deux variables. Il n'est pas possible de choisir une variable du contexte pour le moment"
+  GLOBALnoPredicateChosen <- "Aucune variable sélectionnée"
+  GLOBALonlyOneEvent <- "Un seul évènement détecté. Sankey impossible à réaliser"
   
   ## Timeline
   GLOBALcontextDescription <- "Description du contexte"
@@ -194,6 +213,7 @@ if (GLOBALlang == "fr"){
   
   ## leaflet : 
   GLOBALvoirlacarte <- "See map"
+  GLOBALaddCircles <- "Add circles"
   
   ## valeurs sélectionnées(description filter) : 
   GLOBALvaleursselected <- "values chosen"

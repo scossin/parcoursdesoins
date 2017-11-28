@@ -1,0 +1,10 @@
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix eig:     <http://www.eigsante2017.fr#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix atlasante: <https://www.atlasante.fr/GEOPMSI2014#> .
+
+eig:${patientid} a eig:Graph ;
+	eig:age "${age}"^^xsd:integer ;
+	eig:Sex "${sexe}"^^xsd:string ;
+	eig:hasPolygon atlasante:PolygonCodeGeoPMSI${codeGeo} .

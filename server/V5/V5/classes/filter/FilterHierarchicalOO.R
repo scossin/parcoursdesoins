@@ -5,6 +5,7 @@ FilterHierarchical <- R6::R6Class(
   public = list(
     terminology = NULL,
     hierarchicalData = data.frame(),
+    hierarchy = data.frame(),
     choice = character(),
     changePlotObserver = NULL,
     treeObserver = NULL,
@@ -79,17 +80,19 @@ FilterHierarchical <- R6::R6Class(
         private$eventChoice <- GLOBALnoChoiceAvailable
         self$printChoice()
       } else {
+        ## we keep only codes with count != 0 
         bool <- hierarchy$code %in% eventCount$className
+        staticLogger$info(sum(!bool)," cdes have 0 count in the hierarchy")
         hierarchy <- subset (hierarchy, bool)
-        hierarchicalData <- merge (hierarchy, eventCount, by.x="code", by.y="className",all.x=T)
+        hierarchicalData <- merge (hierarchy, eventCount, by.x="code", by.y="className")
       }
-      bool <- is.na(hierarchicalData$count) | hierarchicalData$count == 0
-      staticLogger$info(sum(bool),"have 0 count in the hierarchy")
-      hierarchicalData$count[bool] <- 0
+      # bool <- is.na(hierarchicalData$count) | hierarchicalData$count == 0
+      # hierarchicalData$count[bool] <- 0
       colnames(hierarchicalData) <- c("code","label","hierarchy","size")
       #hierarchicalData <- rbind(hierarchicalData, data.frame(event="Event",hierarchy="Event",size=0))
       # private$checkHierarchicalData(hierarchicalData)
       self$hierarchicalData <- hierarchicalData
+      # print(self$hierarchicalData)
     }, 
     
     getHierarchy = function(){
@@ -105,6 +108,7 @@ FilterHierarchical <- R6::R6Class(
         staticLogger$error("Unexpected columns :", colnames(hierarchy))
         stop("Unexpected columns :", colnames(hierarchy))
       }
+      self$hierarchy <- hierarchy
       return(hierarchy)
     },
     
@@ -153,7 +157,7 @@ FilterHierarchical <- R6::R6Class(
       # sunburstChoice is a vector with length the depth of the node in the hierarchy
       staticLogger$info("Getting event from choice : ", sunburstChoice)
       sunburstChoice <- paste(sunburstChoice, collapse="-")
-      bool <- grepl(pattern = sunburstChoice,self$hierarchicalData$hierarch, fixed = T)
+      bool <- grepl(pattern = sunburstChoice,self$hierarchicalData$hierarchy, fixed = T)
       # bool <- self$hierarchicalData$hierarchy %in% sunburstChoice 
       # print(self$hierarchicalData)
       if (!any(bool)){
@@ -213,10 +217,10 @@ FilterHierarchical <- R6::R6Class(
    
     getCodeChoice = function(){
       labelChoices <- self$getEventChoice()
-      bool <- as.character(self$hierarchicalData$label) %in% as.character(labelChoices)
-      print(labelChoices)
-      print(sum(bool))
-      return(as.character(self$hierarchicalData$code[bool]))
+      # print(self$hierarchy$label)
+      bool <- as.character(self$hierarchy$label) %in% as.character(labelChoices)
+      # print(labelChoices)
+      return(as.character(self$hierarchy$code[bool]))
     },
     
     getEventChoice = function(){
@@ -239,7 +243,9 @@ FilterHierarchical <- R6::R6Class(
       if (length(private$eventChoice) == 0){
         return(NULL)
       }
-      bool <- self$dataFrame$value %in% private$eventChoice
+      codeChoices <- self$getCodeChoice()
+      bool <- self$dataFrame$value %in% codeChoices
+      # staticLogger$info(sum(bool),"codes found in dataFrame")
       eventsSelected <- as.character(self$dataFrame$event[bool])
       return(eventsSelected)
     },
@@ -338,12 +344,10 @@ FilterHierarchical <- R6::R6Class(
     getShinyList = function(){
       terminologyName <- self$terminology$terminologyName
       dfShinyTreeQuery <- subset(self$hierarchicalData, size != 0, select=c("code","size"))
-      print(dfShinyTreeQuery)
       dfShinyTreeQuery$terminologyName <- ""
       dfShinyTreeQuery <- dfShinyTreeQuery[,c(3,1,2)]
       colnames(dfShinyTreeQuery)[1] <- terminologyName
       content <- GLOBALcon$getShinyTreeList(dfShinyTreeQuery)
-      print(content)
       return(content)
     },
     

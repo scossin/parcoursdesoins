@@ -116,7 +116,7 @@ EventTabpanel <- R6::R6Class(
         eventType <- self$hierarchicalObject$getCodeChoice()
         staticLogger$user("\t clicked value : ",eventType)
         if (is.null(eventType) || length(eventType) == 0 || eventType %in% c(GLOBALnoselected, GLOBALmanyselected,GLOBALnoChoiceAvailable)){
-          staticLogger$info("\t Bad choice for event selection : ")
+          staticLogger$info("\t Bad choice for event selection")
           return(NULL)
         }
         self$contextEnv$eventType <- eventType

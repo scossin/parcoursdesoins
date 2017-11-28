@@ -31,7 +31,7 @@ public class OneClass {
 	 * List of parents in the ontology hierarchy
 	 */
 	
-	protected Set<IRI> parents = new HashSet<IRI>();
+	protected HashSet<IRI> parents = new HashSet<IRI>();
 	
 	/**
 	 * Construct an Class object 
@@ -72,7 +72,7 @@ public class OneClass {
 	 * 
 	 * @return The list of parents IRI of this class
 	 */
-	public Set<IRI> getParents(){
+	public HashSet<IRI> getParents(){
 		return(parents);
 	}
 	

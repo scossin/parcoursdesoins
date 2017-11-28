@@ -5,6 +5,7 @@ Sankey <- R6::R6Class(
   public = list(
     result = NULL,
     validateObserver = NULL,
+    makeSankeyObserver = NULL,
     plotSankeyObserver = NULL,
     V1V2Observer = NULL,
     dfSankey = data.frame(),
@@ -21,10 +22,11 @@ Sankey <- R6::R6Class(
                                               validateButtonId = self$getValidateButtonId())
       self$insertSankeyUI()
       self$addValidateObserver()
-      self$addMakeSankeyObserver()
+      # self$addMakeSankeyObserver()
       self$addPlotSankeyObserver()
       self$addV1V2Observer()
       self$boolV1 <- T
+      self$sendMessageInVerbatim(GLOBALsankeyTutorial)
     },
     
     insertSankeyUI = function(){
@@ -39,10 +41,11 @@ Sankey <- R6::R6Class(
     getUI = function(){
       ui <- div(id = self$getDivId(),
                 div (id = self$getSankeyParamId(),
-                     shiny::actionButton(inputId = self$getButtonMakeSankeyId(),
-                                         label = "MakeSankey"),
+                     # shiny::actionButton(inputId = self$getButtonMakeSankeyId(),
+                     #                     label = "MakeSankey"),
                      shiny::actionButton(inputId = self$getButtonPlotSankeyId(),
-                                         label = "PlotSankey"),
+                                         label = GLOBALplotSankey),
+                     shiny::verbatimTextOutput(outputId = self$getMessageVerbatimId()),
                      shiny::radioButtons(inputId = self$getV1V2choiceId(),
                                          label = "Sankey style",
                                          choices = c("V1","V2"),
@@ -52,6 +55,14 @@ Sankey <- R6::R6Class(
                 
                 
       )
+    },
+    
+    sendMessageInVerbatim = function(message){
+      output[[self$getMessageVerbatimId()]] <- shiny::renderPrint(message)
+    },
+    
+    getMessageVerbatimId = function(){
+      return(paste0("MessageVerbatim-",self$getSankeyParamId()))
     },
     
     insertUIgraphicSankey = function(){
@@ -78,10 +89,10 @@ Sankey <- R6::R6Class(
         }
         
         staticLogger$user("Plot Sankey clicked ")
-        if (is.null(self$dfSankey) || nrow(self$dfSankey) == 0){
-          staticLogger$info("Sankey Df not set yet")
-          return(NULL)
-        }
+        # if (is.null(self$dfSankey) || nrow(self$dfSankey) == 0){
+        #   staticLogger$info("Sankey Df not set yet")
+        #   return(NULL)
+        # }
         self$plotSankey()
       })
     },
@@ -99,10 +110,16 @@ Sankey <- R6::R6Class(
     },
     
     plotSankey = function(){
-      staticLogger$user("plotSankey function called")
+      self$makeDfSankey()
+      if (is.null(self$dfSankey)){
+        staticLogger$info("dfSankey is null")
+        return(NULL)
+      }
       output[[self$getSankeyGraphicId()]] <- sankeyD3::renderSankeyNetwork({
         private$makeSankey(df_sankey = self$dfSankey, V1=self$boolV1, V2=!self$boolV1)
       })
+      self$sendMessageInVerbatim(GLOBALsankeyPloted)
+      return(NULL)
     },
     
     addValidateObserver = function(){
@@ -118,22 +135,6 @@ Sankey <- R6::R6Class(
         }
         
         self$searchQueries$result <-  Result$new(self$searchQueries$xmlSearchQuery)
-        
-        # if (is.null(queryChoice) || queryChoice == ""){
-        #   staticLogger$info("No query selected")
-        #   return(NULL)
-        # }
-        
-        # staticLogger$info("Sankey : ", queryChoice, "selected")
-        # 
-        # queryChoice <- gsub(GLOBALquery,"",queryChoice)
-        # queryChoice <- as.numeric(queryChoice)
-        # lengthListResults <- length(GLOBALlistResults$listResults)
-        # bool <- queryChoice > lengthListResults
-        # if (bool){
-        #   stop("queryChoice number not found in GLOBALlistResults ")
-        # }
-        # self$result <- GLOBALlistResults$listResults[[queryChoice]]
         self$result <- self$searchQueries$result
         self$setEventTabpanel()
       })
@@ -221,40 +222,58 @@ Sankey <- R6::R6Class(
       paste0("SankeyGraphic-",self$getSankeyPlotDivId())
     },
     
-    addMakeSankeyObserver = function(){
-      observeEvent(input[[self$getButtonMakeSankeyId()]],{
-        staticLogger$user(" MakeSankey clicked !")
-        tempResult <- self$result$resultDf
-        staticLogger$info(nrow(tempResult), " resultDf lines initially")
-        column <- 2
-        sankeyColumns <- NULL
-        if (length(GLOBALSankeylistEventTabpanel$listEventTabpanel) == 0){
-          staticLogger$info(" no event in predicate")
+    makeDfSankey = function(){
+      self$dfSankey <- NULL
+      staticLogger$user(" MakeSankey clicked !")
+      tempResult <- self$result$resultDf
+      staticLogger$info(nrow(tempResult), " resultDf lines initially")
+      column <- 2
+      sankeyColumns <- NULL
+      if (length(GLOBALSankeylistEventTabpanel$listEventTabpanel) == 0){
+        self$sendMessageInVerbatim(GLOBALnoEventSelected)
+        staticLogger$info(" no events selected")
+        return(NULL)
+      }
+      
+      if (length(GLOBALSankeylistEventTabpanel$listEventTabpanel) == 2){ # context + one event
+        self$sendMessageInVerbatim(GLOBALonlyOneEvent)
+        staticLogger$info(GLOBALonlyOneEvent)
+        return(NULL)
+      }
+      
+      for (i in 1:length(GLOBALSankeylistEventTabpanel$listEventTabpanel)){
+        eventTabpanel <- GLOBALSankeylistEventTabpanel$listEventTabpanel[[i]]
+        ## ignore context : 
+        if (eventTabpanel$contextEnv$eventNumber == 0){
+          next
+        }
+        eventName <- names(GLOBALSankeylistEventTabpanel$listEventTabpanel)[[i]]
+        instanceSelection <- eventTabpanel$contextEnv$instanceSelection
+        eventValue <- instanceSelection$getValue4Sankey()
+        if (is.null(eventValue)){
+          message <- paste0(eventName, " ",GLOBALnoPredicateChosen)
+          self$sendMessageInVerbatim(message)
+          staticLogger$info(message)
           return(NULL)
         }
-        for (i in 1:length(GLOBALSankeylistEventTabpanel$listEventTabpanel)){
-          eventTabpanel <- GLOBALSankeylistEventTabpanel$listEventTabpanel[[i]]
-          eventName <- names(GLOBALSankeylistEventTabpanel$listEventTabpanel)[[i]]
-          instanceSelection <- eventTabpanel$contextEnv$instanceSelection
-          eventValue <- instanceSelection$getValue4Sankey()
-          if (is.null(eventValue)){
-            staticLogger$info(eventName, " no predicate selected")
-            return(NULL)
-          }
-          colnameResult <- colnames(tempResult)[column]
-          print(tempResult)
-          print(eventValue)
-          tempResult <- merge (tempResult, eventValue, by.x=colnameResult, by.y="event")
-          newSankeyColumn <- paste0("value", eventName)
-          colnames(tempResult)[length(colnames(tempResult))] <- newSankeyColumn
-          column <- column + 1
-          sankeyColumns <- append(sankeyColumns, newSankeyColumn)
-        }
-        
-        self$dfSankey <- subset(tempResult,select=sankeyColumns)
-        staticLogger$info(nrow(self$dfSankey), " lines after merging")
-      })
+        colnameResult <- colnames(tempResult)[column]
+        # print(tempResult)
+        # print(eventValue)
+        tempResult <- merge (tempResult, eventValue, by.x=colnameResult, by.y="event")
+        newSankeyColumn <- paste0("value", eventName)
+        colnames(tempResult)[length(colnames(tempResult))] <- newSankeyColumn
+        column <- column + 1
+        sankeyColumns <- append(sankeyColumns, newSankeyColumn)
+      }
+      self$dfSankey <- subset(tempResult,select=sankeyColumns)
+      staticLogger$info(nrow(self$dfSankey), " lines after merging")
     },
+    
+    # addMakeSankeyObserver = function(){
+    #   self$makeSankeyObserver <- observeEvent(input[[self$getButtonMakeSankeyId()]],{
+    #     self$makeDfSankey()
+    #   })
+    # },
     
     addResult = function(result){
       bool <- inherits(result, "Result")

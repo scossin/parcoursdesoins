@@ -1,0 +1,9 @@
+<!ELEMENT terminologies (terminology+)>
+<!ELEMENT terminology (terminologyName,namespace, prefix,className,ontologyFileName,dataFileName,endpoint)>
+<!ELEMENT terminologyName (#PCDATA)>
+<!ELEMENT namespace (#PCDATA)>
+<!ELEMENT prefix (#PCDATA)>
+<!ELEMENT className (#PCDATA)>
+<!ELEMENT ontologyFileName (#PCDATA)>
+<!ELEMENT dataFileName (#PCDATA)>
+<!ELEMENT endpoint (#PCDATA)>

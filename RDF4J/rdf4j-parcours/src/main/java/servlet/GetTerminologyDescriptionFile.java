@@ -19,7 +19,6 @@ import exceptions.UnfoundFilterException;
 import exceptions.UnfoundResultVariable;
 import exceptions.UnfoundTerminologyException;
 import queryFiles.FileQuery;
-import queryFiles.FilesAvailable;
 import queryFiles.GetTerminologies;
 import terminology.Terminology;
 import terminology.TerminologyInstances;
@@ -70,14 +69,6 @@ public class GetTerminologyDescriptionFile extends HttpServlet {
 			// Set response content type
 			resp.setContentType("text/html");
 			PrintWriter out = resp.getWriter();
-			StringBuilder sb = new StringBuilder();
-			for (FilesAvailable FileAvailable : FilesAvailable.values()){
-				sb.append("<br>");
-				sb.append(FileAvailable.getFileName());
-				sb.append(":            ");
-				sb.append(FileAvailable.getComment());
-				sb.append("<br>");
-			}
 			String docType = "<!doctype html public \"-//w3c//dtd html 4.0 " + "transitional//en\">\n";
 			out.println(docType + "<html> <body>" + "Sorry, invalid Get Request" + "</body> </html>")  ;
 			// put a list of avaible file
@@ -100,7 +91,7 @@ public class GetTerminologyDescriptionFile extends HttpServlet {
 		} else if (information.equals("hierarchy")){
 			try {
 				fileQuery = FileQuery.getHierarchy(terminologyName);
-			} catch (RDFParseException | RepositoryException | UnfoundTerminologyException e) {
+			} catch (RDFParseException | RepositoryException | UnfoundTerminologyException | UnfoundFilterException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

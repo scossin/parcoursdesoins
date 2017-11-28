@@ -130,17 +130,25 @@ QueryBuilder <- R6::R6Class(
         }
         xmlSearchQuery <- self$xmlSearchQuery
         
-        staticQueriesList$saveQuery(xmlSearchQuery, self$getLibQuery())
         # save(xmlSearchQuery, file="tempQuery2.rdata")
-        
-        results <- GLOBALcon$sendQuery(self$xmlSearchQuery)
-        # if (nrow(results) != 0){ ## add results to be further analyzed
-        #   result <- Result$new(self$xmlSearchQuery)
-        #   GLOBALlistResults$addResult(result)
-        # }
-        text <- getTextResults_(results)
+        results <- NULL
+        tryCatch(expr = {
+          results <- GLOBALcon$sendQuery(self$xmlSearchQuery)
+        }, error = function(e){
+          staticLogger$error(e$message)
+          self$sendMessageInVerbatim(GLOBALinvalidRequest)
+        }
+        )
+        if (!is.null(results)){
+          staticQueriesList$saveQuery(xmlSearchQuery, self$getLibQuery())
+          text <- getTextResults_(results)
+          self$sendMessageInVerbatim(text)
+        }
       }
-      output[[self$getResultsVerbatimId()]] <- shiny::renderPrint(text)
+    },
+    
+    sendMessageInVerbatim = function(message){
+      output[[self$getResultsVerbatimId()]] <- shiny::renderPrint(message)
     },
     
     getLibQuery = function(){
@@ -168,6 +176,7 @@ QueryBuilder <- R6::R6Class(
       ## no events selected
       if (length(query$listEventNodes) == 0){
         staticLogger$info("\t No events selected")
+        self$sendMessageInVerbatim(GLOBALnoEventSelected)
         self$xmlSearchQuery <- NULL
         return(NULL)
       }

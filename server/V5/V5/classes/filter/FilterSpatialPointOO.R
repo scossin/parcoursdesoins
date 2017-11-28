@@ -146,12 +146,14 @@ FilterSpatialPoint <- R6::R6Class(
     
     addMarkerLayer = function(){
       addMarker_ <- function(pointsCoordinate, newIcone){
+        pointsCoordinate$popupLabel <- paste0(pointsCoordinate$label, " (",pointsCoordinate$N,")")
         leafletProxy(GLOBALmapId) %>%
           addAwesomeMarkers(
             lng = pointsCoordinate$long, 
             lat = pointsCoordinate$lat,
             layerId = pointsCoordinate$layerId,
-            label = pointsCoordinate$label,
+            label = pointsCoordinate$popupLabel,
+            popup = pointsCoordinate$popupLabel,
             group = self$eventName,
             icon = newIcon)
       }
@@ -201,7 +203,7 @@ FilterSpatialPoint <- R6::R6Class(
                                       multiple = F,
                                       width = "100%"),
                 shinyWidgets::awesomeCheckbox(inputId = self$getRadioButtonMarkerId(),
-                                    label="Add circles",
+                                    label=GLOBALaddCircles,
                                     value = F
                                     )
                 )
@@ -249,11 +251,12 @@ FilterSpatialPoint <- R6::R6Class(
         newIcon <- private$unSelectedIcone()
       }
       leafletProxy(GLOBALmapId) %>% removeMarker(layerId = markerId)
+      line$popupLabel <- paste0(line$label, " (",line$N,")")
       leafletProxy(GLOBALmapId) %>%
         addAwesomeMarkers(icon = newIcon,
                           lng = line$long,
                           lat = line$lat,
-                          label = line$label,
+                          label = line$popupLabel,
                           layerId = line$layerId,
                           group = self$eventName)
     },
@@ -312,7 +315,7 @@ FilterSpatialPoint <- R6::R6Class(
           self$removeCircleMarker()
         } else {
           staticLogger$info("\t \t ", "Adding circle marker: ", self$getRadioButtonMarkerId())
-          radius <- 10 * (self$pointsCoordinate$N / max(self$pointsCoordinate$N))
+          radius <- 20 * (self$pointsCoordinate$N / max(self$pointsCoordinate$N))
           leafletProxy(GLOBALmapId) %>%
             addCircleMarkers(lng = self$pointsCoordinate$long,
                              lat = self$pointsCoordinate$lat,
@@ -382,7 +385,8 @@ FilterSpatialPoint <- R6::R6Class(
     
     insertUIseeMap = function(){
       ui <- shiny::actionButton(inputId = self$getUIseeMapId(),
-                                label = GLOBALvoirlacarte 
+                                label = GLOBALvoirlacarte,
+                                onclick="$(\"[data-value='Carte']\").click()"
                                 )
       jQuerySelector = paste0("#",self$parentId)
       insertUI(selector = jQuerySelector,

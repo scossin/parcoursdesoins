@@ -54,6 +54,7 @@ STATICmakeQueries <- R6::R6Class(
       shiny::withProgress(message = "Sending query", value = 0, {
         totalIter <- length(eventsList)
         nIter <- 1
+        timeTotalElapsed <- 0
         for (events in eventsList){
           bool <- contextEvents$event %in% events
           context <- contextEvents$context[bool]
@@ -62,9 +63,10 @@ STATICmakeQueries <- R6::R6Class(
             results <- rbind (results, GLOBALcon$sendQuery(query))
           )
           timeElapsed <- timeMesure["elapsed"]
+          timeTotalElapsed <- timeTotalElapsed + timeElapsed
           staticLogger$info("\t timeElapsed : ",timeElapsed)
           if (nIter != totalIter){
-            remainingTime <- private$estimateRemainingTime(nIter, totalIter, timeElapsed)
+            remainingTime <- private$estimateRemainingTime(nIter, totalIter, timeTotalElapsed)
             incProgress(nIter/totalIter, detail = paste("Remaining times : ", remainingTime, " seconds"))
           }
           nIter <- nIter + 1
@@ -94,14 +96,6 @@ STATICmakeQueries <- R6::R6Class(
   
   
   private = list(
-    # splitContext = function(context){
-    #   chunk <- 500
-    #   n <- length(context)
-    #   r <- rep(1:ceiling(n/chunk),each=chunk)[1:n]
-    #   d <- split(context, r)
-    #   return(d)
-    # },
-    
     splitEvents = function(events){
       chunk <- 2000
       n <- length(events)

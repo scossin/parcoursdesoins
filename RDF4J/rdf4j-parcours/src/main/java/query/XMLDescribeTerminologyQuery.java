@@ -53,7 +53,7 @@ public class XMLDescribeTerminologyQuery extends XMLDescribeQuery implements Que
 
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, InvalidContextException, UnfoundTerminologyException, RDFParseException, RepositoryException, UnfoundFilterException{
 		//InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "describeMCO.xml" );
-		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "XMLquerydescribeTerminologyFINESSlong.xml" );
+		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "XMLquerydescribeTerminology.dtd881978409365.xml" );
 		//InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "XMLquerydescribeSpatialPoint.xml" );
 		
 		XMLFile file = new XMLFile(xmlFile);

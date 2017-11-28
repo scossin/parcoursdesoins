@@ -41,21 +41,6 @@ navbarPage("Parcours de soins", id="CartoParcours",
                       )
                     ), ## end tabpanel Event
            
-           ### Timelines : 
-           tabPanel("Survie",
-                    div(id = GLOBALsurvieDiv)
-           ),
-           ### Timelines : 
-           tabPanel("Timelines",
-                    div(id = GLOBALtimelineDiv)
-           ),
-           
-           ### Sankey 
-           tabPanel("Sankey",
-                    div(id = GLOBALmainPanelSankeyId),
-                    tabsetPanel(id = GLOBALeventTabSetPanelSankey)
-           ),
-           
            ### leaflet
            tabPanel("Carte",
                     div(class="outer",
@@ -68,5 +53,22 @@ navbarPage("Parcours de soins", id="CartoParcours",
                                       h4(GLOBALcontrols),
                                       div(id=GLOBALlayerControl)
                         ))
+           ),
+           
+           ### Timelines : 
+           tabPanel("Timelines",
+                    div(id = GLOBALtimelineDiv)
+           ),
+           
+           ### Sankey 
+           tabPanel("Sankey",
+                    div(id = GLOBALmainPanelSankeyId),
+                    tabsetPanel(id = GLOBALeventTabSetPanelSankey)
            )
+           # ,
+           
+           # ### Survie : 
+           # tabPanel("Survie",
+           #          div(id = GLOBALsurvieDiv)
+           # )
 )

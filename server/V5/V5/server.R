@@ -18,9 +18,9 @@ server <- function(input,output,session){
   source("classes/terminology/STATICterminologyInstancesOO.R",local=T)
   source("classes/terminology/TerminologyOO.R",local=T)
   staticTerminologyInstances <- STATICterminologyInstances$new()
-  # staticTerminologyInstances$getTerminologyByClassName("ICD10FR")
   
-  # test$predicateEvent$eventType == "Graph"
+  # test <- staticTerminologyInstances$getTerminologyByClassName("Event")
+  # voir<-  test$getPredicateDescriptionOfEvent("Event")
   # test$mainClassName
   # test$predicateDescription
   source("classes/queries/STATICmakeQueriesOO.R",local=T)
@@ -88,7 +88,7 @@ server <- function(input,output,session){
   source("classes/timeLines/HandleTimelinesOO.R",local=T)
   source("classes/timeLines/TimelineOO.R",local=T)
   
-  source("classes/survie/Survie.R",local = T)
+  ## source("classes/survie/Survie.R",local = T)
   
   source("classes/HideShowButtons.R",local = T)
   
@@ -104,7 +104,8 @@ server <- function(input,output,session){
   
   GLOBALSankeylistEventTabpanel <- ListEventsTabpanel$new()
   sankey <- Sankey$new(GLOBALmainPanelSankeyId, "beforeEnd")
-  survie <- Survie$new(GLOBALsurvieDiv,"beforeEnd")
+  
+  # survie <- Survie$new(GLOBALsurvieDiv,"beforeEnd")
   
   
   GLOBALhandleTimelines = HandleTimelines$new(parentId = GLOBALtimelineDiv, 
@@ -113,7 +114,8 @@ server <- function(input,output,session){
   ### Context : 
   staticLogger$info("creating Context...")
   # get a sample ...
-  pSamples <- c("p92776","p54767","p110814","p59452","p139838")
+  # pSamples <- c("p92776","p54767","p110814","p59452","p139838") ### pmsi
+  pSamples <- paste0("p",1:10000)
   contextEvents <- data.frame(context=pSamples,event=pSamples)
   # contextEvents <- data.frame(context=paste0("p",1:1000),event=paste0("p",1:1000))
   parentId = "contextId"

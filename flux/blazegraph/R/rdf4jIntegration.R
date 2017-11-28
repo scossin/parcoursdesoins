@@ -41,7 +41,7 @@ addPredicateValue <- function(df, contexte, variable, relation){
   return(ajout)
 }
 
-contexte <- paste0("p",1:1000)
+contexte <- paste0("p",1:10000)
 
 ## has price
 listeevents$price <- NA
@@ -72,36 +72,41 @@ inDoctor$value <- paste0("RPPS",inDoctor$value)
 
 hasDP <- subset (inEtab, type=="SejourMCO")
 hasDP$predicate <- "hasDP"
-codesCIM10 <- c("I61","I62","I63","A09","I10")
+codesCIM10 <- paste0("I61",0:6)
+codesCIM10 <- c(codesCIM10, c("I620","I629","I638","I490","Z515"))
 hasDP$value <- sample(codesCIM10,size=nrow(hasDP),replace = T)
 allRelations <- rbind (hasEnd, hasBeginning, inEtab,inDoctor,hasPrice,hasDP)
 write.table(allRelations,"allRelations.csv",sep="\t",col.names = F, row.names = F,quote=F)
 
 ####
-
 ## description 
 table(listeevents$group)
 table(hasEnd$type)
 
 ## description 
-allRelations <- rbind (hasEnd, hasBeginning, inEtab)
-write.table(hospitToCSV,"hospitToCSV.csv",sep="\t",col.names = F, row.names = F,quote=F)
+# allRelations <- rbind (hasEnd, hasBeginning, inEtab)
+# write.table(hospitToCSV,"hospitToCSV.csv",sep="\t",col.names = F, row.names = F,quote=F)
 
-table(hasEnd$patientid)
+load("domiciles.rdata")
 
-p1 <- rbind(hasEnd, hasBeginning)
-p1 <- subset (p1, !is.na(value))
-write.table(p1,"p1.csv",sep="\t",col.names = F, row.names = F,quote=F)
+patients <- data.frame(patientid = unique(listeevents$patientid))
+patients$patientid <- gsub("patient","p", patients$patientid)
+patients$codeGeo <- sample(domiciles$domicile, size=nrow(patients), replace = T)
+patients$sexe <- c("homme","femme")
+patients$age <- round(rnorm(n=nrow(patients),mean = 60,sd = 10))
+table(patients$age)
+write.table(patients, "context.csv",sep=",",col.names = T, row.names = F,quote = T)
+colnames(patients)
 
-temp <- subset (listeevents,select=c("patientid","type","start","start"))
-temp$predicat <- "hasBeginning"
-colnames(temp)[4] <- "value"
-temp <- subset (temp, select=c("patientid","type","start","predicat","value"))
-table(temp$type)
+load("../../../CouchesPMSI/codesgeo2014/couchegeoPMSI2014.rdata")
+couchegeoPMSI2014 <- spTransform(couchegeoPMSI2014, CRS("+init=epsg:4326"))
+coordonnees <- data.frame(coordinates(couchegeoPMSI2014))
+meta <- couchegeoPMSI2014@data
+colnames(meta) <- c("code","label","long","lat")
 
-temp <- subset (temp, type %in% c("SejourMCO","Consultation"))
-temp <- temp[sample(1:nrow(temp),100,replace=F),]
-
-str(temp)
-write.table(temp,"test.csv",sep="\t",col.names = F, row.names = F,quote=F)
-table(temp$patientid)
+codeGeo <- subset (patients, select=c("codeGeo"))
+codeGeo <- unique(codeGeo)
+codeGeo <- merge(codeGeo, meta, by.x="codeGeo", by.y="code")
+codeGeo$lat <- NULL
+codeGeo$long <- NULL
+write.table(codeGeo, "codeGeo.csv",sep=",",col.names = T, row.names = F,quote = T)

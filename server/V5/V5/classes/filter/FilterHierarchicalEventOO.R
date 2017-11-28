@@ -51,15 +51,14 @@ FilterHierarchicalEvent <- R6::R6Class(
       staticLogger$info("Getting event from choice : ", sunburstChoice)
       sunburstChoice <- paste(sunburstChoice, collapse="-")
       # bool <- grepl(pattern = sunburstChoice,self$hierarchicalData$hierarch, fixed = T)
-      bool <- self$hierarchicalData$hierarchy %in% sunburstChoice 
-      # print(self$hierarchicalData)
+      bool <- self$hierarchy$tree %in% sunburstChoice 
       if (!any(bool)){
         stop(sunburstChoice, " : not found in hierarchicalData")
       }
       if (sum(bool) != 1){
         stop(sunburstChoice, " : many possibilities in hierarchicalData")
       }
-      eventType <- as.character(self$hierarchicalData$label[bool])
+      eventType <- as.character(self$hierarchy$label[bool])
       staticLogger$info("eventType found : ", eventType)
       return(eventType)
     }, 

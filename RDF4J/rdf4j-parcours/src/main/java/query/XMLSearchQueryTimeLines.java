@@ -135,7 +135,7 @@ public class XMLSearchQueryTimeLines extends XMLSearchQuery implements Query {
 	}
 	
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, UnfoundEventException, UnfoundPredicatException, ParseException, NumberFormatException, IncomparableValueException, UnfoundTerminologyException, OperatorException, InvalidContextException, InvalidXMLFormat, RDFParseException, RepositoryException, UnfoundFilterException {
-		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "XMLquerysearchTimelines.dtd82554413239.xml" );
+		InputStream xmlFile = Util.classLoader.getResourceAsStream(MainResources.queryFolder + "XMLsearchTimelines-p111915.xml" );
 		XMLSearchQueryTimeLines queryClass = new XMLSearchQueryTimeLines(new XMLFile(xmlFile));
 		System.out.println(queryClass.getSPARQLQueryString());
 	}

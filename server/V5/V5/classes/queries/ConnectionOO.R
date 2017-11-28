@@ -78,7 +78,11 @@ Connection <- R6::R6Class(
       fileName <- "/tmp/shinyTreeQuery.csv"
       write.table(dfShinyTreeQuery, fileName,sep = "\t",col.names = T, row.names = F,quote=F)
       url <- paste0(private$getWebServerURL(), private$GetShinyTreeHierarchy)
-      response <- httr::POST(url, body=list(filedata=httr::upload_file(fileName)))
+      
+      shiny::withProgress(expr={
+        response <- httr::POST(url, body=list(filedata=httr::upload_file(fileName)))
+      },min = 0, max = 1,value = 0.9, message = "Sending a query..."
+      )
       private$checkResponse(response)
       content <- rawToChar(response$content)
       return(content)
@@ -92,8 +96,11 @@ Connection <- R6::R6Class(
       XMLqueryInstance$saveQuery()
       url <- paste0(private$getWebServerURL(), private$XMLqueryPattern)
       fileName <- XMLqueryInstance$fileName
-      response <- httr::POST(url, body=list(filedata=upload_file(fileName)))
-      
+      shiny::withProgress(expr={
+        response <- httr::POST(url, body=list(filedata=upload_file(fileName)))
+      },min = 0, max = 1,value = 0.9, message = "Sending a query..."
+      )
+
       # staticLogger$info("query time to getAnswer : ",timeMesure["elapsed"])
       private$checkResponse(response)
       content <- rawToChar(response$content)

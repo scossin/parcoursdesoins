@@ -19,7 +19,8 @@ import org.slf4j.LoggerFactory;
 import exceptions.UnfoundEventException;
 import exceptions.UnfoundFilterException;
 import exceptions.UnfoundPredicatException;
-import hierarchy.HandleHierarchy;
+import hierarchy.GetTreeJsHierarchy;
+import hierarchy.Hierarchy;
 import parameters.MainResources;
 import parameters.Util;
 import servlet.Endpoint;
@@ -58,11 +59,7 @@ public class Terminology {
 	 
 	 private TerminologyServer terminologyServer ;
 	 
-	 private HandleHierarchy handleHierarchy;
-	 
-	 public HandleHierarchy getHandleHierarchy(){
-		 return(handleHierarchy);
-	 }
+	 private Hierarchy hierarchy;
 	 
 	 private File terminologyFolder ; 
 	 
@@ -100,6 +97,11 @@ public class Terminology {
 	 public TerminologyServer getTerminologyServer() throws RDFParseException, RepositoryException, IOException, UnfoundFilterException{
 		 checkInitialization();
 		 return(terminologyServer);
+	 }
+	 
+	 public Hierarchy getHierarchy() throws RDFParseException, RepositoryException, UnfoundFilterException, IOException{
+		 checkInitialization();
+		 return(hierarchy);
 	 }
 	 
 	 public void closeConnection() throws RDFParseException, RepositoryException, IOException, UnfoundFilterException{
@@ -143,7 +145,7 @@ public class Terminology {
 		 this.classDescription = new ClassDescription(this);
 		 this.predicateDescription = new PredicateDescription(this);
 		 this.terminologyServer = new TerminologyServer(this);
-		 this.handleHierarchy = new HandleHierarchy(this);
+		 this.hierarchy = new Hierarchy(this);
 	 }
 	 
 	 /**

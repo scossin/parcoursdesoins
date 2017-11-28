@@ -11,7 +11,7 @@ STATICqueriesList <- R6::R6Class(
       if (!file.exists(self$fileName)){
         stop("Unfound file : " + self$fileName)
       }
-      self$queriesDf <- read.table(self$fileName,sep="\t",header=T)
+      self$queriesDf <- read.table(self$fileName,sep="\t",header=T,quote="")
       bool <- colnames(self$queriesDf) %in% c("file","lib")
       if (!all(bool)){
         stop("unexpected columns in ", fileName)
@@ -47,8 +47,10 @@ STATICqueriesList <- R6::R6Class(
       }
       fileQueryName <- as.character(sub$file)
       staticLogger$info("\t loading query : ", fileQueryName)
-      xmlQueryName <- load (fileQueryName)
-      load(fileQueryName)
+      shiny::withProgress(expr = {
+        xmlQueryName <- load (fileQueryName)
+      }, min = 0, max = 1, value = 0.95, message = "Loading query..."
+      )
       return(get(xmlQueryName))
     },
     

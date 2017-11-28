@@ -134,14 +134,14 @@ Timeline <- R6::R6Class(
     setVariableDescription = function(predicateLabel,instanceName, terminology){
       # instanceName <- "06K04J"
       # predicateLabel <- "GHM"
-      doNothing <- c("integer","dateTime","string")
+      doNothing <- c("double","integer","dateTime","string")
       predicate <- terminology$getPredicate(predicateLabel)
       predicateDescription <- terminology$getPredicateDescription(predicate)
       expectedValue <- predicateDescription$value
       if (expectedValue %in% doNothing){
         return(NULL)
       }
-      
+      print(expectedValue)
       tryCatch(
         terminologyTarget <- staticTerminologyInstances$getTerminologyByClassName(expectedValue)
         , error = function(e){

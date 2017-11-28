@@ -40,3 +40,28 @@ server <- function(input,output,session){
   source("TestFilterHierarchical.R",local = T)
   #source("TestFilterDateOO.R",local = T)
 }
+
+
+library(sunburstR)
+sunburstR::sunburst()
+
+library(sunburstR)
+
+# read in sample visit-sequences.csv data provided in source
+# only use first 200 rows to speed package build and check
+#   https://gist.github.com/kerryrodden/7090426#file-visit-sequences-csv
+sequences <- read.csv(
+  system.file("examples/visit-sequences.csv",package="sunburstR")
+  ,header = FALSE
+  ,stringsAsFactors = FALSE
+)[1:100,]
+
+sunburst(sequences)
+
+## Not run: 
+
+# explore some of the arguments
+sunburst(
+  sequences
+  ,count = TRUE
+)

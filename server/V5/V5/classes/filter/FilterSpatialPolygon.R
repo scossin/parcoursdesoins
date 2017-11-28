@@ -47,6 +47,10 @@ FilterSpatialPolygon <- R6::R6Class(
       bool <- self$spatialPolygon$isSelected
       values <- as.character(self$spatialPolygon$value[bool])
       self$setPolygonCoordinate()
+      if (is.null(self$polygonCoordinate)){
+        staticLogger$info("Filter spatialPolygon : no values")
+        return(NULL)
+      }
       self$addMetadataToShapeFile(previousValues = values)
       ## add previous selection
      
@@ -58,6 +62,10 @@ FilterSpatialPolygon <- R6::R6Class(
     },
     
     setPolygonCoordinate = function(){
+      if (nrow(self$dataFrame) == 0){
+        self$polygonCoordinate <- NULL
+        return(NULL)
+      }
       polygonCoordinate <- table(self$dataFrame$value)
       polygonCoordinate <- data.frame(event = names(polygonCoordinate), 
                                      N = as.numeric(polygonCoordinate))
@@ -157,7 +165,7 @@ FilterSpatialPolygon <- R6::R6Class(
       # print(minValue)
       # print(maxValue)
       self$pal =  colorNumeric("Greens", domain = minValue:maxValue,na.color = "white")
-      self$pal = colorNumeric(c("white", "blue", "red"), domain = minValue:maxValue)
+      self$pal = colorNumeric(c("white", "blue","black"), domain = minValue:maxValue)
       # self$pal = colorBin("Blues", domain = minValue:maxValue,na.color = "white")
       # self$pal <- colorNumeric(
       #   palette = "Blues",
@@ -246,7 +254,7 @@ FilterSpatialPolygon <- R6::R6Class(
         leafletProxy(GLOBALmapId) %>%
           addPolygons(data = spatialPolygon,
                       popup= ~popupLabel,
-                      label= ~label, 
+                      label= ~popupLabel, 
                       labelOptions = labelOptions(direction = 'auto'),
                       stroke=T,opacity=1,weight=weight,
                       fillColor= spatialPolygon$color,
@@ -351,7 +359,7 @@ FilterSpatialPolygon <- R6::R6Class(
       leafletProxy(GLOBALmapId) %>%
         addPolygons(data = line,
                     popup= ~popupLabel,
-                    label= ~label, 
+                    label= ~popupLabel, 
                     labelOptions = labelOptions(direction = 'auto'),
                     stroke=T,opacity=1,weight = weight,
                     fillColor= ~color,
@@ -433,7 +441,8 @@ FilterSpatialPolygon <- R6::R6Class(
     
     insertUIseeMap = function(){
       ui <- shiny::actionButton(inputId = self$getUIseeMapId(),
-                                label = GLOBALvoirlacarte 
+                                label = GLOBALvoirlacarte,
+                                onclick="$(\"[data-value='Carte']\").click()"
                                 )
       jQuerySelector = paste0("#",self$parentId)
       insertUI(selector = jQuerySelector,

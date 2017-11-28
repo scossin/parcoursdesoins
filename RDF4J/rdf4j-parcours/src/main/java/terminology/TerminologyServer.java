@@ -72,6 +72,9 @@ public class TerminologyServer {
 	
 	public void loadTerminology() throws Exception{
 		File instancesFile = terminology.getInstancesFile();
+		if (instancesFile == null){
+			return;
+		}
 		String terminoNameSpace = terminology.getNAMESPACE();
 		logger.info("Trying to load "+ instancesFile.getAbsolutePath() + "...");
 		try {
