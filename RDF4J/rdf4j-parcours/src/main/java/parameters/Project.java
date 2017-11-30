@@ -8,7 +8,7 @@ public class Project {
 //	public static final String dbAlias = dbName ; 
 //	
 	// AVC project : 
-	public final static String terminologiesFolder = "AVC/";
+	public final static String projectFolder = "AVC/";
 	public static final String dbName = "BlazegraphDB";
 	public static final String dbAlias = dbName ; 
 }

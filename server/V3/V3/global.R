@@ -148,7 +148,6 @@ set.seed(67)
 load("../../../RPPS/consultation33selection.rdata")
 i <- 2
 for (i in 1:1000){
-  print(i)
   patientid <- paste("patient",i,sep="")
   finess <- 999
   ## symptome

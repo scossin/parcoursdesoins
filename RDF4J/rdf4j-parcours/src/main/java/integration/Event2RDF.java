@@ -59,9 +59,9 @@ import terminology.TerminologyInstances;
  * @author cossin
  *
  */
-public class Integration {
+public class Event2RDF {
 	
-	final static Logger logger = LoggerFactory.getLogger(Integration.class);
+	final static Logger logger = LoggerFactory.getLogger(Event2RDF.class);
 	
 	/**
 	 * all contexts in the Repository of statements 
@@ -93,7 +93,7 @@ public class Integration {
 	 */
 
 	
-	public Integration(){
+	public Event2RDF(){
 		this.rep = new SailRepository(new MemoryStore());
 		rep.initialize();
 		this.con = rep.getConnection();
@@ -194,13 +194,13 @@ public class Integration {
 	
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
-		Integration integration = new Integration();
+		Event2RDF event2RDF = new Event2RDF();
 		URL folder = Util.classLoader.getResource(MainResources.terminologiesFolder + "chargement");
 		File folderFile = new File(folder.toURI());
-		integration.setFiles(folderFile);
-		integration.readFiles();
+		event2RDF.setFiles(folderFile);
+		event2RDF.readFiles();
 		TimelineFile.close();
-		integration.close();
+		event2RDF.close();
 		TerminologyInstances.closeConnections();
 		System.out.println("End!");
 }

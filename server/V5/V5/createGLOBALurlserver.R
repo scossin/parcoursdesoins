@@ -23,9 +23,9 @@ if (length(args) == 0){
 envVariables <- Sys.getenv()                                                                    
 bool <- names(envVariables) == webserverENV
 if (!any(bool)){
-  msg <- "No WEBSERVER_PORT env variable found, 
+  msg <- paste0("No ", webserverENV, " environment variable found, 
                            is the shiny apps running inside a docker container 
-                           and linked to another container named webserver ?"
+                           and linked to another container ?"
   stop(msg)
 }
 httpAdress <- as.character(envVariables[bool])                                                  
